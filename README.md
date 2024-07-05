@@ -1,4 +1,6 @@
-# Proyecto
+# Proyecto Hotel Managemanagement System
+
+# Vista de Mockups
 
 Para la vista de los mockups, visita [este enlace](https://www.figma.com/design/Zd7BmWijTPYYAxIuqjbP55/Proyecto-Hoteleria?node-id=208-202&t=7sIsEuAcNCq4YB2B-1).
 
