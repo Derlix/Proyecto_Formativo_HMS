@@ -1,4 +1,8 @@
-<h1>Proyecto Hotel Managemanagement System</h1>
+<h1>Proyecto Hotel Management System</h1>
+
+## Plantilla usada
+
+Este proyecto utiliza la plantilla [Admin One &mdash; Free Vue 3.x Tailwind 3.x Admin Dashboard with dark mode](https://justboil.me/tailwind-admin-templates/free-vue-dashboard/) desarrollada por JustBoil.
 
 - Vista de Mockups
 
