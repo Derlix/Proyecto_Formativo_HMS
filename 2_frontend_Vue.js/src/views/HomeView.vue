@@ -7,8 +7,15 @@ import {
   mdiChartTimelineVariant,
   mdiMonitorCellphone,
   mdiReload,
-  mdiGithub,
-  mdiChartPie
+  mdiBed,
+  mdiCloseCircle,
+  mdiSprayBottle,
+  mdiTools,
+  mdiMinusCircle,
+  mdiBroom,
+  mdiChartPie,
+  mdiCheckCircleOutline,
+  mdiAlertCircleOutline
 } from '@mdi/js'
 import * as chartConfig from '@/components/Charts/chart.config.js'
 import LineChart from '@/components/Charts/LineChart.vue'
@@ -23,8 +30,7 @@ import CardBoxClient from '@/components/CardBoxClient.vue'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue'
 import SectionBannerStarOnGitHub from '@/components/SectionBannerStarOnGitHub.vue'
-
-const chartData = ref(null)
+import Modal from '@/components/Modal.vue'
 
 const fillChartData = () => {
   chartData.value = chartConfig.sampleChartData()
@@ -39,98 +45,68 @@ const mainStore = useMainStore()
 const clientBarItems = computed(() => mainStore.clients.slice(0, 4))
 
 const transactionBarItems = computed(() => mainStore.history)
+
+const showModal = ref(false)
+
+const chartData = ref(null)
 </script>
 
 <template>
   <LayoutAuthenticated>
-    <SectionMain>
-      <SectionTitleLineWithButton :icon="mdiChartTimelineVariant" title="Overview" main>
-        <BaseButton
-          href="https://github.com/justboil/admin-one-vue-tailwind"
-          target="_blank"
-          :icon="mdiGithub"
-          label="Star on GitHub"
-          color="contrast"
-          rounded-full
-          small
-        />
-      </SectionTitleLineWithButton>
+    <sectionMain>
+        <h1 class="font-bold">Estado Actual De las Habitaciones</h1>
 
-      <div class="grid grid-cols-1 gap-6 lg:grid-cols-3 mb-6">
-        <CardBoxWidget
-          trend="12%"
-          trend-type="up"
-          color="text-emerald-500"
-          :icon="mdiAccountMultiple"
-          :number="512"
-          label="Clients"
-        />
-        <CardBoxWidget
-          trend="12%"
-          trend-type="down"
-          color="text-blue-500"
-          :icon="mdiCartOutline"
-          :number="7770"
-          prefix="$"
-          label="Sales"
-        />
-        <CardBoxWidget
-          trend="Overflow"
-          trend-type="alert"
-          color="text-red-500"
-          :icon="mdiChartTimelineVariant"
-          :number="256"
-          suffix="%"
-          label="Performance"
-        />
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        <div class="flex flex-col justify-between">
-          <CardBoxTransaction
-            v-for="(transaction, index) in transactionBarItems"
-            :key="index"
-            :amount="transaction.amount"
-            :date="transaction.date"
-            :business="transaction.business"
-            :type="transaction.type"
-            :name="transaction.name"
-            :account="transaction.account"
+        <div class="grid grid-cols-1 gap-12 lg:grid-cols-3 mb-6 mt-4">
+          <CardBoxWidget
+            :number="50"
+            label="Habitaciones totales"
+            :icon="mdiBed"
+            :cardColor="'bg-blue-950'"
+          />
+          <CardBoxWidget
+            :number="24"
+            label="Habitaciones disponibles"
+            :icon="mdiCheckCircleOutline"
+            :cardColor="'bg-green-400'"
+          />
+          <CardBoxWidget
+            :number="8"
+            label="Habitaciones en limpieza"
+            :icon="mdiSprayBottle"
+            :cardColor="'bg-blue-600'"
+          />
+          <CardBoxWidget
+            :number="7"
+            label="Habitaciones ocupadas"
+            :icon="mdiMinusCircle"
+            :cardColor="'bg-red-700'"
+          />
+          <CardBoxWidget
+            :number="2"
+            label="Habitaciones en operación"
+            :icon="mdiTools"
+            :cardColor="'bg-orange-600'"
           />
         </div>
-        <div class="flex flex-col justify-between">
-          <CardBoxClient
-            v-for="client in clientBarItems"
-            :key="client.id"
-            :name="client.name"
-            :login="client.login"
-            :date="client.created"
-            :progress="client.progress"
-          />
+
+        <h1 class="font-bold">Operadores de entradas y salidas</h1>
+        <div class="grid grid-cols-1 gap-16 lg:grid-cols-2 mt-4">
+          <CardBox :color="'bg-blue-600'" :rounded="'rounded-lg'">
+            <h1 class="text-center m-4 font-medium text-xl">Registrar entradas y salidas de huéspedes</h1>
+            <div class="grid grid-cols-1 gap-3 w-full lg:grid-cols-2">
+              <button @click="showModal = true" class="bg-blue-950 h-12 rounded-lg my-6 font-bold hover:bg-blue-900 text-white">Registrar Entrada</button>
+              <button @click="showModal = true" class="bg-blue-300 h-12 rounded-lg my-6 text-black font-bold border-2 border-blue-950 hover:bg-blue-100">Registrar Salida</button>
+
+              <Modal :visible="showModal" @close="showModal = false" />
+            </div>
+          </CardBox>
+          <CardBox :color="'bg-blue-600'" :rounded="'rounded-lg'">
+            <h1 class="text-center m-4 font-medium text-xl">Movimientos de pasajeros correspondientes</h1>
+            <div class="grid grid-cols-1 gap-3 w-full lg:grid-cols-1">
+              <button @click="showModal = true" class="bg-blue-950 h-12 rounded-lg m-6 font-bold hover:bg-blue-900 text-white">Registrar Entrada</button>
+            </div>
+          </CardBox>
         </div>
-      </div>
-
-      <SectionBannerStarOnGitHub class="mt-6 mb-6" />
-
-      <SectionTitleLineWithButton :icon="mdiChartPie" title="Trends overview">
-        <BaseButton :icon="mdiReload" color="whiteDark" @click="fillChartData" />
-      </SectionTitleLineWithButton>
-
-      <CardBox class="mb-6">
-        <div v-if="chartData">
-          <line-chart :data="chartData" class="h-96" />
-        </div>
-      </CardBox>
-
-      <SectionTitleLineWithButton :icon="mdiAccountMultiple" title="Clients" />
-
-      <NotificationBar color="info" :icon="mdiMonitorCellphone">
-        <b>Responsive table.</b> Collapses on mobile
-      </NotificationBar>
-
-      <CardBox has-table>
-        <TableSampleClients />
-      </CardBox>
-    </SectionMain>
+    </sectionMain>
   </LayoutAuthenticated>
 </template>

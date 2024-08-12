@@ -5,7 +5,7 @@ import vue from "@vitejs/plugin-vue";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: "/admin-one-vue-tailwind/",
+  base: "/hotel-hms-sena/",
   plugins: [vue()],
   resolve: {
     alias: {
