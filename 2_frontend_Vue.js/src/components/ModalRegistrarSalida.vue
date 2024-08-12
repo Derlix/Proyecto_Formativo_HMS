@@ -2,11 +2,10 @@
     <div v-if="visible" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 text-black">
       <div class="bg-blue-100 p-16 rounded-lg shadow-lg max-w-2xl w-full">
         <h2 class="text-2xl mb-6">Registrar Salida</h2>
-        <div class="grid grid-cols-3 gap-4">
+        <div class="grid grid-cols-3 gap-4 mb-5">
             <input type="text" name="Buscar" class="col-span-2 rounded-lg p-2">
             <button class="bg-blue-950 rounded-lg text-white p-2">Buscar</button>
         </div>
-        <button class="bg-blue-950 rounded-lg text-white my-4 w-48 h-12">Registrar Adicional</button>
         <div class="overflow-x-auto max-h-64 mb-6">
             <table class="table-fixed border-4 bg-blue-300 border-blue-600 rounded-xl">
               <thead class="border-2 border-black">
@@ -14,7 +13,7 @@
                   <th class="text-center py-2 border border-black">N° Identificacion</th>
                   <th class="text-center py-2 border border-black">Reserva</th>
                   <th class="text-center py-2 border border-black">Nombre</th>
-                  <th class="text-center py-2 border border-black">R. Entrada</th>
+                  <th class="text-center py-2 border border-black">R. Salida</th>
                 </tr>
               </thead>
               <tbody>
