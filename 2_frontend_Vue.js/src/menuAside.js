@@ -1,22 +1,12 @@
 import {
-  mdiAccountCircle,
   mdiMonitor,
-  mdiGithub,
-  mdiLock,
-  mdiAlertCircle,
-  mdiSquareEditOutline,
-  mdiTable,
-  mdiViewList,
-  mdiTelevisionGuide,
-  mdiResponsive,
-  mdiPalette,
-  mdiReact,
   mdiCalendar,
   mdiHistory,
   mdiHumanMaleFemale,
   mdiTicket,
   mdiFileChart,
-  mdiViewGridPlus
+  mdiViewGridPlus,
+  mdiExitRun
 } from '@mdi/js'
 
 export default [
@@ -55,6 +45,11 @@ export default [
     label: 'Gestor de hoteles',
     icon: mdiViewGridPlus
   },
+  {
+    to: '/checkOut',
+    label: 'CheckOut',
+    icon: mdiExitRun
+  }
 
 
 

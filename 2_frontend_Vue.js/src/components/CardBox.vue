@@ -8,7 +8,11 @@ const props = defineProps({
     type: String,
     default: 'rounded-2xl'
   },
-  flex: {
+  color: {
+    type: String,
+    default: 'bg-blue'
+  },
+  flex: { 
     type: String,
     default: 'flex-col'
   },
@@ -29,6 +33,7 @@ const componentClass = computed(() => {
   const base = [
     props.rounded,
     props.flex,
+    props.color,
     props.isModal ? 'dark:bg-slate-900' : 'dark:bg-slate-900/70'
   ]
 
@@ -51,6 +56,7 @@ const submit = (event) => {
     class="bg-white flex"
     @submit="submit"
   >
+  <div :class="[color, 'card-box', rounded]">
     <slot v-if="hasComponentLayout" />
     <template v-else>
       <CardBoxComponentBody :no-padding="hasTable">
@@ -60,5 +66,6 @@ const submit = (event) => {
         <slot name="footer" />
       </CardBoxComponentFooter>
     </template>
+  </div>
   </component>
 </template>

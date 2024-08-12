@@ -97,6 +97,14 @@ const routes = [
     name: 'profile',
     component: Profile
   },
+  {
+    meta: {
+      title: 'checkOut'
+    },
+    path: '/checkOut',
+    name: 'checkOut',
+    component: () => import('@/views/nico-views/CheckOut.vue')
+  }
 
   // Rutas de la plantilla
 

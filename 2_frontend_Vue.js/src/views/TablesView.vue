@@ -1,5 +1,4 @@
 <script setup>
-import { mdiMonitorCellphone, mdiTableBorder, mdiTableOff, mdiGithub } from '@mdi/js'
 import SectionMain from '@/components/SectionMain.vue'
 import NotificationBar from '@/components/NotificationBar.vue'
 import TableSampleClients from '@/components/TableSampleClients.vue'
