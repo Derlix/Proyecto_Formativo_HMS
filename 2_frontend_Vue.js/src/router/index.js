@@ -5,19 +5,52 @@ import Profile from '@/views/ProfileView.vue'
 import Reservas from '@/views/busta-views/Reservas.vue'
 import HistorialReservas from '@/views/busta-views/HistorialReservas.vue'
 import InformeAmaLlaves from '@/views/busta-views/InformeAmaLlaves.vue'
-import ListaPasajeros from '@/views/busta-views/ListaPasajeros.vue'
+// import ListaPasajeros from '@/views/busta-views/ListaPasajeros.vue'
 import ComprobanteDescuentos from '@/views/busta-views/ComprobanteDescuentos.vue'
 import GestorHotel from '@/views/busta-views/GestorHotel.vue'
+import Error404 from '@/views/camilo-views/404.vue'
+import IniciarSesion from '@/views/camilo-views/IniciarSesion.vue'
+import Registrar from '@/views/camilo-views/Registrar.vue'
+import Recuperar from '@/views/camilo-views/Recuperar_contraseña.vue'
+import MovimientoPasajeros from '@/views/camilo-views/MovimientoPasajerosCorrespondiente.vue'
+
 
 const routes = [
   {
     // No va haber index por el momento, iniciar desde Dashboard.
     meta: {
-      title: 'Dashboard'
+      title: 'Iniciar sesión'
     },
     path: '/',
-    name: 'Dashboard',
-    component: Home
+    name: 'iniciar sesión',
+    component: IniciarSesion
+  },
+  {
+    // No va haber index por el momento, iniciar desde Dashboard.
+    meta: {
+      title: 'Registrar'
+    },
+    path: '/registrar',
+    name: 'registrar',
+    component: Registrar
+  },
+  {
+    // No va haber index por el momento, iniciar desde Dashboard.
+    meta: {
+      title: 'Recuperar'
+    },
+    path: '/recuperar',
+    name: 'recuperar',
+    component: Recuperar
+  },
+  {
+    // No va haber index por el momento, iniciar desde Dashboard.
+    meta: {
+      title: 'Movimiento de pasajeros correspondiente'
+    },
+    path: '/movimiento-pasajeros-correspondiente',
+    name: 'movimiento pasajeros correspondiente',
+    component: MovimientoPasajeros
   },
   {
     // Document title tag
@@ -49,16 +82,16 @@ const routes = [
     name: 'historial de reservas',
     component: HistorialReservas
   },
-  {
-    // Document title tag
-    // We combine it with defaultDocumentTitle set in `src/main.js` on router.afterEach hook
-    meta: {
-      title: 'Informe de Pasajeros'
-    },
-    path: '/informe-pasajeros',
-    name: 'infomrme de pasajeros',
-    component: ListaPasajeros
-  },
+  // {
+  //   // Document title tag
+  //   // We combine it with defaultDocumentTitle set in `src/main.js` on router.afterEach hook
+  //   meta: {
+  //     title: 'Informe de Pasajeros'
+  //   },
+  //   path: '/informe-pasajeros',
+  //   name: 'infomrme de pasajeros',
+  //   component: ListaPasajeros
+  // },
   {
     // Document title tag
     // We combine it with defaultDocumentTitle set in `src/main.js` on router.afterEach hook
@@ -104,7 +137,13 @@ const routes = [
     path: '/checkOut',
     name: 'checkOut',
     component: () => import('@/views/nico-views/CheckOut.vue')
-  }
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: '404',
+    component: Error404
+  },
+
 
   // Rutas de la plantilla
 

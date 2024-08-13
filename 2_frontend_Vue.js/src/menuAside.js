@@ -25,11 +25,17 @@ export default [
     label: 'His. Reservas',
     icon: mdiHistory
   },
+  // movimiento-pasajeros-correspondiente
   {
-    to: '/informe-pasajeros',
-    label: 'Inf. Pasajero corres',
+    to: '/movimiento-pasajeros-correspondiente',
+    label: 'Mv. Pasajero corres',
     icon: mdiHumanMaleFemale
   },
+  // {
+  //   to: '/informe-pasajeros',
+  //   label: 'Inf. Pasajero corres',
+  //   icon: mdiHumanMaleFemale
+  // },
   {
     to: '/comprobante-descuento',
     label: 'Com. Descuento',
