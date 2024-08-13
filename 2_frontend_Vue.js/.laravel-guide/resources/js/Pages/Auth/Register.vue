@@ -31,10 +31,11 @@ const submit = () => {
       ...data,
       terms: form.terms && form.terms.length,
     }))
-    .post(route("register"), {
+    .post(route("registrar"), {
       onFinish: () => form.reset("password", "password_confirmation"),
     });
 };
+
 </script>
 
 <template>

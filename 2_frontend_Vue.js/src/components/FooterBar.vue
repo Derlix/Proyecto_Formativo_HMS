@@ -1,7 +1,7 @@
 <script setup>
 import { containerMaxW } from '@/config.js'
 import BaseLevel from '@/components/BaseLevel.vue'
-import JustboilLogo from '@/components/JustboilLogo.vue'
+// import JustboilLogo from '@/components/JustboilLogo.vue'
 
 const year = new Date().getFullYear()
 </script>
@@ -21,13 +21,13 @@ const year = new Date().getFullYear()
       </div> -->
       <div class="flex justify-center md:py-2 rounded-md space-x-4 bg-white px-3">
         <a href="https://example.com">
-          <img src="/dist/assets/img/sena-agro.png" class="w-auto h-10 md:h-10" alt="" srcset="">
+          <img src="/public/img/sena-agro.png" class="w-auto h-10 md:h-10" alt="" srcset="">
         </a>
         <a href="https://example.com">
-          <img src="/dist/assets/img/tucan.png" class="w-auto h-10 md:h-10" alt="" srcset="">
+          <img src="/public/img/tucan.png" class="w-auto h-10 md:h-10" alt="" srcset="">
         </a>
         <a href="https://example.com">
-          <img src="/dist/assets/img/colombia-potencia-vida-mininterior.png" class="w-auto h-10 md:h-10" alt="" srcset="">
+          <img src="/public/img/colombia-potencia-vida-mininterior.png" class="w-auto h-10 md:h-10" alt="" srcset="">
         </a>
       </div>
     </BaseLevel>
