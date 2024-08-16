@@ -1,7 +1,6 @@
 import enum
-from typing import List, Optional
+from typing import Optional
 from pydantic import BaseModel
-from datetime import datetime
 
 # Enumeraciones
 class EquipajeEnum(enum.Enum):
@@ -32,3 +31,9 @@ class CheckInCreate(BaseModel):
 
 class CheckInResponse(CheckIn):
     pass
+
+class CheckInEdit(BaseModel):
+    id_reserva: Optional[int] = None
+    medio_llegada: Optional[MedioLlegadaEnum] = None
+    llegada_situacion: Optional[LlegadaEnum] = None
+    equipaje: Optional[EquipajeEnum] = None
