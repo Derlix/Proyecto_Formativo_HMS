@@ -14,7 +14,3 @@ async def read_all_reservas(
     reservas = leer_all_reservas(db)
 
     return reservas
-
-@app. on_event("startup")
-def on_startup():
-    test_db_connection()
