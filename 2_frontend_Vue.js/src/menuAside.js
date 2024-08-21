@@ -16,6 +16,21 @@ export default [
     label: 'Dashboard'
   },
   {
+    to: '/informe-pasajeros',
+    icon: mdiMonitor,
+    label: 'informe pasajeros'
+  },
+  {
+    to: '/tarjeta-reserva',
+    icon: mdiMonitor,
+    label: 'tarjeta reserva'
+  },
+  {
+    to: '/transpaso-particulares',
+    icon: mdiMonitor,
+    label: 'Transpaso a particulares'
+  },
+  {
     to: '/reservas',
     label: 'Reservas',
     icon: mdiCalendar
