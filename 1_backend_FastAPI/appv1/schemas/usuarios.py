@@ -1,15 +1,29 @@
-from sqlalchemy import create_engine, Column, Integer, String, Float, Enum, ForeignKey, DateTime, Table, SmallInteger
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
+from pydantic import BaseModel,EmailStr,StringConstraints
+from datetime import datetime
+from typing import Annotated,Optional,List
 
-Base = declarative_base()
+class UsuarioBase(BaseModel):
+    nombre_completo: Annotated[str, StringConstraints(max_length=80)]
+    email: EmailStr
+    usuario_rol: Annotated[str, StringConstraints(max_length=15)]
 
-class Usuarios(Base):
-    __tablename__ = 'usuarios'
+class UsuarioCreate(UsuarioBase):
+    passhash: Annotated[str, StringConstraints(max_length=30)]
     
-    id_usuarios = Column(Integer, primary_key=True, unique=True)
-    nombre_completo = Column(String(255))
-    email = Column(String(255))
-    pashash = Column(String(255))
-    usuario_rol = Column(String(255), ForeignKey('roles.nombre_rol'))
-    id_hotel = Column(Integer, ForeignKey('hoteles.id_hotel'))
+class UsuarioResponse(UsuarioBase):
+    id_usuario: str
+    estado_usuario: bool = True
+    creado_en: datetime
+    actualizado_en: datetime
+
+class UsuarioUpdate(BaseModel):
+    nombre_completo: Optional[Annotated[str, StringConstraints(max_length=80)]] = None
+    email: Optional[EmailStr] = None
+    usuario_rol: Optional[Annotated[str, StringConstraints(max_length=15)]] = None
+    estado_usuario: bool = None
+
+class PaginatedUsuariosResponse(BaseModel):
+    usuarios: List[UsuarioResponse]
+    total_paginas: int
+    pagina_actual: int
+    pagina_cantidad: int
