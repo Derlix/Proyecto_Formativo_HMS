@@ -75,10 +75,6 @@ import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
                     <h2 class="text-start dark:text-white">Total Credito:</h2>
                     <input class="border-none bg-gray-300 rounded-2xl text-center h-7 w-48" type="text" placeholder="No">
                 </div>
-                <div class="grid grid-cols-4 font-medium p-2 gap-3 text-black">
-                    <h2 class="text-start dark:text-white">Total Credito:</h2>
-                    <input class="border-none bg-gray-300 rounded-2xl text-center h-7 w-48" type="text" placeholder="No">
-                </div>
             </div>
             <div class="grid grid-cols-2 p-5 text-black font-bold">
                 <h2 class="dark:text-white">TOTAL A PAGAR:</h2>
