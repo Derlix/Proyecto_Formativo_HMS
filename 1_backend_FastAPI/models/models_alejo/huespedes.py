@@ -1,4 +1,4 @@
-from sqlalchemy import  Column, Integer, String, Enum,  DateTime
+from sqlalchemy import  Boolean, Column, Integer, String, Enum,  DateTime
 from sqlalchemy.ext.declarative import declarative_base
 
 
@@ -16,3 +16,4 @@ class huespedes(Base):
     telefono = Column(String(15))
     ocupacion = Column(String(50))
     direccion = Column(String(50))
+    huesped_status = Column(Boolean, default=True)
