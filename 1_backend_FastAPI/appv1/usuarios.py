@@ -1,40 +1,32 @@
-from fastapi import HTTPException
-from sqlalchemy.exc import IntegrityError
-from appv1.schemas.usuarios import UsuarioCreate
-from core.security import get_hashed_password
-from core.utlis import generateuser_id
-from sqlalchemy import text
-from sqlalchemy.orm import Session
+from pydantic import BaseModel,EmailStr,StringConstraints
+from datetime import datetime
+from typing import Annotated,Optional,List
 
-#Crear un usuario
+class UsuarioBase(BaseModel):
+    nombre_completo: Annotated[str, StringConstraints(max_length=80)]
+    email: EmailStr
+    usuario_rol: Annotated[str, StringConstraints(max_length=15)]
 
-def create_usuario_sql(db: Session, usuario: UsuarioCreate):
-    try:
-        sql_query = text(
-            "INSERT INTO usuarios (id_usuario, nombre_completo, email, passhash, usuario_rol, id_hotel) "
-            "VALUES (:usuario_id, :nombre_completo, :email, :passhash, :usuario_rol, :id_hotel)"
-        )
+class UsuarioCreate(UsuarioBase):
+    passhash: Annotated[str, StringConstraints(max_length=30)]
+    id_hotel: Optional[int] = None  # Ahora es opcional
 
-        params = {
-            "usuario_id": generateuser_id(),
-            "nombre_completo": usuario.nombre_completo,
-            "email": usuario.email,
-            "passhash": get_hashed_password(usuario.passhash),
-            "usuario_rol": usuario.usuario_rol,
-            "id_hotel": usuario.id_hotel,
-        }
+    
+class UsuarioResponse(UsuarioBase):
+    id_usuario: str
+    estado_usuario: bool = True
+    creado_en: datetime
+    actualizado_en: datetime
 
-        db.execute(sql_query, params)
-        db.commit()
-        return True
+class UsuarioUpdate(BaseModel):
+    nombre_completo: Optional[Annotated[str, StringConstraints(max_length=80)]] = None
+    email: Optional[EmailStr] = None
+    usuario_rol: Optional[Annotated[str, StringConstraints(max_length=15)]] = None
+    estado_usuario: bool = None
 
-    except IntegrityError as e:
-        db.rollback()
-        print(f"Error al crear usuario: {e}")
-        if 'Duplicate entry' in str(e.orig):
-            if 'PRIMARY' in str(e.orig):
-                raise HTTPException(status_code=400, detail="Error. El id generado automáticamente ya existe, vuelva a intentarlo.")
-            if 'for key \'email\'' in str(e.orig):
-                raise HTTPException(status_code=400, detail="Error. El email ya está registrado.")
-        else:
-            raise HTTPException(status_code=400, detail="Error. No hay integridad de datos al crear el usuario")
+class PaginatedUsuariosResponse(BaseModel):
+    usuarios: List[UsuarioResponse]
+    total_paginas: int
+    pagina_actual: int
+    pagina_cantidad: int
+
