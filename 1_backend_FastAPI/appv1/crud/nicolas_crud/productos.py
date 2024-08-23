@@ -1,20 +1,15 @@
 from http.client import HTTPException
-from appv1.schemas.nicolas_schemas.Productos import ProductoCreate, ProductoUpdate
-from sqlalchemy.orm import Session
-from sqlalchemy import text
-from sqlalchemy.exc import SQLAlchemyError,IntegrityError
-from fastapi import  HTTPException
+from appv1.schemas.nicolas_schemas.Productos import ProductoBase, ImpuestoUpdate, ProductoUpdate
+from sqlalchemy.orm import Session # type: ignore
+from sqlalchemy import text # type: ignore
+from sqlalchemy.exc import SQLAlchemyError,IntegrityError # type: ignore
+from fastapi import  HTTPException # type: ignore
 
-def get_product_by_id(db: Session, id_producto: str):
-    sql = text("SELECT * FROM productos WHERE id_producto = :id_producto")
-    result = db.execute(sql, {"id_producto": id_producto}).fetchone()
-    return result
-
-def create_products(db: Session, product:ProductoCreate):
+def create_products(db: Session, product:ProductoBase):
     try:
         sql_query = text(
         "INSERT INTO productos(nombre_producto, descripcion, precio_actual)"
-        "VALUES (:nombre_producto, :descripcion, :precio_actual)"
+        "VALUES (:nombre_producto, :descripcion, precio_actual)"
         
         )
         params = {
@@ -63,15 +58,6 @@ def update_product(db: Session, id_producto: str, producto: ProductoUpdate):
             updates.append("precio_actual = :precio_actual")
             params["precio_actual"] = producto.precio_actual
 
-
-        for ind, valor in enumerate(updates):
-                    if len(updates) - 1 == ind:
-                        sql += valor
-                    else:
-                        sql += valor + ", "
-
-        sql += " WHERE id_producto = :id_producto"
-        
         sql = text(sql)
 
         db.execute(sql, params)
@@ -88,7 +74,7 @@ def update_product(db: Session, id_producto: str, producto: ProductoUpdate):
         raise HTTPException(status_code=500, detail="Error al actualizar producto")
    
 
-def delete_product(db: Session, id_producto: int):
+def delete_tax(db: Session, id_producto: int):
     try:
         sql = text("DELETE FROM productos WHERE id_producto = :id_producto")
         db.execute(sql, {"id_producto": id_producto})

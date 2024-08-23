@@ -1,14 +1,9 @@
 from http.client import HTTPException
 from appv1.schemas.nicolas_schemas.Impuesto import ImpuestoCreate, ImpuestoUpdate
-from sqlalchemy.orm import Session
-from sqlalchemy import text
-from sqlalchemy.exc import SQLAlchemyError,IntegrityError
-from fastapi import  HTTPException
-
-def get_tax_by_id(db: Session, id_impuesto: str):
-    sql = text("SELECT * FROM impuestos WHERE id_impuesto = :id_impuesto")
-    result = db.execute(sql, {"id_impuesto": id_impuesto}).fetchone()
-    return result
+from sqlalchemy.orm import Session # type: ignore
+from sqlalchemy import text # type: ignore
+from sqlalchemy.exc import SQLAlchemyError,IntegrityError # type: ignore
+from fastapi import  HTTPException # type: ignore
 
 def create_tax(db: Session, tax:ImpuestoCreate):
     try:
@@ -59,15 +54,6 @@ def update_tax(db: Session, id_impuesto: str, impuesto: ImpuestoUpdate):
             updates.append("tasa = :tasa")
             params["tasa"] = impuesto.tasa
 
-        for ind, valor in enumerate(updates):
-                    if len(updates) - 1 == ind:
-                        sql += valor
-                    else:
-                        sql += valor + ", "
-
-        sql += " WHERE id_impuesto = :id_impuesto"
-        
-        # Envuelve la consulta SQL en text()
         sql = text(sql)
 
         db.execute(sql, params)
@@ -86,7 +72,7 @@ def update_tax(db: Session, id_impuesto: str, impuesto: ImpuestoUpdate):
 
 def delete_tax(db: Session, id_impuesto: int):
     try:
-        sql = text("DELETE FROM impuestos WHERE id_impuesto = :id_impuesto")
+        sql = text("DELETE FROM impuesto WHERE id_impuesto = :id_impuesto")
         db.execute(sql, {"id_impuesto": id_impuesto})
         db.commit()
         return True

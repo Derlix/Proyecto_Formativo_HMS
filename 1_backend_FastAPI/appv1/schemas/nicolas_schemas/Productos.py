@@ -17,6 +17,6 @@ class ProductoResponse(ProductoBase):
     precio_actual: float
 
 class ProductoUpdate(ProductoBase):
-    nombre_producto: Annotated[str, StringConstraints(max_length=50)] = None
-    descripcion: Annotated[str, StringConstraints(max_length=150)] = None
-    precio_actual: condecimal(max_digits=10, decimal_places=2) = None
+    nombre_producto: Annotated[str, StringConstraints(max_length=50)]
+    descripcion: Annotated[str, StringConstraints(max_length=150)]
+    precio_actual: condecimal(max_digits=10, decimal_places=2)
