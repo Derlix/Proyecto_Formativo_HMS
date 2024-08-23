@@ -1,6 +1,5 @@
 from typing import Annotated
 from pydantic import BaseModel, StringConstraints, condecimal
-from sqlalchemy import Float, INTEGER
 
 class ImpuestoBase(BaseModel):
     descripcion: Annotated[str, StringConstraints(max_length=150)]

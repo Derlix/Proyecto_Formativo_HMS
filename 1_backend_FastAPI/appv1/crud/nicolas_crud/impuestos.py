@@ -42,7 +42,7 @@ def get_all_tax(db: Session):
         print(f"Error al buscar impuestos: {e}")
         raise HTTPException(status_code=500, detail="Error al buscar impuestos")
     
-def update_impuesto(db: Session, id_impuesto: str, impuesto: ImpuestoUpdate):
+def update_tax(db: Session, id_impuesto: str, impuesto: ImpuestoUpdate):
     try:
         sql = "UPDATE impuestos SET "
         params = {"id_impuesto": id_impuesto}
@@ -63,16 +63,16 @@ def update_impuesto(db: Session, id_impuesto: str, impuesto: ImpuestoUpdate):
         db.rollback()  # Revertir la transacción en caso de error de integridad (llave foránea)
         print(f"Error al actualizar impuesto: {e}")
         if not id_impuesto:
-            raise HTTPException(status_code=400, detail="Error. No hay Integridad de datos al actualizar usuario")
+            raise HTTPException(status_code=400, detail="Error. No hay Integridad de datos al actualizar impuesto")
     except SQLAlchemyError as e:
         db.rollback()
-        print(f"Error al actualizar usuario: {e}")
-        raise HTTPException(status_code=500, detail="Error al actualizar usuario")
+        print(f"Error al actualizar impuesto: {e}")
+        raise HTTPException(status_code=500, detail="Error al actualizar impuesto")
    
 
 def delete_tax(db: Session, id_impuesto: int):
     try:
-        sql = text("DELETE impuesto WHERE id_impuesto = :id_impuesto")
+        sql = text("DELETE FROM impuesto WHERE id_impuesto = :id_impuesto")
         db.execute(sql, {"id_impuesto": id_impuesto})
         db.commit()
         return True

@@ -1,14 +1,14 @@
 from typing import List
-from appv1.crud.nicolas_crud.impuestos import create_tax
+from appv1.crud.nicolas_crud.impuestos import create_tax, get_all_tax
 from appv1.schemas.nicolas_schemas.Impuesto import ImpuestoResponse,ImpuestoCreate
-from fastapi import APIRouter,Depends,HTTPException # type: ignore
+from fastapi import APIRouter,Depends,HTTPException
 from db.database import get_db
-from sqlalchemy.orm import Session # type: ignore
+from sqlalchemy.orm import Session
 
 router = APIRouter()
 
 @router.post("/create")
-async def insert_category(category: ImpuestoCreate, db: Session = Depends(get_db)):
+async def insert_tax(category: ImpuestoCreate, db: Session = Depends(get_db)):
     respuesta = create_tax(db, category)
     if respuesta:
         return {"mensaje":"impuesto registrado con exito"}
@@ -17,9 +17,9 @@ async def insert_category(category: ImpuestoCreate, db: Session = Depends(get_db
 
 
 
-# @router.post("/get_room_categorie_name/",response_model = ImpuestoResponse)
-# async def read_category_by_name(p_category_name: str, db: Session = Depends(get_db)):
-#     room_categorie_name = get_room_categorie_name(db, p_category_name)
-#     if room_categorie_name is None:
-#         raise HTTPException(status_code=404, detail="impuesto no encontrada")
-#     return room_categorie_name
+@router.get("/get-all/", response_model=List[ImpuestoResponse])
+async def read_all_tax(db: Session= Depends(get_db)):
+    tax = get_all_tax(db)
+    if len(tax) == 0:
+        raise HTTPException(status_code=404, detail="No hay impuestos")
+    return tax

@@ -7,5 +7,3 @@ class Impuesto(Base):
     id_impuesto = Column( Integer , autoincrement=True ,primary_key=True)
     descripcion = Column(String(150))
     tasa = Column(Float(5,2))
-
-      
