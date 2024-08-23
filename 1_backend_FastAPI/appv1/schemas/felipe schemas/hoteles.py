@@ -15,7 +15,7 @@ class HotelesResponse(BaseModel):
     direccion: str
     telefono: str
     
-class HotelesResponse(BaseModel):
+class HotelesUpdate(BaseModel):
     nombre: Optional[Annotated[str, StringConstraints(max_length=80)]] = None
     ubicacion: Optional[Annotated[str, StringConstraints(max_length=45)]] = None
     direccion: Optional[Annotated[str, StringConstraints(max_length=70)]] = None

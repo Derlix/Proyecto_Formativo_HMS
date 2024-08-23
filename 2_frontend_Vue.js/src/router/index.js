@@ -13,9 +13,36 @@ import IniciarSesion from '@/views/camilo-views/IniciarSesion.vue'
 import Registrar from '@/views/camilo-views/Registrar.vue'
 import Recuperar from '@/views/camilo-views/Recuperar_contraseña.vue'
 import MovimientoPasajeros from '@/views/camilo-views/MovimientoPasajerosCorrespondiente.vue'
+import InformePasajeros from '@/views/arce-views/InformePasajeros.vue'
+import TarjetaReserva from '@/views/arce-views/TarjetaReserva.vue'
+import TranspasoParticulares from '@/views/arce-views/TranspasoParticulares.vue'
 
 
 const routes = [
+  {
+    meta: {
+      title: 'InformePasajeros'
+    },
+    path: '/informe-pasajeros',
+    name: 'informe_pasajeros',
+    component: InformePasajeros
+  },
+  {
+    meta: {
+      title: 'TarjetaReserva'
+    },
+    path: '/tarjeta-reserva',
+    name: 'trajeta_reserva',
+    component: TarjetaReserva
+  },
+  {
+    meta: {
+      title: 'TranspasoParticulares'
+    },
+    path: '/transpaso-particulares',
+    name: 'transpaso_particulares',
+    component: TranspasoParticulares
+  },
   {
     // No va haber index por el momento, iniciar desde Dashboard.
     meta: {
