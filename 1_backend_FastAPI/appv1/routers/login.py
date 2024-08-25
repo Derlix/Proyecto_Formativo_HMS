@@ -21,7 +21,7 @@ async def get_current_user(
         user_db = get_usuario_by_id(db, user)
         if user_db is None:
             raise HTTPException(status_code=404, detail="User not found")
-        if not user_db.user_status:
+        if not user_db.usuario_estado:
             raise HTTPException(status_code=403, detail="User Deleted, Not authorized")
         return user_db
 
