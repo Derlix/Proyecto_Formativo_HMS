@@ -9,6 +9,7 @@ class UsuarioBase(BaseModel):
 
 class UsuarioCreate(UsuarioBase):
     passhash: Annotated[str, StringConstraints(max_length=30)]
+    id_hotel: int 
     
 class UsuarioResponse(UsuarioBase):
     id_usuario: str

@@ -6,6 +6,8 @@ from core.utlis import generateuser_id
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
+# crudusuario.py
+
 def create_usuario_sql(db: Session, usuario: UsuarioCreate):
     try:
         sql_query = text(
@@ -19,7 +21,7 @@ def create_usuario_sql(db: Session, usuario: UsuarioCreate):
             "email": usuario.email,
             "passhash": get_hashed_password(usuario.passhash),
             "usuario_rol": usuario.usuario_rol,
-            "id_hotel": usuario.id_hotel,
+            "id_hotel": usuario.id_hotel,  # Ahora se pasa directamente
         }
 
         db.execute(sql_query, params)
@@ -38,9 +40,9 @@ def create_usuario_sql(db: Session, usuario: UsuarioCreate):
             raise HTTPException(status_code=400, detail="Error. No hay integridad de datos al crear el usuario")
 
 # Consultar un usuario por su ID
-def get_usuario_by_id(db: Session, user_id: str):
-    sql = text("SELECT * FROM users WHERE user_id = :user_id")
-    result = db.execute(sql, {"user_id": user_id}).fetchone()
+def get_usuario_by_id(db: Session, id_usuario: str):
+    sql = text("SELECT * FROM usuarios WHERE id_usuario = :id_usuario")
+    result = db.execute(sql, {"id_usuario": id_usuario}).fetchone()
     return result
 
     # Consultar un usuario por su email
@@ -56,7 +58,7 @@ def get_usuarios_by_email(db: Session, email: str):
 #consultar todos los usuarios activos
 def get_all_users(db: Session):
     try:
-        sql = text("SELECT * FROM ususarios WHERE user_status = true ")
+        sql = text("SELECT * FROM usuarios WHERE usuario-estad = true ")
         result = db.execute(sql).fetchall()
         return result
     except SQLAlchemyError as e:
@@ -65,10 +67,10 @@ def get_all_users(db: Session):
 
 
 # Eliminar un usuario
-def delete_user(db: Session, user_id: str):
+def delete_user(db: Session, id_usuario: str):
     try:
-        sql = text("UPDATE usuarios SET usuario_estado = 0  WHERE user_id = :user_id")
-        db.execute(sql, {"user_id": user_id})
+        sql = text("UPDATE usuarios SET usuario_estado = 0  WHERE id_usuario = :id_usuario")
+        db.execute(sql, {"id_usuario": id_usuario})
         db.commit()
         return True
     except IntegrityError as e:
