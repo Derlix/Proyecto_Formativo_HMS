@@ -10,7 +10,7 @@ class Usuarios(Base):
     email = Column(String(100), unique=True)
     passhash = Column(String(30))  # Ajustado a varchar(255)
     usuario_rol = Column(String(15), ForeignKey('roles.nombre_rol'))  # Ajustado para coincidir con 'roles.nombre_rol'
-    estado_usuario = Column(Boolean, default=True)
+    usuario_estado = Column(Boolean, default=True)
     creado_en = Column(TIMESTAMP, default=datetime.now)
     actualizado_en = Column(DateTime, default=datetime.now, onupdate=datetime.now)
     id_hotel = Column(Integer, ForeignKey('hoteles.id_hotel'))  # Ajustado a Integer
