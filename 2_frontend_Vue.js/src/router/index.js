@@ -166,6 +166,14 @@ const routes = [
     component: () => import('@/views/nico-views/CheckOut.vue')
   },
   {
+    meta: {
+      title: 'Productos'
+    },
+    path: '/productos',
+    name: 'productos',
+    component: () => import('@/views/nico-views/ProductoVue.vue')
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: '404',
     component: Error404
