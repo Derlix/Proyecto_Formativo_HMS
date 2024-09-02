@@ -15,12 +15,14 @@ class HabitacionBase(BaseModel):
     piso: Optional[int]
     precio_actual: condecimal(max_digits=10, decimal_places=2)
     id_usuario: Optional[Annotated[str, StringConstraints(max_length=30)]]
+    numero_habitacion: Annotated[str, StringConstraints(max_length=30)]
     id_categoria_habitacion: Optional[int]
 
 
 class HabitacionCreate(HabitacionBase):
     piso: Optional[int]
     precio_actual: condecimal(max_digits=10, decimal_places=2)
+    numero_habitacion: Annotated[str, StringConstraints(max_length=30)]
 
 class HabitacionResponse(HabitacionBase):
     id_habitacion: int
@@ -30,6 +32,7 @@ class HabitacionUpdate(HabitacionBase):
     piso: Optional[int]
     precio_actual: condecimal(max_digits=10, decimal_places=2)
     id_usuario: Optional[Annotated[str, StringConstraints(max_length=30)]]
+    numero_habitacion: Annotated[str, StringConstraints(max_length=30)]
     id_categoria_habitacion: Optional[int]
 
 

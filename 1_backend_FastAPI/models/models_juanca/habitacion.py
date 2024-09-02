@@ -6,6 +6,7 @@ class Habitacion(Base):
     __tablename__ = "habitaciones"
 
     id_habitacion = Column(Integer, primary_key=True, autoincrement=True)
+    numero_habitacion = Column(String(30), nullable=False)
     estado = Column(Enum("ACTIVO", "INACTIVO", "MANTENIMIENTO"), nullable=False)
     piso = Column(Integer, nullable=False)
     precio_actual = Column(Float(10, 2), nullable=False)

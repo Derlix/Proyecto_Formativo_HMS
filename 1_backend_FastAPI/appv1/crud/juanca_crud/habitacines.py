@@ -10,6 +10,7 @@ from sqlalchemy import text
 def create_room(db: Session, room: HabitacionCreate):
     try:
         params = {
+            "numero_habitacion": room.numero_habitacion,
             "estado": room.estado.value,
             "piso": int(room.piso),
             "precio_actual": float(room.precio_actual),
@@ -19,8 +20,8 @@ def create_room(db: Session, room: HabitacionCreate):
         print(params)
         
         sql_query = text(
-            "INSERT INTO habitaciones (estado, piso, precio_actual, id_usuario, id_categoria_habitacion) "
-            "VALUES (:estado, :piso, :precio_actual, :id_usuario, :id_categoria_habitacion)"
+            "INSERT INTO habitaciones (numero_habitacion, estado, piso, precio_actual, id_usuario, id_categoria_habitacion) "
+            "VALUES (:numero_habitacion, :estado, :piso, :precio_actual, :id_usuario, :id_categoria_habitacion)"
         )
         db.execute(sql_query, params)
         db.commit()
@@ -65,6 +66,7 @@ def get_room_by_id(db: Session, room_id: int) -> HabitacionResponse:
         # Mapeo del resultado a un esquema Pydantic
         habitacion = HabitacionResponse(
             id_habitacion=result.id_habitacion,
+            numero_habitacion= result.numero_habitacion,
             estado=result.estado,
             piso=result.piso,
             precio_actual=result.precio_actual,
@@ -91,6 +93,7 @@ def update_room(db: Session, room_id: int, room: HabitacionCreate):
         # Actualizar la habitación
         sql_query = text(
             "UPDATE habitaciones SET "
+            "numero_habitacion = :numero_habitacion,"
             "estado = :estado, "
             "piso = :piso, "
             "precio_actual = :precio_actual, "
@@ -98,7 +101,9 @@ def update_room(db: Session, room_id: int, room: HabitacionCreate):
             "id_categoria_habitacion = :id_categoria_habitacion "
             "WHERE id_habitacion = :room_id"
         )
+
         params = {
+            "numero_habitacion": room.numero_habitacion,
             "estado": room.estado.value,
             "piso": room.piso,
             "precio_actual": room.precio_actual,
@@ -117,11 +122,12 @@ def update_room(db: Session, room_id: int, room: HabitacionCreate):
             # Convertir la tupla en diccionario manualmente si es necesario
             updated_room_dict = {
                 "id_habitacion": updated_room[0],  # Ajusta el índice según el orden de las columnas en la tupla
-                "estado": updated_room[1],
-                "piso": updated_room[2],
-                "precio_actual": updated_room[3],
-                "id_usuario": updated_room[4],
-                "id_categoria_habitacion": updated_room[5]
+                "numero_habitacion": updated_room[1],
+                "estado": updated_room[2],
+                "piso": updated_room[3],
+                "precio_actual": updated_room[4],
+                "id_usuario": updated_room[5],
+                "id_categoria_habitacion": updated_room[6]
             }
             return updated_room_dict
         else:
