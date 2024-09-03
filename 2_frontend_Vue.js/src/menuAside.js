@@ -76,9 +76,14 @@ export default [
     to: '/productos',
     label: 'Productos',
     icon: mdiReproduction
+  },
+  {
+    to: '/facturas',
+    label: 'Facturas',
+    icon: mdiFileChart
   }
 
-
+  
 
   // {
   //   to: '/tables',

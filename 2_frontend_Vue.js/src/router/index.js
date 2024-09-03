@@ -179,6 +179,15 @@ const routes = [
     component: Error404
   },
 
+  {
+    meta: {
+      title: 'Facturas'
+    },
+    path: '/facturas',
+    name: 'facturas',
+    component: () => import('@/views/brayan-views/FacturasView.vue')
+  }
+
 
   // Rutas de la plantilla
 
