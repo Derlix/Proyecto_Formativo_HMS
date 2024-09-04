@@ -7,7 +7,8 @@ import {
   mdiFileChart,
   mdiViewGridPlus,
   mdiExitRun,
-  mdiReproduction
+  mdiReproduction,
+  mdiHammerSickle
 } from '@mdi/js'
 
 export default [
@@ -76,6 +77,11 @@ export default [
     to: '/productos',
     label: 'Productos',
     icon: mdiReproduction
+  },
+  {
+    to: '/hoteles',
+    label: 'Hoteles',
+    icon: mdiHammerSickle
   }
 
 
