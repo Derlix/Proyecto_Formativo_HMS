@@ -10,6 +10,7 @@ class HotelesCreate(BaseModel):
     
    
 class HotelesResponse(BaseModel):
+    id_hotel: int
     nombre: str
     ubicacion: str
     direccion: str

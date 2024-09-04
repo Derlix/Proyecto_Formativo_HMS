@@ -65,4 +65,3 @@ def get_all_hoteles_by_page(
         "current_page": page,
         "page_size": page_size
    }
-   

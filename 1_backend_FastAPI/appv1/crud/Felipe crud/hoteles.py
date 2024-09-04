@@ -109,9 +109,9 @@ def get_all_hotels_paginated(db: Session, page: int = 1, page_size: int = 10):
         offset = (page - 1) * page_size
 
         sql = text(
-            "SELECT nombre, ubicacion, direccion, telefono "
+            "SELECT id_hotel, nombre, ubicacion, direccion, telefono "
             "FROM hoteles "
-            "ORDER BY nombre DESC "  
+            "ORDER BY id_hotel DESC "  
             "LIMIT :page_size OFFSET :offset"
         )
         params = {
