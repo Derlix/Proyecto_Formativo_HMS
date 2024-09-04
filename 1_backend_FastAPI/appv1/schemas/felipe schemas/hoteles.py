@@ -1,4 +1,4 @@
-from typing import Annotated, Optional
+from typing import Annotated, List, Optional
 from pydantic import BaseModel, StringConstraints
 from datetime import datetime
 
@@ -20,3 +20,9 @@ class HotelesUpdate(BaseModel):
     ubicacion: Optional[Annotated[str, StringConstraints(max_length=45)]] = None
     direccion: Optional[Annotated[str, StringConstraints(max_length=70)]] = None
     telefono: Optional[Annotated[str, StringConstraints(max_length=15)]] = None
+
+class PaginatedHotelResponse(BaseModel):
+    hoteles: List[HotelesResponse]
+    total_pages: int
+    current_page: int
+    page_size: int
