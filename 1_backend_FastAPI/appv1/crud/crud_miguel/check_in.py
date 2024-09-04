@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Any, Dict, List
 from pydantic import ValidationError
 from sqlalchemy import text
@@ -71,7 +72,11 @@ def get_check_in_by_id(db: Session, id_check_in: int) -> CheckInResponse:
             raise HTTPException(status_code=404, detail="Check-in not found")
 
         # Convertir los resultados a un diccionario
-        result_dict = dict(result._mapping)  # _mapping es un atributo de Result en SQLAlchemy
+        result_dict = dict(result._mapping)
+
+        # Asegúrate de que 'fecha_reserva' sea un tipo date
+        if isinstance(result_dict["fecha_reserva"], datetime):
+            result_dict["fecha_reserva"] = result_dict["fecha_reserva"].date()
 
         # Crear instancias de los modelos Pydantic
         try:
@@ -79,7 +84,7 @@ def get_check_in_by_id(db: Session, id_check_in: int) -> CheckInResponse:
                 id_check_in=result_dict["id_check_in"],
                 reserva=ReservaDetail(
                     id_reserva=result_dict["id_reserva"],
-                    fecha_reserva=result_dict["fecha_reserva"],
+                    fecha_reserva=result_dict["fecha_reserva"],  # Aquí debería ser tipo 'date'
                     empresa=result_dict["empresa"],
                     valor_deposito=result_dict["valor_deposito"],
                     forma_pago=result_dict["forma_pago"]
@@ -107,7 +112,7 @@ def get_check_in_by_id(db: Session, id_check_in: int) -> CheckInResponse:
 
 
 
-def get_all_check_in(db: Session):
+def get_all_check_in(db: Session) -> List[CheckInResponse]:
     try:
         sql = text("""
             SELECT 
@@ -134,12 +139,16 @@ def get_all_check_in(db: Session):
             # Convertir la fila a un diccionario
             row_dict = dict(row._mapping)  # _mapping convierte la fila en un diccionario
 
+            # Convertir 'fecha_reserva' de datetime a date si es necesario
+            if isinstance(row_dict["fecha_reserva"], datetime):
+                row_dict["fecha_reserva"] = row_dict["fecha_reserva"].date()
+
             try:
                 check_in = CheckInResponse(
                     id_check_in=row_dict["id_check_in"],
                     reserva=ReservaDetail(
-                        id_reserva=row_dict["id_reserva"],  # Asegúrate de incluir el campo id_reserva en ReservaDetail
-                        fecha_reserva=row_dict["fecha_reserva"],
+                        id_reserva=row_dict["id_reserva"],
+                        fecha_reserva=row_dict["fecha_reserva"],  # Asegúrate de que este campo es tipo 'date'
                         empresa=row_dict["empresa"],
                         valor_deposito=row_dict["valor_deposito"],
                         forma_pago=row_dict["forma_pago"]
