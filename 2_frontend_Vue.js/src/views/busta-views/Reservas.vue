@@ -1,45 +1,156 @@
 <script setup>
 import { computed, ref, onMounted } from 'vue'
 import { useMainStore } from '@/stores/main'
-import {
-  mdiAccountMultiple,
-  mdiCartOutline,
-  mdiChartTimelineVariant,
-  mdiMonitorCellphone,
-  mdiReload,
-  mdiGithub,
-  mdiChartPie
-} from '@mdi/js'
 import * as chartConfig from '@/components/Charts/chart.config.js'
-import LineChart from '@/components/Charts/LineChart.vue'
-import SectionMain from '@/components/SectionMain.vue'
-import CardBoxWidget from '@/components/CardBoxWidget.vue'
-import CardBox from '@/components/CardBox.vue'
-import TableSampleClients from '@/components/TableSampleClients.vue'
-import NotificationBar from '@/components/NotificationBar.vue'
-import BaseButton from '@/components/BaseButton.vue'
-import CardBoxTransaction from '@/components/CardBoxTransaction.vue'
-import CardBoxClient from '@/components/CardBoxClient.vue'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
-import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue'
-import SectionBannerStarOnGitHub from '@/components/SectionBannerStarOnGitHub.vue'
+import axios from 'axios'
 
+// Reactive properties
 const chartData = ref(null)
+const mesActual = ref(new Date().getMonth())
+const anioActual = ref(new Date().getFullYear())
+const reservas = ref([])
+const habitaciones = ref([])
+const tituloNuevaReserva = ref('')
+const fechaInicioNuevaReserva = ref('')
+const fechaFinNuevaReserva = ref('')
+const idHabitacionSeleccionada = ref('')
 
+// Store
+const mainStore = useMainStore()
+
+// Computed properties
+const clientBarItems = computed(() => mainStore.clients.slice(0, 4))
+const transactionBarItems = computed(() => mainStore.history)
+const nombreMesActual = computed(() =>
+  new Date(anioActual.value, mesActual.value).toLocaleString('es-ES', { month: 'long' })
+)
+const diasDelMes = computed(() => {
+  const fecha = new Date(anioActual.value, mesActual.value + 1, 0)
+  return Array.from({ length: fecha.getDate() }, (_, i) => i + 1)
+})
+
+// Methods
 const fillChartData = () => {
   chartData.value = chartConfig.sampleChartData()
 }
 
+const obtenerHabitaciones = async () => {
+  try {
+    const respuesta = await axios.get('http://localhost/reserva.php?action=getHabitacionesByHotel&idHotel=1')
+    habitaciones.value = respuesta.data
+  } catch (error) {
+    console.error('Error al obtener las habitaciones:', error)
+  }
+}
+
+const obtenerReservas = async () => {
+  try {
+    const respuesta = await axios.get(`http://localhost/reserva.php?action=getReservaPorMesAno&mes=${mesActual.value + 1}&anio=${anioActual.value}`)
+    reservas.value = Array.isArray(respuesta.data) ? respuesta.data : []
+  } catch (error) {
+    console.error('Error al obtener las reservas:', error)
+    reservas.value = []
+  }
+}
+
+const mesAnterior = () => {
+  if (mesActual.value === 0) {
+    mesActual.value = 11
+    anioActual.value -= 1
+  } else {
+    mesActual.value -= 1
+  }
+  obtenerReservas()
+}
+
+const mesSiguiente = () => {
+  if (mesActual.value === 11) {
+    mesActual.value = 0
+    anioActual.value += 1
+  } else {
+    mesActual.value += 1
+  }
+  obtenerReservas()
+}
+
+const manejarClicFecha = (idHabitacion, dia) => {
+  fechaInicioNuevaReserva.value = `${anioActual.value}-${String(mesActual.value + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`
+  idHabitacionSeleccionada.value = idHabitacion
+}
+
+const agregarReserva = () => {
+  const fechaInicio = new Date(fechaInicioNuevaReserva.value)
+  const fechaFin = new Date(fechaFinNuevaReserva.value)
+  fechaFin.setDate(fechaFin.getDate() + 1)
+
+  if (tituloNuevaReserva.value && fechaFin >= fechaInicio && idHabitacionSeleccionada.value) {
+    reservas.value.push({
+      id_reserva: reservas.value.length + 1,
+      nombre_huesped: tituloNuevaReserva.value,
+      fecha_entrada: fechaInicio,
+      fecha_salida_propuesta: fechaFin,
+      id_habitacion: idHabitacionSeleccionada.value,
+    })
+
+    tituloNuevaReserva.value = ''
+    fechaInicioNuevaReserva.value = ''
+    fechaFinNuevaReserva.value = ''
+    idHabitacionSeleccionada.value = ''
+  } else {
+    alert('Por favor, complete todos los campos correctamente.')
+  }
+}
+
+const manejarClicReserva = (reserva) => {
+  if (confirm(`¿Está seguro de que desea eliminar la reserva de "${reserva.nombre_huesped}"?`)) {
+    reservas.value = reservas.value.filter(r => r.id_reserva !== reserva.id_reserva)
+  }
+}
+
+const obtenerReservasPorHabitacionYFecha = (idHabitacion, dia) => {
+  return reservas.value.filter(reserva =>
+    reserva.id_habitacion === idHabitacion &&
+    estaFechaEnRango(new Date(anioActual.value, mesActual.value, dia), new Date(reserva.fecha_entrada), new Date(reserva.fecha_salida_propuesta))
+  )
+}
+
+const estaFechaEnRango = (fecha, fechaInicio, fechaFin) => {
+  return fecha >= fechaInicio && fecha <= fechaFin
+}
+
+const alIniciarArrastre = (evento, reservaArrastrada) => {
+  evento.dataTransfer.setData('idReserva', reservaArrastrada.id_reserva)
+}
+
+const alSoltar = (evento, idHabitacion, dia) => {
+  const idReserva = evento.dataTransfer.getData('idReserva')
+  const reservaArrastrada = reservas.value.find(r => r.id_reserva === parseInt(idReserva))
+
+  if (reservaArrastrada) {
+    const nuevaFechaInicio = new Date(anioActual.value, mesActual.value, dia)
+    const duracionReserva = (new Date(reservaArrastrada.fecha_salida_propuesta) - new Date(reservaArrastrada.fecha_entrada)) / (1000 * 60 * 60 * 24)
+    const nuevaFechaFin = new Date(nuevaFechaInicio)
+    nuevaFechaFin.setDate(nuevaFechaInicio.getDate() + duracionReserva)
+
+    reservaArrastrada.id_habitacion = idHabitacion
+    reservaArrastrada.fecha_entrada = nuevaFechaInicio
+    reservaArrastrada.fecha_salida_propuesta = nuevaFechaFin
+  }
+}
+
+const permitirSoltar = (evento) => {
+  evento.preventDefault()
+}
+
+// Lifecycle hooks
 onMounted(() => {
   fillChartData()
+  obtenerHabitaciones()
+  obtenerReservas()
 })
-
-const mainStore = useMainStore()
-
-const clientBarItems = computed(() => mainStore.clients.slice(0, 4))
-
-const transactionBarItems = computed(() => mainStore.history)
 </script>
+
 
 <template>
   <LayoutAuthenticated>
@@ -49,164 +160,52 @@ const transactionBarItems = computed(() => mainStore.history)
     </div>
 
     <div class="calendar-app">
-      <div class="calendar-container">
-        <div class="calendar-header">
-          <button @click="prevMonth">Anterior</button>
-          <span>{{ currentMonthName }} {{ currentYear }}</span>
-          <button @click="nextMonth">Siguiente</button>
-        </div>
-        <table class="calendar-table">
-          <thead>
-            <tr>
-              <th>Habitaciones</th>
-              <th v-for="day in daysInMonth" :key="day">{{ day }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="resource in resources" :key="resource.id">
-              <td>{{ resource.title }}</td>
-              <td v-for="day in daysInMonth" :key="`${resource.id}-${day}`" class="calendar-cell"
-                @drop="onDrop($event, resource.id, day)" @dragover="allowDrop"
-                @click="handleDateClick(resource.id, day)">
-                <div v-for="event in getEventsForResourceAndDate(resource.id, day)" :key="event.id" class="event"
-                  draggable="true" @dragstart="onDragStart($event, event)" @click.stop="handleEventClick(event)">
-                  {{ event.title }}
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <div class="event-creation">
-          <h3>Crear nueva reserva</h3>
-          <input v-model="newEventTitle" type="text" placeholder="Título del evento" />
-          <input v-model="newEventStartDate" type="date" />
-          <input v-model="newEventEndDate" type="date" />
-          <select v-model="selectedResourceId">
-            <option v-for="resource in resources" :value="resource.id" :key="resource.id">{{ resource.title }}
-            </option>
-          </select>
-          <button @click="addEvent">Agregar evento</button>
-        </div>
+    <div class="calendar-container">
+      <div class="calendar-header">
+        <button @click="mesAnterior">Anterior</button>
+        <span>{{ nombreMesActual }} {{ anioActual }}</span>
+        <button @click="mesSiguiente">Siguiente</button>
+      </div>
+      <table class="calendar-table">
+        <thead>
+          <tr>
+            <th>Habitaciones</th>
+            <th v-for="dia in diasDelMes" :key="dia">{{ dia }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="habitacion in habitaciones" :key="habitacion.id_habitacion">
+            <td>{{ habitacion.numero_habitacion }}</td>
+            <td v-for="dia in diasDelMes" :key="`${habitacion.id_habitacion}-${dia}`" class="calendar-cell"
+              @drop="alSoltar($event, habitacion.id_habitacion, dia)" @dragover="permitirSoltar"
+              @click="manejarClicFecha(habitacion.id_habitacion, dia)">
+              <div v-for="reserva in obtenerReservasPorHabitacionYFecha(habitacion.id_habitacion, dia)"
+                :key="reserva.id_reserva" class="event" draggable="true" @dragstart="alIniciarArrastre($event, reserva)"
+                @click.stop="manejarClicReserva(reserva)">
+                {{ reserva.nombre_huesped }}
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="event-creation">
+        <h3>Crear nueva reserva</h3>
+        <input v-model="tituloNuevaReserva" type="text" placeholder="Título del evento" />
+        <input v-model="fechaInicioNuevaReserva" type="date" />
+        <input v-model="fechaFinNuevaReserva" type="date" />
+        <select v-model="idHabitacionSeleccionada">
+          <option v-for="habitacion in habitaciones" :value="habitacion.id_habitacion" :key="habitacion.id_habitacion">
+            {{ habitacion.numero_habitacion }}
+          </option>
+        </select>
+        <button @click="agregarReserva">Agregar reserva</button>
       </div>
     </div>
+  </div>
   </LayoutAuthenticated>
 </template>
 
-<script>
-import { defineComponent } from 'vue';
 
-export default defineComponent({
-  data() {
-    return {
-      currentMonth: new Date().getMonth(),
-      currentYear: new Date().getFullYear(),
-      events: [],
-      resources: [
-        { id: '1001', title: 'Habitación 1001' },
-        { id: '1002', title: 'Habitación 1002' },
-        { id: '1003', title: 'Habitación 1003' },
-        { id: '1004', title: 'Habitación 1004' },
-        { id: '1005', title: 'Habitación 1005' },
-      ],
-      newEventTitle: '',
-      newEventStartDate: '',
-      newEventEndDate: '',
-      selectedResourceId: '', // Nueva propiedad para almacenar la habitación seleccionada
-    };
-  },
-  computed: {
-    currentMonthName() {
-      return new Date(this.currentYear, this.currentMonth).toLocaleString('default', { month: 'long' });
-    },
-    daysInMonth() {
-      const date = new Date(this.currentYear, this.currentMonth + 1, 0);
-      return Array.from({ length: date.getDate() }, (_, i) => i + 1);
-    },
-  },
-  methods: {
-    prevMonth() {
-      if (this.currentMonth === 0) {
-        this.currentMonth = 11;
-        this.currentYear -= 1;
-      } else {
-        this.currentMonth -= 1;
-      }
-    },
-    nextMonth() {
-      if (this.currentMonth === 11) {
-        this.currentMonth = 0;
-        this.currentYear += 1;
-      } else {
-        this.currentMonth += 1;
-      }
-    },
-    handleDateClick(resourceId, day) {
-      this.newEventStartDate = `${this.currentYear}-${String(this.currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-      this.selectedResourceId = resourceId; // Asignar automáticamente la habitación seleccionada
-    },
-    addEvent() {
-      const startDate = new Date(this.newEventStartDate);
-      const endDate = new Date(this.newEventEndDate);
-
-      // Agregar un día a la fecha de fin para hacerla inclusiva
-      endDate.setDate(endDate.getDate() + 1);
-
-      if (this.newEventTitle && endDate >= startDate && this.selectedResourceId) {
-        this.events.push({
-          id: this.events.length + 1,
-          title: this.newEventTitle,
-          startDate,
-          endDate,
-          resourceId: this.selectedResourceId,
-        });
-
-        // Reset the inputs
-        this.newEventTitle = '';
-        this.newEventStartDate = '';
-        this.newEventEndDate = '';
-        this.selectedResourceId = '';
-      } else {
-        alert('Por favor, complete todos los campos correctamente.');
-      }
-    },
-    handleEventClick(event) {
-      if (confirm(`¿Está seguro de que desea eliminar el evento "${event.title}"?`)) {
-        this.events = this.events.filter(e => e.id !== event.id);
-      }
-    },
-    getEventsForResourceAndDate(resourceId, day) {
-      return this.events.filter(event =>
-        event.resourceId === resourceId &&
-        this.isDateInRange(new Date(this.currentYear, this.currentMonth, day), event.startDate, event.endDate)
-      );
-    },
-    isDateInRange(date, startDate, endDate) {
-      return date >= startDate && date < endDate;
-    },
-    onDragStart(event, draggedEvent) {
-      event.dataTransfer.setData('eventId', draggedEvent.id);
-    },
-    onDrop(event, resourceId, day) {
-      const eventId = event.dataTransfer.getData('eventId');
-      const draggedEvent = this.events.find(e => e.id === parseInt(eventId));
-
-      if (draggedEvent) {
-        const newStartDate = new Date(this.currentYear, this.currentMonth, day);
-        const eventDuration = (draggedEvent.endDate - draggedEvent.startDate) / (1000 * 60 * 60 * 24);
-        const newEndDate = new Date(newStartDate);
-        newEndDate.setDate(newStartDate.getDate() + eventDuration);
-
-        draggedEvent.resourceId = resourceId;
-        draggedEvent.startDate = newStartDate;
-        draggedEvent.endDate = newEndDate;
-      }
-    },
-    allowDrop(event) {
-      event.preventDefault();
-    },
-  },
-});
-</script>
 
 <style scoped>
 .calendar-app {
@@ -228,6 +227,23 @@ export default defineComponent({
 .calendar-table {
   width: 100%;
   border-collapse: collapse;
+}
+
+.calendar-table th,
+.calendar-table td {
+  border: 1px solid #d3e2e8;
+  padding: 0.5rem;
+}
+
+.calendar-table th {
+  text-align: center;
+  background-color: #f3f4f6;
+}
+
+.calendar-table td:first-child {
+  text-align: center; /* Centra el texto en la columna de "Habitaciones" */
+  font-weight: bold;
+  background-color: #f3f4f6; /* Puedes personalizar el color de fondo si es necesario */
 }
 
 .calendar-cell {
