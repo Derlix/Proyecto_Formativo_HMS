@@ -174,6 +174,14 @@ const routes = [
     component: () => import('@/views/nico-views/ProductoVue.vue')
   },
   {
+    meta: {
+      title: 'Hoteles'
+    },
+    path: '/hoteles',
+    name: 'hoteles',
+    component: () => import('@/views/felipe-views/HotelVista.vue')
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: '404',
     component: Error404
