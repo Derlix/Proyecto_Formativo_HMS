@@ -1,58 +1,23 @@
 <script setup>
-import { computed, ref, onMounted } from 'vue'
-import { useMainStore } from '@/stores/main'
-import {
-  mdiAccountMultiple,
-  mdiCartOutline,
-  mdiChartTimelineVariant,
-  mdiMonitorCellphone,
-  mdiReload,
-  mdiBed,
-  mdiCloseCircle,
-  mdiSprayBottle,
-  mdiTools,
-  mdiMinusCircle,
-  mdiBroom,
-  mdiChartPie,
-  mdiCheckCircleOutline,
-  mdiAlertCircleOutline
-} from '@mdi/js'
-import * as chartConfig from '@/components/Charts/chart.config.js'
-import LineChart from '@/components/Charts/LineChart.vue'
-import SectionMain from '@/components/SectionMain.vue'
-import CardBoxWidget from '@/components/CardBoxWidget.vue'
-import CardBox from '@/components/CardBox.vue'
-import TableSampleClients from '@/components/TableSampleClients.vue'
-import NotificationBar from '@/components/NotificationBar.vue'
-import BaseButton from '@/components/BaseButton.vue'
-import CardBoxTransaction from '@/components/CardBoxTransaction.vue'
-import CardBoxClient from '@/components/CardBoxClient.vue'
+import { ref } from 'vue'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
-import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue'
-import SectionBannerStarOnGitHub from '@/components/SectionBannerStarOnGitHub.vue'
-import Modal from '@/components/Modal.vue'
+import CardBox from '@/components/CardBox.vue'
+import ModalRegistrarEntrada from '@/components/ModalRegistrarEntrada.vue'
 import ModalRegistrarSalida from '@/components/ModalRegistrarSalida.vue'
-
-const fillChartData = () => {
-  chartData.value = chartConfig.sampleChartData()
-}
-
-onMounted(() => {
-  fillChartData()
-})
-
-const mainStore = useMainStore()
-
-const clientBarItems = computed(() => mainStore.clients.slice(0, 4))
-
-const transactionBarItems = computed(() => mainStore.history)
+import CardBoxWidget from '@/components/CardBoxWidget.vue'
+import {
+  mdiBed,
+  mdiCheckCircleOutline,
+  mdiSprayBottle,
+  mdiMinusCircle,
+  mdiTools,
+} from '@mdi/js'
 
 const showModal = ref(false)
-
 const showModalSalidas = ref(false)
-
-const chartData = ref(null)
 </script>
+
+
 
 <template>
   <LayoutAuthenticated>
@@ -105,7 +70,10 @@ const chartData = ref(null)
               <button @click="showModal = true" class="bg-blue-950 h-12 rounded-lg my-6 font-bold hover:bg-blue-900 text-white">Registrar Entrada</button>
               <button @click="showModalSalidas = true" class="bg-blue-300 h-12 rounded-lg my-6 text-black font-bold border-2 border-blue-950 hover:bg-blue-100">Registrar Salida</button>
 
-              <Modal :visible="showModal" @close="showModal = false" />
+              <!-- Mostrar modal de registrar entrada -->
+              <ModalRegistrarEntrada :visible="showModal" @close="showModal = false" />
+
+              <!-- Modal para registrar salida -->
               <ModalRegistrarSalida :visible="showModalSalidas" @close="showModalSalidas = false"/>
             </div>
           </CardBox>
@@ -119,3 +87,4 @@ const chartData = ref(null)
     </sectionMain>
   </LayoutAuthenticated>
 </template>
+
