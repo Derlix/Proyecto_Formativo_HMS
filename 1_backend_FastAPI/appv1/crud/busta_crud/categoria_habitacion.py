@@ -1,5 +1,5 @@
 from http.client import HTTPException
-from appv1.schemas.busta_schemas.categoria_habitacion import CategoriaHabitacionCreate
+from appv1.schemas.busta_schemas.categoria_habitacion import CategoriaHabitacionCreate,CategoriaHabitacionUpdate
 from sqlalchemy.orm import Session # type: ignore
 from sqlalchemy import text # type: ignore
 from sqlalchemy.exc import SQLAlchemyError,IntegrityError # type: ignore
@@ -51,59 +51,81 @@ def get_room_categorie_name(db: Session, p_room_categorie_name: str ):
     except SQLAlchemyError as e:
         print(f"Error al buscar categoria: {e}")
         raise HTTPException(status_code=500, detail="Error al buscar categoria")
-    
-    
-# def update_user(db: Session, user_id: str, user: UserUpdate):
-#     try:
-#         sql = "UPDATE users SET "
-#         params = {"user_id": user_id}
-#         updates = []
-#         if user.full_name:
-#             updates.append("full_name = :full_name")
-#             params["full_name"] = user.full_name
-#         if user.mail:
-#             updates.append("mail = :mail")
-#             params["mail"] = user.mail
-#         if user.user_role:
-#             updates.append("user_role = :user_role")
-#             params["user_role"] = user.user_role
-#         if user.user_status is not None:
-#             updates.append("user_status = :user_status")
-#             params["user_status"] = user.user_status
-#         sql += ", ".join(updates) + " WHERE user_id = :user_id"
 
-# Envuelve la consulta SQL en text()
+# Buscar categoria por habitacion:
 
-    #     sql = text(sql)
-
-    #     db.execute(sql, params)
-    #     db.commit()
-    #     return True
-    # except IntegrityError as e:
-    #     db.rollback()  # Revertir la transacción en caso de error de integridad (llave foránea)
-    #     print(f"Error al actualizar usuario: {e}")
-    #     if 'for key 'mail'' in str(e.orig):
-    #         raise HTTPException(status_code=400, detail="Error. El email ya está registrado")
-    #     else:
-    #         raise HTTPException(status_code=400, detail="Error. No hay Integridad de datos al actualizar usuario")
-    # except SQLAlchemyError as e:
-    #     db.rollback()
-    #     print(f"Error al actualizar usuario: {e}")
-    #     raise HTTPException(status_code=500, detail="Error al actualizar usuario")
-    
-    
-# Eliminar una Categoia Habitacion
-def delete_user(db: Session, id_categoria_habitacion: int):
+def get_room_categorie_id(db: Session, id_categoria_habitacion: int ):
     try:
-        sql = text("UPDATE categoria_habitacion SET user_status = 0  WHERE user_id = :user_id")
-        db.execute(sql, {"id_categoria_habitacion": id_categoria_habitacion})
+        sql_query = text("SELECT * FROM categoria_habitacion WHERE id_categoria_habitacion = :id_categoria_habitacion")
+        result = db.execute(sql_query, {"id_categoria_habitacion": id_categoria_habitacion}).fetchone()
+        return result
+    except SQLAlchemyError as e:
+        print(f"Error al buscar categoria: {e}")
+        raise HTTPException(status_code=500, detail="Error al buscar categoria")
+    
+    
+def update_categoria_habitacion(db: Session, id_categoria_habitacion: int, categoria_habitacion: CategoriaHabitacionUpdate):
+    try:
+        sql = "UPDATE categoria_habitacion SET "
+        params = {"id_categoria_habitacion": id_categoria_habitacion}
+        updates = []
+        
+        if categoria_habitacion.precio_fijo:
+            updates.append("precio_fijo = :precio_fijo")
+            params["precio_fijo"] = categoria_habitacion.precio_fijo
+        
+        if categoria_habitacion.tipo_habitacion:
+            updates.append("tipo_habitacion = :tipo_habitacion")
+            params["tipo_habitacion"] = categoria_habitacion.tipo_habitacion
+        
+        if categoria_habitacion.id_hotel is not None:
+            updates.append("id_hotel = :id_hotel")
+            params["id_hotel"] = categoria_habitacion.id_hotel
+
+        # Si no hay campos para actualizar, retorna error
+        if not updates:
+            raise HTTPException(status_code=400, detail="No hay campos para actualizar")
+        
+        sql += ", ".join(updates) + " WHERE id_categoria_habitacion = :id_categoria_habitacion"
+        
+        # Envuelve la consulta SQL en text()
+        sql = text(sql)
+        
+        db.execute(sql, params)
         db.commit()
         return True
     except IntegrityError as e:
-        db.rollback()  # Revertir la transacción en caso de error de integridad (llave foránea)
-        print(f"Error al eliminar usuario: {e}")
-        raise HTTPException(status_code=400, detail="Error. Integridad de datos al eliminar usuario")
+        db.rollback()  # Revertir la transacción en caso de error de integridad
+        print(f"Error al actualizar la categoría de habitación: {e}")
+        raise HTTPException(status_code=400, detail="Error de integridad de datos al actualizar categoría de habitación")
     except SQLAlchemyError as e:
-        db.rollback()  
-        print(f"Error al eliminar usuario: {e}")
-        raise HTTPException(status_code=500, detail="Error al eliminar usuario")
+        db.rollback()  # Revertir la transacción en caso de otro tipo de error
+        print(f"Error al actualizar la categoría de habitación: {e}")
+        raise HTTPException(status_code=500, detail="Error al actualizar la categoría de habitación")
+
+
+def get_all_cateogories_paginated(db: Session, page: int = 1, page_size: int = 10):
+    try:
+        offset = (page - 1) * page_size
+
+        sql = text(
+        "SELECT id_categoria_habitacion, precio_fijo, tipo_habitacion,id_hotel "
+        "FROM categoria_habitacion "
+        "LIMIT :page_size OFFSET :offset"
+        )
+        params = {
+            "page_size": page_size,
+            "offset": offset
+        }
+        result = db.execute(sql, params).mappings().all()
+
+        count_sql = text("SELECT COUNT(*) FROM categoria_habitacion")
+        total_users = db.execute(count_sql).scalar()
+
+        total_pages = (total_users + page_size - 1) // page_size
+
+        return result, total_pages
+    except SQLAlchemyError as e:
+        print(f"Error al obtener todas las categorias: {e}")
+        raise HTTPException(status_code=500, detail="Error al obtener todas las cateogias")
+    
