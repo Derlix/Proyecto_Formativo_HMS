@@ -102,3 +102,28 @@ def delete_product(db: Session, id_producto: int):
         db.rollback()  
         print(f"Error al eliminar producto: {e}")
         raise HTTPException(status_code=500, detail="Error al eliminar producto")
+    
+def get_all_products_paginated(db: Session, page: int, page_size:int = 10):
+    try:
+        offset = (page - 1) * page_size
+        
+        sql = text("SELECT id_producto, nombre_producto, descripcion, precio_actual " 
+                   "FROM productos " 
+                   "ORDER BY id_producto DESC " 
+                   "LIMIT :page_size OFFSET :offset "
+        )
+        params = {
+            "page_size": page_size,
+            "offset": offset
+        }
+        result = db.execute(sql, params).mappings().all()
+        
+        count_sql = text("SELECT COUNT(id_producto) FROM productos")
+        total_products = db.execute(count_sql).scalar()
+        
+        total_pages = (total_products + page_size - 1) // page_size
+        
+        return result, total_pages
+    except SQLAlchemyError as e:
+        print(f"Error al obtener todos los usuarios: {e}")
+        raise HTTPException(status_code=500, detail="Error el obtener todos los usuarios.")
