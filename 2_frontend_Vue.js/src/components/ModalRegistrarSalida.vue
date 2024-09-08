@@ -1,3 +1,25 @@
+<script setup>
+import ModalAlert from './ModalAlert.vue';
+import { ref } from 'vue';
+import { mdiAlert, mdiCheckCircle } from '@mdi/js'
+
+const props = defineProps({
+  visible: {
+    type: Boolean,
+    required: true
+  }
+})
+
+
+const showModal = ref(false)
+
+const emit = defineEmits(['close'])
+
+const close = () => {
+  emit('close')
+}
+</script>
+  
 <template>
     <div v-if="visible" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 text-black">
       <div class="bg-blue-100 p-16 rounded-lg shadow-lg max-w-2xl w-full">
@@ -45,23 +67,17 @@
             </table>
           </div>
           
-        <button @click="close" class="bg-blue-950 text-white px-6 py-3 rounded w-full">Confirmar Salida</button>
+        <button @click="showModal = true" class="bg-blue-950 text-white px-6 py-3 rounded w-full">Confirmar Salida</button>
+
+        <ModalAlert
+        :visible="showModal"
+        @close="showModal = false"
+        :icon="mdiCheckCircle"
+        :color="'text-blue-600'"
+        descripcion="Salida confirmada con exito."
+        textBoton="Cerrar"
+        v-on:click="close"
+        />
       </div>
     </div>
-  </template>
-  
-  <script setup>
-  const props = defineProps({
-    visible: {
-      type: Boolean,
-      required: true
-    }
-  })
-  
-  const emit = defineEmits(['close'])
-  
-  const close = () => {
-    emit('close')
-  }
-  </script>
-  
+</template>

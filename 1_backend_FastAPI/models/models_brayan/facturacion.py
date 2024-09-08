@@ -26,8 +26,9 @@ class Facturacion(Base):
     impuestos = Column(Float(10,2))
     total = Column(Float(10,2))
     total_precio_productos = Column(Float(10,2))
-    metodo_pago = Column(Enum(MetodoPagoType))
-    estado = Column(Enum(EstadoType))
+    metodo_pago = Column(Enum(MetodoPagoType), nullable=False, default=MetodoPagoType.efectivo)
+    estado = Column(Enum(EstadoType), nullable=False, default=EstadoType.pendiente)
     fecha_salida = Column(DateTime)
 
-
+    
+    

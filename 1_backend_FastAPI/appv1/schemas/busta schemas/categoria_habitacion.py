@@ -1,22 +1,14 @@
-import enum
-from typing import Annotated
-from pydantic import BaseModel
-
-from sqlalchemy import INTEGER, FLOAT
-
-class TipoTabitacionEnum(enum.Enum):
-    suite = "SUITE"
-    suite_jr = "SUITE JR"
-    sencilla = "SECILLA"
-    doble = "DOBLE"
+from pydantic import BaseModel, condecimal, StringConstraints
+from typing import Annotated, Optional
 
 class CategoriaHabitacionBase(BaseModel):
-    id_categoria_habitacion = Annotated[str, INTEGER]
-    tarifa:  Annotated[float, FLOAT(max_length=(10,2))]
-    tipo_habitacion: TipoTabitacionEnum
+    precio_fijo: condecimal(max_digits=10, decimal_places=2)
+    tipo_habitacion: Annotated[str, StringConstraints(max_length=40)]
+    id_hotel: Optional[int]
 
+class CategoriaHabitacionCreate(CategoriaHabitacionBase):
+    precio_fijo: condecimal(max_digits=10, decimal_places=2)
+    tipo_habitacion: Annotated[str, StringConstraints(max_length=40)]
 
 class CategoriaHabitacionResponse(CategoriaHabitacionBase):
     id_categoria_habitacion: int
-    tarifa:  float
-    tipo_habitacion: TipoTabitacionEnum

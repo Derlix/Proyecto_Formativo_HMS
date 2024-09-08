@@ -6,7 +6,8 @@ import {
   mdiTicket,
   mdiFileChart,
   mdiViewGridPlus,
-  mdiExitRun
+  mdiExitRun,
+  mdiReproduction
 } from '@mdi/js'
 
 export default [
@@ -70,9 +71,19 @@ export default [
     to: '/checkOut',
     label: 'CheckOut',
     icon: mdiExitRun
+  },
+  {
+    to: '/productos',
+    label: 'Productos',
+    icon: mdiReproduction
+  },
+  {
+    to: '/facturas',
+    label: 'Facturas',
+    icon: mdiFileChart
   }
 
-
+  
 
   // {
   //   to: '/tables',

@@ -1,61 +1,50 @@
 from typing import List
-from appv1.crud.nicolas_crud.impuestos import create_tax
-from appv1.schemas.nicolas_schemas.Productos import ProductoCreate
-from fastapi import APIRouter,Depends #type: ignore
+from appv1.crud.nicolas_crud.productos import create_products, delete_product, get_all_products, get_product_by_id, update_product
+from appv1.schemas.nicolas_schemas.Productos import ProductoCreate, ProductoResponse, ProductoUpdate
+from fastapi import APIRouter,Depends, HTTPException
 from db.database import get_db
-from sqlalchemy.orm import Session # type: ignore
+from sqlalchemy.orm import Session
 
 router = APIRouter()
 
 @router.post("/create")
 async def insert_product(producto: ProductoCreate, db: Session = Depends(get_db)):
-    respuesta = create_tax(db, producto)
+    respuesta = create_products(db, producto)
     if respuesta:
         return {"mensaje":"producto registrado con exito"}
     else:
         return {"mensaje":"El producto no se ha podido registrar con exito"}
 
+@router.get("/get-all/", response_model=List[ProductoResponse])
+async def read_all_tax(db: Session= Depends(get_db)):
+    product = get_all_products(db)
+    if len(product) == 0:
+        raise HTTPException(status_code=404, detail="No hay Productos")
+    return product
 
-# # Endpoint para actualizar un usuario
-# @router.put("/update/", response_model=dict)
-# def update_user_by_id(
-#     user_id: str, 
-#     user: UserUpdate, 
-#     db: Session = Depends(get_db),
-#     current_user: UserResponse = Depends(get_current_user)
-# ):  
+# Endpoint para actualizar un producto
+@router.put("/update/", response_model=dict)
+def update_product_by_id(product_id: str, product: ProductoUpdate, db: Session = Depends(get_db)):
     
-#     permisos = get_permissions(db, current_user.user_role, MODULE)
-#     if current_user.user_id != user_id:
-#         if not permisos.p_update:
-#             raise HTTPException(status_code=401, detail="Usuario no autorizado") 
         
-#     verify_user = get_user_by_id(db, user_id)
-#     if verify_user is None:
-#         raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    verify_product = get_product_by_id(db, product_id)
+    if verify_product is None:
+        raise HTTPException(status_code=404, detail="Producto no encontrado")
     
-#     db_user = update_user(db, user_id, user)
-#     if db_user:
-#         return {"mensaje": "registro actualizado con éxito"}
+    db_product = update_product(db, product_id, product)
+    if db_product:
+        return {"mensaje": "Producto actualizado con éxito"}
 
-# @router.delete("/delete/{user_id}", response_model=dict)
-# def delete_user_by_id(
-#     user_id: str, 
-#     db: Session = Depends(get_db),
-#     current_user: UserResponse = Depends(get_current_user)
-# ):  
-#     permisos = get_permissions(db, current_user.user_role, MODULE)
-#     if current_user.user_id != user_id:
-#         if not permisos.p_delete:
-#             raise HTTPException(status_code=401, detail="Usuario no autorizado") 
+@router.delete("/delete/{id_producto}", response_model=dict)
+def delete_product_by_id(id_producto: str, db: Session = Depends(get_db)):
+
+    product = get_product_by_id(db, id_producto)
+    if product is None:
+        raise HTTPException(status_code=404, detail="Producto no encontrado")
     
-#     user = get_user_by_id(db, user_id)
-#     if user is None:
-#         raise HTTPException(status_code=404, detail="Usuario no encontrado")
-    
-#     result = delete_user(db, user_id)
-#     if result:
-#         return {"mensaje": "Usuario eliminado con éxito"}
+    result = delete_product(db, id_producto)
+    if result:
+        return {"mensaje": "Producto eliminado con éxito"}
     
 # # usuarios paginados
 # @router.get("/users-by-page/", response_model=PaginatedUsersResponse)

@@ -166,10 +166,35 @@ const routes = [
     component: () => import('@/views/nico-views/CheckOut.vue')
   },
   {
+    meta: {
+      title: 'Productos'
+    },
+    path: '/productos',
+    name: 'productos',
+    component: () => import('@/views/nico-views/ProductoVue.vue')
+  },
+  {
+    meta: {
+      title: 'Hoteles'
+    },
+    path: '/hoteles',
+    name: 'hoteles',
+    component: () => import('@/views/felipe-views/HotelVista.vue')
+  },
+  {
     path: '/:pathMatch(.*)*',
     name: '404',
     component: Error404
   },
+
+  {
+    meta: {
+      title: 'Facturas'
+    },
+    path: '/facturas',
+    name: 'facturas',
+    component: () => import('@/views/brayan-views/FacturasView.vue')
+  }
 
 
   // Rutas de la plantilla
