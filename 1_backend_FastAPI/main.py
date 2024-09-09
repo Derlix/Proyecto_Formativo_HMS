@@ -1,5 +1,4 @@
 from fastapi import FastAPI
-from appv1.routers.arce_routers import CaracteristicaRouter
 from appv1.routers.nicolas_route import impuesto
 from appv1.routers.nicolas_route import producto
 from appv1.routers.juanca_routers import habitacion
