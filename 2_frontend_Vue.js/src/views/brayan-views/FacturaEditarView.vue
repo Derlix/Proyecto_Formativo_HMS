@@ -73,4 +73,15 @@ const cancelEdit = () => {
 .bg-opacity-50 {
   background-color: rgba(0, 0, 0, 0.5);
 }
+
+input {
+  background-color: #ffffff; /* Fondo blanco para inputs */
+  color: #333333; /* Texto negro para inputs */
+}
+
+
+h2 {
+  background-color: #ffffff; /* Fondo blanco para inputs */
+  color: #333333; /* Texto negro para inputs */
+}
 </style>
