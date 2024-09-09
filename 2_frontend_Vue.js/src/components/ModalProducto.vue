@@ -1,8 +1,8 @@
 <template>
     <div v-if="visible" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
         <div class="bg-blue-100 p-6 rounded-lg shadow-lg max-w-2xl w-full">
-            <p class="text-black mb-4 bg-blue-400 rounded border-opacity-10 font-bold text-2xl text-center pt-3 pb-2">{{ descripcion }}</p>
-            <div class="bg-blue-400 p-7">
+            <p class="text-black mb-4 rounded border-opacity-10 font-bold text-2xl text-center pt-3 pb-2">{{ descripcion }}</p>
+            <div class="p-6">
                 <form @submit.prevent="submitForm">
                     <div class="grid grid-cols-2 gap-3">
                         <div class="mb-4">
@@ -11,12 +11,12 @@
                         </div>
                         <div class="mb-4">
                             <label for="cantidad" class="block text-gray-700">Precio</label>
-                            <input v-model="form.cantidad" type="number" step="0.01" id="cantidad" class="w-full px-3 py-2 border rounded" required />
+                            <input v-model="form.cantidad" type="number" step="0.01" id="precio" class="w-full px-3 py-2 border rounded" required />
                         </div>
                     </div>
                     <div class="mb-4">
                         <label for="precio" class="block text-gray-700">Descripcion</label>
-                        <input v-model="form.precio" type="text" id="precio" class="w-full px-3 py-2 border rounded h-16" required />
+                        <input v-model="form.precio" type="text" id="descripcion" class="w-full px-3 py-2 border rounded h-16" required />
                     </div>
                     <div class="flex justify-center space-x-4">
                         <button type="submit" class="bg-green-800 text-white px-4 py-2 rounded">{{ textBoton }}</button>
