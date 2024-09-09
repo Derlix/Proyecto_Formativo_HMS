@@ -4,6 +4,9 @@ import { useMainStore } from '@/stores/main'
 import * as chartConfig from '@/components/Charts/chart.config.js'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import axios from 'axios'
+import AlertaReserva from '@/components/AlertaReserva.vue'
+
+const showModal = ref(false)
 
 // Reactive properties
 const chartData = ref(null)
@@ -37,7 +40,9 @@ const fillChartData = () => {
 
 const obtenerHabitaciones = async () => {
   try {
-    const respuesta = await axios.get('http://localhost/reserva.php?action=getHabitacionesByHotel&idHotel=1')
+    const respuesta = await axios.get(
+      'http://localhost/reserva.php?action=getHabitacionesByHotel&idHotel=1'
+    )
     habitaciones.value = respuesta.data
   } catch (error) {
     console.error('Error al obtener las habitaciones:', error)
@@ -46,7 +51,11 @@ const obtenerHabitaciones = async () => {
 
 const obtenerReservas = async () => {
   try {
-    const respuesta = await axios.get(`http://localhost/reserva.php?action=getReservaPorMesAno&mes=${mesActual.value + 1}&anio=${anioActual.value}`)
+    const respuesta = await axios.get(
+      `http://localhost/reserva.php?action=getReservaPorMesAno&mes=${mesActual.value + 1}&anio=${
+        anioActual.value
+      }`
+    )
     reservas.value = Array.isArray(respuesta.data) ? respuesta.data : []
   } catch (error) {
     console.error('Error al obtener las reservas:', error)
@@ -75,7 +84,10 @@ const mesSiguiente = () => {
 }
 
 const manejarClicFecha = (idHabitacion, dia) => {
-  fechaInicioNuevaReserva.value = `${anioActual.value}-${String(mesActual.value + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`
+  fechaInicioNuevaReserva.value = `${anioActual.value}-${String(mesActual.value + 1).padStart(
+    2,
+    '0'
+  )}-${String(dia).padStart(2, '0')}`
   idHabitacionSeleccionada.value = idHabitacion
 }
 
@@ -90,7 +102,7 @@ const agregarReserva = () => {
       nombre_huesped: tituloNuevaReserva.value,
       fecha_entrada: fechaInicio,
       fecha_salida_propuesta: fechaFin,
-      id_habitacion: idHabitacionSeleccionada.value,
+      id_habitacion: idHabitacionSeleccionada.value
     })
 
     tituloNuevaReserva.value = ''
@@ -104,14 +116,19 @@ const agregarReserva = () => {
 
 const manejarClicReserva = (reserva) => {
   if (confirm(`¿Está seguro de que desea eliminar la reserva de "${reserva.nombre_huesped}"?`)) {
-    reservas.value = reservas.value.filter(r => r.id_reserva !== reserva.id_reserva)
+    reservas.value = reservas.value.filter((r) => r.id_reserva !== reserva.id_reserva)
   }
 }
 
 const obtenerReservasPorHabitacionYFecha = (idHabitacion, dia) => {
-  return reservas.value.filter(reserva =>
-    reserva.id_habitacion === idHabitacion &&
-    estaFechaEnRango(new Date(anioActual.value, mesActual.value, dia), new Date(reserva.fecha_entrada), new Date(reserva.fecha_salida_propuesta))
+  return reservas.value.filter(
+    (reserva) =>
+      reserva.id_habitacion === idHabitacion &&
+      estaFechaEnRango(
+        new Date(anioActual.value, mesActual.value, dia),
+        new Date(reserva.fecha_entrada),
+        new Date(reserva.fecha_salida_propuesta)
+      )
   )
 }
 
@@ -125,11 +142,14 @@ const alIniciarArrastre = (evento, reservaArrastrada) => {
 
 const alSoltar = (evento, idHabitacion, dia) => {
   const idReserva = evento.dataTransfer.getData('idReserva')
-  const reservaArrastrada = reservas.value.find(r => r.id_reserva === parseInt(idReserva))
+  const reservaArrastrada = reservas.value.find((r) => r.id_reserva === parseInt(idReserva))
 
   if (reservaArrastrada) {
     const nuevaFechaInicio = new Date(anioActual.value, mesActual.value, dia)
-    const duracionReserva = (new Date(reservaArrastrada.fecha_salida_propuesta) - new Date(reservaArrastrada.fecha_entrada)) / (1000 * 60 * 60 * 24)
+    const duracionReserva =
+      (new Date(reservaArrastrada.fecha_salida_propuesta) -
+        new Date(reservaArrastrada.fecha_entrada)) /
+      (1000 * 60 * 60 * 24)
     const nuevaFechaFin = new Date(nuevaFechaInicio)
     nuevaFechaFin.setDate(nuevaFechaInicio.getDate() + duracionReserva)
 
@@ -151,61 +171,112 @@ onMounted(() => {
 })
 </script>
 
-
 <template>
   <LayoutAuthenticated>
+    <div class="px-3">
+      <h2 class="">Operador De Reservas</h2>
+    </div>
+
+    <!-- Contenedor de botones con Flexbox de Tailwind -->
+    <div class="flex justify-center space-x-4 py-4">
+      <button
+        @click="showModal = true"
+        class="text-sm font-semibold leading-6 text-white bg-blue-800 hover:bg-blue-900 rounded-md px-4 py-2"
+      >
+        Crear reserva
+      </button>
+
+      <!-- Pasa showModal como prop y maneja el evento de cierre -->
+      <AlertaReserva :mostrarModal="showModal" @cerrar="showModal = false" />
+
+      <button
+        type="button"
+        class="text-sm font-semibold leading-6 text-white bg-blue-800 hover:bg-blue-900 rounded-md px-4 py-2"
+      >
+        Cambiar habitación
+      </button>
+
+      <button
+        type="button"
+        class="text-sm font-semibold leading-6 text-white bg-blue-800 hover:bg-blue-900 rounded-md px-4 py-2"
+      >
+        Cambiar reserva
+      </button>
+
+      <button
+        type="button"
+        class="text-sm font-semibold leading-6 text-white bg-blue-800 hover:bg-blue-900 rounded-md px-4 py-2"
+      >
+        Registrar comprobante de descuento
+      </button>
+    </div>
 
     <div class="px-3">
       <h2 class="">Reservas</h2>
     </div>
 
     <div class="calendar-app">
-    <div class="calendar-container">
-      <div class="calendar-header">
-        <button @click="mesAnterior">Anterior</button>
-        <span>{{ nombreMesActual }} {{ anioActual }}</span>
-        <button @click="mesSiguiente">Siguiente</button>
-      </div>
-      <table class="calendar-table">
-        <thead>
-          <tr>
-            <th>Habitaciones</th>
-            <th v-for="dia in diasDelMes" :key="dia">{{ dia }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="habitacion in habitaciones" :key="habitacion.id_habitacion">
-            <td>{{ habitacion.numero_habitacion }}</td>
-            <td v-for="dia in diasDelMes" :key="`${habitacion.id_habitacion}-${dia}`" class="calendar-cell"
-              @drop="alSoltar($event, habitacion.id_habitacion, dia)" @dragover="permitirSoltar"
-              @click="manejarClicFecha(habitacion.id_habitacion, dia)">
-              <div v-for="reserva in obtenerReservasPorHabitacionYFecha(habitacion.id_habitacion, dia)"
-                :key="reserva.id_reserva" class="event" draggable="true" @dragstart="alIniciarArrastre($event, reserva)"
-                @click.stop="manejarClicReserva(reserva)">
-                {{ reserva.nombre_huesped }}
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="event-creation">
-        <h3>Crear nueva reserva</h3>
-        <input v-model="tituloNuevaReserva" type="text" placeholder="Título del evento" />
-        <input v-model="fechaInicioNuevaReserva" type="date" />
-        <input v-model="fechaFinNuevaReserva" type="date" />
-        <select v-model="idHabitacionSeleccionada">
-          <option v-for="habitacion in habitaciones" :value="habitacion.id_habitacion" :key="habitacion.id_habitacion">
-            {{ habitacion.numero_habitacion }}
-          </option>
-        </select>
-        <button @click="agregarReserva">Agregar reserva</button>
+      <div class="calendar-container">
+        <div class="calendar-header">
+          <button @click="mesAnterior">Anterior</button>
+          <span>{{ nombreMesActual }} {{ anioActual }}</span>
+          <button @click="mesSiguiente">Siguiente</button>
+        </div>
+        <table class="calendar-table">
+          <thead>
+            <tr>
+              <th>Habitaciones</th>
+              <th v-for="dia in diasDelMes" :key="dia">{{ dia }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="habitacion in habitaciones" :key="habitacion.id_habitacion">
+              <td>{{ habitacion.numero_habitacion }}</td>
+              <td
+                v-for="dia in diasDelMes"
+                :key="`${habitacion.id_habitacion}-${dia}`"
+                class="calendar-cell"
+                @drop="alSoltar($event, habitacion.id_habitacion, dia)"
+                @dragover="permitirSoltar"
+                @click="manejarClicFecha(habitacion.id_habitacion, dia)"
+              >
+                <div
+                  v-for="reserva in obtenerReservasPorHabitacionYFecha(
+                    habitacion.id_habitacion,
+                    dia
+                  )"
+                  :key="reserva.id_reserva"
+                  class="event"
+                  draggable="true"
+                  @dragstart="alIniciarArrastre($event, reserva)"
+                  @click.stop="manejarClicReserva(reserva)"
+                >
+                  {{ reserva.nombre_huesped }}
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="event-creation">
+          <h3>Crear nueva reserva</h3>
+          <input v-model="tituloNuevaReserva" type="text" placeholder="Título del evento" />
+          <input v-model="fechaInicioNuevaReserva" type="date" />
+          <input v-model="fechaFinNuevaReserva" type="date" />
+          <select v-model="idHabitacionSeleccionada">
+            <option
+              v-for="habitacion in habitaciones"
+              :value="habitacion.id_habitacion"
+              :key="habitacion.id_habitacion"
+            >
+              {{ habitacion.numero_habitacion }}
+            </option>
+          </select>
+          <button @click="agregarReserva">Agregar reserva</button>
+        </div>
       </div>
     </div>
-  </div>
   </LayoutAuthenticated>
 </template>
-
-
 
 <style scoped>
 .calendar-app {
