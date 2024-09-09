@@ -16,6 +16,7 @@ import MovimientoPasajeros from '@/views/camilo-views/MovimientoPasajerosCorresp
 import InformePasajeros from '@/views/arce-views/InformePasajeros.vue'
 import TarjetaReserva from '@/views/arce-views/TarjetaReserva.vue'
 import TranspasoParticulares from '@/views/arce-views/TranspasoParticulares.vue'
+import InformacionReserva from '@/views/arce-views/InformacionReserva.vue'
 
 
 const routes = [
@@ -26,6 +27,14 @@ const routes = [
     path: '/informe-pasajeros',
     name: 'informe_pasajeros',
     component: InformePasajeros
+  },
+  {
+    meta: {
+      title: 'InformacionReserva'
+    },
+    path: '/informacion-reserva',
+    name: 'informacion_reserva',
+    component: InformacionReserva
   },
   {
     meta: {
@@ -172,6 +181,14 @@ const routes = [
     path: '/productos',
     name: 'productos',
     component: () => import('@/views/nico-views/ProductoVue.vue')
+  },
+  {
+    meta: {
+      title: 'Hoteles'
+    },
+    path: '/hoteles',
+    name: 'hoteles',
+    component: () => import('@/views/felipe-views/HotelVista.vue')
   },
   {
     path: '/:pathMatch(.*)*',

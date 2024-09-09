@@ -1,4 +1,4 @@
-import datetime
+from datetime import date
 from pydantic import BaseModel
 from typing import Optional
 import enum
@@ -26,7 +26,8 @@ class CheckInBase(BaseModel):
 
 class ReservaDetail(BaseModel):
     id_reserva: int  
-    fecha_reserva: datetime.date
+    fecha_reserva: date  # Este campo es correcto
+
     empresa: str
     valor_deposito: float
     forma_pago: str
