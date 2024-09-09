@@ -22,6 +22,11 @@ export default [
     label: 'informe pasajeros'
   },
   {
+    to: '/informacion-reserva',
+    icon: mdiMonitor,
+    label: 'Info reserva'
+  },
+  {
     to: '/tarjeta-reserva',
     icon: mdiMonitor,
     label: 'tarjeta reserva'
