@@ -17,6 +17,11 @@ export default [
     label: 'Dashboard'
   },
   {
+    to: '/inicio-cajero',
+    icon: mdiMonitor,
+    label: 'Inicio Cajero'
+  },
+  {
     to: '/informe-pasajeros',
     icon: mdiMonitor,
     label: 'informe pasajeros'

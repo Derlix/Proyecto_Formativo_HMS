@@ -17,9 +17,18 @@ import InformePasajeros from '@/views/arce-views/InformePasajeros.vue'
 import TarjetaReserva from '@/views/arce-views/TarjetaReserva.vue'
 import TranspasoParticulares from '@/views/arce-views/TranspasoParticulares.vue'
 import InformacionReserva from '@/views/arce-views/InformacionReserva.vue'
+import InicioCajero from '@/views/arce-views/InicioCajero.vue'
 
 
 const routes = [
+  {
+    meta: {
+      title: 'InicioCajero'
+    },
+    path: '/inicio-cajero',
+    name: 'inicio_cajero',
+    component: InicioCajero
+  },
   {
     meta: {
       title: 'InformePasajeros'
