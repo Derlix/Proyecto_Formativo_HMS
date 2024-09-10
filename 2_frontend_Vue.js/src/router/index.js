@@ -195,7 +195,6 @@ const routes = [
     name: '404',
     component: Error404
   },
-
   {
     meta: {
       title: 'Facturas'
@@ -203,6 +202,14 @@ const routes = [
     path: '/facturas',
     name: 'facturas',
     component: () => import('@/views/brayan-views/FacturasView.vue')
+  },
+  {
+    meta: {
+      title: 'Trasunto'
+    },
+    path: '/trasunto-movimiento-huespedes',
+    name: 'Trasunto',
+    component: () => import('@/views/nico-views/TrasuntoMovimiento.vue')
   }
 
 

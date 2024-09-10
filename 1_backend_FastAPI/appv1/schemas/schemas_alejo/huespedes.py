@@ -29,7 +29,7 @@ class HuespedCreate(HuespedBase):
 
 class HuespedResponse(HuespedBase):
     id_huesped: int
-    huesped_status: bool = true
+    huesped_estado: bool = true
     created_at: datetime
     updated_at: datetime
 
@@ -43,11 +43,11 @@ class HuespedUpdate(BaseModel):
     telefono: Optional [Annotated[str, StringConstraints(max_length=15)]] = None
     ocupacion: Optional [Annotated[str, StringConstraints(max_length=50)]] = None
     direccion: Optional [Annotated[str, StringConstraints(max_length=50)]] = None
-    huesped_status: bool = None
+    huesped_estado: bool = None
 
 
 class HuespedDelete(BaseModel):
-    huesped_status: bool = false
+    huesped_estado: bool = false
 
 
 class PaginatedHuespedResponse(BaseModel):

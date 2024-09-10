@@ -16,4 +16,4 @@ class huespedes(Base):
     telefono = Column(String(15))
     ocupacion = Column(String(50))
     direccion = Column(String(50))
-    huesped_status = Column(Boolean, default=True)
+    huesped_estado = Column(Boolean, default=True)

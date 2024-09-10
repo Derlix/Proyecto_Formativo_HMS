@@ -71,7 +71,7 @@ def get_huesped_by_email(db: Session, p_email: str):
 
 def get_all_huespedes(db: Session):
         try:
-             sql = text("SELECT * FROM huespedes WHERE huesped_status = True")
+             sql = text("SELECT * FROM huespedes WHERE huesped_estado = True")
              result = db.execute(sql).fetchall()
              return result
         
@@ -109,9 +109,9 @@ def update_huesped(db: Session, id_huesped: str, huesped:HuespedUpdate):
         if huesped.direccion:
             updates.append("direccion = :direccion")
             params["direccion"] = huesped.direccion
-        if huesped.huesped_status is not None:
-            updates.append("huesped_status = :huesped_status")
-            params["huesped_status"] = huesped.huesped_status
+        if huesped.huesped_estado is not None:
+            updates.append("huesped_estado = :huesped_estado")
+            params["huesped_estado"] = huesped.huesped_estado
         sql += ", ".join(updates) + " WHERE id_huesped = :id_huesped"         
 
         sql = text(sql)
@@ -138,9 +138,9 @@ def delete_huesped(db: Session, id_huesped:str, huesped: HuespedDelete):
         sql = "UPDATE huespedes SET "
         params = {"id_huesped": id_huesped}
         updates = []
-        if huesped.huesped_status is not None:
-            updates.append("huesped_status = :huesped_status")
-            params["huesped_status"] = huesped.huesped_status
+        if huesped.huesped_estado is not None:
+            updates.append("huesped_estado = :huesped_estado")
+            params["huesped_estado"] = huesped.huesped_estado
         sql += ", ".join(updates) + " WHERE id_huesped = :id_huesped"         
      
         sql = text(sql)
@@ -161,7 +161,7 @@ def get_all_huespedes_paginated(db: Session, page: int = 1, page_size: int = 10)
         offset = (page - 1) * page_size
 
         sql = text(
-            "SELECT id_huesped, nombre_completo, tipo_documento, numero_documento, fecha_expedicion, email, telefono, ocupacion, direccion, huesped_status, created_at, updated_at "
+            "SELECT id_huesped, nombre_completo, tipo_documento, numero_documento, fecha_expedicion, email, telefono, ocupacion, direccion, huesped_estado, created_at, updated_at "
             "FROM huespedes "
             "ORDER BY created_at DESC "  
             "LIMIT :page_size OFFSET :offset"
