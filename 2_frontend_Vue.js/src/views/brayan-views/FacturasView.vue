@@ -1,64 +1,100 @@
 <template>
   <LayoutAuthenticated>
-    <SectionMain class="bg-blue-100 rounded-lg p-4">
-      <h1 class="text-black font-bold mb-8">Historial de Facturas</h1>
-      <div class="grid grid-cols-5 gap-2 py-2">
-        <input type="search" placeholder="Buscar factura por ID" class="rounded rounded-lg">
-        <button type="button" class="bg-blue-800 rounded rounded-lg text-white">Buscar</button>
+    <SectionMain class="bg-blue-200 rounded-lg p-6">
+      <h1 class="text-2xl font-bold text-gray-800 mb-8">Historial de Facturas</h1>
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-4 py-4">
+        <input
+          type="search"
+          placeholder="Buscar factura por ID"
+          class="rounded-lg border border-gray-300 p-2"
+        />
+        <button
+          type="button"
+          class="bg-blue-800 rounded-lg text-white p-2 hover:bg-blue-700 transition"
+        >
+          Buscar
+        </button>
       </div>
+      <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-6 max-w-8xl mx-auto ">
+        <table class="min-w-full text-sm text-left divide-y divide-gray-200 dark:divide-gray-600" style="table-layout: auto;">
 
-      <div class="overflow-auto" style="max-height: 500px;">
-        <table class="min-w-full bg-white border border-gray-300">
-          <thead>
+          <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 ">
             <tr>
-              <th class="border-b px-1 py-2">ID Facturación</th>
-              <th class="border-b px-4 py-2">ID Check-in</th>
-              <th class="border-b px-10 py-2">Subtotal</th>
-              <th class="border-b px-10 py-2">Impuestos</th>
-              <th class="border-b px-10 py-2">Total</th>
-              <th class="border-b px-1 py-2">Total Precio Productos</th>
-              <th class="border-b px-6 py-2">Método de Pago</th>
-              <th class="border-b px-6 py-2">Estado</th>
-              <th class="border-b px-10 py-2">Fecha Salida</th>
-              <th class="border-b px-4 py-2">ID Reserva</th>
-              <th class="border-b px-4 py-2">Medio Llegada</th>
-              <th class="border-b px-4 py-2">Llegada Situación</th>
-              <th class="border-b px-4 py-2">Equipaje</th>
-              <th class="border-b px-4 py-2">Fecha Reserva</th>
-              <th class="border-b px-4 py-2">Empresa</th>
-              <th class="border-b px-4 py-2">Valor Depósito</th>
-              <th class="border-b px-4 py-2">Forma de Pago</th>
-              <th class="border-b px-4 py-2">Nombre Completo</th>
-              <th class="border-b px-4 py-2">Número Documento</th>
-              <th class="border-b px-4 py-2">Acciones</th>
+              <th class=" px-2 py-3 w-28">ID Facturación</th>
+              <th class="  px-2 py-7 w-28">ID Check-in</th>
+              <th class="px-4 py-3 w-28">Subtotal</th>
+              <th class="px-4 py-3 w-28">Impuestos</th>
+              <th class="px-4 py-3 w-28">Total</th>
+              <th class="px-4 py-3 w-32">Total Precio Productos</th>
+              <th class=" px-4 py-3 w-44">Método de Pago</th>
+              <th class="px-4 py-3 w-28">Estado</th>
+              <th class="px-4 py-3 w-32">Fecha Salida</th>
+              <th class="px-2 py-3 w-28">ID Reserva</th>
+              <th class="px-2 py-3 w-32">Medio Llegada</th>
+              <th class="px-2 py-3 w-24">Llegada Situación</th>
+              <th class="px-2 py-3 w-28">Equipaje</th>
+              <th class="px-2 py-3 w-28">Fecha Reserva</th>
+              <th class="px-2 py-3 w-32">Empresa</th>
+              <th class="px-2 py-3 w-28">Valor Depósito</th>
+              <th class="px-2 py-3 w-28">Forma de Pago</th>
+              <th class="px-2 py-3 w-36">Nombre</th>
+              <th class="px-2 py-3 w-32">N° Documento</th>
+              <th class="px-4 py-3 w-64">Acciones</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="body in datos_quemados" :key="body.id_facturacion">
-              <td class="border-b px-4 py-2">{{ body.id_facturacion }}</td>
-              <td class="border-b px-4 py-2">{{ body.id_check_in }}</td>
-              <td class="border-b px-4 py-2">{{ body.subtotal }}</td>
-              <td class="border-b px-4 py-2">{{ body.impuestos }}</td>
-              <td class="border-b px-4 py-2">{{ body.total }}</td>
-              <td class="border-b px-4 py-2">{{ body.total_precio_productos }}</td>
-              <td class="border-b px-4 py-2">{{ body.metodo_pago }}</td>
-              <td class="border-b px-4 py-2">{{ body.estado }}</td>
-              <td class="border-b px-4 py-2">{{ body.fecha_salida }}</td>
-              <td class="border-b px-4 py-2">{{ body.id_reserva }}</td>
-              <td class="border-b px-4 py-2">{{ body.medio_llegada }}</td>
-              <td class="border-b px-4 py-2">{{ body.llegada_situacion }}</td>
-              <td class="border-b px-4 py-2">{{ body.equipaje }}</td>
-              <td class="border-b px-4 py-2">{{ body.fecha_reserva }}</td>
-              <td class="border-b px-4 py-2">{{ body.empresa }}</td>
-              <td class="border-b px-4 py-2">{{ body.valor_deposito }}</td>
-              <td class="border-b px-4 py-2">{{ body.forma_pago }}</td>
-              <td class="border-b px-4 py-2">{{ body.nombre_completo }}</td>
-              <td class="border-b px-4 py-2">{{ body.numero_documento }}</td>
-              <td class="px-6 py-4 text-center">
-                <a href="#" @click.prevent="openAgregarProductosModal(body)" class="font-medium text-violet-600 hover:underline mr-3">Agregar Productos</a>
-                <a href="#" @click.prevent="openListaProductosModal(body)" class="font-medium text-cyan-600 hover:underline mr-3">Ver Productos</a>
-                <a href="#" @click.prevent="openEditModal(body)" class="font-medium text-blue-600 hover:underline mr-3">Editar</a>
-                <a href="#" @click.prevent="openDeleteModal(body)" class="font-medium text-red-600 hover:underline">Eliminar</a>
+            <tr v-for="(body, index) in datos_quemados" :key="body.id_facturacion"
+                :class="{'bg-gray-100 dark:bg-gray-900': index % 2 === 0, 'bg-white dark:bg-gray-800': index % 2 !== 0}">
+              <td class="px-2 py-2 dark:text-white">{{ body.id_facturacion }}</td>
+              <td class="px-2 py-2 dark:text-white">{{ body.id_check_in }}</td>
+              <td class="px-4 py-2 dark:text-white">{{ body.subtotal }}</td>
+              <td class="px-4 py-2 dark:text-white">{{ body.impuestos }}</td>
+              <td class="px-4 py-2 dark:text-white">{{ body.total }}</td>
+              <td class="px-4 py-2 dark:text-white">{{ body.total_precio_productos }}</td>
+              <td class="px-4 py-2 dark:text-white">{{ body.metodo_pago }}</td>
+              <td class="px-4 py-2 dark:text-white">{{ body.estado }}</td>
+              <td class="px-4 py-2 dark:text-white">{{ body.fecha_salida }}</td>
+              <td class="px-2 py-2 dark:text-white">{{ body.id_reserva }}</td>
+              <td class="px-2 py-2 dark:text-white">{{ body.medio_llegada }}</td>
+              <td class="px-2 py-2 dark:text-white">{{ body.llegada_situacion }}</td>
+              <td class="px-2 py-2 dark:text-white">{{ body.equipaje }}</td>
+              <td class="px-2 py-2 dark:text-white">{{ body.fecha_reserva }}</td>
+              <td class="px-2 py-2 dark:text-white">{{ body.empresa }}</td>
+              <td class="px-2 py-2 dark:text-white">{{ body.valor_deposito }}</td>
+              <td class="px-2 py-2 dark:text-white">{{ body.forma_pago }}</td>
+              <td class="px-2 py-2 dark:text-white">{{ body.nombre_completo }}</td>
+              <td class="px-2 py-2 dark:text-white">{{ body.numero_documento }}</td>
+              <td class="px-2 py-2 w-64">
+                <div class="flex justify-center space-x-2">
+                  <a
+                    href="#"
+                    @click.prevent="openAgregarProductosModal(body)"
+                    class="text-violet-600 hover:underline dark:text-violet-400"
+                  >
+                    Agregar Productos
+                  </a>
+                  <a
+                    href="#"
+                    @click.prevent="openListaProductosModal(body)"
+                    class="text-cyan-600 hover:underline dark:text-cyan-400"
+                  >
+                    Ver Productos
+                  </a>
+                  <a
+                    href="#"
+                    @click.prevent="openEditModal(body)"
+                    class="text-blue-600 hover:underline dark:text-blue-400"
+                  >
+                    Editar
+                  </a>
+                  <a
+                    href="#"
+                    @click.prevent="openDeleteModal(body)"
+                    class="text-red-600 hover:underline dark:text-red-400"
+                  >
+                    Eliminar
+                  </a>
+                </div>
               </td>
             </tr>
           </tbody>
@@ -98,6 +134,7 @@
   </LayoutAuthenticated>
 </template>
 
+
 <script setup>
 import { ref } from 'vue';
 import SectionMain from '@/components/SectionMain.vue';
@@ -106,6 +143,9 @@ import FacturaEditarView from './FacturaEditarView.vue';
 import FacturaEliminarView from './FacturaEliminarView.vue';
 import FacturaProductoLista from './FacturaProductoLista.vue';
 import FacturaProductoAgregar from './FacturaProductoAgregar.vue';
+
+
+// import { getFacturasByPage } from "@/services_brayan/FacturaService";
 
 // Datos simulados
 const datos_quemados = ref([
@@ -151,7 +191,6 @@ const datos_quemados = ref([
     nombre_completo: 'Ana Gómez',
     numero_documento: '87654321'
   },
-  
   {
     id_facturacion: 3,
     id_check_in: 'CI003',
@@ -163,123 +202,37 @@ const datos_quemados = ref([
     estado: 'Pagado',
     fecha_salida: '2024-09-10',
     id_reserva: 'R003',
-    medio_llegada: 'Taxi',
+    medio_llegada: 'Automóvil',
     llegada_situacion: 'A tiempo',
-    equipaje: '1 maleta',
+    equipaje: '3 maletas',
     fecha_reserva: '2024-08-20',
     empresa: 'Hotel DEF',
-    valor_deposito: 100.0,
+    valor_deposito: 80.0,
     forma_pago: 'Tarjeta de Débito',
-    nombre_completo: 'Carlos Ruiz',
+    nombre_completo: 'Carlos Fernández',
     numero_documento: '11223344'
   },
   {
     id_facturacion: 4,
     id_check_in: 'CI004',
-    subtotal: 250.0,
-    impuestos: 50.0,
-    total: 300.0,
-    total_precio_productos: 240.0,
-    metodo_pago: 'Transferencia',
+    subtotal: 80.0,
+    impuestos: 16.0,
+    total: 96.0,
+    total_precio_productos: 70.0,
+    metodo_pago: 'Tarjeta de Crédito',
     estado: 'Pagado',
     fecha_salida: '2024-09-15',
     id_reserva: 'R004',
-    medio_llegada: 'Avión',
+    medio_llegada: 'Tren',
     llegada_situacion: 'A tiempo',
-    equipaje: '3 maletas',
+    equipaje: '1 maleta',
     fecha_reserva: '2024-08-25',
     empresa: 'Hotel GHI',
-    valor_deposito: 120.0,
-    forma_pago: 'Transferencia',
+    valor_deposito: 40.0,
+    forma_pago: 'Tarjeta de Crédito',
     nombre_completo: 'Laura Martínez',
     numero_documento: '55667788'
-  },
-  {
-    id_facturacion: 5,
-    id_check_in: 'CI002',
-    subtotal: 150.0,
-    impuestos: 30.0,
-    total: 180.0,
-    total_precio_productos: 140.0,
-    metodo_pago: 'Efectivo',
-    estado: 'Pendiente',
-    fecha_salida: '2024-09-05',
-    id_reserva: 'R002',
-    medio_llegada: 'Bus',
-    llegada_situacion: 'Retrasado',
-    equipaje: '2 maletas',
-    fecha_reserva: '2024-08-15',
-    empresa: 'Hotel ABC',
-    valor_deposito: 70.0,
-    forma_pago: 'Efectivo',
-    nombre_completo: 'Ana Gómez',
-    numero_documento: '87654321'
   }
-  ,
-  {
-    id_facturacion: 5,
-    id_check_in: 'CI002',
-    subtotal: 150.0,
-    impuestos: 30.0,
-    total: 180.0,
-    total_precio_productos: 140.0,
-    metodo_pago: 'Efectivo',
-    estado: 'Pendiente',
-    fecha_salida: '2024-09-05',
-    id_reserva: 'R002',
-    medio_llegada: 'Bus',
-    llegada_situacion: 'Retrasado',
-    equipaje: '2 maletas',
-    fecha_reserva: '2024-08-15',
-    empresa: 'Hotel ABC',
-    valor_deposito: 70.0,
-    forma_pago: 'Efectivo',
-    nombre_completo: 'Ana Gómez',
-    numero_documento: '87654321'
-  },
-  {
-    id_facturacion: 5,
-    id_check_in: 'CI002',
-    subtotal: 150.0,
-    impuestos: 30.0,
-    total: 180.0,
-    total_precio_productos: 140.0,
-    metodo_pago: 'Efectivo',
-    estado: 'Pendiente',
-    fecha_salida: '2024-09-05',
-    id_reserva: 'R002',
-    medio_llegada: 'Bus',
-    llegada_situacion: 'Retrasado',
-    equipaje: '2 maletas',
-    fecha_reserva: '2024-08-15',
-    empresa: 'Hotel ABC',
-    valor_deposito: 70.0,
-    forma_pago: 'Efectivo',
-    nombre_completo: 'Ana Gómez',
-    numero_documento: '87654321'
-  },
-  {
-    id_facturacion: 5,
-    id_check_in: 'CI002',
-    subtotal: 150.0,
-    impuestos: 30.0,
-    total: 180.0,
-    total_precio_productos: 140.0,
-    metodo_pago: 'Efectivo',
-    estado: 'Pendiente',
-    fecha_salida: '2024-09-05',
-    id_reserva: 'R002',
-    medio_llegada: 'Bus',
-    llegada_situacion: 'Retrasado',
-    equipaje: '2 maletas',
-    fecha_reserva: '2024-08-15',
-    empresa: 'Hotel ABC',
-    valor_deposito: 70.0,
-    forma_pago: 'Efectivo',
-    nombre_completo: 'Ana Gómez',
-    numero_documento: '87654321'
-  }
-  
 ]);
 
 const showEditModal = ref(false);
@@ -288,78 +241,59 @@ const showlistaProductosModal = ref(false);
 const agregarProductosModal = ref(false);
 const selectedFactura = ref(null);
 
-const openEditModal = (factura) => {
-  selectedFactura.value = factura;
-  showEditModal.value = true;
-};
-
-const closeEditModal = () => {
-  showEditModal.value = false;
-};
-
-const openDeleteModal = (factura) => {
-  selectedFactura.value = factura;
-  showDeleteModal.value = true;
-};
-
-const closeDeleteModal = () => {
-  showDeleteModal.value = false;
-};
-
-const openListaProductosModal = (factura) => {
-  selectedFactura.value = factura;
-  showlistaProductosModal.value = true;
-};
-
-const closeProductosModal = () => {
-  showlistaProductosModal.value = false;
-};
-
-const openAgregarProductosModal = (factura) => {
+function openAgregarProductosModal(factura) {
   selectedFactura.value = factura;
   agregarProductosModal.value = true;
-};
+}
 
-const closeAgregarProductosModal = () => {
+function openListaProductosModal(factura) {
+  selectedFactura.value = factura;
+  showlistaProductosModal.value = true;
+}
+
+function openEditModal(factura) {
+  selectedFactura.value = factura;
+  showEditModal.value = true;
+}
+
+function openDeleteModal(factura) {
+  selectedFactura.value = factura;
+  showDeleteModal.value = true;
+}
+
+function closeEditModal() {
+  showEditModal.value = false;
+}
+
+function closeDeleteModal() {
+  showDeleteModal.value = false;
+}
+
+function closeProductosModal() {
+  showlistaProductosModal.value = false;
+}
+
+function closeAgregarProductosModal() {
   agregarProductosModal.value = false;
-};
+}
 
-const handleUpdate = (updatedFactura) => {
-  // Logic to update factura in the list
-};
+function handleUpdate() {
+  // Lógica para actualizar la factura
+  closeEditModal();
+}
 
-const handleDelete = (factura) => {
-  // Logic to delete factura from the list
-};
+function handleDelete() {
+  // Lógica para eliminar la factura
+  closeDeleteModal();
+}
 </script>
+
 <style scoped>
-table {
-  width: 100%;
-  border-collapse: collapse;
-  background-color: #ffffff; /* Fondo blanco para toda la tabla */
-  color: #000000; /* Texto negro */
-}
-
-th, td {
-  text-align: left;
-  white-space: nowrap;
-  border: 1px solid #000000; /* Bordes negros */
-}
-
-th {
-  background-color: #f0f0f0; /* Fondo gris claro para las cabeceras */
-}
-
-tbody tr:nth-child(even) {
-  background-color: #f9f9f9; /* Fondo gris claro para filas alternadas */
-}
-
-tbody tr:nth-child(odd) {
-  background-color: #ffffff; /* Fondo blanco para filas alternadas */
-}
-
-h1 {
-  font-size: 1.5rem;
-}
+  table {
+    table-layout: fixed; /* Hace que el width se respete */
+    width: 100%; /* Asegura que la tabla use todo el ancho disponible */
+  }
+  th, td {
+    white-space: nowrap; /* Evita que el contenido se rompa en múltiples líneas */
+  }
 </style>
-
