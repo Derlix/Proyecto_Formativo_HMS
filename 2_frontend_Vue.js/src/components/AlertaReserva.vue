@@ -11,10 +11,10 @@
 
       <!-- Texto explicativo -->
       <p class="text-lg font-semibold text-center text-gray-900 mb-2">
-        ¿Qué tipo de huésped deseas cargar?
+        ¿Qué tipo de huesped deseas cargar?
       </p>
       <p class="text-sm text-center text-gray-600 mb-8">
-        Carga un nuevo huésped o busca entre tus contactos a uno recurrente
+        Carga un nuevo huesped o busca entre tus contactos a uno recurrente
       </p>
 
       <!-- Botones de opciones -->
@@ -23,26 +23,24 @@
           @click="seleccionarNuevoHuesped"
           class="bg-blue-800 text-white py-2 px-6 rounded-md hover:bg-blue-900 transition"
         >
-          Huésped nuevo
+          huesped nuevo
         </button>
         <button
-          @click="showModal = true"
+          @click="abrirHuespedExistente"
           class="bg-gray-300 text-gray-700 py-2 px-6 rounded-md hover:bg-gray-400 transition"
         >
-          Huésped existente
+          huesped existente
         </button>
-
-        <ModalRegistrarReserva :visible="showModal" @close="showModal = false" />
       </div>
     </div>
+    <!-- Mostrar modal de huesped existente -->
+    <ModalHuespedExistente :visible="mostrarHuespedExistente" @close="mostrarHuespedExistente = false" />
   </div>
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from 'vue'
-import ModalRegistrarReserva from './ModalRegistrarReserva.vue'
-
-
+import { ref } from 'vue'
+import ModalHuespedExistente from '@/components/ModalHuespedExistente.vue'
 
 const props = defineProps({
   mostrarModal: Boolean
@@ -50,15 +48,18 @@ const props = defineProps({
 
 const emit = defineEmits(['cerrar'])
 
+const mostrarHuespedExistente = ref(false)
+
 function cerrarModal() {
   emit('cerrar')
 }
 
 function seleccionarNuevoHuesped() {
-  console.log('Seleccionar huésped nuevo')
+  console.log('Seleccionar huesped nuevo')
 }
 
-function seleccionarHuespedExistente() {
-  console.log('Seleccionar huésped existente')
+function abrirHuespedExistente() {
+  mostrarHuespedExistente.value = true
+
 }
 </script>
