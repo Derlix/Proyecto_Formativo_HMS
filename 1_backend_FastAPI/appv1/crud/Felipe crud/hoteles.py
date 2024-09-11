@@ -103,3 +103,29 @@ def delete_hotel(db: Session, id_hotel: int):
         print(f"Error al eliminar hotel: {e}")
         raise HTTPException(status_code=500, detail="Error al eliminar hotel")
      
+def get_all_hotels_paginated(db: Session, page: int = 1, page_size: int = 10):
+    try:
+       
+        offset = (page - 1) * page_size
+
+        sql = text(
+            "SELECT id_hotel, nombre, ubicacion, direccion, telefono "
+            "FROM hoteles "
+            "ORDER BY id_hotel DESC "  
+            "LIMIT :page_size OFFSET :offset"
+        )
+        params = {
+            "page_size": page_size,
+            "offset": offset
+        }
+        result = db.execute(sql, params).mappings().all()
+
+        count_sql = text("SELECT COUNT(*) FROM hoteles")
+        total_hoteles = db.execute(count_sql).scalar()
+
+        total_pages = (total_hoteles + page_size - 1) // page_size
+
+        return result, total_pages
+    except SQLAlchemyError as e:
+        print(f"Error al obtener todos los hoteles: {e}")
+        raise HTTPException(status_code=500, detail="Error al obtener todos los hoteles")   

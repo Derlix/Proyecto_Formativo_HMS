@@ -1,8 +1,8 @@
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException
-from appv1.crud.hoteles import create_hotel_sql, delete_hotel, get_all_hoteles, get_hotel_by_id, update_hotel
+from appv1.crud.hoteles import create_hotel_sql, delete_hotel, get_all_hoteles, get_hotel_by_id, update_hotel, get_all_hotels_paginated
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
-from appv1.schemas.hoteles import HotelesCreate, HotelesResponse, HotelesUpdate
+from appv1.schemas.hoteles import HotelesCreate, HotelesResponse, HotelesUpdate, PaginatedHotelResponse
 from db.database import get_db
 from sqlalchemy.orm import Session
 from sqlalchemy import text
@@ -49,4 +49,19 @@ async def read_hotel_by_id(id_hotel:int, db:Session = Depends(get_db) ):
    
    return hotel
 
-    
+@router.get("/hoteles-by-page/", response_model=PaginatedHotelResponse)
+def get_all_hoteles_by_page(
+   page: int = 1,
+   page_size: int = 10,
+   db: Session = Depends(get_db),                          
+   ):
+
+   
+   hoteles, total_pages = get_all_hotels_paginated(db, page, page_size)
+
+   return {
+        "hoteles": hoteles,
+        "total_pages": total_pages,
+        "current_page": page,
+        "page_size": page_size
+   }

@@ -85,6 +85,10 @@ const saveHotel = () => {
 const isSaveDisabled = computed(() => {
   return !hotelForm.name || !hotelForm.location || !hotelForm.address || !hotelForm.phone
 })
+
+
+
+
 </script>
 
 <template>
@@ -113,8 +117,8 @@ const isSaveDisabled = computed(() => {
                 <td class="border px-4 py-2">{{ hotel.address }}</td>
                 <td class="border px-4 py-2">{{ hotel.phone }}</td>
                 <td class="border px-4 py-2">
-                  <BaseButton @click="editHotel(hotel)" color="warning" outline label="Editar" :icon="mdiPencil" />
-                  <BaseButton @click="deleteHotel(hotel.id)" color="danger" outline label="Eliminar" :icon="mdiDelete" />
+                  <BaseButton @click="editHotel(hotel)" color="warning" outline label="Editar" :icon="mdiPencil" class="g-4" />
+                  <BaseButton @click="deleteHotel(hotel.id)" color="danger" outline label="Eliminar" :icon="mdiDelete" class="g-4" />
                 </td>
               </tr>
             </tbody>
