@@ -5,6 +5,7 @@ import CardBox from '@/components/CardBox.vue'
 import ModalRegistrarEntrada from '@/components/ModalRegistrarEntrada.vue'
 import ModalRegistrarSalida from '@/components/ModalRegistrarSalida.vue'
 import CardBoxWidget from '@/components/CardBoxWidget.vue'
+import SectionMain from '@/components/SectionMain.vue'
 import {
   mdiBed,
   mdiCheckCircleOutline,

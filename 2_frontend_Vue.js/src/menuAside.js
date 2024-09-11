@@ -7,7 +7,8 @@ import {
   mdiFileChart,
   mdiViewGridPlus,
   mdiExitRun,
-  mdiReproduction
+  mdiReproduction,
+  mdiPassport
 } from '@mdi/js'
 
 export default [
@@ -91,6 +92,11 @@ export default [
     to: '/facturas',
     label: 'Facturas',
     icon: mdiFileChart
+  },
+  {
+    to: '/trasunto-movimiento-huespedes',
+    label: 'Trasunto',
+    icon: mdiPassport
   }
 
   

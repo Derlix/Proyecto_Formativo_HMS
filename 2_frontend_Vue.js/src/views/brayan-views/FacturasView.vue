@@ -1,248 +1,12 @@
-<script setup>
-import { ref } from 'vue';
-import SectionMain from '@/components/SectionMain.vue'
-import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
-import FacturaEditarView from './FacturaEditarView.vue';
-import FacturaEliminarView from './FacturaEliminarView.vue';
-
-// Datos simulados, normalmente esto vendría de una API o un store
-const datos_quemados = ref([
-  {
-    id_facturacion: 1,
-    id_check_in: 101,
-    subtotal: 100,
-    impuestos: 21,
-    total: 121,
-    total_precio_productos: 80,
-    metodo_pago: 'Tarjeta',
-    estado: 'Pagado',
-    fecha_salida: '2024-09-01',
-    id_reserva: 201,
-    medio_llegada: 'Avión',
-    llegada_situacion: 'A tiempo',
-    equipaje: 'Sí',
-    fecha_reserva: '2024-08-30',
-    empresa: 'Ejemplo S.A.',
-    valor_deposito: 50,
-    forma_pago: 'Transferencia',
-    nombre_completo: 'Juan Pérez',
-    numero_documento: '12345678A'
-  },
-  {
-    id_facturacion: 2,
-    id_check_in: 102,
-    subtotal: 150,
-    impuestos: 31.5,
-    total: 181.5,
-    total_precio_productos: 120,
-    metodo_pago: 'Efectivo',
-    estado: 'Pendiente',
-    fecha_salida: '2024-09-02',
-    id_reserva: 202,
-    medio_llegada: 'Tren',
-    llegada_situacion: 'Retrasado',
-    equipaje: 'No',
-    fecha_reserva: '2024-08-31',
-    empresa: 'Hotel Lux',
-    valor_deposito: 75,
-    forma_pago: 'Efectivo',
-    nombre_completo: 'Ana Gómez',
-    numero_documento: '23456789B'
-  },
-  {
-    id_facturacion: 3,
-    id_check_in: 103,
-    subtotal: 200,
-    impuestos: 42,
-    total: 242,
-    total_precio_productos: 160,
-    metodo_pago: 'Tarjeta',
-    estado: 'Pagado',
-    fecha_salida: '2024-09-03',
-    id_reserva: 203,
-    medio_llegada: 'Bus',
-    llegada_situacion: 'A tiempo',
-    equipaje: 'Sí',
-    fecha_reserva: '2024-09-01',
-    empresa: 'Grand Hotel',
-    valor_deposito: 100,
-    forma_pago: 'Tarjeta',
-    nombre_completo: 'Carlos Martínez',
-    numero_documento: '34567890C'
-  },
-  {
-    id_facturacion: 4,
-    id_check_in: 104,
-    subtotal: 180,
-    impuestos: 37.8,
-    total: 217.8,
-    total_precio_productos: 140,
-    metodo_pago: 'Transferencia',
-    estado: 'Pagado',
-    fecha_salida: '2024-09-04',
-    id_reserva: 204,
-    medio_llegada: 'Avión',
-    llegada_situacion: 'A tiempo',
-    equipaje: 'Sí',
-    fecha_reserva: '2024-09-02',
-    empresa: 'Ocean View',
-    valor_deposito: 90,
-    forma_pago: 'Transferencia',
-    nombre_completo: 'Marta Ruiz',
-    numero_documento: '45678901D'
-  },
-  {
-    id_facturacion: 5,
-    id_check_in: 105,
-    subtotal: 130,
-    impuestos: 27.3,
-    total: 157.3,
-    total_precio_productos: 110,
-    metodo_pago: 'Efectivo',
-    estado: 'Pendiente',
-    fecha_salida: '2024-09-05',
-    id_reserva: 205,
-    medio_llegada: 'Tren',
-    llegada_situacion: 'A tiempo',
-    equipaje: 'No',
-    fecha_reserva: '2024-09-03',
-    empresa: 'City Hotel',
-    valor_deposito: 65,
-    forma_pago: 'Efectivo',
-    nombre_completo: 'Luis Fernández',
-    numero_documento: '56789012E'
-  },
-  {
-    id_facturacion: 2111,
-    id_check_in: 3453,
-    subtotal: 2233,
-    impuestos: 1113.2,
-    total: 266.2,
-    total_precio_productos: 180,
-    metodo_pago: 'Tarjeta',
-    estado: 'Pagado',
-    fecha_salida: '2024-09-06',
-    id_reserva: 206,
-    medio_llegada: 'Bus',
-    llegada_situacion: 'Retrasado',
-    equipaje: 'Sí',
-    fecha_reserva: '2024-09-04',
-    empresa: 'Skyline Hotel',
-    valor_deposito: 110,
-    forma_pago: 'Tarjeta',
-    nombre_completo: 'Sofía López',
-    numero_documento: '67890123F'
-  },
-  {
-    id_facturacion: 5,
-    id_check_in: 343,
-    subtotal: 235425,
-    impuestos: 32434.2,
-    total: 266.2,
-    total_precio_productos: 180,
-    metodo_pago: 'Tarjeta',
-    estado: 'Pagado',
-    fecha_salida: '2024-09-06',
-    id_reserva: 206,
-    medio_llegada: 'Bus',
-    llegada_situacion: 'Retrasado',
-    equipaje: 'Sí',
-    fecha_reserva: '2024-09-04',
-    empresa: 'Skyline Hotel',
-    valor_deposito: 110,
-    forma_pago: 'Tarjeta',
-    nombre_completo: 'Sofía López',
-    numero_documento: '67890123F'
-  },
-  {
-    id_facturacion: 32,
-    id_check_in: 234,
-    subtotal: 2342,
-    impuestos: 46.2,
-    total: 266.2,
-    total_precio_productos: 180,
-    metodo_pago: 'Tarjeta',
-    estado: 'Pagado',
-    fecha_salida: '2024-09-06',
-    id_reserva: 206,
-    medio_llegada: 'Bus',
-    llegada_situacion: 'Retrasado',
-    equipaje: 'Sí',
-    fecha_reserva: '2024-09-04',
-    empresa: 'Skyline Hotel',
-    valor_deposito: 110,
-    forma_pago: 'Tarjeta',
-    nombre_completo: 'Sofía López',
-    numero_documento: '67890123F'
-  },
-  {
-    id_facturacion: 44,
-    id_check_in: 34,
-    subtotal: 4434,
-    impuestos: 4634.2,
-    total: 2646.2,
-    total_precio_productos: 180,
-    metodo_pago: 'Tarjeta',
-    estado: 'Pagado',
-    fecha_salida: '2024-09-06',
-    id_reserva: 206,
-    medio_llegada: 'Bus',
-    llegada_situacion: 'Retrasado',
-    equipaje: 'Sí',
-    fecha_reserva: '2024-09-04',
-    empresa: 'Skyline Hotel',
-    valor_deposito: 110,
-    forma_pago: 'Tarjeta',
-    nombre_completo: 'Sofía López',
-    numero_documento: '67890123F'
-  }
-]);
-
-
-const showEditModal = ref(false);
-const showDeleteModal = ref(false);
-const selectedFactura = ref(null);
-
-const openEditModal = (factura) => {
-  selectedFactura.value = { ...factura }; // Clona el objeto para editar
-  showEditModal.value = true;
-};
-
-const openDeleteModal = (factura) => {
-  selectedFactura.value = { ...factura }; // Clona el objeto para eliminar
-  showDeleteModal.value = true;
-};
-
-const handleUpdate = () => {
-  showEditModal.value = false;
-  // Aquí puedes actualizar los datos en el componente si es necesario
-};
-
-const handleDelete = () => {
-  showDeleteModal.value = false;
-  // Aquí puedes eliminar los datos en el componente si es necesario
-};
-
-const closeEditModal = () => {
-  showEditModal.value = false;
-};
-
-const closeDeleteModal = () => {
-  showDeleteModal.value = false;
-};
-</script>
-
 <template>
   <LayoutAuthenticated>
     <SectionMain class="bg-blue-100 rounded-lg p-4">
       <h1 class="text-black font-bold mb-8">Historial de Facturas</h1>
       <div class="grid grid-cols-5 gap-2 py-2">
-            
-            <input type="search" placeholder="Buscar factura por ID" class="rounded rounded-lg">
-            <button type="button" class="bg-blue-800 rounded rounded-lg text-white">Buscar</button>
-           
-        </div>
-      <!-- Contenedor con scroll horizontal y vertical -->
+        <input type="search" placeholder="Buscar factura por ID" class="rounded rounded-lg">
+        <button type="button" class="bg-blue-800 rounded rounded-lg text-white">Buscar</button>
+      </div>
+
       <div class="overflow-auto" style="max-height: 500px;">
         <table class="min-w-full bg-white border border-gray-300">
           <thead>
@@ -291,6 +55,8 @@ const closeDeleteModal = () => {
               <td class="border-b px-4 py-2">{{ body.nombre_completo }}</td>
               <td class="border-b px-4 py-2">{{ body.numero_documento }}</td>
               <td class="px-6 py-4 text-center">
+                <a href="#" @click.prevent="openAgregarProductosModal(body)" class="font-medium text-violet-600 hover:underline mr-3">Agregar Productos</a>
+                <a href="#" @click.prevent="openListaProductosModal(body)" class="font-medium text-cyan-600 hover:underline mr-3">Ver Productos</a>
                 <a href="#" @click.prevent="openEditModal(body)" class="font-medium text-blue-600 hover:underline mr-3">Editar</a>
                 <a href="#" @click.prevent="openDeleteModal(body)" class="font-medium text-red-600 hover:underline">Eliminar</a>
               </td>
@@ -298,7 +64,6 @@ const closeDeleteModal = () => {
           </tbody>
         </table>
       </div>
-
 
       <!-- Modal de edición -->
       <FacturaEditarView
@@ -315,26 +80,286 @@ const closeDeleteModal = () => {
         @update="handleDelete"
         @close="closeDeleteModal"
       />
+
+      <!-- Modal de Productos -->
+      <FacturaProductoLista
+        v-if="showlistaProductosModal"
+        :factura="selectedFactura"
+        @close="closeProductosModal"
+      />
+
+      <!-- Modal de Agregar Productos -->
+      <FacturaProductoAgregar
+        v-if="agregarProductosModal"
+        :factura="selectedFactura"
+        @close="closeAgregarProductosModal"
+      />
     </SectionMain>
   </LayoutAuthenticated>
 </template>
 
+<script setup>
+import { ref } from 'vue';
+import SectionMain from '@/components/SectionMain.vue';
+import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
+import FacturaEditarView from './FacturaEditarView.vue';
+import FacturaEliminarView from './FacturaEliminarView.vue';
+import FacturaProductoLista from './FacturaProductoLista.vue';
+import FacturaProductoAgregar from './FacturaProductoAgregar.vue';
+
+// Datos simulados
+const datos_quemados = ref([
+  {
+    id_facturacion: 1,
+    id_check_in: 'CI001',
+    subtotal: 100.0,
+    impuestos: 20.0,
+    total: 120.0,
+    total_precio_productos: 90.0,
+    metodo_pago: 'Tarjeta de Crédito',
+    estado: 'Pagado',
+    fecha_salida: '2024-09-01',
+    id_reserva: 'R001',
+    medio_llegada: 'Avión',
+    llegada_situacion: 'A tiempo',
+    equipaje: '1 maleta',
+    fecha_reserva: '2024-08-01',
+    empresa: 'Hotel XYZ',
+    valor_deposito: 50.0,
+    forma_pago: 'Transferencia',
+    nombre_completo: 'Juan Pérez',
+    numero_documento: '12345678'
+  },
+  {
+    id_facturacion: 2,
+    id_check_in: 'CI002',
+    subtotal: 150.0,
+    impuestos: 30.0,
+    total: 180.0,
+    total_precio_productos: 140.0,
+    metodo_pago: 'Efectivo',
+    estado: 'Pendiente',
+    fecha_salida: '2024-09-05',
+    id_reserva: 'R002',
+    medio_llegada: 'Bus',
+    llegada_situacion: 'Retrasado',
+    equipaje: '2 maletas',
+    fecha_reserva: '2024-08-15',
+    empresa: 'Hotel ABC',
+    valor_deposito: 70.0,
+    forma_pago: 'Efectivo',
+    nombre_completo: 'Ana Gómez',
+    numero_documento: '87654321'
+  },
+  
+  {
+    id_facturacion: 3,
+    id_check_in: 'CI003',
+    subtotal: 200.0,
+    impuestos: 40.0,
+    total: 240.0,
+    total_precio_productos: 190.0,
+    metodo_pago: 'Tarjeta de Débito',
+    estado: 'Pagado',
+    fecha_salida: '2024-09-10',
+    id_reserva: 'R003',
+    medio_llegada: 'Taxi',
+    llegada_situacion: 'A tiempo',
+    equipaje: '1 maleta',
+    fecha_reserva: '2024-08-20',
+    empresa: 'Hotel DEF',
+    valor_deposito: 100.0,
+    forma_pago: 'Tarjeta de Débito',
+    nombre_completo: 'Carlos Ruiz',
+    numero_documento: '11223344'
+  },
+  {
+    id_facturacion: 4,
+    id_check_in: 'CI004',
+    subtotal: 250.0,
+    impuestos: 50.0,
+    total: 300.0,
+    total_precio_productos: 240.0,
+    metodo_pago: 'Transferencia',
+    estado: 'Pagado',
+    fecha_salida: '2024-09-15',
+    id_reserva: 'R004',
+    medio_llegada: 'Avión',
+    llegada_situacion: 'A tiempo',
+    equipaje: '3 maletas',
+    fecha_reserva: '2024-08-25',
+    empresa: 'Hotel GHI',
+    valor_deposito: 120.0,
+    forma_pago: 'Transferencia',
+    nombre_completo: 'Laura Martínez',
+    numero_documento: '55667788'
+  },
+  {
+    id_facturacion: 5,
+    id_check_in: 'CI002',
+    subtotal: 150.0,
+    impuestos: 30.0,
+    total: 180.0,
+    total_precio_productos: 140.0,
+    metodo_pago: 'Efectivo',
+    estado: 'Pendiente',
+    fecha_salida: '2024-09-05',
+    id_reserva: 'R002',
+    medio_llegada: 'Bus',
+    llegada_situacion: 'Retrasado',
+    equipaje: '2 maletas',
+    fecha_reserva: '2024-08-15',
+    empresa: 'Hotel ABC',
+    valor_deposito: 70.0,
+    forma_pago: 'Efectivo',
+    nombre_completo: 'Ana Gómez',
+    numero_documento: '87654321'
+  }
+  ,
+  {
+    id_facturacion: 5,
+    id_check_in: 'CI002',
+    subtotal: 150.0,
+    impuestos: 30.0,
+    total: 180.0,
+    total_precio_productos: 140.0,
+    metodo_pago: 'Efectivo',
+    estado: 'Pendiente',
+    fecha_salida: '2024-09-05',
+    id_reserva: 'R002',
+    medio_llegada: 'Bus',
+    llegada_situacion: 'Retrasado',
+    equipaje: '2 maletas',
+    fecha_reserva: '2024-08-15',
+    empresa: 'Hotel ABC',
+    valor_deposito: 70.0,
+    forma_pago: 'Efectivo',
+    nombre_completo: 'Ana Gómez',
+    numero_documento: '87654321'
+  },
+  {
+    id_facturacion: 5,
+    id_check_in: 'CI002',
+    subtotal: 150.0,
+    impuestos: 30.0,
+    total: 180.0,
+    total_precio_productos: 140.0,
+    metodo_pago: 'Efectivo',
+    estado: 'Pendiente',
+    fecha_salida: '2024-09-05',
+    id_reserva: 'R002',
+    medio_llegada: 'Bus',
+    llegada_situacion: 'Retrasado',
+    equipaje: '2 maletas',
+    fecha_reserva: '2024-08-15',
+    empresa: 'Hotel ABC',
+    valor_deposito: 70.0,
+    forma_pago: 'Efectivo',
+    nombre_completo: 'Ana Gómez',
+    numero_documento: '87654321'
+  },
+  {
+    id_facturacion: 5,
+    id_check_in: 'CI002',
+    subtotal: 150.0,
+    impuestos: 30.0,
+    total: 180.0,
+    total_precio_productos: 140.0,
+    metodo_pago: 'Efectivo',
+    estado: 'Pendiente',
+    fecha_salida: '2024-09-05',
+    id_reserva: 'R002',
+    medio_llegada: 'Bus',
+    llegada_situacion: 'Retrasado',
+    equipaje: '2 maletas',
+    fecha_reserva: '2024-08-15',
+    empresa: 'Hotel ABC',
+    valor_deposito: 70.0,
+    forma_pago: 'Efectivo',
+    nombre_completo: 'Ana Gómez',
+    numero_documento: '87654321'
+  }
+  
+]);
+
+const showEditModal = ref(false);
+const showDeleteModal = ref(false);
+const showlistaProductosModal = ref(false);
+const agregarProductosModal = ref(false);
+const selectedFactura = ref(null);
+
+const openEditModal = (factura) => {
+  selectedFactura.value = factura;
+  showEditModal.value = true;
+};
+
+const closeEditModal = () => {
+  showEditModal.value = false;
+};
+
+const openDeleteModal = (factura) => {
+  selectedFactura.value = factura;
+  showDeleteModal.value = true;
+};
+
+const closeDeleteModal = () => {
+  showDeleteModal.value = false;
+};
+
+const openListaProductosModal = (factura) => {
+  selectedFactura.value = factura;
+  showlistaProductosModal.value = true;
+};
+
+const closeProductosModal = () => {
+  showlistaProductosModal.value = false;
+};
+
+const openAgregarProductosModal = (factura) => {
+  selectedFactura.value = factura;
+  agregarProductosModal.value = true;
+};
+
+const closeAgregarProductosModal = () => {
+  agregarProductosModal.value = false;
+};
+
+const handleUpdate = (updatedFactura) => {
+  // Logic to update factura in the list
+};
+
+const handleDelete = (factura) => {
+  // Logic to delete factura from the list
+};
+</script>
 <style scoped>
 table {
   width: 100%;
   border-collapse: collapse;
+  background-color: #ffffff; /* Fondo blanco para toda la tabla */
+  color: #000000; /* Texto negro */
 }
 
 th, td {
   text-align: left;
-  white-space: nowrap; 
+  white-space: nowrap;
+  border: 1px solid #000000; /* Bordes negros */
 }
 
 th {
-  background-color: #f4f4f4;
+  background-color: #f0f0f0; /* Fondo gris claro para las cabeceras */
+}
+
+tbody tr:nth-child(even) {
+  background-color: #f9f9f9; /* Fondo gris claro para filas alternadas */
+}
+
+tbody tr:nth-child(odd) {
+  background-color: #ffffff; /* Fondo blanco para filas alternadas */
 }
 
 h1 {
   font-size: 1.5rem;
 }
 </style>
+
