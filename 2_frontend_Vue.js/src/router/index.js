@@ -1,4 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
+import { useAuthStore } from '@/stores' // Importa el store de autenticación
+
 // import Style from '@/views/StyleView.vue'
 import Home from '@/views/HomeView.vue'
 import Profile from '@/views/ProfileView.vue'
@@ -281,5 +283,19 @@ const router = createRouter({
     return savedPosition || { top: 0 }
   }
 })
+
+// Verifica la autenticación antes de cada navegación
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore(); // Obtiene la instancia del store de autenticación
+
+  // Si la ruta requiere autenticación y no hay token
+  if (to.meta.requiresAuth && !authStore.accessToken) {
+    next('/'); // Redirige al login
+  } else if (to.path === '/' && authStore.accessToken) {
+    next('/dashboard'); // Si está autenticado, redirige al dashboard
+  } else {
+    next(); // Si todo está bien, permite la navegación
+  }
+});
 
 export default router
