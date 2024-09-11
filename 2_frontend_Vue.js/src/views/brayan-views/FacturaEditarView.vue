@@ -1,7 +1,7 @@
 <template>
   <div class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
-    <div class="bg-white p-6 rounded-lg shadow-lg w-1/3">
-      <h2 class="text-xl font-bold mt-4 mb-1 ">Editar Factura</h2>
+    <div class="bg-blue-200 p-6 rounded-lg shadow-lg w-1/3">
+      <h2 class="text-xl font-bold text-gray-800 mt-4 mb-1">Editar Factura</h2>
       <form @submit.prevent="updateFactura">
         <div class="mb-4">
           <label class="block text-gray-700">Subtotal</label>
@@ -32,8 +32,12 @@
           <input v-model="factura.fecha_salida" type="date" class="w-full border border-gray-300 rounded px-3 py-2" />
         </div>
         <div class="flex justify-end">
-          <button type="button" @click="cancelEdit" class="bg-gray-500 text-white px-4 py-2 rounded mr-2">Cancelar</button>
-          <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Guardar</button>
+          <button type="button" @click="cancelEdit" class="bg-gray-500 text-white px-4 py-2 rounded mr-2 hover:bg-gray-600 transition">
+            Cancelar
+          </button>
+          <button type="submit" class="bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+            Guardar
+          </button>
         </div>
       </form>
     </div>
@@ -74,14 +78,13 @@ const cancelEdit = () => {
   background-color: rgba(0, 0, 0, 0.5);
 }
 
-input {
-  background-color: #ffffff; /* Fondo blanco para inputs */
-  color: #333333; /* Texto negro para inputs */
+input{
+  
+  color: #333333; /* Texto negro */
 }
 
-
-h2 {
-  background-color: #ffffff; /* Fondo blanco para inputs */
-  color: #333333; /* Texto negro para inputs */
+/* Fondo azul y estilo de los botones */
+button {
+  transition: background-color 0.3s;
 }
 </style>
