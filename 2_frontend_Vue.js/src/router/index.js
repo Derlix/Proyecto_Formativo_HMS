@@ -29,7 +29,8 @@ const routes = [
     },
     path: '/inicio-cajero',
     name: 'inicio_cajero',
-    component: InicioCajero
+    component: InicioCajero,
+    meta: { requiresAuth: true}
   },
   {
     meta: {
@@ -37,7 +38,8 @@ const routes = [
     },
     path: '/informe-pasajeros',
     name: 'informe_pasajeros',
-    component: InformePasajeros
+    component: InformePasajeros,
+    meta: { requiresAuth: true}
   },
   {
     meta: {
@@ -45,7 +47,8 @@ const routes = [
     },
     path: '/informacion-reserva',
     name: 'informacion_reserva',
-    component: InformacionReserva
+    component: InformacionReserva,
+    meta: { requiresAuth: true}
   },
   {
     meta: {
@@ -53,7 +56,8 @@ const routes = [
     },
     path: '/tarjeta-reserva',
     name: 'trajeta_reserva',
-    component: TarjetaReserva
+    component: TarjetaReserva,
+    meta: { requiresAuth: true}
   },
   {
     meta: {
@@ -61,7 +65,8 @@ const routes = [
     },
     path: '/transpaso-particulares',
     name: 'transpaso_particulares',
-    component: TranspasoParticulares
+    component: TranspasoParticulares,
+    meta: { requiresAuth: true}
   },
   {
     // No va haber index por el momento, iniciar desde Dashboard.
@@ -70,7 +75,7 @@ const routes = [
     },
     path: '/',
     name: 'iniciar sesión',
-    component: IniciarSesion
+    component: IniciarSesion,
   },
   {
     // No va haber index por el momento, iniciar desde Dashboard.
@@ -79,7 +84,7 @@ const routes = [
     },
     path: '/registrar',
     name: 'registrar',
-    component: Registrar
+    component: Registrar,
   },
   {
     // No va haber index por el momento, iniciar desde Dashboard.
@@ -88,7 +93,7 @@ const routes = [
     },
     path: '/recuperar',
     name: 'recuperar',
-    component: Recuperar
+    component: Recuperar,
   },
   {
     // No va haber index por el momento, iniciar desde Dashboard.
@@ -97,7 +102,8 @@ const routes = [
     },
     path: '/movimiento-pasajeros-correspondiente',
     name: 'movimiento pasajeros correspondiente',
-    component: MovimientoPasajeros
+    component: MovimientoPasajeros,
+    meta: { requiresAuth: true}
   },
   {
     // Document title tag
@@ -107,7 +113,8 @@ const routes = [
     },
     path: '/dashboard',
     name: 'dashboard',
-    component: Home
+    component: Home,
+    meta: { requiresAuth: true}
   },
   {
     // Document title tag
@@ -117,7 +124,8 @@ const routes = [
     },
     path: '/reservas',
     name: 'reservas',
-    component: Reservas
+    component: Reservas,
+    meta: { requiresAuth: true}
   },
   {
     // Document title tag
@@ -127,7 +135,8 @@ const routes = [
     },
     path: '/historial-reservas',
     name: 'historial de reservas',
-    component: HistorialReservas
+    component: HistorialReservas,
+    meta: { requiresAuth: true}
   },
   // {
   //   // Document title tag
@@ -147,7 +156,8 @@ const routes = [
     },
     path: '/comprobante-descuento',
     name: 'Comprobante de descuento',
-    component: ComprobanteDescuentos
+    component: ComprobanteDescuentos,
+    meta: { requiresAuth: true}
   },
   {
     // Document title tag
@@ -157,7 +167,8 @@ const routes = [
     },
     path: '/informe-ama-llaves',
     name: 'informe ama de llaves',
-    component: InformeAmaLlaves
+    component: InformeAmaLlaves,
+    meta: { requiresAuth: true}
   },
   {
     // Document title tag
@@ -167,7 +178,8 @@ const routes = [
     },
     path: '/gestor-hoteles',
     name: 'gestor de hoteles',
-    component: GestorHotel
+    component: GestorHotel,
+    meta: { requiresAuth: true}
   },
   {
     meta: {
@@ -175,7 +187,8 @@ const routes = [
     },
     path: '/profile',
     name: 'profile',
-    component: Profile
+    component: Profile,
+    meta: { requiresAuth: true}
   },
   {
     meta: {
@@ -183,7 +196,8 @@ const routes = [
     },
     path: '/checkOut',
     name: 'checkOut',
-    component: () => import('@/views/nico-views/CheckOut.vue')
+    component: () => import('@/views/nico-views/CheckOut.vue'),
+    meta: { requiresAuth: true}
   },
   {
     meta: {
@@ -191,7 +205,8 @@ const routes = [
     },
     path: '/productos',
     name: 'productos',
-    component: () => import('@/views/nico-views/ProductoVue.vue')
+    component: () => import('@/views/nico-views/ProductoVue.vue'),
+    meta: { requiresAuth: true}
   },
   {
     meta: {
@@ -199,12 +214,14 @@ const routes = [
     },
     path: '/hoteles',
     name: 'hoteles',
-    component: () => import('@/views/felipe-views/HotelVista.vue')
+    component: () => import('@/views/felipe-views/HotelVista.vue'),
+    meta: { requiresAuth: true}
   },
   {
     path: '/:pathMatch(.*)*',
     name: '404',
-    component: Error404
+    component: Error404,
+    meta: { requiresAuth: true}
   },
   {
     meta: {
@@ -212,7 +229,8 @@ const routes = [
     },
     path: '/facturas',
     name: 'facturas',
-    component: () => import('@/views/brayan-views/FacturasView.vue')
+    component: () => import('@/views/brayan-views/FacturasView.vue'),
+    meta: { requiresAuth: true}
   },
   {
     meta: {
@@ -220,60 +238,9 @@ const routes = [
     },
     path: '/trasunto-movimiento-huespedes',
     name: 'Trasunto',
-    component: () => import('@/views/nico-views/TrasuntoMovimiento.vue')
+    component: () => import('@/views/nico-views/TrasuntoMovimiento.vue'),
+    meta: { requiresAuth: true}
   }
-
-
-  // Rutas de la plantilla
-
-  // {
-  //   meta: {
-  //     title: 'Tables'
-  //   },
-  //   path: '/tables',
-  //   name: 'tables',
-  //   component: () => import('@/views/TablesView.vue')
-  // },
-  // {
-  //   meta: {
-  //     title: 'Forms'
-  //   },
-  //   path: '/forms',
-  //   name: 'forms',
-  //   component: () => import('@/views/FormsView.vue')
-  // },
-  // {
-  //   meta: {
-  //     title: 'Ui'
-  //   },
-  //   path: '/ui',
-  //   name: 'ui',
-  //   component: () => import('@/views/UiView.vue')
-  // },
-  // {
-  //   meta: {
-  //     title: 'Responsive layout'
-  //   },
-  //   path: '/responsive',
-  //   name: 'responsive',
-  //   component: () => import('@/views/ResponsiveView.vue')
-  // },
-  // {
-  //   meta: {
-  //     title: 'Login'
-  //   },
-  //   path: '/login',
-  //   name: 'login',
-  //   component: () => import('@/views/LoginView.vue')
-  // },
-  // {
-  //   meta: {
-  //     title: 'Error'
-  //   },
-  //   path: '/error',
-  //   name: 'error',
-  //   component: () => import('@/views/ErrorView.vue')
-  // }
 ]
 
 const router = createRouter({
