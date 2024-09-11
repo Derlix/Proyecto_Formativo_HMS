@@ -43,53 +43,53 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(body, index) in datos_quemados" :key="body.id_facturacion"
+            <tr v-for="(factura, index) in facturas" :key="factura.id_facturacion"
                 :class="{'bg-gray-100 dark:bg-gray-900': index % 2 === 0, 'bg-white dark:bg-gray-800': index % 2 !== 0}">
-              <td class="px-2 py-2 dark:text-white">{{ body.id_facturacion }}</td>
-              <td class="px-2 py-2 dark:text-white">{{ body.id_check_in }}</td>
-              <td class="px-4 py-2 dark:text-white">{{ body.subtotal }}</td>
-              <td class="px-4 py-2 dark:text-white">{{ body.impuestos }}</td>
-              <td class="px-4 py-2 dark:text-white">{{ body.total }}</td>
-              <td class="px-4 py-2 dark:text-white">{{ body.total_precio_productos }}</td>
-              <td class="px-4 py-2 dark:text-white">{{ body.metodo_pago }}</td>
-              <td class="px-4 py-2 dark:text-white">{{ body.estado }}</td>
-              <td class="px-4 py-2 dark:text-white">{{ body.fecha_salida }}</td>
-              <td class="px-2 py-2 dark:text-white">{{ body.id_reserva }}</td>
-              <td class="px-2 py-2 dark:text-white">{{ body.medio_llegada }}</td>
-              <td class="px-2 py-2 dark:text-white">{{ body.llegada_situacion }}</td>
-              <td class="px-2 py-2 dark:text-white">{{ body.equipaje }}</td>
-              <td class="px-2 py-2 dark:text-white">{{ body.fecha_reserva }}</td>
-              <td class="px-2 py-2 dark:text-white">{{ body.empresa }}</td>
-              <td class="px-2 py-2 dark:text-white">{{ body.valor_deposito }}</td>
-              <td class="px-2 py-2 dark:text-white">{{ body.forma_pago }}</td>
-              <td class="px-2 py-2 dark:text-white">{{ body.nombre_completo }}</td>
-              <td class="px-2 py-2 dark:text-white">{{ body.numero_documento }}</td>
+              <td class="px-2 py-2 dark:text-white">{{ factura.id_facturacion }}</td>
+              <td class="px-2 py-2 dark:text-white">{{ factura.check_in.id_check_in }}</td>
+              <td class="px-4 py-2 dark:text-white">{{ factura.subtotal }}</td>
+              <td class="px-4 py-2 dark:text-white">{{ factura.impuestos }}</td>
+              <td class="px-4 py-2 dark:text-white">{{ factura.total }}</td>
+              <td class="px-4 py-2 dark:text-white">{{ factura.total_precio_productos }}</td>
+              <td class="px-4 py-2 dark:text-white">{{ factura.metodo_pago }}</td>
+              <td class="px-4 py-2 dark:text-white">{{ factura.estado }}</td>
+              <td class="px-4 py-2 dark:text-white">{{ factura.fecha_salida }}</td>
+              <td class="px-2 py-2 dark:text-white">{{ factura.reserva.id_reserva }}</td>
+              <td class="px-2 py-2 dark:text-white">{{ factura.check_in.medio_llegada }}</td>
+              <td class="px-2 py-2 dark:text-white">{{ factura.check_in.llegada_situacion }}</td>
+              <td class="px-2 py-2 dark:text-white">{{ factura.check_in.equipaje }}</td>
+              <td class="px-2 py-2 dark:text-white">{{ factura.reserva.fecha_reserva }}</td>
+              <td class="px-2 py-2 dark:text-white">{{ factura.reserva.empresa }}</td>
+              <td class="px-2 py-2 dark:text-white">{{ factura.reserva.valor_deposito }}</td>
+              <td class="px-2 py-2 dark:text-white">{{ factura.reserva.forma_pago }}</td>
+              <td class="px-2 py-2 dark:text-white">{{ factura.huesped.nombre_completo }}</td>
+              <td class="px-2 py-2 dark:text-white">{{ factura.huesped.numero_documento }}</td>
               <td class="px-2 py-2 w-64">
                 <div class="flex justify-center space-x-2">
                   <a
                     href="#"
-                    @click.prevent="openAgregarProductosModal(body)"
-                    class="text-violet-600 hover:underline dark:text-violet-400"
+                    @click.prevent="openAgregarProductosModal(factura)"
+                    class="text-violet-600 hover:underline dark:text-violet-400 btn btn-primary"
                   >
                     Agregar Productos
                   </a>
                   <a
                     href="#"
-                    @click.prevent="openListaProductosModal(body)"
+                    @click.prevent="openListaProductosModal(factura)"
                     class="text-cyan-600 hover:underline dark:text-cyan-400"
                   >
                     Ver Productos
                   </a>
                   <a
                     href="#"
-                    @click.prevent="openEditModal(body)"
+                    @click.prevent="openEditModal(factura)"
                     class="text-blue-600 hover:underline dark:text-blue-400"
                   >
                     Editar
                   </a>
                   <a
                     href="#"
-                    @click.prevent="openDeleteModal(body)"
+                    @click.prevent="openDeleteModal(factura)"
                     class="text-red-600 hover:underline dark:text-red-400"
                   >
                     Eliminar
@@ -136,104 +136,45 @@
 
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import SectionMain from '@/components/SectionMain.vue';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import FacturaEditarView from './FacturaEditarView.vue';
 import FacturaEliminarView from './FacturaEliminarView.vue';
 import FacturaProductoLista from './FacturaProductoLista.vue';
 import FacturaProductoAgregar from './FacturaProductoAgregar.vue';
+import axios from 'axios';
 
 
 // import { getFacturasByPage } from "@/services_brayan/FacturaService";
 
-// Datos simulados
-const datos_quemados = ref([
-  {
-    id_facturacion: 1,
-    id_check_in: 'CI001',
-    subtotal: 100.0,
-    impuestos: 20.0,
-    total: 120.0,
-    total_precio_productos: 90.0,
-    metodo_pago: 'Tarjeta de Crédito',
-    estado: 'Pagado',
-    fecha_salida: '2024-09-01',
-    id_reserva: 'R001',
-    medio_llegada: 'Avión',
-    llegada_situacion: 'A tiempo',
-    equipaje: '1 maleta',
-    fecha_reserva: '2024-08-01',
-    empresa: 'Hotel XYZ',
-    valor_deposito: 50.0,
-    forma_pago: 'Transferencia',
-    nombre_completo: 'Juan Pérez',
-    numero_documento: '12345678'
-  },
-  {
-    id_facturacion: 2,
-    id_check_in: 'CI002',
-    subtotal: 150.0,
-    impuestos: 30.0,
-    total: 180.0,
-    total_precio_productos: 140.0,
-    metodo_pago: 'Efectivo',
-    estado: 'Pendiente',
-    fecha_salida: '2024-09-05',
-    id_reserva: 'R002',
-    medio_llegada: 'Bus',
-    llegada_situacion: 'Retrasado',
-    equipaje: '2 maletas',
-    fecha_reserva: '2024-08-15',
-    empresa: 'Hotel ABC',
-    valor_deposito: 70.0,
-    forma_pago: 'Efectivo',
-    nombre_completo: 'Ana Gómez',
-    numero_documento: '87654321'
-  },
-  {
-    id_facturacion: 3,
-    id_check_in: 'CI003',
-    subtotal: 200.0,
-    impuestos: 40.0,
-    total: 240.0,
-    total_precio_productos: 190.0,
-    metodo_pago: 'Tarjeta de Débito',
-    estado: 'Pagado',
-    fecha_salida: '2024-09-10',
-    id_reserva: 'R003',
-    medio_llegada: 'Automóvil',
-    llegada_situacion: 'A tiempo',
-    equipaje: '3 maletas',
-    fecha_reserva: '2024-08-20',
-    empresa: 'Hotel DEF',
-    valor_deposito: 80.0,
-    forma_pago: 'Tarjeta de Débito',
-    nombre_completo: 'Carlos Fernández',
-    numero_documento: '11223344'
-  },
-  {
-    id_facturacion: 4,
-    id_check_in: 'CI004',
-    subtotal: 80.0,
-    impuestos: 16.0,
-    total: 96.0,
-    total_precio_productos: 70.0,
-    metodo_pago: 'Tarjeta de Crédito',
-    estado: 'Pagado',
-    fecha_salida: '2024-09-15',
-    id_reserva: 'R004',
-    medio_llegada: 'Tren',
-    llegada_situacion: 'A tiempo',
-    equipaje: '1 maleta',
-    fecha_reserva: '2024-08-25',
-    empresa: 'Hotel GHI',
-    valor_deposito: 40.0,
-    forma_pago: 'Tarjeta de Crédito',
-    nombre_completo: 'Laura Martínez',
-    numero_documento: '55667788'
+const facturas = ref([]);
+
+const url = 'https://api-hotel-suqt.onrender.com/facturacion/get_all_facturas';
+// Función para obtener las facturas desde la API
+const fetchFacturas = async () => {
+  try {
+    const response = await axios.get(url);
+    console.log(response.data); // Verifica la estructura de datos aquí
+    facturas.value = response.data; // Ajusta según la estructura de respuesta de la API
+  } catch (error) {
+    console.error('Error al obtener facturas:', error.message);
+    if (error.response) {
+      console.error('Error en la respuesta:', error.response);
+    }
   }
-]);
+};
+
+// Llamar a la función fetchFacturas cuando el componente se monte
+//end 
+onMounted(() => {
+  fetchFacturas();
+});
+
+
+
+
+
 
 const showEditModal = ref(false);
 const showDeleteModal = ref(false);
@@ -296,4 +237,5 @@ function handleDelete() {
   th, td {
     white-space: nowrap; /* Evita que el contenido se rompa en múltiples líneas */
   }
+  
 </style>
