@@ -150,13 +150,13 @@ import axios from 'axios';
 
 const facturas = ref([]);
 
-const url = 'https://api-hotel-suqt.onrender.com/facturacion/get_all_facturas';
-// Función para obtener las facturas desde la API
+// Importar el servicio para obtener  facturas
+import { getAllFacturas } from "@/services/brayan_service/FacturacionService";
+
 const fetchFacturas = async () => {
   try {
-    const response = await axios.get(url);
-    console.log(response.data); // Verifica la estructura de datos aquí
-    facturas.value = response.data; // Ajusta según la estructura de respuesta de la API
+    const response = await getAllFacturas(); 
+    facturas.value = response; 
   } catch (error) {
     console.error('Error al obtener facturas:', error.message);
     if (error.response) {
@@ -165,15 +165,9 @@ const fetchFacturas = async () => {
   }
 };
 
-// Llamar a la función fetchFacturas cuando el componente se monte
-//end 
 onMounted(() => {
   fetchFacturas();
 });
-
-
-
-
 
 
 const showEditModal = ref(false);
