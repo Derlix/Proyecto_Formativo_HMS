@@ -3,7 +3,6 @@ import { ref, computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import { mdiMinus, mdiPlus } from '@mdi/js'
 import { getButtonColor } from '@/colors.js'
-import {useAuthStore} from '@/store/useAuthStore'
 import BaseIcon from '@/components/BaseIcon.vue'
 import AsideMenuList from '@/components/AsideMenuList.vue'
 
@@ -24,16 +23,7 @@ const asideMenuItemActiveStyle = computed(() =>
 )
 
 const isDropdownActive = ref(false)
-// Accede al store de autenticación
-const authStore = useAuthStore();
-const permissions = authStore.permissions; // Accede a los permisos
 
-// Verifica si el usuario tiene permisos para el módulo actual
-const hasPermission = computed(() => {
-  return permissions.some(permission => 
-    permission.module_name === props.item.label && permission.p_select
-  );
-});
 
 const componentClass = computed(() => [
   props.isDropdownList ? 'py-3 px-6 text-sm' : 'py-3',
@@ -54,7 +44,7 @@ const menuClick = (event) => {
 </script>
 
 <template>
-  <li v-if="hasPermission">
+  <li >
     <component
       :is="item.to ? RouterLink : 'a'"
       v-slot="vSlot"
