@@ -9,8 +9,8 @@ export const createHuesped = async (nombre_completo, tipo_documento, numero_docu
       numero_documento: numero_documento,
       fecha_expedicion: fecha_expedicion,
       mail: email,
-      telefono: telefono, 
-      ocupacion: ocupacion, 
+      telefono: telefono,
+      ocupacion: ocupacion,
       direccion: direccion,
     });
     return response;
@@ -90,8 +90,8 @@ export const updateHuesped = async (HuespedId, nombre_completo, tipo_documento, 
         numero_documento: numero_documento,
         fecha_expedicion: fecha_expedicion,
         mail: email,
-        telefono: telefono, 
-        ocupacion: ocupacion, 
+        telefono: telefono,
+        ocupacion: ocupacion,
         direccion: direccion,
     });
     return response;
@@ -104,16 +104,20 @@ export const updateHuesped = async (HuespedId, nombre_completo, tipo_documento, 
   }
 };
 
-// Función para eliminar un usuario
-export const deleteUser = async (HuespedId) => {
+
+export const deleteHuesped = async (HuespedId) => {
   try {
-    const response = await api.delete(`/huespedes/delete-huesped/${HuespedId}`);
-    return response;
+      const response = await api.delete(`/huespedes/delete-huesped/${HuespedId}`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}` // Incluye el token de autenticación
+          }
+      });
+      return response;
   } catch (error) {
-    if (error.response) {
-      throw error.response; // Devuelve el error original de la API
-    } else {
-      throw new Error('Error de red o de servidor'); // Manejar errores de red
-    }
+      if (error.response) {
+          throw error; // Lanza el error para que lo maneje el store
+      } else {
+          throw new Error('Error de red o de servidor'); // Manejar errores de red
+      }
   }
-};
+}
