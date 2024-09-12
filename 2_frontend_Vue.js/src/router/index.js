@@ -7,7 +7,7 @@ import Profile from '@/views/ProfileView.vue'
 import Reservas from '@/views/busta-views/Reservas.vue'
 import HistorialReservas from '@/views/busta-views/HistorialReservas.vue'
 import InformeAmaLlaves from '@/views/busta-views/InformeAmaLlaves.vue'
-// import ListaPasajeros from '@/views/busta-views/ListaPasajeros.vue'
+import ListaPasajeros from '@/views/busta-views/ListaPasajeros.vue'
 import ComprobanteDescuentos from '@/views/busta-views/ComprobanteDescuentos.vue'
 import GestorHotel from '@/views/busta-views/GestorHotel.vue'
 import Error404 from '@/views/camilo-views/404.vue'
@@ -240,7 +240,18 @@ const routes = [
     name: 'Trasunto',
     component: () => import('@/views/nico-views/TrasuntoMovimiento.vue'),
     meta: { requiresAuth: true}
+  },
+  {
+    meta: {
+      title: 'Lista Pasajeros'
+    },
+    path: '/lista-pasajeros',
+    name: 'lista pasajeros',
+    component: ListaPasajeros,
+    meta: { requiresAuth: true}
   }
+
+  
 ]
 
 const router = createRouter({

@@ -97,6 +97,11 @@ export default [
     to: '/facturas',
     label: 'Facturas',
     icon: mdiReproduction
+  },
+  {
+    to: '/lista-pasajeros',
+    label: 'Lista pasajeros',
+    icon: mdiReproduction
   }
   
 
