@@ -86,7 +86,13 @@ export default [
     to: '/productos',
     label: 'Productos',
     icon: mdiReproduction
+  },
+  {
+    to: '/hoteles',
+    label: 'Hoteles',
+    icon: mdiMonitor,
   }
+
 
   
 
