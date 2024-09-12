@@ -92,8 +92,12 @@ export default [
     label: 'Hoteles',
     icon: mdiMonitor,
   }
-
-
+  ,
+  {
+    to: '/facturas',
+    label: 'Facturas',
+    icon: mdiReproduction
+  }
   
 
   // {
