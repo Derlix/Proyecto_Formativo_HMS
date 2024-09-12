@@ -35,6 +35,6 @@ export default {
 
 /* Imagen del spinner */
 .spinner-image {
-  @apply w-[150] h-[150px]; /* Tamaño personalizado de la imagen */
+  @apply w-[100] h-[80px]; /* Tamaño personalizado de la imagen */
 }
 </style>
