@@ -5,7 +5,7 @@ import router from '@/router'; // Importa el router de Vue
 
 // Crear una instancia de Axios
 const api = axios.create({
-  baseURL: 'https://api-hotel-suqt.onrender.com', // Usar la URL de la API desde el archivo .env
+  baseURL: import.meta.env.VITE_API_URL, // Usar la URL de la API desde el archivo .env
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
