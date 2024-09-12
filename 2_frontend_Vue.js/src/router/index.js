@@ -190,6 +190,16 @@ const routes = [
     component: Profile,
     meta: { requiresAuth: true}
   },
+
+  {
+    meta: {
+      title: 'Huespedes'
+    },
+    path: '/huespedes',
+    name: 'huespedes',
+    component: () => import('@/views/alejo-views/HuespedesVue.vue'),
+    meta: { requiresAuth: true}
+  },
   {
     meta: {
       title: 'checkOut'
