@@ -1,157 +1,160 @@
-<script setup>
-import { ref, reactive, computed } from 'vue'
-import { useRouter } from 'vue-router'
-import { mdiPlus, mdiPencil, mdiDelete } from '@mdi/js'
-import SectionFullScreen from '@/components/SectionFullScreen.vue'
-import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
-import CardBox from '@/components/CardBox.vue'
-import FormField from '@/components/FormField.vue'
-import FormControl from '@/components/FormControl.vue'
-import BaseButton from '@/components/BaseButton.vue'
-import BaseButtons from '@/components/BaseButtons.vue'
-import LayoutGuest from '@/layouts/LayoutGuest.vue'
-import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue'
-import * as chartConfig from '@/components/Charts/chart.config.js'
-import SectionMain from '@/components/SectionMain.vue'
-import ModalForm from '@/components/ModalFormHotel.vue' // Importar el nuevo componente
-
-
-// Data reactiva para el formulario de hotel
-const hotelForm = reactive({
-  id: null,
-  name: '',
-  location: '',
-  address: '',
-  phone: '',
-})
-
-// Lista de hoteles (en una aplicación real, esto debería venir de una API)
-const hotels = ref([
-  { id: 1, name: 'Hotel Paradise', location: 'Miami', address: 'cll 12 avn 45', phone: '52143235' },
-  { id: 2, name: 'Mountain Retreat', location: 'Denver', address: 'Main St 123', phone: '12345678' },
-  { id: 3, name: 'City Lights', location: 'New York', address: '5th Avenue', phone: '87654321' },
-])
-
-// Estado de visibilidad del modal y edición
-const showModal = ref(false)
-const isEditing = ref(false)
-
-// Router para la navegación
-const router = useRouter()
-
-// Función para mostrar el modal de creación de un nuevo hotel
-const createHotel = () => {
-  hotelForm.id = null
-  hotelForm.name = ''
-  hotelForm.location = ''
-  hotelForm.address = ''
-  hotelForm.phone = ''
-  showModal.value = true
-  isEditing.value = false
-}
-
-// Función para editar un hotel existente
-const editHotel = (hotel) => {
-  hotelForm.id = hotel.id
-  hotelForm.name = hotel.name
-  hotelForm.location = hotel.location
-  hotelForm.address = hotel.address
-  hotelForm.phone = hotel.phone
-  showModal.value = true
-  isEditing.value = true
-}
-
-// Función para eliminar un hotel
-const deleteHotel = (hotelId) => {
-  hotels.value = hotels.value.filter(hotel => hotel.id !== hotelId)
-}
-
-// Función para guardar (crear o editar) un hotel
-const saveHotel = () => {
-  if (isEditing.value) {
-    // Actualizar hotel existente
-    const index = hotels.value.findIndex(hotel => hotel.id === hotelForm.id)
-    if (index !== -1) {
-      hotels.value[index] = { ...hotelForm }
-    }
-  } else {
-    // Crear nuevo hotel
-    hotels.value.push({ ...hotelForm, id: hotels.value.length + 1 })
-  }
-  showModal.value = false
-}
-
-// Computed para deshabilitar el botón de guardar si los campos están vacíos
-const isSaveDisabled = computed(() => {
-  return !hotelForm.name || !hotelForm.location || !hotelForm.address || !hotelForm.phone
-})
-
-
-
-
-</script>
-
 <template>
- <LayoutAuthenticated>
-      <sectionMain>
-      <SectionTitleLineWithButton :icon="mdiChartTimelineVariant" title="Administracion De Hoteles"></SectionTitleLineWithButton>
-    </sectionMain>
+  <LayoutAuthenticated>
+    <SectionMain>
+      <SectionTitleLineWithButton  title="Administración De Hoteles" />
+    </SectionMain>
 
-    <sectionMain>
-      <BaseButton @click="createHotel" color="info" label="Agregar Hotel" :icon="mdiPlus" class="mb-4" />
+    <SectionMain>
+      <!-- Botón para agregar hotel -->
+      <BaseButton @click="openCreateModal" color="info" label="Agregar Hotel" class="mb-4" />
+
+      <!-- Tabla de hoteles -->
       <div class="w-full overflow-auto mb-4">
-          <table class="table-auto w-full">
-            <thead>
-              <tr>
-                <th class="px-4 py-2 text-left">Nombre</th>
-                <th class="px-4 py-2 text-left">Ubicación</th>
-                <th class="px-4 py-2 text-left">Dirección</th>
-                <th class="px-4 py-2 text-left">Teléfono</th>
-                <th class="px-4 py-2 text-left">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="hotel in hotels" :key="hotel.id">
-                <td class="border px-4 py-2">{{ hotel.name }}</td>
-                <td class="border px-4 py-2">{{ hotel.location }}</td>
-                <td class="border px-4 py-2">{{ hotel.address }}</td>
-                <td class="border px-4 py-2">{{ hotel.phone }}</td>
-                <td class="border px-4 py-2">
-                  <BaseButton @click="editHotel(hotel)" color="warning" outline label="Editar" :icon="mdiPencil" class="g-4" />
-                  <BaseButton @click="deleteHotel(hotel.id)" color="danger" outline label="Eliminar" :icon="mdiDelete" class="g-4" />
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-    </sectionMain>
-  <!-- Modal para creación/modificación de hotel -->
-  <ModalForm :isVisible="showModal" :title="isEditing ? 'Editar Hotel' : 'Agregar Hotel'" @close="showModal = false">
-          <form @submit.prevent="saveHotel">
-            <FormField label="Nombre del Hotel" help="Ingrese el nombre del hotel">
-              <FormControl v-model="hotelForm.name" name="name" />
-            </FormField>
+        <table class="table-auto w-full">
+          <thead>
+            <tr>
+              <th class="px-4 py-2 text-left">Nombre</th>
+              <th class="px-4 py-2 text-left">Ubicación</th>
+              <th class="px-4 py-2 text-left">Dirección</th>
+              <th class="px-4 py-2 text-left">Teléfono</th>
+              <th class="px-4 py-2 text-left">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="hotel in hoteles" :key="hotel.id_hotel">
+              <td class="border px-4 py-2">{{ hotel.nombre }}</td>
+              <td class="border px-4 py-2">{{ hotel.ubicacion }}</td>
+              <td class="border px-4 py-2">{{ hotel.direccion }}</td>
+              <td class="border px-4 py-2">{{ hotel.telefono }}</td>
+              <td class="border px-4 py-2">
+                <BaseButton @click="openEditModal(hotel)" color="warning" outline label="Editar"  class="g-4" />
+                <BaseButton @click="deleteHotel(hotel)" color="danger" outline label="Eliminar"  class="g-4" />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-            <FormField label="Ubicación" help="Ingrese la ubicación del hotel">
-              <FormControl v-model="hotelForm.location" name="location" />
-            </FormField>
+      <!-- Modal para crear/editar hotel -->
+      <ModalForm :isVisible="showModal" :title="isEditing ? 'Editar Hotel' : 'Agregar Hotel'" @close="closeModal">
+        <form @submit.prevent="saveHotel">
+          <FormField label="Nombre del Hotel" help="Ingrese el nombre del hotel">
+            <FormControl v-model="hotelForm.nombre" name="nombre" />
+          </FormField>
 
-            <FormField label="Dirección" help="Ingrese la dirección del hotel">
-              <FormControl v-model="hotelForm.address" name="address" />
-            </FormField>
+          <FormField label="Ubicación" help="Ingrese la ubicación del hotel">
+            <FormControl v-model="hotelForm.ubicacion" name="ubicacion" />
+          </FormField>
 
-            <FormField label="Teléfono" help="Ingrese el teléfono del hotel">
-              <FormControl v-model="hotelForm.phone" name="phone" type="text" />
-            </FormField>
+          <FormField label="Dirección" help="Ingrese la dirección del hotel">
+            <FormControl v-model="hotelForm.direccion" name="direccion" />
+          </FormField>
 
-            <BaseButtons>
-              <BaseButton :disabled="isSaveDisabled" type="submit" color="info" label="Guardar" />
-              <BaseButton @click="showModal = false" color="secondary" label="Cancelar" />
-            </BaseButtons>
-          </form>
-        </ModalForm>
- </LayoutAuthenticated>
+          <FormField label="Teléfono" help="Ingrese el teléfono del hotel">
+            <FormControl v-model="hotelForm.telefono" name="telefono" type="text" />
+          </FormField>
+
+          <BaseButtons>
+            <BaseButton :disabled="isSaveDisabled" type="submit" color="info" label="Guardar" />
+            <BaseButton @click="closeModal" color="secondary" label="Cancelar" />
+          </BaseButtons>
+        </form>
+      </ModalForm>
+    </SectionMain>
+  </LayoutAuthenticated>
 </template>
+
+<script>
+import { mdiPlus, mdiPencil, mdiDelete } from '@mdi/js';
+import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
+import FormField from '@/components/FormField.vue';
+import FormControl from '@/components/FormControl.vue';
+import BaseButton from '@/components/BaseButton.vue';
+import BaseButtons from '@/components/BaseButtons.vue';
+import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
+import ModalForm from '@/components/ModalFormHotel.vue';
+import SectionMain from '@/components/SectionMain.vue';
+
+import { createHotel, getHotels, updateHotel, deleteHotel } from '@/services/hotelService';
+
+export default {
+  components: {
+    LayoutAuthenticated,
+    FormField,
+    FormControl,
+    BaseButton,
+    BaseButtons,
+    SectionTitleLineWithButton,
+    ModalForm,
+    SectionMain,
+  },
+  data() {
+    return {
+      hoteles: [],  // Lista de hoteles
+      hotelForm: {
+        nombre: '',
+        ubicacion: '',
+        direccion: '',
+        telefono: '',
+      },
+      showModal: false,  // Control de visibilidad del modal
+      isEditing: false,  // Indica si estamos en modo edición o creación
+      currentHotelId: null, // ID del hotel que se está editando
+    };
+  },
+  created() {
+    this.fetchHotels(); // Cargar hoteles al montar el componente
+  },
+  methods: {
+    async fetchHotels() {
+      try {
+        const response = await getHotels();
+        this.hoteles = response.data;  // Asigna la respuesta a la lista de hoteles
+      } catch (error) {
+        console.error('Error al obtener los hoteles:', error);
+      }
+    },
+    openCreateModal() {
+      this.isEditing = false;
+      this.hotelForm = { nombre: '', ubicacion: '', direccion: '', telefono: '' };
+      this.showModal = true;
+    },
+    openEditModal(hotel) {
+      this.isEditing = true;
+      this.currentHotelId = hotel.id_hotel; // Guarda el ID del hotel que se va a editar
+      this.hotelForm = { ...hotel }; // Rellena el formulario con los datos del hotel
+      this.showModal = true;
+    },
+    closeModal() {
+      this.showModal = false;
+    },
+    async saveHotel() {
+      try {
+        if (this.isEditing) {
+          // Actualizar hotel
+          await updateHotel(this.currentHotelId, this.hotelForm.nombre, this.hotelForm.ubicacion, this.hotelForm.direccion, this.hotelForm.telefono);
+        } else {
+          // Crear nuevo hotel
+          await createHotel(this.hotelForm.nombre, this.hotelForm.ubicacion, this.hotelForm.direccion, this.hotelForm.telefono);
+        }
+        this.fetchHotels(); // Actualiza la lista de hoteles
+        this.closeModal();  // Cierra el modal
+      } catch (error) {
+        console.error('Error al guardar el hotel:', error.response ? error.response.data : error);
+      }
+    },
+    async deleteHotel(hotel) {
+      try {
+        await deleteHotel(hotel.id_hotel); // Llama a la función de servicio para eliminar el hotel
+        this.fetchHotels(); // Actualiza la lista de hoteles
+        this.closeModal();
+      } catch (error) {
+        console.error('Error al eliminar el hotel:', error);
+      }
+    },
+  },
+};
+</script>
 
 <style scoped>
 .table-auto {
@@ -159,7 +162,8 @@ const isSaveDisabled = computed(() => {
   width: 100%;
 }
 
-th, td {
+th,
+td {
   border: 1px solid #ddd;
   padding: 8px;
   text-align: left;
@@ -167,25 +171,5 @@ th, td {
 
 th {
   background-color: #f4f4f4;
-}
-
-.text-center {
-  text-align: center;
-}
-
-.w-full {
-  width: 100%;
-}
-
-.h-full {
-  height: 100%;
-}
-
-.p-8 {
-  padding: 2rem;
-}
-
-.overflow-auto {
-  overflow: auto;
 }
 </style>

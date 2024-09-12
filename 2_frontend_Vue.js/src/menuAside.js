@@ -86,11 +86,21 @@ export default [
     to: '/productos',
     label: 'Productos',
     icon: mdiReproduction
+  },
+  {
+    to: '/hoteles',
+    label: 'Hoteles',
+    icon: mdiMonitor,
   }
   ,
   {
     to: '/facturas',
     label: 'Facturas',
+    icon: mdiReproduction
+  },
+  {
+    to: '/lista-pasajeros',
+    label: 'Lista pasajeros',
     icon: mdiReproduction
   }
   
