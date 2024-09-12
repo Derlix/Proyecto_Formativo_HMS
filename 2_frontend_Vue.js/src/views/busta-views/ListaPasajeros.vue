@@ -44,7 +44,7 @@ const transactionBarItems = computed(() => mainStore.history)
 <template>
   <LayoutAuthenticated>
     <sectionMain>
-        <SectionTitleLineWithButton :icon="mdiChartTimelineVariant" title="Informe de pasajeros"></SectionTitleLineWithButton>
+        <SectionTitleLineWithButton :icon="mdiChartTimelineVariant" title="Lista de pasajeros"></SectionTitleLineWithButton>
     </sectionMain>
   </LayoutAuthenticated>
 </template>
