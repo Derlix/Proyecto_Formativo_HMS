@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import CardBox from '@/components/CardBox.vue'
 import ModalRegistrarEntrada from '@/components/ModalRegistrarEntrada.vue'
@@ -13,9 +13,30 @@ import {
   mdiMinusCircle,
   mdiTools,
 } from '@mdi/js'
+import { obtenerTodasHabitaciones } from '@/services/habitacionService'
 
 const showModal = ref(false)
 const showModalSalidas = ref(false)
+const totalHabitaciones = ref(0)
+const habitacionesActivas = ref(0)
+const habitacionesMantenimiento = ref(0)
+const habitacionesOcupadas = ref(0)
+
+const fetchHabitaciones = async () => {
+  try {
+    const habitaciones = await obtenerTodasHabitaciones()
+    totalHabitaciones.value = habitaciones.length
+    habitacionesActivas.value = habitaciones.filter(h => h.estado === 'ACTIVO').length
+    habitacionesMantenimiento.value = habitaciones.filter(h => h.estado === 'MANTENIMIENTO').length
+    habitacionesOcupadas.value = habitaciones.filter(h => h.estado === 'INACTIVO').length
+  } catch (error) {
+    console.error('Error al obtener habitaciones:', error)
+  }
+}
+
+onMounted(() => {
+  fetchHabitaciones()
+})
 </script>
 
 
@@ -27,35 +48,35 @@ const showModalSalidas = ref(false)
 
         <div class="grid grid-cols-1 gap-12 lg:grid-cols-3 mb-6 mt-4">
           <CardBoxWidget
-            :number="50"
+            :number="totalHabitaciones"
             label="Habitaciones totales"
             :icon="mdiBed"
             :cardColor="'bg-blue-950'"
             :color="'text-white'"
           />
           <CardBoxWidget
-            :number="24"
+            :number="habitacionesActivas"
             label="Habitaciones disponibles"
             :icon="mdiCheckCircleOutline"
             :cardColor="'bg-green-400'"
             :color="'text-white'"
           />
           <CardBoxWidget
-            :number="8"
+            :number="habitacionesMantenimiento"
             label="Habitaciones en limpieza"
             :icon="mdiSprayBottle"
             :cardColor="'bg-blue-600'"
             :color="'text-white'"
           />
           <CardBoxWidget
-            :number="7"
+            :number="habitacionesOcupadas"
             label="Habitaciones ocupadas"
             :icon="mdiMinusCircle"
             :cardColor="'bg-red-700'"
             :color="'text-white'"
           />
           <CardBoxWidget
-            :number="2"
+            :number="habitacionesOcupadas"
             label="Habitaciones en operación"
             :icon="mdiTools"
             :cardColor="'bg-orange-600'"
