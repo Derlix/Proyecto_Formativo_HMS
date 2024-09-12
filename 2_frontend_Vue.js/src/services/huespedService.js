@@ -107,7 +107,7 @@ export const updateHuesped = async (HuespedId, nombre_completo, tipo_documento, 
 
 export const deleteHuesped = async (HuespedId) => {
   try {
-      const response = await api.delete(`/huespedes/delete-huesped/${HuespedId}`, {
+      const response = await api.put(`/huespedes/delete-huesped/${HuespedId}`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('access_token')}` // Incluye el token de autenticación
           }

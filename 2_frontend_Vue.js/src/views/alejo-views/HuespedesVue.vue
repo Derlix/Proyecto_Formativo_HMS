@@ -20,11 +20,14 @@ const buscarHuesped = ref('');
 // const imageFile = ref('');
 // const imagePreview = ref('');
 
-// Obtiene los huéspedes de la página actual
 const fetchHuespedes = async () => {
   try {
     const response = await getHuespedByPage(currentPage.value);
-    huespedes.value = response.data.huespedes;
+
+    const activos = response.data.huespedes.filter(huesped => huesped.huesped_estado === true);
+
+    huespedes.value = activos;
+
     totalPages.value = response.data.total_pages;
   } catch (error) {
     alert(error.response?.data?.detail || 'Error al obtener los huéspedes');
@@ -90,7 +93,7 @@ const deleteHuespedMethod = async (id_huesped) => {
 
 // Abre el modal para editar un huésped
 const openEditModal = (action, huesped = {}) => {
-  
+
   isEditMode.value = true;
   if (action === 'update') {
     isEditMode.value = true;
@@ -107,7 +110,7 @@ const openEditModal = (action, huesped = {}) => {
   }
   visible.value = true;
 
-  
+
   // Es posible que necesites ajustar cómo mostrar el modal si usas una biblioteca específica
 };
 
@@ -165,7 +168,7 @@ onMounted(() => {
           </button>
         </div>
       </div>
-     
+
       <div>
         <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-6">
           <table class="w-full text-sm text-center rtl:text-right text-black font-medium dark:text-gray-100">
@@ -184,7 +187,7 @@ onMounted(() => {
               </tr>
             </thead>
             <tbody>
-              <tr v-for="huesped in huespedes" :key="huesped.id_huespede">
+              <tr v-for="huesped in huespedes" :key="huesped.id_huesped">
                 <td>{{ huesped.nombre_completo }}</td>
                 <td>{{ huesped.tipo_documento }}</td>
                 <td>{{ huesped.numero_documento }}</td>
@@ -202,7 +205,7 @@ onMounted(() => {
                     <i class="mdi mdi-square-edit-outline text-2xl"></i>
                   </button>
                   <button
-                    @click="deleteHuespedMethod(huesped.id_huespede)"
+                    @click="deleteHuespedMethod(huesped.id_huesped)"
                     class="text-red-500 rounded-md hover:text-black focus:outline-none"
                   >
                     <i class="mdi mdi-trash-can text-2xl"></i>
@@ -213,7 +216,7 @@ onMounted(() => {
           </table>
         </div>
       </div>
-      
+
 
       <!-- Controles de paginación -->
       <div class="pagination-controls">
@@ -233,7 +236,7 @@ onMounted(() => {
         </button>
       </div>
 
-    
+
       <!-- Modal para editar usuario -->
       <div
         v-if="visible"
@@ -241,7 +244,7 @@ onMounted(() => {
         tabindex="-1"
         aria-labelledby="userModalLabel"
         class="fixed inset-0 z-50 bg-gray-900 bg-opacity-50 flex items-center justify-center"
-      
+
       >
         <div class="flex items-center justify-center min-h-screen p-4">
           <div class="bg-white rounded-lg shadow-lg w-full max-w-4xl">
@@ -358,7 +361,7 @@ onMounted(() => {
                     />
                   </div>
                 </div>
-            
+
                 <!-- Botón de enviar (guardar cambios) -->
                 <div class="mt-4">
                   <button
@@ -370,7 +373,7 @@ onMounted(() => {
                 </div>
               </form>
             </div>
-            
+
           </div>
         </div>
       </div>
@@ -378,13 +381,13 @@ onMounted(() => {
       <!-- <ModalHuesped
         descripcion="Editar Huesped"
         textBoton="Editar Huesped"
-        :visible="editarHuesped" 
+        :visible="editarHuesped"
         @close="editarHuesped = false" />
 
         <ModalHuesped
         descripcion="Eliminar Huesped"
         textBoton="Eliminar Huesped"
-        :visible="eliminarHuesped" 
+        :visible="eliminarHuesped"
         @close="eliminarHuesped = false" /> -->
     </SectionMain>
   </LayoutAuthenticated>
