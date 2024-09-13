@@ -15,18 +15,18 @@
           Buscar
         </button>
       </div>
-      <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-6 max-w-8xl mx-auto ">
-        <table class="min-w-full text-sm text-left divide-y divide-gray-200 dark:divide-gray-600" style="table-layout: auto;">
 
-          <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 ">
+      <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-6 max-w-8xl mx-auto">
+        <table class="min-w-full text-sm text-left divide-y divide-gray-200 dark:divide-gray-600" style="table-layout: auto;">
+          <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
-              <th class=" px-2 py-3 w-28">ID Facturación</th>
-              <th class="  px-2 py-7 w-28">ID Check-in</th>
+              <th class="px-2 py-3 w-28">ID Facturación</th>
+              <th class="px-2 py-7 w-28">ID Check-in</th>
               <th class="px-4 py-3 w-28">Subtotal</th>
               <th class="px-4 py-3 w-28">Impuestos</th>
               <th class="px-4 py-3 w-28">Total</th>
               <th class="px-4 py-3 w-32">Total Precio Productos</th>
-              <th class=" px-4 py-3 w-44">Método de Pago</th>
+              <th class="px-4 py-3 w-44">Método de Pago</th>
               <th class="px-4 py-3 w-28">Estado</th>
               <th class="px-4 py-3 w-32">Fecha Salida</th>
               <th class="px-2 py-3 w-28">ID Reserva</th>
@@ -101,7 +101,7 @@
         </table>
       </div>
 
-      <!-- Modal de edición -->
+      <!-- Modal de Edición -->
       <FacturaEditarView
         v-if="showEditModal"
         :factura="selectedFactura"
@@ -119,9 +119,9 @@
 
       <!-- Modal de Productos -->
       <FacturaProductoLista
-        v-if="showlistaProductosModal"
+        v-if="showListaProductosModal"
         :factura="selectedFactura"
-        @close="closeProductosModal"
+        @close="closeListaProductosModal"
       />
 
       <!-- Modal de Agregar Productos -->
@@ -134,7 +134,6 @@
   </LayoutAuthenticated>
 </template>
 
-
 <script setup>
 import { ref, onMounted } from 'vue';
 import SectionMain from '@/components/SectionMain.vue';
@@ -143,20 +142,22 @@ import FacturaEditarView from './FacturaEditarView.vue';
 import FacturaEliminarView from './FacturaEliminarView.vue';
 import FacturaProductoLista from './FacturaProductoLista.vue';
 import FacturaProductoAgregar from './FacturaProductoAgregar.vue';
-import axios from 'axios';
 
-
-// import { getFacturasByPage } from "@/services_brayan/FacturaService";
+import { getAllFacturas, updateFacturaService } from "@/services/brayan_service/FacturacionService";
 
 const facturas = ref([]);
+const selectedFactura = ref(null);
 
-// Importar el servicio para obtener  facturas
-import { getAllFacturas } from "@/services/brayan_service/FacturacionService";
+const showEditModal = ref(false);
+const showDeleteModal = ref(false);
+const showListaProductosModal = ref(false);
+const agregarProductosModal = ref(false);
+
 
 const fetchFacturas = async () => {
   try {
-    const response = await getAllFacturas(); 
-    facturas.value = response; 
+    const response = await getAllFacturas();
+    facturas.value = response;
   } catch (error) {
     console.error('Error al obtener facturas:', error.message);
     if (error.response) {
@@ -170,30 +171,47 @@ onMounted(() => {
 });
 
 
-const showEditModal = ref(false);
-const showDeleteModal = ref(false);
-const showlistaProductosModal = ref(false);
-const agregarProductosModal = ref(false);
-const selectedFactura = ref(null);
 
-function openAgregarProductosModal(factura) {
-  selectedFactura.value = factura;
-  agregarProductosModal.value = true;
+async function handleUpdate() {
+  try {
+    await fetchFacturas(); 
+    
+    closeEditModal(); 
+  } catch (error) {
+   
+    console.error('Error al actualizar la factura:', error);
+  }
 }
 
-function openListaProductosModal(factura) {
-  selectedFactura.value = factura;
-  showlistaProductosModal.value = true;
+async function handleDelete() {
+  try {
+    await fetchFacturas();  // Recarga las facturas después de eliminar una
+    closeDeleteModal();     // Cierra el modal de eliminación
+  } catch (error) {
+    console.error('Error al eliminar la factura:', error);
+  }
 }
+
+
 
 function openEditModal(factura) {
-  selectedFactura.value = factura;
+  selectedFactura.value = { ...factura }; // Clona la factura seleccionada
   showEditModal.value = true;
 }
 
 function openDeleteModal(factura) {
-  selectedFactura.value = factura;
+  selectedFactura.value = { ...factura }; 
   showDeleteModal.value = true;
+}
+
+function openListaProductosModal(factura) {
+  selectedFactura.value = factura;
+  showListaProductosModal.value = true;
+}
+
+function openAgregarProductosModal(factura) {
+  selectedFactura.value = factura;
+  agregarProductosModal.value = true;
 }
 
 function closeEditModal() {
@@ -204,32 +222,23 @@ function closeDeleteModal() {
   showDeleteModal.value = false;
 }
 
-function closeProductosModal() {
-  showlistaProductosModal.value = false;
+function closeListaProductosModal() {
+  showListaProductosModal.value = false;
 }
 
 function closeAgregarProductosModal() {
   agregarProductosModal.value = false;
 }
 
-function handleUpdate() {
-  // Lógica para actualizar la factura
-  closeEditModal();
-}
 
-function handleDelete() {
-  // Lógica para eliminar la factura
-  closeDeleteModal();
-}
+
 </script>
-
 <style scoped>
   table {
-    table-layout: fixed; /* Hace que el width se respete */
-    width: 100%; /* Asegura que la tabla use todo el ancho disponible */
+    table-layout: fixed;
+    width: 100%;
   }
   th, td {
-    white-space: nowrap; /* Evita que el contenido se rompa en múltiples líneas */
+    white-space: nowrap;
   }
-  
 </style>
