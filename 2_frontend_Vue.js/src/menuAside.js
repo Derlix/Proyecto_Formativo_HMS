@@ -57,6 +57,11 @@ export default [
     label: 'Mv. Pasajero corres',
     icon: mdiHumanMaleFemale
   },
+  {
+    to: '/huespedes',
+    label: 'Huespedes',
+    icon: mdiReproduction
+  },
   // {
   //   to: '/informe-pasajeros',
   //   label: 'Inf. Pasajero corres',
