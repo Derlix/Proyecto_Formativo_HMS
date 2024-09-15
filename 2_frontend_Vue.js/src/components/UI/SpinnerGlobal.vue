@@ -3,7 +3,7 @@
   <div v-if="loading" class="spinner-overlay">
     <div class="spinner-container">
       <!-- Imagen personalizada del spinner -->
-      <img src="https://media.tenor.com/9Pz9iuGtD0QAAAAi/loading.gif" alt="Loading..." class="spinner-image">
+      <img src="@/assets/img/loading.gif" alt="Loading..." class="spinner-image">
     </div>
   </div>
 </template>

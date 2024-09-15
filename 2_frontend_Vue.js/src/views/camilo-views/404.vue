@@ -13,7 +13,7 @@ const goToLogin = () => {
   <div class="min-h-screen flex items-center justify-center bg-gray-100">
     <div class="max-w-md w-full bg-white p-8 shadow-md rounded-lg flex items-center">
       <!-- Aquí puedes ajustar la ruta de la imagen según la ubicación de tu archivo -->
-      <img src="@/assets/404-image.png" alt="404 Not Found" class="w-1/3 h-auto mr-6" />
+      <img src="@/assets/img/404.png" alt="404 Not Found" class="w-1/3 h-auto mr-6" />
       <div class="w-2/3">
         <h2 class="text-3xl font-semibold text-gray-700">¡Página No Encontrada!</h2>
         <p class="mt-2 text-gray-600">
