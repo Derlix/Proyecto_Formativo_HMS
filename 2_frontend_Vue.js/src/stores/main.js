@@ -11,7 +11,7 @@ export const useMainStore = defineStore('main', () => {
   const userEmail = computed(() => authStore.user?.email || 'undefined');
   const userRole = computed(() => authStore.user?.usuario_rol || 'undefined');
 
-  const userAvatar = computed(() => authStore.user?.usuario_foto || `/public/img/recepcionista.png`);
+  const userAvatar = computed(() => authStore.user?.usuario_foto || `src/assets/img/recepcionista.png`);
 
   const isFieldFocusRegistered = ref(false)
 
