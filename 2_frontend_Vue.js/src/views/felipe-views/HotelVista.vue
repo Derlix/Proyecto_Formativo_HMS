@@ -27,8 +27,10 @@
               <td class="border px-4 py-2">{{ hotel.direccion }}</td>
               <td class="border px-4 py-2">{{ hotel.telefono }}</td>
               <td class="border px-4 py-2">
-                <BaseButton @click="openEditModal(hotel)" color="warning" outline label="Editar"  class="g-4" />
-                <BaseButton @click="deleteHotel(hotel)" color="danger" outline label="Eliminar"  class="g-4" />
+                <td class=" px-4 py-2">
+                <BaseButton @click="openEditModal(hotel)" color="warning" outline label="Editar" class="g-4" />
+                <BaseButton @click="openConfirmDeleteModal(hotel)" color="danger" outline label="Eliminar" class="g-4" />
+               </td>
               </td>
             </tr>
           </tbody>
@@ -60,6 +62,13 @@
           </BaseButtons>
         </form>
       </ModalForm>
+  <ModalForm :isVisible="showConfirmDeleteModal" title="Confirmar eliminación" @close="closeConfirmDeleteModal">
+  <p>¿Estás seguro de que deseas eliminar este hotel?</p>
+  <BaseButtons>
+    <BaseButton @click="confirmDeleteHotel" color="danger" label="Eliminar" />
+    <BaseButton @click="closeConfirmDeleteModal" color="secondary" label="Cancelar" />
+  </BaseButtons>
+</ModalForm>
     </SectionMain>
   </LayoutAuthenticated>
 </template>
@@ -74,6 +83,7 @@ import BaseButtons from '@/components/BaseButtons.vue';
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
 import ModalForm from '@/components/ModalFormHotel.vue';
 import SectionMain from '@/components/SectionMain.vue';
+import CardBoxModal from '@/components/CardBoxModal.vue';
 
 import { createHotel, getHotels, updateHotel, deleteHotel } from '@/services/hotelService';
 
@@ -87,6 +97,7 @@ export default {
     SectionTitleLineWithButton,
     ModalForm,
     SectionMain,
+    CardBoxModal,
   },
   data() {
     return {
@@ -98,8 +109,10 @@ export default {
         telefono: '',
       },
       showModal: false,  // Control de visibilidad del modal
-      isEditing: false,  // Indica si estamos en modo edición o creación
-      currentHotelId: null, // ID del hotel que se está editando
+    showConfirmDeleteModal: false,  // Control de visibilidad del modal de confirmación
+    isEditing: false,  // Indica si estamos en modo edición o creación
+    currentHotelId: null, // ID del hotel que se está editando
+    hotelToDelete: null, // Hotel seleccionado para eliminar
     };
   },
   created() {
@@ -143,15 +156,25 @@ export default {
         console.error('Error al guardar el hotel:', error.response ? error.response.data : error);
       }
     },
-    async deleteHotel(hotel) {
-      try {
-        await deleteHotel(hotel.id_hotel); // Llama a la función de servicio para eliminar el hotel
+    openConfirmDeleteModal(hotel) {
+    this.hotelToDelete = hotel; // Almacena el hotel a eliminar
+    this.showConfirmDeleteModal = true; // Muestra el modal de confirmación
+  },
+  closeConfirmDeleteModal() {
+    this.showConfirmDeleteModal = false; // Cierra el modal de confirmación
+    this.hotelToDelete = null; // Resetea el hotel seleccionado
+  },
+  async confirmDeleteHotel() {
+    try {
+      if (this.hotelToDelete) {
+        await deleteHotel(this.hotelToDelete.id_hotel); // Llama a la función de servicio para eliminar el hotel
         this.fetchHotels(); // Actualiza la lista de hoteles
-        this.closeModal();
-      } catch (error) {
-        console.error('Error al eliminar el hotel:', error);
+        this.closeConfirmDeleteModal(); // Cierra el modal
       }
-    },
+    } catch (error) {
+      console.error('Error al eliminar el hotel:', error);
+    }
+  },
   },
 };
 </script>
