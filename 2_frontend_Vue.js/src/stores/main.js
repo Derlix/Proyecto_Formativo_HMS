@@ -1,21 +1,20 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import axios from 'axios'
+import { useAuthStore } from '@/stores' // Importa el store de autenticación
 
 export const useMainStore = defineStore('main', () => {
-  const userName = ref('Cristiano Ronaldo')
-  const userEmail = ref('cristiano.ronaldo@example.com')
 
-  const userAvatar = computed(
-    () =>
+  const authStore = useAuthStore();
 
-      `/public/img/recepcionista.png`
+  const userName = computed(() => authStore.user?.nombre_completo || 'undefined');
+  const userEmail = computed(() => authStore.user?.email || 'undefined');
+  const userRole = computed(() => authStore.user?.usuario_rol || 'undefined');
+  const userID = computed(() => authStore.user?.user_id || 'undefined');
 
-      // `https://api.dicebear.com/7.x/avataaars/svg?seed=${userEmail.value.replace(
-      //   /[^a-z0-9]+/gi,
-      //   '-'
-      // )}`
-  )
+
+
+  const userAvatar = computed(() => authStore.user?.usuario_foto || `src/assets/img/recepcionista.png`);
 
   const isFieldFocusRegistered = ref(false)
 
@@ -28,6 +27,12 @@ export const useMainStore = defineStore('main', () => {
     }
     if (payload.email) {
       userEmail.value = payload.email
+    }
+    if (payload.usuario_rol) {
+      userRole.value = payload.usuario_rol
+    }
+    if (payload.user_id) {
+      userID.value = payload.user_id
     }
   }
 
@@ -60,6 +65,8 @@ export const useMainStore = defineStore('main', () => {
     isFieldFocusRegistered,
     clients,
     history,
+    userRole,
+    userID,
     setUser,
     fetchSampleClients,
     fetchSampleHistory
