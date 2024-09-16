@@ -121,6 +121,7 @@
       <FacturaProductoLista
         v-if="showListaProductosModal"
         :factura="selectedFactura"
+       
         @close="closeListaProductosModal"
       />
 

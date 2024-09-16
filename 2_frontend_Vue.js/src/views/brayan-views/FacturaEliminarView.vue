@@ -13,6 +13,7 @@
 
 <script setup>
 import { defineProps, defineEmits } from 'vue';
+
 import { deleteFactura } from "@/services/brayan_service/FacturacionService";
 
 const props = defineProps({
@@ -28,7 +29,11 @@ const confirmDelete = async () => {
     emit('delete');  // Emite el evento correcto para que lo maneje el componente padre
     emit('close');   // Cierra el modal
   } catch (error) {
-    alert('Error al eliminar la factura: ' + (error.response?.data?.message || error.message));
+    if (error.response?.status === 400) {
+      alert('No se puede eliminar la factura porque tiene productos asociados. Elimine los productos primero.');
+    } else {
+      alert('Error al eliminar la factura: ' + (error.response?.data?.message || error.message));
+    }
   }
 };
 
