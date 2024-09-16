@@ -10,6 +10,9 @@ export const useMainStore = defineStore('main', () => {
   const userName = computed(() => authStore.user?.nombre_completo || 'undefined');
   const userEmail = computed(() => authStore.user?.email || 'undefined');
   const userRole = computed(() => authStore.user?.usuario_rol || 'undefined');
+  const userID = computed(() => authStore.user?.user_id || 'undefined');
+
+
 
   const userAvatar = computed(() => authStore.user?.usuario_foto || `src/assets/img/recepcionista.png`);
 
@@ -27,6 +30,9 @@ export const useMainStore = defineStore('main', () => {
     }
     if (payload.usuario_rol) {
       userRole.value = payload.usuario_rol
+    }
+    if (payload.user_id) {
+      userID.value = payload.user_id
     }
   }
 
@@ -60,6 +66,7 @@ export const useMainStore = defineStore('main', () => {
     clients,
     history,
     userRole,
+    userID,
     setUser,
     fetchSampleClients,
     fetchSampleHistory

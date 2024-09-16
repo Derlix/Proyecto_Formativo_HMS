@@ -20,6 +20,7 @@ import TarjetaReserva from '@/views/arce-views/TarjetaReserva.vue'
 import TranspasoParticulares from '@/views/arce-views/TranspasoParticulares.vue'
 import InformacionReserva from '@/views/arce-views/InformacionReserva.vue'
 import InicioCajero from '@/views/arce-views/InicioCajero.vue'
+import VistaHabitaciones from '@/views/camilo-views/VistaHabitaciones.vue'
 
 
 const routes = [
@@ -198,6 +199,15 @@ const routes = [
     path: '/huespedes',
     name: 'huespedes',
     component: () => import('@/views/alejo-views/HuespedesVue.vue'),
+    meta: { requiresAuth: true}
+  },
+  {
+    meta: {
+      title: 'VistaHabitaciones'
+    },
+    path: '/habitaciones',
+    name: 'VistaHabitaciones',
+    component: VistaHabitaciones,
     meta: { requiresAuth: true}
   },
   {
