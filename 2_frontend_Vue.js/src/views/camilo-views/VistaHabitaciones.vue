@@ -74,10 +74,10 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import axios from 'axios';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import RoomModal from '@/components/RoomModal.vue';
 import ModalAlert from '@/components/ModalAlert.vue';
+import { obtenerTodasHabitaciones, eliminarHabitacion } from '@/services/juanca_service/habitacionService';
 
 // Referencias y estados
 const habitaciones = ref([]);
@@ -86,71 +86,41 @@ const showConfirmModal = ref(false);
 const habitacionSeleccionada = ref({});
 const habitacionAEliminar = ref(null);
 
-const url = 'https://api-hotel-suqt.onrender.com/habitacion';
-
-// Función para obtener todas las habitaciones
+// Obtener todas las habitaciones
 const obtenerHabitaciones = async () => {
   try {
-    const token = localStorage.getItem('access_token');
-    if (!token) {
-      throw new Error('Token no disponible');
-    }
-    const respuesta = await axios.get(url, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    habitaciones.value = respuesta.data;
+    const response = await obtenerTodasHabitaciones();
+    habitaciones.value = response.data;
   } catch (error) {
-    if (error.response && error.response.status === 401) {
-      console.error("No autorizado. Verifica el token.");
-      // Lógica adicional si necesitas manejar el token, como redireccionar al login
-    } else {
-      console.error("Error al obtener las habitaciones:", error.message);
-    }
+    console.error("Error al obtener las habitaciones:", error.message);
   }
 };
 
-// Función para eliminar una habitación
-const eliminarHabitacion = async (id_habitacion) => {
+// Función para eliminar una habitación confirmada
+const eliminarHabitacionConfirmada = async () => {
   try {
-    const token = localStorage.getItem('access_token');
-    if (!token) {
-      throw new Error('Token no disponible');
-    }
-    await axios.delete(`${url}/${id_habitacion}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    await obtenerHabitaciones();
+    await eliminarHabitacion(habitacionAEliminar.value);
+    showConfirmModal.value = false;
+    habitacionAEliminar.value = null;
+    obtenerHabitaciones();
   } catch (error) {
     console.error("Error al eliminar la habitación:", error.message);
   }
 };
 
-// Confirmar eliminación
+// Función para confirmar la eliminación de una habitación
 const confirmarEliminacion = (id_habitacion) => {
   habitacionAEliminar.value = id_habitacion;
   showConfirmModal.value = true;
 };
 
-// Confirmar eliminación después del modal
-const eliminarHabitacionConfirmada = () => {
-  if (habitacionAEliminar.value) {
-    eliminarHabitacion(habitacionAEliminar.value);
-    showConfirmModal.value = false;
-    habitacionAEliminar.value = null;
-  }
-};
-
-// Función para editar habitación
+// Función para editar una habitación
 const editarHabitacion = (habitacion) => {
   habitacionSeleccionada.value = habitacion;
   showModal.value = true;
 };
 
-// Mostrar modal para crear habitación
+// Función para mostrar el modal de crear una nueva habitación
 const mostrarModalCrear = () => {
   habitacionSeleccionada.value = {
     id_habitacion: null,
@@ -163,7 +133,7 @@ const mostrarModalCrear = () => {
   showModal.value = true;
 };
 
-// Cerrar el modal
+// Función para cerrar el modal
 const cerrarModal = () => {
   showModal.value = false;
 };
