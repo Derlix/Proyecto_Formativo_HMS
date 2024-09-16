@@ -4,7 +4,7 @@ import { getAllHistorialReservas } from '@/services/busta_service/HistorialReser
 
 import SectionMain from '@/components/SectionMain.vue';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
-import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
+import TitleIconOnly from '@/components/TitleIconOnly.vue'
 import { mdiChartTimelineVariant } from '@mdi/js';
 
 const reservas = ref([]); // Variable para almacenar las reservas
@@ -27,7 +27,7 @@ onMounted(() => {
 <template>
   <LayoutAuthenticated>
     <SectionMain>
-      <SectionTitleLineWithButton :icon="mdiChartTimelineVariant" title="Historial de Reservas" />
+      <TitleIconOnly :icon="mdiChartTimelineVariant" title="Historial de reservas" />
     </SectionMain>
 
     <SectionMain>
