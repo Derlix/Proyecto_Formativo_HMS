@@ -1,85 +1,67 @@
 <template>
-  <div class="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-    <h1 class="text-3xl font-semibold text-gray-800 mb-6">Gestión de Habitaciones</h1>
+  <LayoutAuthenticated>
+    <div class="container mx-auto p-6">
+      <h1 class="text-2xl font-bold mb-6">Lista de Habitaciones</h1>
 
-    <!-- Formulario de habitación -->
-    <form @submit.prevent="guardarHabitacion" class="bg-white shadow-lg rounded-lg p-6 mb-8">
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
-        <!-- Estado -->
-        <div>
-          <label for="estado" class="block text-sm font-medium text-gray-700">Estado</label>
-          <select v-model="habitacion.estado" id="estado" class="mt-1 block w-full bg-gray-50 border border-gray-300 rounded-md shadow-sm py-2 px-3 text-gray-700 focus:ring-indigo-500 focus:border-indigo-500">
-            <option value="ACTIVO">Activo</option>
-            <option value="INACTIVO">Inactivo</option>
-            <option value="MANTENIMIENTO">Mantenimiento</option>
-          </select>
-        </div>
+      <!-- Botón para crear una nueva habitación -->
+      <button
+        @click="mostrarModalCrear"
+        class="bg-green-500 text-white px-4 py-2 rounded-md mb-6 shadow-sm hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+      >
+        Crear Habitación
+      </button>
 
-        <!-- Piso -->
-        <div>
-          <label for="piso" class="block text-sm font-medium text-gray-700">Piso</label>
-          <input type="text" v-model="habitacion.piso" id="piso" class="mt-1 block w-full bg-gray-50 border border-gray-300 rounded-md shadow-sm py-2 px-3 text-gray-700 focus:ring-indigo-500 focus:border-indigo-500" required>
-        </div>
+      <!-- Modal para crear/editar una habitación -->
+      <RoomModal
+        :visible="showModal"
+        :habitacion="habitacionSeleccionada"
+        @close="cerrarModal"
+        @save="obtenerHabitaciones"
+      />
 
-        <!-- Precio Actual -->
-        <div>
-          <label for="precio_actual" class="block text-sm font-medium text-gray-700">Precio Actual</label>
-          <input type="number" v-model="habitacion.precio_actual" id="precio_actual" class="mt-1 block w-full bg-gray-50 border border-gray-300 rounded-md shadow-sm py-2 px-3 text-gray-700 focus:ring-indigo-500 focus:border-indigo-500" required>
-        </div>
+      <!-- Modal para confirmar eliminación -->
+      <ModalAlert
+        :visible="showConfirmModal"
+        descripcion="¿Estás seguro de que deseas eliminar esta habitación?"
+        textBoton="Eliminar"
+        @close="showConfirmModal = false"
+        @confirm="eliminarHabitacionConfirmada"
+      />
 
-        <!-- Usuario -->
-        <div>
-          <label for="id_usuario" class="block text-sm font-medium text-gray-700">ID de Usuario</label>
-          <input type="text" v-model="habitacion.id_usuario" id="id_usuario" class="mt-1 block w-full bg-gray-50 border border-gray-300 rounded-md shadow-sm py-2 px-3 text-gray-700 focus:ring-indigo-500 focus:border-indigo-500" required>
-        </div>
-
-        <!-- Número de Habitación -->
-        <div>
-          <label for="numero_habitacion" class="block text-sm font-medium text-gray-700">Número de Habitación</label>
-          <input type="text" v-model="habitacion.numero_habitacion" id="numero_habitacion" class="mt-1 block w-full bg-gray-50 border border-gray-300 rounded-md shadow-sm py-2 px-3 text-gray-700 focus:ring-indigo-500 focus:border-indigo-500" required>
-        </div>
-
-        <!-- Categoría de Habitación -->
-        <div>
-          <label for="id_categoria_habitacion" class="block text-sm font-medium text-gray-700">Categoría de Habitación</label>
-          <input type="text" v-model="habitacion.id_categoria_habitacion" id="id_categoria_habitacion" class="mt-1 block w-full bg-gray-50 border border-gray-300 rounded-md shadow-sm py-2 px-3 text-gray-700 focus:ring-indigo-500 focus:border-indigo-500" required>
-        </div>
-      </div>
-
-      <!-- Botones -->
-      <div class="flex justify-end space-x-4">
-        <button type="button" @click="resetForm" class="px-4 py-2 bg-gray-500 text-white rounded-md shadow hover:bg-gray-600 focus:outline-none">
-          Cancelar
-        </button>
-        <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md shadow hover:bg-indigo-700 focus:outline-none">
-          {{ isEdit ? 'Actualizar' : 'Crear' }} Habitación
-        </button>
-      </div>
-    </form>
-
-    <!-- Tabla de Habitaciones -->
-    <div class="overflow-x-auto">
-      <table class="min-w-full bg-white shadow-md rounded-lg">
+      <!-- Tabla de habitaciones -->
+      <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden block lg:table">
         <thead>
-          <tr>
-            <th class="px-4 py-2 border-b-2 border-gray-300 text-left text-xs font-semibold text-gray-600 uppercase">Número</th>
-            <th class="px-4 py-2 border-b-2 border-gray-300 text-left text-xs font-semibold text-gray-600 uppercase">Estado</th>
-            <th class="px-4 py-2 border-b-2 border-gray-300 text-left text-xs font-semibold text-gray-600 uppercase">Piso</th>
-            <th class="px-4 py-2 border-b-2 border-gray-300 text-left text-xs font-semibold text-gray-600 uppercase">Precio</th>
-            <th class="px-4 py-2 border-b-2 border-gray-300 text-left text-xs font-semibold text-gray-600 uppercase">Acciones</th>
+          <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+            <th class="py-3 px-6 text-left">Número</th>
+            <th class="py-3 px-6 text-left">Piso</th>
+            <th class="py-3 px-6 text-left">Categoría</th>
+            <th class="py-3 px-6 text-left">Estado</th>
+            <th class="py-3 px-6 text-left">Precio</th>
+            <th class="py-3 px-6 text-center">Acciones</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="habitacion in habitaciones" :key="habitacion.id_habitacion" class="hover:bg-gray-100">
-            <td class="px-4 py-2 border-b border-gray-300">{{ habitacion.numero_habitacion }}</td>
-            <td class="px-4 py-2 border-b border-gray-300">{{ habitacion.estado }}</td>
-            <td class="px-4 py-2 border-b border-gray-300">{{ habitacion.piso }}</td>
-            <td class="px-4 py-2 border-b border-gray-300">{{ habitacion.precio_actual }}</td>
-            <td class="px-4 py-2 border-b border-gray-300 space-x-4">
-              <button @click="editarHabitacion(habitacion)" class="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600">
+          <tr
+            v-for="habitacion in habitaciones"
+            :key="habitacion.id_habitacion"
+            class="border-b border-gray-200 hover:bg-gray-100"
+          >
+            <td class="py-3 px-6 text-left whitespace-nowrap">{{ habitacion.numero_habitacion }}</td>
+            <td class="py-3 px-6 text-left">{{ habitacion.piso }}</td>
+            <td class="py-3 px-6 text-left">{{ habitacion.id_categoria_habitacion }}</td>
+            <td class="py-3 px-6 text-left">{{ habitacion.estado }}</td>
+            <td class="py-3 px-6 text-left">{{ habitacion.precio_actual }}</td>
+            <td class="py-3 px-6 text-center">
+              <button
+                @click="editarHabitacion(habitacion)"
+                class="bg-blue-500 text-white px-4 py-2 rounded-md mr-2 shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
                 Editar
               </button>
-              <button @click="eliminarHabitacion(habitacion.id_habitacion)" class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600">
+              <button
+                @click="confirmarEliminacion(habitacion.id_habitacion)"
+                class="bg-red-500 text-white px-4 py-2 rounded-md shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
+              >
                 Eliminar
               </button>
             </td>
@@ -87,126 +69,120 @@
         </tbody>
       </table>
     </div>
-  </div>
+  </LayoutAuthenticated>
 </template>
 
-<script>
-import {
-  crearHabitacion,
-  obtenerTodasHabitaciones,
-  actualizarHabitacion,
-  eliminarHabitacion
-} from '../../services/juanca_service/habitacionService';
+<script setup>
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
+import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
+import RoomModal from '@/components/RoomModal.vue';
+import ModalAlert from '@/components/ModalAlert.vue';
 
-export default {
-  data() {
-    return {
-      habitaciones: [],
-      habitacion: {
-        estado: 'ACTIVO',
-        piso: '',
-        precio_actual: '',
-        id_usuario: '',
-        numero_habitacion: '',
-        id_categoria_habitacion: '',
-      },
-      isEdit: false,
-    };
-  },
-  methods: {
-    async fetchHabitaciones() {
-      try {
-        const response = await obtenerTodasHabitaciones();
-        this.habitaciones = response.data;
-      } catch (error) {
-        console.error("Error al obtener las habitaciones:", error);
-      }
-    },
-    async guardarHabitacion() {
-      try {
-        const {
-          estado,
-          piso,
-          precio_actual,
-          id_usuario,
-          numero_habitacion,
-          id_categoria_habitacion
-        } = this.habitacion;
+// Referencias y estados
+const habitaciones = ref([]);
+const showModal = ref(false);
+const showConfirmModal = ref(false);
+const habitacionSeleccionada = ref({});
+const habitacionAEliminar = ref(null);
 
-        if (this.isEdit) {
-          await actualizarHabitacion(
-            this.habitacion.id_habitacion,
-            estado,
-            piso,
-            precio_actual,
-            id_usuario,
-            numero_habitacion,
-            id_categoria_habitacion
-          );
-        } else {
-          await crearHabitacion(
-            estado,
-            piso,
-            precio_actual,
-            id_usuario,
-            numero_habitacion,
-            id_categoria_habitacion
-          );
-        }
-        this.fetchHabitaciones();
-        this.resetForm(); // Limpiar el formulario
-      } catch (error) {
-        console.error('Error al guardar la habitación:', error);
-      }
-    },
+const url = 'https://api-hotel-suqt.onrender.com/habitacion';
 
-    editarHabitacion(habitacion) {
-      this.isEdit = true;
-      this.habitacion = {
-        ...habitacion,
-        piso: Number(habitacion.piso),
-        precio_actual: String(habitacion.precio_actual),
-        id_usuario: String(habitacion.id_usuario),
-        numero_habitacion: String(habitacion.numero_habitacion),
-        id_categoria_habitacion: Number(habitacion.id_categoria_habitacion)
-      };
-    },
-    async eliminarHabitacion(id_habitacion) {
-      try {
-        await eliminarHabitacion(id_habitacion);
-        this.fetchHabitaciones(); // Refrescar la lista de habitaciones
-      } catch (error) {
-        console.error('Error al eliminar la habitación:', error);
-      }
-    },
-    cancelarEdicion() {
-      this.isEdit = false;
-      this.resetForm();
-    },
-    resetForm() {
-      this.habitacion = {
-        estado: 'ACTIVO',
-        piso: 0,
-        precio_actual: '',
-        id_usuario: '',
-        numero_habitacion: '',
-        id_categoria_habitacion: 0,
-      };
-      this.isEdit = false;
+// Función para obtener todas las habitaciones
+const obtenerHabitaciones = async () => {
+  try {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      throw new Error('Token no disponible');
     }
-  },
-
-  mounted() {
-    this.fetchHabitaciones(); // Cargar la lista de habitaciones cuando el componente es montado
+    const respuesta = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    habitaciones.value = respuesta.data;
+  } catch (error) {
+    if (error.response && error.response.status === 401) {
+      console.error("No autorizado. Verifica el token.");
+      // Lógica adicional si necesitas manejar el token, como redireccionar al login
+    } else {
+      console.error("Error al obtener las habitaciones:", error.message);
+    }
   }
 };
+
+// Función para eliminar una habitación
+const eliminarHabitacion = async (id_habitacion) => {
+  try {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      throw new Error('Token no disponible');
+    }
+    await axios.delete(`${url}/${id_habitacion}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    await obtenerHabitaciones();
+  } catch (error) {
+    console.error("Error al eliminar la habitación:", error.message);
+  }
+};
+
+// Confirmar eliminación
+const confirmarEliminacion = (id_habitacion) => {
+  habitacionAEliminar.value = id_habitacion;
+  showConfirmModal.value = true;
+};
+
+// Confirmar eliminación después del modal
+const eliminarHabitacionConfirmada = () => {
+  if (habitacionAEliminar.value) {
+    eliminarHabitacion(habitacionAEliminar.value);
+    showConfirmModal.value = false;
+    habitacionAEliminar.value = null;
+  }
+};
+
+// Función para editar habitación
+const editarHabitacion = (habitacion) => {
+  habitacionSeleccionada.value = habitacion;
+  showModal.value = true;
+};
+
+// Mostrar modal para crear habitación
+const mostrarModalCrear = () => {
+  habitacionSeleccionada.value = {
+    id_habitacion: null,
+    numero_habitacion: '',
+    piso: '',
+    id_categoria_habitacion: '',
+    estado: '',
+    precio_actual: '',
+  };
+  showModal.value = true;
+};
+
+// Cerrar el modal
+const cerrarModal = () => {
+  showModal.value = false;
+};
+
+// Obtener las habitaciones al montar el componente
+onMounted(() => {
+  obtenerHabitaciones();
+});
 </script>
 
 <style scoped>
-form {
-  margin-bottom: 20px;
+/* Ajusta el tamaño del modal */
+.modal-content {
+  max-width: 600px;
+  margin: auto;
 }
+
+/* Personaliza el tamaño de los botones */
 button {
-  margin-left: 10px;
+  padding: 10px 15px;
 }
 </style>
