@@ -4,7 +4,7 @@ import CardBoxModal from '@/components/CardBoxModal.vue'
 import BaseLevel from '@/components/BaseLevel.vue'
 import BaseButtons from '@/components/BaseButtons.vue'
 import BaseButton from '@/components/BaseButton.vue'
-import { getProductsByPage, createProduct, updateProduct, deleteProduct } from '@/services/productService'
+import { getProductsByPage, updateProduct, deleteProduct } from '@/services/productService'
 import { mdiBookEdit, mdiTrashCan } from '@mdi/js'
 
 const productos = ref([]);
@@ -36,28 +36,29 @@ const updateProducto = async () => {
     }
 };
 
-// const eliminarProducto = async (id_producto) => {
-//     if (confirm('¿Estás seguro de que deseas eliminar este producto?')) {
-//         try {
-//             await deleteProduct(id_producto);
-//             alert('Producto eliminado exitosamente');
-//             fechtProducts(); // Refresca la lista de productos después de eliminar
-//         } catch (error) {
-//             alert('Error al eliminar el producto:', error);
-//         }
-//     }
-// };
+const eliminarProducto = async (id_producto) => {
+    if (confirm('¿Estás seguro de que deseas eliminar este producto?')) {
+        try {
+            await deleteProduct(id_producto);
+            alert('Producto eliminado exitosamente');
+            fechtProducts(); // Refresca la lista de productos después de eliminar
+        } catch (error) {
+            alert('Error al eliminar el producto:', error);
+        }
+    }
+};
 
 const openModal = (action, producto = {}) => {
     if (action === 'update') {
         isEditMode.value = true;
         descripcion.value = 'Actualizar Producto';
+        activarModal.value = true
         currentProduct.value = { ...producto };
     } else if (action === 'delete') {
         isEditMode.value = false;
         deleteProduct()
         descripcion.value = 'Eliminar Producto';
-        CardBoxModal.buttonLabel = "Eliminar";
+        activarModal.value = true
         currentProduct.value = { ...producto };
     }
 };
@@ -115,7 +116,7 @@ fechtProducts();
 
     <!-- Modal para crear/actualizar/eliminar producto -->
     <CardBoxModal v-model="activarModal" :title="descripcion">
-        <form @submit.prevent="isEditMode ? updateProducto() : createProducto()">
+        <form @submit.prevent="isEditMode ? updateProducto() : eliminarProducto()">
             <div class="grid grid-cols-2 gap-3">
                 <div class="mb-4">
                     <label for="nombre" class="block text-gray-700 dark:text-white">Nombre del producto</label>

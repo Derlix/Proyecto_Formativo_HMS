@@ -3,16 +3,16 @@ import SectionMain from '@/components/SectionMain.vue';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import productsTable from '@/components/nico_components/productsTable.vue';
 
-const createProducto = async () => {
-    try {
-        await createProduct(currentProduct.value.nombre_producto, currentProduct.value.descripcion, currentProduct.value.precio_actual);
-        alert('Producto creado exitosamente');
-        fechtProducts();
-        closeModal();
-    } catch (error) {
-        alert('Error al insertar producto: ', error);
-    }
-};
+// const createProducto = async () => {
+//     try {
+//         await createProduct(currentProduct.value.nombre_producto, currentProduct.value.descripcion, currentProduct.value.precio_actual);
+//         alert('Producto creado exitosamente');
+//         fechtProducts();
+//         closeModal();
+//     } catch (error) {
+//         alert('Error al insertar producto: ', error);
+//     }
+// };
 
 </script>
 
