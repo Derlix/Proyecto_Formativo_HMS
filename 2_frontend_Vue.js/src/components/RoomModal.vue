@@ -3,6 +3,7 @@
     <div class="bg-white w-full max-w-lg mx-auto rounded-lg shadow-lg p-6">
       <h2 class="text-2xl font-bold mb-4">{{ isEditing ? 'Editar' : 'Crear' }} Habitación</h2>
       <form @submit.prevent="guardarHabitacion">
+        <!-- Campos del formulario -->
         <div class="mb-4">
           <label for="numero_habitacion" class="block text-sm font-medium text-gray-700">Número de Habitación</label>
           <input
@@ -58,6 +59,7 @@
             class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
           />
         </div>
+
         <div class="flex justify-end space-x-4">
           <button
             type="button"
@@ -80,7 +82,11 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue';
-import axios from 'axios';
+import { crearHabitacion, actualizarHabitacion } from '../services/juanca_service/habitacionService'; // Importar servicios
+import { useMainStore } from '@/stores/main';
+
+const mainStore = useMainStore();
+const userID = computed(() => mainStore.userID);
 
 const props = defineProps({
   visible: Boolean,
@@ -100,6 +106,7 @@ const form = ref({
 
 const isEditing = computed(() => !!form.value.id_habitacion);
 
+// Actualiza el formulario cuando cambia la habitación
 watch(() => props.habitacion, (newHabitacion) => {
   form.value = { ...newHabitacion };
 });
@@ -110,52 +117,48 @@ const close = () => {
 
 const guardarHabitacion = async () => {
   try {
-    const url = 'https://api-hotel-suqt.onrender.com/habitacion';
-    const token = localStorage.getItem('access_token');
+    const habitacionData = { ...form.value, id_usuario: userID.value }; // Asigna userID directamente
 
-    if (!token) {
-      throw new Error('Token no disponible');
-    }
-
-    const headers = {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    };
-
-    // Asegurarse de que el campo `precio_actual` sea una cadena
-    const dataToSend = { ...form.value };
-    dataToSend.precio_actual = dataToSend.precio_actual.toString();
-
-    // Asegurarse de que el campo `id_habitacion` sea 0 si es null
-    dataToSend.id_habitacion = dataToSend.id_habitacion === null ? 0 : dataToSend.id_habitacion;
-
-    // Asegúrate de que `id_usuario` esté presente
-    if (!dataToSend.id_usuario) {
+    // Verifica si hay un id_usuario válido
+    if (!habitacionData.id_usuario) {
       throw new Error('ID del usuario es requerido');
     }
 
     if (isEditing.value) {
-      await axios.put(`${url}/${dataToSend.id_habitacion}`, dataToSend, { headers });
+      // Actualizar habitación existente
+      await actualizarHabitacion(
+        habitacionData.id_habitacion,
+        habitacionData.estado,
+        habitacionData.piso,
+        habitacionData.precio_actual.toString(),
+        habitacionData.id_usuario,
+        habitacionData.numero_habitacion,
+        habitacionData.id_categoria_habitacion
+      );
     } else {
-      // Asegúrate de proporcionar el `id_usuario` aquí
-      dataToSend.id_usuario = 'ID_DEL_USUARIO'; // Reemplaza con el ID de usuario adecuado
-      await axios.post(url, dataToSend, { headers });
+      // Crear nueva habitación
+      await crearHabitacion(
+        habitacionData.estado,
+        habitacionData.piso,
+        habitacionData.precio_actual.toString(),
+        habitacionData.id_usuario,
+        habitacionData.numero_habitacion,
+        habitacionData.id_categoria_habitacion
+      );
     }
 
     emit('save');
     close();
   } catch (error) {
     if (error.response) {
-      console.error("Detalles del error:", error.response.data);
-      alert(`Error al guardar la habitación: ${error.response.data.detail ? error.response.data.detail : error.response.data.message}`);
+      console.error('Detalles del error:', error.response.data);
+      alert(`Error al guardar la habitación: ${error.response.data.detail || error.response.data.message}`);
     } else {
-      console.error("Error al guardar la habitación:", error.message);
+      console.error('Error al guardar la habitación:', error.message);
       alert(`Error al guardar la habitación: ${error.message}`);
     }
   }
 };
-
-
 </script>
 
 <style scoped>
