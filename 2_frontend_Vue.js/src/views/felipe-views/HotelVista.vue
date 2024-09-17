@@ -1,7 +1,7 @@
 <template>
   <LayoutAuthenticated>
     <SectionMain>
-      <SectionTitleLineWithButton  title="Administración De Hoteles" />
+      <SectionTitleLineWithButton title="Administración De Hoteles" />
     </SectionMain>
 
     <SectionMain>
@@ -10,28 +10,34 @@
 
       <!-- Tabla de hoteles -->
       <div class="w-full overflow-auto mb-4">
-        <table class="table-auto w-full">
+        <table>
           <thead>
             <tr>
-              <th class="px-4 py-2 text-left">Nombre</th>
-              <th class="px-4 py-2 text-left">Ubicación</th>
-              <th class="px-4 py-2 text-left">Dirección</th>
-              <th class="px-4 py-2 text-left">Teléfono</th>
-              <th class="px-4 py-2 text-left">Acciones</th>
+              <th />
+              <th>Nombre</th>
+              <th>Ubicación</th>
+              <th>Dirección</th>
+              <th>Teléfono</th>
+             
+              <th />
             </tr>
           </thead>
           <tbody>
             <tr v-for="hotel in hoteles" :key="hotel.id_hotel">
-              <td class="border px-4 py-2">{{ hotel.nombre }}</td>
-              <td class="border px-4 py-2">{{ hotel.ubicacion }}</td>
-              <td class="border px-4 py-2">{{ hotel.direccion }}</td>
-              <td class="border px-4 py-2">{{ hotel.telefono }}</td>
-              <td class="border px-4 py-2">
-                <td class=" px-4 py-2">
-                <BaseButton @click="openEditModal(hotel)" color="warning" outline label="Editar" class="g-4" />
-                <BaseButton @click="openConfirmDeleteModal(hotel)" color="danger" outline label="Eliminar" class="g-4" />
-               </td>
+              <td class="border-b-0 lg:w-6 before:hidden">
+          
+        </td>
+              <td>{{ hotel.nombre }}</td>
+              <td>{{ hotel.ubicacion }}</td>
+              <td>{{ hotel.direccion }}</td>
+              <td>{{ hotel.telefono }}</td>
+              <td class="before:hidden lg:w-1 whitespace-nowrap">
+                <BaseButtons type="justify-start lg:justify-end" no-wrap>
+                  <BaseButton @click="openEditModal(hotel)" :icon="mdiEye" small color="warning"  class="g-4" />
+                  <BaseButton @click="openConfirmDeleteModal(hotel)" :icon="mdiTrashCan" small color="danger"  class="g-4" />
+                </BaseButtons>
               </td>
+              
             </tr>
           </tbody>
         </table>
@@ -62,19 +68,20 @@
           </BaseButtons>
         </form>
       </ModalForm>
-  <ModalForm :isVisible="showConfirmDeleteModal" title="Confirmar eliminación" @close="closeConfirmDeleteModal">
-  <p>¿Estás seguro de que deseas eliminar este hotel?</p>
-  <BaseButtons>
-    <BaseButton @click="confirmDeleteHotel" color="danger" label="Eliminar" />
-    <BaseButton @click="closeConfirmDeleteModal" color="secondary" label="Cancelar" />
-  </BaseButtons>
-</ModalForm>
+
+      <!-- Modal de confirmación de eliminación -->
+      <ModalForm :isVisible="showConfirmDeleteModal" title="Confirmar eliminación" @close="closeConfirmDeleteModal">
+        <p>¿Estás seguro de que deseas eliminar este hotel?</p>
+        <BaseButtons>
+          <BaseButton @click="confirmDeleteHotel" color="danger" label="Eliminar" />
+          <BaseButton @click="closeConfirmDeleteModal" color="secondary" label="Cancelar" />
+        </BaseButtons>
+      </ModalForm>
     </SectionMain>
   </LayoutAuthenticated>
 </template>
 
 <script>
-import { mdiPlus, mdiPencil, mdiDelete } from '@mdi/js';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import FormField from '@/components/FormField.vue';
 import FormControl from '@/components/FormControl.vue';
@@ -84,7 +91,7 @@ import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.
 import ModalForm from '@/components/ModalFormHotel.vue';
 import SectionMain from '@/components/SectionMain.vue';
 import CardBoxModal from '@/components/CardBoxModal.vue';
-
+import { mdiEye, mdiTrashCan } from '@mdi/js';
 import { createHotel, getHotels, updateHotel, deleteHotel } from '@/services/hotelService';
 
 export default {
@@ -101,28 +108,30 @@ export default {
   },
   data() {
     return {
-      hoteles: [],  // Lista de hoteles
+      hoteles: [],
       hotelForm: {
         nombre: '',
         ubicacion: '',
         direccion: '',
         telefono: '',
       },
-      showModal: false,  // Control de visibilidad del modal
-    showConfirmDeleteModal: false,  // Control de visibilidad del modal de confirmación
-    isEditing: false,  // Indica si estamos en modo edición o creación
-    currentHotelId: null, // ID del hotel que se está editando
-    hotelToDelete: null, // Hotel seleccionado para eliminar
+      showModal: false,
+      showConfirmDeleteModal: false,
+      isEditing: false,
+      currentHotelId: null,
+      hotelToDelete: null,
+      mdiEye,  // Assign the icons to data directly
+      mdiTrashCan,
     };
   },
   created() {
-    this.fetchHotels(); // Cargar hoteles al montar el componente
+    this.fetchHotels();
   },
   methods: {
     async fetchHotels() {
       try {
         const response = await getHotels();
-        this.hoteles = response.data;  // Asigna la respuesta a la lista de hoteles
+        this.hoteles = response.data;
       } catch (error) {
         console.error('Error al obtener los hoteles:', error);
       }
@@ -134,8 +143,8 @@ export default {
     },
     openEditModal(hotel) {
       this.isEditing = true;
-      this.currentHotelId = hotel.id_hotel; // Guarda el ID del hotel que se va a editar
-      this.hotelForm = { ...hotel }; // Rellena el formulario con los datos del hotel
+      this.currentHotelId = hotel.id_hotel;
+      this.hotelForm = { ...hotel };
       this.showModal = true;
     },
     closeModal() {
@@ -144,55 +153,35 @@ export default {
     async saveHotel() {
       try {
         if (this.isEditing) {
-          // Actualizar hotel
           await updateHotel(this.currentHotelId, this.hotelForm.nombre, this.hotelForm.ubicacion, this.hotelForm.direccion, this.hotelForm.telefono);
         } else {
-          // Crear nuevo hotel
-          await createHotel(this.hotelForm.nombre, this.hotelForm.ubicacion, this.hotelForm.direccion, this.hotelForm.telefono);
+          await createHotel(this.hotelForm);
         }
-        this.fetchHotels(); // Actualiza la lista de hoteles
-        this.closeModal();  // Cierra el modal
+        this.fetchHotels();
+        this.closeModal();
       } catch (error) {
         console.error('Error al guardar el hotel:', error.response ? error.response.data : error);
       }
     },
     openConfirmDeleteModal(hotel) {
-    this.hotelToDelete = hotel; // Almacena el hotel a eliminar
-    this.showConfirmDeleteModal = true; // Muestra el modal de confirmación
-  },
-  closeConfirmDeleteModal() {
-    this.showConfirmDeleteModal = false; // Cierra el modal de confirmación
-    this.hotelToDelete = null; // Resetea el hotel seleccionado
-  },
-  async confirmDeleteHotel() {
-    try {
-      if (this.hotelToDelete) {
-        await deleteHotel(this.hotelToDelete.id_hotel); // Llama a la función de servicio para eliminar el hotel
-        this.fetchHotels(); // Actualiza la lista de hoteles
-        this.closeConfirmDeleteModal(); // Cierra el modal
+      this.hotelToDelete = hotel;
+      this.showConfirmDeleteModal = true;
+    },
+    closeConfirmDeleteModal() {
+      this.showConfirmDeleteModal = false;
+      this.hotelToDelete = null;
+    },
+    async confirmDeleteHotel() {
+      try {
+        if (this.hotelToDelete) {
+          await deleteHotel(this.hotelToDelete.id_hotel);
+          this.fetchHotels();
+          this.closeConfirmDeleteModal();
+        }
+      } catch (error) {
+        console.error('Error al eliminar el hotel:', error);
       }
-    } catch (error) {
-      console.error('Error al eliminar el hotel:', error);
-    }
-  },
+    },
   },
 };
 </script>
-
-<style scoped>
-.table-auto {
-  border-collapse: collapse;
-  width: 100%;
-}
-
-th,
-td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-}
-
-th {
-  background-color: #f4f4f4;
-}
-</style>
