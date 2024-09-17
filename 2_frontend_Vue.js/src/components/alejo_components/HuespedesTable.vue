@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { mdiEye, mdiTrashCan } from '@mdi/js'
-import CardBoxModal from '@/components/CardBoxModal.vue'
+import CardBoxModal from '@/components/alejo_components/CardBoxModal.vue'
 import ModalAlert from '../ModalAlert.vue'
 import BaseLevel from '@/components/BaseLevel.vue'
 import BaseButtons from '@/components/BaseButtons.vue'
@@ -21,6 +21,7 @@ const activarModalEdit = ref(false);
 const currentPage = ref(1);
 const isModalVisible = ref(false);
 const modalMessage = ref('');
+const form = ref(null);
 const activarModalDelete = ref({
   visible: false,
   huesped: null
@@ -121,6 +122,12 @@ const update_Huesped = async () => {
 };
 
 
+const cancelEdit = () => {
+  activarModalEdit.value = false;
+  // Solo cierra el modal
+};
+
+
 
 // Método para abrir el modal
 const openDeleteModal = (huesped) => {
@@ -153,6 +160,7 @@ const cancelDelete = () => {
 };
 
 
+
 const formatDate = (dateString) => {
   const options = {
     year: 'numeric',
@@ -172,7 +180,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <CardBoxModal v-model="activarModalEdit" title="Editar huesped" >
+  <CardBoxModal v-model="activarModalEdit" title="Editar huesped"  buttonLabel="Guardar cambios" has-cancel @cancel="cancelEdit"
+  @confirm="update_Huesped " >
     <form @submit.prevent="update_Huesped()">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <!-- Primer par de campos -->
@@ -262,16 +271,16 @@ onMounted(() => {
       </div>
 
       <!-- Botón de enviar (guardar cambios) -->
-      <div class="mt-4">
+      <!-- <div class="mt-4">
         <BaseButton
               type="submit"
               label="Guardar cambios"
               color="info"
               small
             /> 
-      </div>
+      </div> -->
     </form>
-  </CardBoxModal>
+  </CardBoxModal >
 
   <CardBoxModal v-model="activarModalDelete.visible"  v-if="activarModalDelete.huesped" title="Eliminar huesped" buttonLabel="Eliminar" button="danger" has-cancel @confirm="confirmDelete"
   @cancel="cancelDelete" >

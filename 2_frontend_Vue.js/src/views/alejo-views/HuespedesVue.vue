@@ -9,7 +9,7 @@ import HuespedesTable from '@/components/alejo_components/HuespedesTable.vue';
 <template>
   <LayoutAuthenticated>
     <SectionMain class=" rounded-lg">
-      <h1 class="text-black dark:text-white text-2xl font-bold mb-8">Historial Huespedes</h1>
+      <h1 class="text-black dark:text-white text-2xl font-bold mb-8">Historial Huéspedes</h1>
 
     <HuespedesTable />
 
