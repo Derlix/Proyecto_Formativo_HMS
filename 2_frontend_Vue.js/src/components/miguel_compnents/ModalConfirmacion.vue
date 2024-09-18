@@ -18,7 +18,8 @@
       </h1>
 
       <div class="flex justify-center mb-6">
-        <span class="text-gray-700 dark:text-gray-300 mx-2">Datos de la reserva</span>
+        <span class="text-gray-700 dark:text-gray-300 mx-2">Reserva para: </span>
+        <p class="text-gray-900 dark:text-gray-100">{{ huesped.nombre_completo }}</p>
       </div>
 
       <div class="grid grid-cols-2 gap-4">
@@ -92,15 +93,10 @@
 
         <div>
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Llegada</label>
-          <div class="grid grid-cols-2 gap-2">
+          <div class="grid grid-cols-1 gap-2">
             <input
-              type="text"
+              type="date"
               v-model="llegadaDia"
-              class="block w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
-            />
-            <input
-              type="text"
-              v-model="llegadaMes"
               class="block w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
             />
           </div>
@@ -108,15 +104,10 @@
 
         <div>
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Salida</label>
-          <div class="grid grid-cols-2 gap-2">
+          <div class="grid grid-cols-1 gap-2">
             <input
-              type="text"
+              type="date"
               v-model="salidaDia"
-              class="block w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
-            />
-            <input
-              type="text"
-              v-model="salidaMes"
               class="block w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
             />
           </div>
@@ -140,10 +131,16 @@
           Atrás
         </button>
         <button
-          @click="siguiente"
-          class="bg-blue-600 dark:bg-blue-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 transition"
+        @click="confirmar"
+        class="bg-blue-600 dark:bg-blue-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 transition"
         >
           Siguiente
+
+          <ModalPaso02 
+      :visible="mostrarConfirmacion" 
+      @close="mostrarConfirmacion = false" 
+      :huesped="huesped"
+    />
         </button>
       </div>
     </div>
@@ -152,6 +149,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import ModalPaso02 from './ModalPaso02.vue';
 
 const props = defineProps({
   visible: Boolean,
@@ -168,6 +166,10 @@ function cerrarModal() {
 }
 
 function confirmarReserva() {
+  mostrarConfirmacion.value = true 
   cerrarModal()
 }
+
+
+
 </script>
