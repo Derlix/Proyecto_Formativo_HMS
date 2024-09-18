@@ -4,7 +4,7 @@ import { useMainStore } from '@/stores/main'
 import * as chartConfig from '@/components/Charts/chart.config.js'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import axios from 'axios'
-import AlertaReserva from '@/components/AlertaReserva.vue'
+import AlertaCrearReserva from '@/components/miguel_compnents/AlertaCrearReserva.vue'
 
 const showModal = ref(false)
 
@@ -187,7 +187,7 @@ onMounted(() => {
       </button>
 
       <!-- Pasa showModal como prop y maneja el evento de cierre -->
-      <AlertaReserva :mostrarModal="showModal" @cerrar="showModal = false" />
+      <AlertaCrearReserva :mostrarModal="showModal" @cerrar="showModal = false" />
 
       <button
         type="button"
