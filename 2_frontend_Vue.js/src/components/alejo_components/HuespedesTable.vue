@@ -7,6 +7,7 @@ import BaseLevel from '@/components/BaseLevel.vue'
 import BaseButtons from '@/components/BaseButtons.vue'
 import BaseButton from '@/components/BaseButton.vue'
 import { getHuespedByPage, deleteHuesped, updateHuesped, getHuespedByDocument} from '@/services/huespedService';
+import NotificationBar from '@/components/alejo_components/NotificationBar.vue'
 
 defineProps({
   checkable: Boolean
@@ -15,17 +16,22 @@ defineProps({
 const huespedes = ref([]);
 const currentHuesped = ref({});
 const buscarHuesped = ref('');
-const totalPages = ref(0);
+const TotalPages = ref(0);
+const currentPage = ref(1);
 const isEditMode = ref(false);
 const activarModalEdit = ref(false);
-const currentPage = ref(1);
 const isModalVisible = ref(false);
+const isAlertVisible = ref(false);
+const colorAlert = ref('');
 const modalMessage = ref('');
-const form = ref(null);
 const activarModalDelete = ref({
   visible: false,
   huesped: null
 });
+
+
+
+
 
 
 const fetchHuespedes = async () => {
@@ -36,7 +42,7 @@ const fetchHuespedes = async () => {
 
     huespedes.value = activos;
 
-    totalPages.value = response.data.total_pages;
+    TotalPages.value = response.data.total_pages;
   } catch (error) {
     alert(error.response?.data?.detail || 'Error al obtener los huéspedes');
   }
@@ -79,20 +85,7 @@ const handleClose = () => {
   buscarHuesped.value = "";
 };
 
-// const nextPage = () => {
-//   if (currentPage.value < totalPages.value) {
-//     currentPage.value++;
-//     fetchHuespedes();
-//   }
-// };
 
-// // Navega a la página anterior
-// const prevPage = () => {
-//   if (currentPage.value > 1) {
-//     currentPage.value--;
-//     fetchHuespedes();
-//   }
-// };
 
 const openEditModal = (huesped = {}) => {
   isEditMode.value = true;
@@ -114,10 +107,27 @@ const update_Huesped = async () => {
       currentHuesped.value.ocupacion,
       currentHuesped.value.direccion
     );
-    alert('Huésped actualizado exitosamente');
-    fetchHuespedes();
+    modalMessage.value = 'Huésped actualizado exitosamente';
+    isAlertVisible.value = true;
+    colorAlert.value = 'success';
+    activarModalEdit.value = false;
+
+    setTimeout(() => {
+      isAlertVisible.value = false;
+    }, 3000);
+    //cierra el modal en tres segundos
+
+    await fetchHuespedes();
   } catch (error) {
-    alert(error.data.detail);
+    modalMessage.value = error.data.detail;
+    isAlertVisible.value = true;
+    colorAlert.value = 'danger';
+    activarModalEdit.value = false;
+
+    setTimeout(() => {
+      isAlertVisible.value = false;
+    }, 3000);
+
   }
 };
 
@@ -146,11 +156,21 @@ const confirmDelete = async () => {
 
   try {
     await deleteHuesped(huespedTemp.id_huesped);
+    modalMessage.value = 'Huésped eliminado exitosamente';
+    isAlertVisible.value = true;
+    colorAlert.value = 'danger';
+    setTimeout(() => {
+      isAlertVisible.value = false;
+    }, 3000);
+
     await fetchHuespedes(); // Actualiza la lista de huéspedes
-    activarModalDelete.value.visible = false; // Cierra el modal
+    activarModalDelete.value.visible = false; 
   } catch (error) {
-    console.error('Error al eliminar el huésped:', error);
-    alert('Hubo un problema al intentar eliminar el huésped. Inténtalo de nuevo más tarde.');
+    modalMessage.value = error.data.detail;
+    isAlertVisible.value = true;
+    colorAlert.value = 'danger';
+    activarModalDelete.value.visible = false; 
+
   }
 };
 
@@ -166,8 +186,7 @@ const formatDate = (dateString) => {
     year: 'numeric',
     month: 'numeric',
     day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
+    timeZone: 'UTC'
   };
   return new Date(dateString).toLocaleDateString('es-ES', options);
 };
@@ -180,6 +199,21 @@ onMounted(() => {
 </script>
 
 <template>
+  <NotificationBar
+  v-if="isAlertVisible"
+  :color="colorAlert" 
+  :description="modalMessage"
+  :visible="isModalVisible"
+  />
+
+  <ModalAlert
+  v-if="isModalVisible"
+  :descripcion="modalMessage"
+  textBoton="Cerrar"
+  :visible="isModalVisible"
+  @close="handleClose"
+  />
+
   <CardBoxModal v-model="activarModalEdit" title="Editar huesped"  buttonLabel="Guardar cambios" has-cancel @cancel="cancelEdit"
   @confirm="update_Huesped " >
     <form @submit.prevent="update_Huesped()">
@@ -364,26 +398,21 @@ onMounted(() => {
   </table>
   <div class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800">
     <BaseLevel>
-      <BaseButtons>
-        <BaseButton
-          v-for="page in pagesList"
-          :key="page"
-          :active="page === currentPage"
-          :label="page + 1"
-          :color="page === currentPage ? 'lightDark' : 'whiteDark'"
-          small
-          @click="currentPage = page"
-        />
-      </BaseButtons>
-      <small>Page {{ currentPageHuman }} of {{ numPages }}</small>
+        <BaseButtons>
+            <BaseButton
+            v-for="page in TotalPages"
+            :key="page"
+            :active="page === currentPage"
+            :label="page"
+            :color="page === currentPage ? 'lightDark' : 'whiteDark'"
+            small
+            @click="currentPage = page; fetchHuespedes()"
+            />
+        </BaseButtons>
+        <small>Página {{ currentPage }} de {{ TotalPages }}</small>
     </BaseLevel>
-  </div>
+    </div>
+ 
 
-  <ModalAlert
-      v-if="isModalVisible"
-      :descripcion="modalMessage"
-      textBoton="Cerrar"
-      :visible="isModalVisible"
-      @close="handleClose"
-    />
+
 </template>
