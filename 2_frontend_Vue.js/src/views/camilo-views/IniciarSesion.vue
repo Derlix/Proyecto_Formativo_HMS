@@ -95,11 +95,11 @@ const handleLogin = async () => {
           :input-value="true"
         />
 
-        <div class="text-center">
-            <router-link to="/recuperar" class="m-1 text-xs">¿Olvidaste tu contraseña? Restablecer contraseña</router-link>
+        <div class="text-center m-1">
+            <router-link to="/recuperar" class="text-xs">¿Olvidaste tu contraseña? Restablecer contraseña</router-link>
         </div>
-        <div class="text-center">
-            <router-link to="/registrar" class="m-1 text-xs">¿Aún no tienes cuenta? Registrate</router-link>
+        <div class="text-center m-2">
+            <router-link to="/registrar" class="text-xs">¿Aún no tienes cuenta? Registrate</router-link>
         </div>
       </CardBox>
     </SectionFullScreen>
