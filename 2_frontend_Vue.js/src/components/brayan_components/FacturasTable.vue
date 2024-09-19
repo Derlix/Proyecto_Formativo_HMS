@@ -1,0 +1,846 @@
+<script setup>
+import { computed, ref, onMounted, watch } from 'vue'
+import { useMainStore } from '@/stores/main'
+import { mdiEye, mdiTrashCan, mdiPencilBoxMultiple, mdiFoodForkDrink, mdiCartPlus, mdiPencilPlus, mdiEyeCheckOutline } from '@mdi/js'
+import CardModalBrayan from '@/components/brayan_components/CardModalBrayan.vue'
+import CardLista from '@/components/brayan_components/CardLista.vue'
+import TableCheckboxCell from '@/components/TableCheckboxCell.vue'
+import BaseLevel from '@/components/BaseLevel.vue'
+import BaseButtons from '@/components/BaseButtons.vue'
+import BaseButton from '@/components/BaseButton.vue'
+import UserAvatar from '@/components/UserAvatar.vue'
+
+defineProps({
+  checkable: Boolean
+})
+
+
+
+import { getProductosFacturaById, deleteProductoFactura, updateProductoFactura, addProductoToFactura } from "@/services/brayan_service/FacturaProductoService";
+import { getAllFacturas, updateFacturaService, deleteFactura } from "@/services/brayan_service/FacturacionService";
+
+
+//variables de facturas
+const facturas = ref([]);
+const selectedFactura = ref({});
+const showEditModal = ref(false);
+const showDeleteModal = ref(false);
+const showDetalles = ref(false);
+
+
+
+
+
+//ver facturas
+const fetchFacturas = async () => {
+  try {
+    const response = await getAllFacturas();
+    facturas.value = response;
+  } catch (error) {
+    console.error('Error al obtener facturas:', error.message);
+    if (error.response) {
+      console.error('Error en la respuesta:', error.response);
+    }
+  }
+};
+
+onMounted(() => {
+  fetchFacturas();
+});
+
+const emit = defineEmits(['update', 'close']);
+
+
+
+//actualizar facturas
+const updateFactura = async () => {
+  try {
+    await updateFacturaService(
+      selectedFactura.value.id_facturacion,
+      selectedFactura.value.subtotal,
+      selectedFactura.value.impuestos,
+      selectedFactura.value.total,
+      selectedFactura.value.total_precio_productos,
+      selectedFactura.value.metodo_pago,
+      selectedFactura.value.estado,
+      selectedFactura.value.fecha_salida
+    );
+    alert('Factura editada exitosamente');
+    fetchFacturas();
+    closeEditModal();
+    emit('update');
+    emit('close');
+  } catch (error) {
+    alert('Error al actualizar la factura: ' + (error.response?.data?.message || error.message));
+  }
+};
+
+
+
+//Eliminar factura
+const confirmDelete = async () => {
+  try {
+    await deleteFactura(selectedFactura.value.id_facturacion);
+    alert('Factura eliminada exitosamente');
+    fetchFacturas();
+    closeDeleteModal();
+    emit('delete');  // Emite el evento correcto para que lo maneje el componente padre
+    emit('close');   // Cierra el modal
+  } catch (error) {
+    if (error.response?.status === 400) {
+      alert('No se puede eliminar la factura porque tiene productos asociados. Elimine los productos primero.');
+    } else {
+      alert('Error al eliminar la factura: ' + (error.response?.data?.message || error.message));
+    }
+  }
+};
+
+
+//ABRIR MODAL DE EDITAR Y ELIMINAR FACTURA
+function openEditModal(factura) {
+  selectedFactura.value = { ...factura, fecha_salida: factura.fecha_salida ? factura.fecha_salida.replace(' ', 'T').split('.')[0] : '' }; // Clona la factura seleccionada
+  showEditModal.value = true;
+}
+
+function openDeleteModal(factura) {
+  selectedFactura.value = { ...factura };
+  showDeleteModal.value = true;
+}
+
+function openDetallesmodal(factura) {
+  selectedFactura.value = { ...factura };
+  showDetalles.value = true;
+  console.log(showDetalles.value);
+}
+
+
+
+
+//CERRAR MODAL DE EDITAR Y ELIMINAR FACTURA
+function closeEditModal() {
+  showEditModal.value = false;
+}
+
+function closeDeleteModal() {
+  showDeleteModal.value = false;
+}
+
+function closeDetallesModal() {
+  showDetalles.value = false;
+}
+
+
+function cerrarEditarFactura() {
+  closeEditModal();
+}
+
+function cerrarEliminarFactura() {
+  closeDeleteModal();
+}
+
+
+function cerrarDetallesFactura() {
+  closeDetallesModal();
+}
+
+
+//
+
+//PRODUCTOS DE FACTURAS |||||||||||||||||||
+
+
+//variables de productos de facturas
+const productos = ref([]);
+const selectedProduct = ref({
+  factura_producto: {
+    id_facturacion: null,
+    id_producto: null,
+    cantidad: null,
+    fecha: null,
+    precio_unitario: null,
+
+  },
+
+});
+const showListaProductosModal = ref(false);
+const showAgregarProductosModal = ref(false);
+const showDeleteProductosModal = ref(false);
+const showEditProductosModal = ref(false);
+
+
+//LISTA DE PRODCUTOS DE FACTURA
+const fetchProductos = async () => {
+  try {
+    if (selectedFactura.value && selectedFactura.value.id_facturacion) {
+      const response = await getProductosFacturaById(selectedFactura.value.id_facturacion);
+      console.log(response); // Verifica la estructura de la respuesta
+      if (response && response.productos) {
+        productos.value = response.productos; // Asegúrate de asignar la lista de productos
+      } else {
+        console.error('No se encontraron productos en la respuesta:', response);
+      }
+    }
+  } catch (error) {
+    console.error('Error al obtener productos de la factura:', error);
+  }
+};
+
+watch(() => selectedFactura.value, fetchProductos, { immediate: true });
+
+
+const addProducto = async () => {
+  try {
+    console.log('Datos del producto a agregar:', selectedProduct.value);
+    await addProductoToFactura(
+      selectedFactura.value.id_facturacion,
+      selectedProduct.value.id_producto,
+      selectedProduct.value.cantidad,
+      selectedProduct.value.fecha,
+      selectedProduct.value.precio_unitario
+    );
+    alert('El producto se agregó correctamente a la factura');
+    fetchProductos();
+    closeAgregarProductosModal();
+    resetSelectedProduct();
+  } catch (error) {
+    console.error('Error al agregar el producto:', error); // Imprime el error para depurar
+    alert('Error al agregar el producto: ' + (error.response?.data?.message || error.message));
+  }
+};
+
+function resetSelectedProduct() {
+  selectedProduct.value = {
+    id_producto: null,
+    cantidad: null,
+    fecha: null,
+    precio_unitario: null
+  };
+}
+
+
+
+
+
+
+//ELIMINAR PRODUCTO DE FACTURA
+const confirmDeleteProducto = async () => {
+  try {
+    console.log('Confirmar eliminación del producto:', selectedProduct.value); // Verifica que se muestra la información del producto
+    await deleteProductoFactura(selectedProduct.value.factura_producto.id_factura_producto);
+    alert('Producto de la Factura eliminado exitosamente');
+    fetchProductos();
+    closeDeleteProductosModal();
+  } catch (error) {
+    alert('Error al eliminar el producto: ' + (error.response?.data?.message || error.message));
+  }
+};
+
+
+//ACTUALIZAR PRODUCTO DE FACTURA
+const updateProducto = async () => {
+  try {
+    console.log('Datos del producto en el modal:', selectedProduct.value);
+    await updateProductoFactura(
+      selectedProduct.value.factura_producto.id_factura_producto,
+      selectedProduct.value.factura_producto.cantidad,
+      selectedProduct.value.fecha,
+      selectedProduct.value.factura_producto.precio_unitario
+    );
+    alert('Producto de la factura editado exitosamente');
+    fetchProductos();
+    closeEditProductosModal();
+  } catch (error) {
+    alert('Error al actualizar el producto de la factura: ' + (error.response?.data?.message || error.message));
+  }
+};
+
+
+
+
+
+//ABRIR MODAL DE LISTA DE PRODUCTOS DE LA FACTURA
+
+function openListaProductosModal(factura) {
+  selectedFactura.value = factura;
+  showListaProductosModal.value = true;
+}
+
+
+
+//ABRIR MODAL DE AGREGAR PRODUCTOS A LA FACTURA
+function openAgregarProductosModal(factura) {
+  selectedFactura.value = factura;
+  showAgregarProductosModal.value = true;
+}
+
+
+
+const openEditProductoModal = (producto) => {
+  if (producto && producto.factura_producto && producto.factura_producto.id_factura_producto) {
+    console.log('Producto seleccionado para editar:', producto);
+    selectedProduct.value = { ...producto };
+    showEditProductosModal.value = true;
+  } else {
+    console.error('Producto no válido:', producto);
+  }
+};
+
+
+
+const openDeleteProductoModal = (producto) => {
+  if (producto && producto.factura_producto && producto.factura_producto.id_factura_producto) {
+    console.log('Producto seleccionado:', producto.factura_producto.id_factura_producto);
+    selectedProduct.value = { ...producto };
+    showDeleteProductosModal.value = true;
+  } else {
+    console.error('Producto no válido:', producto);
+  }
+};
+
+
+
+//CERRAR MODAL DE LISTA DE PRODUCTOS DE LA FACTURA
+function closeListaProductosModal() {
+  showListaProductosModal.value = false;
+}
+
+
+function closeAgregarProductosModal() {
+  showAgregarProductosModal.value = false;
+}
+
+
+const closeEditProductosModal = () => {
+  showEditProductosModal.value = false;
+};
+
+const closeDeleteProductosModal = () => {
+  showDeleteProductosModal.value = false;
+};
+
+
+
+
+//CERRAR MODALES DE AGREGAR Y ELIMINAR PRODUCTOS DE LA FACTURA
+function cerrarlistaProductoFactura() {
+  closeListaProductosModal();
+}
+
+
+function cerrarEditarProductoFactura() {
+  closeEditProductosModal();
+}
+
+function cerrarEliminarProductoFactura() {
+  closeDeleteProductosModal();
+}
+
+function cerrarAgregarProductoFactura() {
+  closeAgregarProductosModal();
+}
+
+
+
+</script>
+
+<template>
+
+
+  <!-- CARDBOX PARA EDITAR FACTURA-->
+  <div id="cardEditar">
+    <CardModalBrayan v-model="showEditModal" title="Editar Factura">
+      <form @submit.prevent="updateFactura">
+        <div class="grid grid-cols-2 sm:grid-cols-2  gap-4">
+          <!-- Primer par de campos -->
+          <div class="mb-4">
+            <label for="facturaSubtotal" class="block text-gray-700 dark:text-gray-300 font-medium">Subtotal</label>
+            <input type="number" id="facturaSubtotal"
+              class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-300 sm:text-sm"
+              v-model="selectedFactura.subtotal" required />
+          </div>
+          <div class="mb-4">
+            <label for="facturaImpuestos" class="block text-gray-700 dark:text-gray-300 font-medium">Impuestos</label>
+            <input type="number" id="facturaImpuestos"
+              class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-300 sm:text-sm"
+              v-model="selectedFactura.impuestos" required />
+          </div>
+          <!-- Segundo par de campos -->
+          <div class="mb-4">
+            <label for="facturaTotal" class="block text-gray-700 dark:text-gray-300 font-medium">Total</label>
+            <input type="number" id="facturaTotal"
+              class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-300 sm:text-sm"
+              v-model="selectedFactura.total" required />
+          </div>
+          <div class="mb-4">
+            <label for="facturaTotalPrecioProductos" class="block text-gray-700 dark:text-gray-300 font-medium">Total
+              Precio Productos</label>
+            <input type="number" id="facturaTotalPrecioProductos"
+              class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-300 sm:text-sm"
+              v-model="selectedFactura.total_precio_productos" required />
+          </div>
+          <!-- Tercer par de campos -->
+          <div class="mb-4">
+            <label for="facturaMetodoPago" class="block text-gray-700 dark:text-gray-300 font-medium">Método de
+              Pago</label>
+            <input type="text" id="facturaMetodoPago"
+              class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-300 sm:text-sm"
+              v-model="selectedFactura.metodo_pago" required />
+          </div>
+          <div class="mb-4">
+            <label for="facturaEstado" class="block text-gray-700 dark:text-gray-300 font-medium">Estado</label>
+            <input type="text" id="facturaEstado"
+              class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-300 sm:text-sm"
+              v-model="selectedFactura.estado" required />
+          </div>
+          <!-- Último par de campos -->
+          <div class="mb-4">
+            <label for="facturaFechaSalida" class="block text-gray-700 dark:text-gray-300 font-medium">Fecha
+              Salida</label>
+            <input type="datetime-local" id="facturaFechaSalida"
+              class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-300 sm:text-sm"
+              v-model="selectedFactura.fecha_salida" required />
+          </div>
+        </div>
+
+        <!-- Botón de enviar (guardar cambios) -->
+        <div class="mt-3flex justify-start">
+          <BaseButton class="mx-3" type="button" label="Cerrar" color="info" medium @click="cerrarEditarFactura" />
+          <BaseButton type="submit" label="Editar" color="success" medium />
+
+        </div>
+      </form>
+    </CardModalBrayan>
+  </div>
+
+
+
+
+  <!-- CARDBOX PARA ELIMINAR FACTURA -->
+  <CardModalBrayan v-model="showDeleteModal" title="Eliminar Factura">
+    <div class="mb-4">
+      <p id="texto_">
+        ¿Está seguro que desea eliminar la factura con el ID {{ selectedFactura.id_facturacion }}?
+      </p>
+    </div>
+
+    <div class="flex justify-end mt-5">
+      <BaseButton class="mx-3" type="button" label="Cancelar" color="info" medium @click="cerrarEliminarFactura" />
+      <BaseButton type="button" label="Eliminar" color="danger" small @click="confirmDelete" />
+
+    </div>
+  </CardModalBrayan>
+
+
+
+
+
+
+  <!-- SECCION DE PRODUCTOOOOOS
+//
+//
+
+//
+
+-->
+
+  <!-- CARDBOX PARA VER LA LISTA DE PRODUCTOS DE UNA FACTURA-->
+  <CardLista v-model="showListaProductosModal" title="Historial de Productos de la Factura">
+    <div class="relative overflow-x-auto ">
+
+      <div class="max-h-96 overflow-y-auto ">
+        <table id="tabla_productos">
+          <thead class="text-xs text-gray-700 uppercase bg-blue-100 ">
+            <tr>
+              <th>ID Facturación</th>
+              <th>ID Factura Producto</th>
+              <th>ID Producto</th>
+              <th>Cantidad</th>
+              <th>Precio U</th>
+              <th>Nombre</th>
+              <th>Descripción</th>
+              <th>Precio Actual</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="producto in productos" :key="producto.factura_producto.id_factura_producto">
+              <td :data-label="'ID Facturación'">{{ selectedFactura.id_facturacion }}</td>
+              <td :data-label="'ID Factura Producto'">{{ producto.factura_producto.id_factura_producto }}</td>
+              <td :data-label="'ID Producto'">{{ producto.factura_producto?.id_producto || 'N/A' }}</td>
+              <td :data-label="'Cantidad'">{{ producto.factura_producto?.cantidad || 'N/A' }}</td>
+              <td :data-label="'Precio U'">{{ producto.factura_producto?.precio_unitario || 'N/A' }}</td>
+              <td :data-label="'Nombre'">{{ producto.productos?.nombre_producto || 'N/A' }}</td>
+              <td :data-label="'Descripción'">{{ producto.productos?.descripcion || 'N/A' }}</td>
+              <td :data-label="'Precio Actual'">{{ producto.productos?.precio_actual || 'N/A' }}</td>
+              <td :data-label="'Acciones'">
+                <div class="flex justify-center space-x-2">
+                  <BaseButton color="info" :icon="mdiPencilPlus" small @click="openEditProductoModal(producto)">
+                  </BaseButton>
+                  <BaseButton color="danger" :icon="mdiTrashCan" small @click="openDeleteProductoModal(producto)">
+                  </BaseButton>
+
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+    <div class="flex justify-end ">
+
+      <button type="button" @click="cerrarlistaProductoFactura"
+        class="bg-gray-500 text-white mt-4 px-4 py-2 rounded mr-2 ">
+        Salir
+      </button>
+    </div>
+  </CardLista>
+
+
+  <!-- CARDBOX PARA ELIMINAR PRODUCTO DE UNA FACTURA -->
+  <CardModalBrayan v-model="showDeleteProductosModal" title="Eliminar Producto">
+    <p id="texto_" class="mb-4">
+      ¿Está seguro que desea eliminar el Producto con el ID factura-producto {{
+        selectedProduct.factura_producto?.id_factura_producto }} de la factura?
+    </p>
+
+    <div class="flex justify-end">
+      <button type="button" @click="cerrarEliminarProductoFactura"
+        class="bg-gray-500 text-white px-4 py-2 rounded mr-2">
+        Cancelar
+      </button>
+      <button type="button" @click="confirmDeleteProducto" class="bg-red-500 text-white px-4 py-2 rounded">
+        Eliminar
+      </button>
+    </div>
+  </CardModalBrayan>
+
+
+  <!-- CARDBOX PARA EDITAR PRODUCTO DE UNA FACTURA -->
+  <CardModalBrayan v-model="showEditProductosModal" title="Editar Producto">
+    <form @submit.prevent="updateProducto">
+      <div class="mb-4">
+        <label for="cantidad" class="block text-gray-700">Cantidad</label>
+        <input type="number" id="cantidad" v-model="selectedProduct.factura_producto.cantidad"
+          class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500"
+          required />
+      </div>
+      <div class="mb-4">
+        <label for="fecha" class="block text-gray-700">Fecha</label>
+        <input type="date" id="fecha" v-model="selectedProduct.fecha"
+          class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500" />
+      </div>
+      <div class="mb-4">
+        <label for="precio_unitario" class="block text-gray-700">Precio Unitario</label>
+        <input type="number" id="precio_unitario" v-model="selectedProduct.factura_producto.precio_unitario"
+          class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500"
+          required />
+      </div>
+
+      <div class="flex justify-end">
+        <button @click="cerrarEditarProductoFactura" type="button"
+          class="bg-gray-500 text-white px-4 py-2 rounded mr-2 hover:bg-gray-600 transition">
+          Cancelar
+        </button>
+        <button type="submit" class="bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+          Editar
+        </button>
+      </div>
+    </form>
+  </CardModalBrayan>
+
+
+  <!-- CARDBOX PARA AGREGAR PRODUCTO DE UNA FACTURA -->
+  <CardModalBrayan v-model="showAgregarProductosModal" title="Agregar Producto a la Factura">
+    <form @submit.prevent="addProducto">
+      <div class="mb-4">
+        <label for="id_facturacion" class="block text-gray-700">ID facturación</label>
+        <input id="id_facturacion" v-model="selectedFactura.id_facturacion" type="number" disabled
+          class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 bg-gray-100 focus:outline-none focus:border-blue-500" />
+      </div>
+      <div class="mb-4">
+        <label for="id_producto" class="block text-gray-700">ID producto</label>
+        <input id="id_producto" v-model="selectedProduct.id_producto" type="number"
+          class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500" />
+      </div>
+      <div class="mb-4">
+        <label for="cantidad" class="block text-gray-700">Cantidad</label>
+        <input id="cantidad" v-model="selectedProduct.cantidad" type="number"
+          class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500" />
+      </div>
+      <div class="mb-4">
+        <label for="fecha" class="block text-gray-700">Fecha</label>
+        <input id="fecha" v-model="selectedProduct.fecha" type="date"
+          class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500" />
+      </div>
+      <div class="mb-4">
+        <label for="precio_unitario" class="block text-gray-700">Precio Unitario</label>
+        <input id="precio_unitario" v-model="selectedProduct.precio_unitario" type="text"
+          class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500" />
+      </div>
+      <div class="flex justify-end">
+        <button type="button" @click="cerrarAgregarProductoFactura"
+          class="bg-gray-500 text-white px-4 py-2 rounded mr-2 hover:bg-gray-600 transition">
+          Cancelar
+        </button>
+        <button type="submit" class="bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+          Agregar
+        </button>
+      </div>
+    </form>
+  </CardModalBrayan>
+
+
+
+
+
+  <!-- SECCION  DE HISTORIAL DE FACTURAS-->
+  <div class="relative overflow-x-auto">
+    <h1 class="text-black dark:text-white text-3xl font-bold mb-3">Seccion de Facturas</h1>
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-4 py-4">
+      <input type="search" placeholder="Buscar factura por ID" class="rounded-lg border border-gray-300 p-2" />
+      <button type="button" class="bg-blue-800 rounded-lg text-white p-2 hover:bg-blue-700 transition">
+        Buscar
+      </button>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th v-if="checkable" />
+
+          <th class="">ID Facturación</th>
+          <th class="">ID Check-in</th>
+          <th class="">Subtotal</th>
+          <th class="">Impuestos</th>
+          <th class="">Total</th>
+          <th class="">Total Precio Productos</th>
+          <th class="">Método de Pago</th>
+          <th class="">Estado</th>
+          <th class="">Fecha Salida</th>
+          <th class="">ID Reserva</th>
+          <th class="">Medio Llegada</th>
+          <th class="">Llegada Situación</th>
+          <th class="">Equipaje</th>
+          <th class="">Fecha Reserva</th>
+          <th class="">Empresa</th>
+          <th class="">Valor Depósito</th>
+          <th class="">Forma de Pago</th>
+          <th class="">Nombre</th>
+          <th class="">N° Documento</th>
+          <th class="">Acciones</th>
+
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="factura in facturas" :key="factura.id_facturacion">
+
+          <td data-label="ID Facturación">{{ factura.id_facturacion }}</td>
+          <td data-label="ID Check-In">{{ factura.check_in.id_check_in }}</td>
+          <td data-label="Subtotal">{{ factura.subtotal }}</td>
+          <td data-label="Impuestos">{{ factura.impuestos }}</td>
+          <td data-label="Total">{{ factura.total }}</td>
+          <td data-label="Total Precio Productos">{{ factura.total_precio_productos }}</td>
+          <td data-label="Método de Pago">{{ factura.metodo_pago }}</td>
+          <td data-label="Estado">{{ factura.estado }}</td>
+          <td data-label="Fecha de Salida">{{ factura.fecha_salida }}</td>
+          <td data-label="ID Reserva">{{ factura.reserva.id_reserva }}</td>
+          <td data-label="Medio de Llegada">{{ factura.check_in.medio_llegada }}</td>
+          <td data-label="Llegada Situación">{{ factura.check_in.llegada_situacion }}</td>
+          <td data-label="Equipaje">{{ factura.check_in.equipaje }}</td>
+          <td data-label="Fecha Reserva">{{ factura.reserva.fecha_reserva }}</td>
+          <td data-label="Empresa">{{ factura.reserva.empresa }}</td>
+          <td data-label="Valor Depósito">{{ factura.reserva.valor_deposito }}</td>
+          <td data-label="Forma de Pago">{{ factura.reserva.forma_pago }}</td>
+          <td data-label="Nombre Completo">{{ factura.huesped.nombre_completo }}</td>
+          <td data-label="Número de Documento">{{ factura.huesped.numero_documento }}</td>
+          <td class="before:hidden lg:w-1 whitespace-nowrap">
+            <BaseButtons type="justify-start lg:justify-end" no-wrap>
+              <BaseButton color="primary" :icon="mdiEyeCheckOutline" small @click="openDetallesmodal(factura)">
+              </BaseButton>
+              <BaseButton color="warning" :icon="mdiCartPlus" small @click="openAgregarProductosModal(factura)">
+              </BaseButton>
+              <BaseButton color="success" :icon="mdiFoodForkDrink" small @click="openListaProductosModal(factura)">
+              </BaseButton>
+              <BaseButton color="info" :icon="mdiPencilBoxMultiple" small @click="openEditModal(factura)" />
+              <BaseButton color="danger" :icon="mdiTrashCan" small @click="openDeleteModal(factura)" />
+
+            </BaseButtons>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+
+
+  <!-- VER INFO DE LA FACTURA-->
+  <!-- CardBox para mostrar información de la factura y productos asociados -->
+  <CardLista v-model="showDetalles">
+    <!-- Sección de Información de la Factura -->
+   
+    <div class="mb-6 ">
+      <div class="max-h-96 overflow-y-auto  ">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h1 class="font-bold text-lg mb-4" >Detalles de la Factura</h1>
+          <img src="src/assets/img/sena-agro.png" alt="" style="width: 50px; height: 50px; margin-right: 10px;">
+        </div>
+
+
+        <table>
+          <thead>
+            <tr>
+              <th>Campo</th>
+              <th>Valor</th>
+            </tr>
+          </thead>
+          <tbody class="text-sm">
+            <tr>
+              <td data-label="Campo">ID Facturación</td>
+              <td data-label="Valor">{{ selectedFactura?.id_facturacion }}</td>
+            </tr>
+            <tr>
+              <td data-label="Campo">ID Check-In</td>
+              <td data-label="Valor">{{ selectedFactura?.check_in?.id_check_in }}</td>
+            </tr>
+            <tr>
+              <td data-label="Campo">Subtotal</td>
+              <td data-label="Valor">{{ selectedFactura?.subtotal }}</td>
+            </tr>
+            <tr>
+              <td data-label="Campo">Impuestos</td>
+              <td data-label="Valor">{{ selectedFactura?.impuestos }}</td>
+            </tr>
+            <tr>
+              <td data-label="Campo">Total</td>
+              <td data-label="Valor">{{ selectedFactura?.total }}</td>
+            </tr>
+            <tr>
+              <td data-label="Campo">Total Precio Productos</td>
+              <td data-label="Valor">{{ selectedFactura?.total_precio_productos }}</td>
+            </tr>
+            <tr>
+              <td data-label="Campo">Método de Pago</td>
+              <td data-label="Valor">{{ selectedFactura?.metodo_pago }}</td>
+            </tr>
+            <tr>
+              <td data-label="Campo">Estado</td>
+              <td data-label="Valor">{{ selectedFactura?.estado }}</td>
+            </tr>
+            <tr>
+              <td data-label="Campo">Fecha de Salida</td>
+              <td data-label="Valor">{{ selectedFactura?.fecha_salida }}</td>
+            </tr>
+            <tr>
+              <td data-label="Campo">ID Reserva</td>
+              <td data-label="Valor">{{ selectedFactura?.reserva?.id_reserva }}</td>
+            </tr>
+            <tr>
+              <td data-label="Campo">Medio de Llegada</td>
+              <td data-label="Valor">{{ selectedFactura?.check_in?.medio_llegada }}</td>
+            </tr>
+            <tr>
+              <td data-label="Campo">Llegada Situación</td>
+              <td data-label="Valor">{{ selectedFactura?.check_in?.llegada_situacion }}</td>
+            </tr>
+            <tr>
+              <td data-label="Campo">Equipaje</td>
+              <td data-label="Valor">{{ selectedFactura?.check_in?.equipaje }}</td>
+            </tr>
+            <tr>
+              <td data-label="Campo">Fecha Reserva</td>
+              <td data-label="Valor">{{ selectedFactura?.reserva?.fecha_reserva }}</td>
+            </tr>
+            <tr>
+              <td data-label="Campo">Empresa</td>
+              <td data-label="Valor">{{ selectedFactura?.reserva?.empresa }}</td>
+            </tr>
+            <tr>
+              <td data-label="Campo">Valor Depósito</td>
+              <td data-label="Valor">{{ selectedFactura?.reserva?.valor_deposito }}</td>
+            </tr>
+            <tr>
+              <td data-label="Campo">Forma de Pago</td>
+              <td data-label="Valor">{{ selectedFactura?.reserva?.forma_pago }}</td>
+            </tr>
+            <tr>
+              <td data-label="Campo">Nombre Completo</td>
+              <td data-label="Valor">{{ selectedFactura?.huesped?.nombre_completo }}</td>
+            </tr>
+            <tr>
+              <td data-label="Campo">Número de Documento</td>
+              <td data-label="Valor">{{ selectedFactura?.huesped?.numero_documento }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="text-lg font-semibold mb-4 mt-8">Productos Asociados</h3>
+        <table class="">
+          <thead>
+            <tr>
+              <th class=" text-sm">ID Factura Producto</th>
+              <th class=" text-sm">ID Producto</th>
+              <th class=" text-sm">Cantidad</th>
+              <th class=" text-sm">Precio Unitario</th>
+              <th class=" text-sm">Nombre</th>
+              <th class=" text-sm">Descripción</th>
+              <th class=" text-sm">Precio Actual</th>
+            </tr>
+          </thead>
+          <tbody class="text-sm">
+            <tr v-for="producto in productos" :key="producto.factura_producto.id_factura_producto">
+              <td data-label="ID factura_producto">{{ producto.factura_producto.id_factura_producto }}</td>
+              <td data-label="ID producto">{{ producto.factura_producto.id_producto || 'N/A' }}</td>
+              <td data-label="cantidad">{{ producto.factura_producto.cantidad || 'N/A' }}</td>
+              <td data-label="precio unitario">{{ producto.factura_producto.precio_unitario || 'N/A' }}</td>
+              <td data-label="nombre">{{ producto.productos.nombre_producto || 'N/A' }}</td>
+              <td data-label="descripcion">{{ producto.productos.descripcion || 'N/A' }}</td>
+              <td data-label="precio total">{{ producto.productos.precio_actual || 'N/A' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <BaseButton type="button" @click="cerrarListaProductosModal"
+        class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition">
+        Cerrar
+      </BaseButton>
+    </div>
+  </CardLista>
+
+
+
+
+
+
+
+
+  <!--  <div class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800">
+    <BaseLevel>
+      <BaseButtons>
+        <BaseButton v-for="page in pagesList" :key="page" :active="page === currentPage" :label="page + 1"
+          :color="page === currentPage ? 'lightDark' : 'whiteDark'" small @click="currentPage = page" />
+      </BaseButtons>
+      <small>Page {{ currentPageHuman }} of {{ numPages }}</small>
+    </BaseLevel>
+  </div>
+    -->
+</template>
+<style scoped>
+th,
+td {
+  white-space: nowrap;
+}
+
+.dark input {
+  background-color: #1f2937;
+  /* Fondo oscuro */
+  color: white;
+  /* Texto claro */
+  border-color: #374151;
+  /* Borde oscuro */
+}
+
+/* #tabla_productos{
+  
+}
+*/
+</style>
