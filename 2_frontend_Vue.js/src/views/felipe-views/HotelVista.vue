@@ -1,7 +1,7 @@
 <template>
   <LayoutAuthenticated>
     <SectionMain>
-      <SectionTitleLineWithButton  title="Administración De Hoteles" />
+      <SectionTitleLineWithButton title="Administración De Hoteles" />
     </SectionMain>
 
     <SectionMain>
@@ -10,34 +10,49 @@
 
       <!-- Tabla de hoteles -->
       <div class="w-full overflow-auto mb-4">
-        <table class="table-auto w-full">
+        <table>
           <thead>
             <tr>
-              <th class="px-4 py-2 text-left">Nombre</th>
-              <th class="px-4 py-2 text-left">Ubicación</th>
-              <th class="px-4 py-2 text-left">Dirección</th>
-              <th class="px-4 py-2 text-left">Teléfono</th>
-              <th class="px-4 py-2 text-left">Acciones</th>
+              <th />
+              <th>Nombre</th>
+              <th>Ubicación</th>
+              <th>Dirección</th>
+              <th>Teléfono</th>
+             
+              <th />
             </tr>
           </thead>
           <tbody>
             <tr v-for="hotel in hoteles" :key="hotel.id_hotel">
-              <td class="border px-4 py-2">{{ hotel.nombre }}</td>
-              <td class="border px-4 py-2">{{ hotel.ubicacion }}</td>
-              <td class="border px-4 py-2">{{ hotel.direccion }}</td>
-              <td class="border px-4 py-2">{{ hotel.telefono }}</td>
-              <td class="border px-4 py-2">
-                <BaseButton @click="openEditModal(hotel)" color="warning" outline label="Editar"  class="g-4" />
-                <BaseButton @click="deleteHotel(hotel)" color="danger" outline label="Eliminar"  class="g-4" />
+              <td class="border-b-0 lg:w-6 before:hidden">
+          
+        </td>
+              <td>{{ hotel.nombre }}</td>
+              <td>{{ hotel.ubicacion }}</td>
+              <td>{{ hotel.direccion }}</td>
+              <td>{{ hotel.telefono }}</td>
+              <td class="before:hidden lg:w-1 whitespace-nowrap">
+                <BaseButtons type="justify-start lg:justify-end" no-wrap>
+                  <BaseButton @click="openEditModal(hotel)" :icon="mdiEye" small color="warning"  class="g-4" />
+                  <BaseButton @click="openConfirmDeleteModal(hotel)" :icon="mdiTrashCan" small color="danger"  class="g-4" />
+                </BaseButtons>
               </td>
+              
             </tr>
           </tbody>
         </table>
       </div>
 
       <!-- Modal para crear/editar hotel -->
-      <ModalForm :isVisible="showModal" :title="isEditing ? 'Editar Hotel' : 'Agregar Hotel'" @close="closeModal">
-        <form @submit.prevent="saveHotel">
+      <CardBoxModal
+        v-model="showModal"
+        :title="isEditing ? 'Editar Hotel' : 'Agregar Hotel'"
+        buttonLabel="Guardar"
+        hasCancel
+        @confirm="saveHotel"
+        @cancel="closeModal"
+      >
+        <form @submit.prevent="saveHotel" class="space-y-4">
           <FormField label="Nombre del Hotel" help="Ingrese el nombre del hotel">
             <FormControl v-model="hotelForm.nombre" name="nombre" />
           </FormField>
@@ -53,19 +68,27 @@
           <FormField label="Teléfono" help="Ingrese el teléfono del hotel">
             <FormControl v-model="hotelForm.telefono" name="telefono" type="text" />
           </FormField>
-
-          <BaseButtons>
-            <BaseButton :disabled="isSaveDisabled" type="submit" color="info" label="Guardar" />
-            <BaseButton @click="closeModal" color="secondary" label="Cancelar" />
-          </BaseButtons>
         </form>
-      </ModalForm>
+      </CardBoxModal>
+
+      <!-- Modal de confirmación de eliminación -->
+      <CardBoxModal
+        v-model="showConfirmDeleteModal"
+        title="Confirmar eliminación"
+        buttonLabel="Eliminar"
+        hasCancel
+        @confirm="confirmDeleteHotel"
+        @cancel="closeConfirmDeleteModal"
+      >
+        <p>¿Estás seguro de que deseas eliminar este hotel?</p>
+      </CardBoxModal>
+
+    
     </SectionMain>
   </LayoutAuthenticated>
 </template>
 
 <script>
-import { mdiPlus, mdiPencil, mdiDelete } from '@mdi/js';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import FormField from '@/components/FormField.vue';
 import FormControl from '@/components/FormControl.vue';
@@ -74,7 +97,8 @@ import BaseButtons from '@/components/BaseButtons.vue';
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
 import ModalForm from '@/components/ModalFormHotel.vue';
 import SectionMain from '@/components/SectionMain.vue';
-
+import CardBoxModal  from '@/components/felipe_componentes/CardBoxModal.vue';
+import { mdiEye, mdiTrashCan } from '@mdi/js';
 import { createHotel, getHotels, updateHotel, deleteHotel } from '@/services/hotelService';
 
 export default {
@@ -87,89 +111,95 @@ export default {
     SectionTitleLineWithButton,
     ModalForm,
     SectionMain,
+    CardBoxModal,
   },
   data() {
     return {
-      hoteles: [],  // Lista de hoteles
+      hoteles: [],
       hotelForm: {
         nombre: '',
         ubicacion: '',
         direccion: '',
         telefono: '',
       },
-      showModal: false,  // Control de visibilidad del modal
-      isEditing: false,  // Indica si estamos en modo edición o creación
-      currentHotelId: null, // ID del hotel que se está editando
+      showModal: false,
+      showConfirmDeleteModal: false,
+      isEditing: false,
+      currentHotelId: null,
+      hotelToDelete: null,
+      mdiEye,  // Assign the icons to data directly
+      mdiTrashCan,
     };
   },
   created() {
-    this.fetchHotels(); // Cargar hoteles al montar el componente
+    this.fetchHotels();
   },
   methods: {
-    async fetchHotels() {
-      try {
-        const response = await getHotels();
-        this.hoteles = response.data;  // Asigna la respuesta a la lista de hoteles
-      } catch (error) {
-        console.error('Error al obtener los hoteles:', error);
-      }
-    },
-    openCreateModal() {
-      this.isEditing = false;
-      this.hotelForm = { nombre: '', ubicacion: '', direccion: '', telefono: '' };
-      this.showModal = true;
-    },
-    openEditModal(hotel) {
-      this.isEditing = true;
-      this.currentHotelId = hotel.id_hotel; // Guarda el ID del hotel que se va a editar
-      this.hotelForm = { ...hotel }; // Rellena el formulario con los datos del hotel
-      this.showModal = true;
-    },
-    closeModal() {
-      this.showModal = false;
-    },
-    async saveHotel() {
-      try {
-        if (this.isEditing) {
-          // Actualizar hotel
-          await updateHotel(this.currentHotelId, this.hotelForm.nombre, this.hotelForm.ubicacion, this.hotelForm.direccion, this.hotelForm.telefono);
-        } else {
-          // Crear nuevo hotel
-          await createHotel(this.hotelForm.nombre, this.hotelForm.ubicacion, this.hotelForm.direccion, this.hotelForm.telefono);
-        }
-        this.fetchHotels(); // Actualiza la lista de hoteles
-        this.closeModal();  // Cierra el modal
-      } catch (error) {
-        console.error('Error al guardar el hotel:', error.response ? error.response.data : error);
-      }
-    },
-    async deleteHotel(hotel) {
-      try {
-        await deleteHotel(hotel.id_hotel); // Llama a la función de servicio para eliminar el hotel
-        this.fetchHotels(); // Actualiza la lista de hoteles
-        this.closeModal();
-      } catch (error) {
-        console.error('Error al eliminar el hotel:', error);
-      }
-    },
+  async fetchHotels() {
+    try {
+      const response = await getHotels();
+      this.hoteles = response.data;
+    } catch (error) {
+      console.error('Error al obtener los hoteles:', error);
+    }
   },
+  openCreateModal() {
+    this.isEditing = false;
+    this.hotelForm = { nombre: '', ubicacion: '', direccion: '', telefono: '' };
+    this.showModal = true;
+  },
+  openEditModal(hotel) {
+    this.isEditing = true;
+    this.currentHotelId = hotel.id_hotel;
+    this.hotelForm = { ...hotel };
+    this.showModal = true;
+  },
+  closeModal() {
+    this.showModal = false;
+  },
+  validateForm() {
+    if (!this.hotelForm.nombre || !this.hotelForm.ubicacion || !this.hotelForm.direccion || !this.hotelForm.telefono) {
+      alert('Todos los campos son obligatorios.');
+      return false;
+    }
+    return true;
+  },
+  async saveHotel() {
+    if (!this.validateForm()) {
+      return;
+    }
+
+    try {
+      if (this.isEditing) {
+        await updateHotel(this.currentHotelId, this.hotelForm.nombre, this.hotelForm.ubicacion, this.hotelForm.direccion, this.hotelForm.telefono);
+      } else {
+        await createHotel(this.hotelForm.nombre, this.hotelForm.ubicacion, this.hotelForm.direccion, this.hotelForm.telefono);
+      }
+      this.fetchHotels();
+      this.closeModal();
+    } catch (error) {
+      console.error('Error al guardar el hotel:', error.response ? error.response.data : error);
+    }
+  },
+  openConfirmDeleteModal(hotel) {
+    this.hotelToDelete = hotel;
+    this.showConfirmDeleteModal = true;
+  },
+  closeConfirmDeleteModal() {
+    this.showConfirmDeleteModal = false;
+    this.hotelToDelete = null;
+  },
+  async confirmDeleteHotel() {
+    try {
+      if (this.hotelToDelete) {
+        await deleteHotel(this.hotelToDelete.id_hotel);
+        this.fetchHotels();
+        this.closeConfirmDeleteModal();
+      }
+    } catch (error) {
+      console.error('Error al eliminar el hotel:', error);
+    }
+  },
+},
 };
 </script>
-
-<style scoped>
-.table-auto {
-  border-collapse: collapse;
-  width: 100%;
-}
-
-th,
-td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-}
-
-th {
-  background-color: #f4f4f4;
-}
-</style>
