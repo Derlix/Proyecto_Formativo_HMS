@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive } from 'vue'
 import { useAuthStore } from '@/stores' // Importa el store de autenticación
 
 import { useRouter } from 'vue-router'
@@ -10,7 +10,6 @@ import FormCheckRadio from '@/components/FormCheckRadio.vue'
 import FormField from '@/components/FormField.vue'
 import FormControl from '@/components/FormControl.vue'
 import BaseButton from '@/components/BaseButton.vue'
-import BaseButtons from '@/components/BaseButtons.vue'
 import LayoutGuest from '@/layouts/LayoutGuest.vue'
 
 const form = reactive({
@@ -51,27 +50,23 @@ const handleLogin = async () => {
   };
 };
 
-
-const goToRegister = () => {
-  router.push('/registrar')
-}
-
-const goToForgotPassword = () => {
-  router.push('/recuperar')
-}
-
 </script>
 
 <template>
   <LayoutGuest>
-    <SectionFullScreen v-slot="{ cardClass }" bg="purplePink">
-      <CardBox :class="cardClass" is-form @submit.prevent="handleLogin">
+    <SectionFullScreen bg="white">
+      <CardBox is-form @submit.prevent="handleLogin" class=" w-2/6">
+        <div class="flex justify-center mb-4">
+          <!-- Logo (puedes colocar un ícono aquí) -->
+          <img src="src/assets/img/sena-agro.png" alt="Logo Sena" class="w-16">
+        </div>
+        <h1 class="text-center mb-4 font-bold">Iniciar Sesion</h1>
         <!-- Mostrar error si existe -->
         <div v-if="errorMessage" class="alert alert-danger" role="alert">
           {{ errorMessage }}
         </div>
-        <FormField label="Usuario" help="Por favor ingrese su usuario">
-          <FormControl v-model="email" :icon="mdiAccount" name="login" autocomplete="username" />
+        <FormField label="Email" help="Por Favor Ingrese Su Correo">
+          <FormControl v-model="email" :icon="mdiAccount" name="login" autocomplete="usermail" />
         </FormField>
 
         <FormField label="Contraseña" help="Por favor ingrese su contraseña">
@@ -84,6 +79,15 @@ const goToForgotPassword = () => {
           />
         </FormField>
 
+        <div class="mb-7">
+            <BaseButton
+              type="submit"
+              color="info"
+              label="Ingresar"
+              class="w-full"
+            />
+        </div>
+
         <FormCheckRadio
           v-model="form.remember"
           name="remember"
@@ -91,22 +95,12 @@ const goToForgotPassword = () => {
           :input-value="true"
         />
 
-        <template #footer>
-          <BaseButtons>
-            <BaseButton @click="goToRegister" color="info" outline label="Registrarse" />
-            <BaseButton
-              @click="goToForgotPassword"
-              color="info"
-              outline
-              label="Olvidé mi Contraseña"
-            />
-            <BaseButton
-              type="submit"
-              color="info"
-              label="Iniciar Sesión"
-            />
-          </BaseButtons>
-        </template>
+        <div class="text-center">
+            <router-link to="/recuperar" class="m-1 text-xs">¿Olvidaste tu contraseña? Restablecer contraseña</router-link>
+        </div>
+        <div class="text-center">
+            <router-link to="/registrar" class="m-1 text-xs">¿Aún no tienes cuenta? Registrate</router-link>
+        </div>
       </CardBox>
     </SectionFullScreen>
   </LayoutGuest>

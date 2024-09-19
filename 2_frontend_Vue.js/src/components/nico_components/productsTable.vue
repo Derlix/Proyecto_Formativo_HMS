@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { mdiFileEdit, mdiTrashCan } from '@mdi/js'
-import CardBoxModal from '@/components/CardBoxModal.vue'
+import CardBoxModal from '@/components/alejo_components/CardBoxModal.vue'
 import ModalAlert from '../ModalAlert.vue'
 import BaseLevel from '@/components/BaseLevel.vue'
 import BaseButtons from '@/components/BaseButtons.vue'
@@ -25,6 +25,7 @@ const activarModalDelete = ref({
   visible: false,
   huesped: null
 });
+
 
 const fechtProducts = async () => {
   try {
@@ -88,7 +89,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <CardBoxModal v-model="activarModalEdit" title="Editar Producto">
+  <CardBoxModal v-model="activarModalEdit" title="Editar Producto" buttonLabel="Guardar cambios" has-cancel @cancel="cancelEdit" @confirm="update_Product ">
     <form @submit.prevent="update_Product()">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="mb-4">
@@ -103,9 +104,6 @@ onMounted(() => {
           <label for="descripcion" class="block text-gray-700 font-medium">Descripcion:</label>
           <input type="text" id="descripcion" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" v-model="currentProduct.descripcion" required/>
         </div>
-      </div>
-      <div class="mt-2">
-        <BaseButton type="submit" label="Guardar cambios" color="info" small/>
       </div>
     </form>
   </CardBoxModal>
