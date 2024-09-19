@@ -135,60 +135,71 @@ export default {
     this.fetchHotels();
   },
   methods: {
-    async fetchHotels() {
-      try {
-        const response = await getHotels();
-        this.hoteles = response.data;
-      } catch (error) {
-        console.error('Error al obtener los hoteles:', error);
-      }
-    },
-    openCreateModal() {
-      this.isEditing = false;
-      this.hotelForm = { nombre: '', ubicacion: '', direccion: '', telefono: '' };
-      this.showModal = true;
-    },
-    openEditModal(hotel) {
-      this.isEditing = true;
-      this.currentHotelId = hotel.id_hotel;
-      this.hotelForm = { ...hotel };
-      this.showModal = true;
-    },
-    closeModal() {
-      this.showModal = false;
-    },
-    async saveHotel() {
-      try {
-        if (this.isEditing) {
-          await updateHotel(this.currentHotelId, this.hotelForm.nombre, this.hotelForm.ubicacion, this.hotelForm.direccion, this.hotelForm.telefono);
-        } else {
-          await createHotel(this.hotelForm.nombre, this.hotelForm.ubicacion, this.hotelForm.direccion, this.hotelForm.telefono);
-        }
-        this.fetchHotels();
-        this.closeModal();
-      } catch (error) {
-        console.error('Error al guardar el hotel:', error.response ? error.response.data : error);
-      }
-    },
-    openConfirmDeleteModal(hotel) {
-      this.hotelToDelete = hotel;
-      this.showConfirmDeleteModal = true;
-    },
-    closeConfirmDeleteModal() {
-      this.showConfirmDeleteModal = false;
-      this.hotelToDelete = null;
-    },
-    async confirmDeleteHotel() {
-      try {
-        if (this.hotelToDelete) {
-          await deleteHotel(this.hotelToDelete.id_hotel);
-          this.fetchHotels();
-          this.closeConfirmDeleteModal();
-        }
-      } catch (error) {
-        console.error('Error al eliminar el hotel:', error);
-      }
-    },
+  async fetchHotels() {
+    try {
+      const response = await getHotels();
+      this.hoteles = response.data;
+    } catch (error) {
+      console.error('Error al obtener los hoteles:', error);
+    }
   },
+  openCreateModal() {
+    this.isEditing = false;
+    this.hotelForm = { nombre: '', ubicacion: '', direccion: '', telefono: '' };
+    this.showModal = true;
+  },
+  openEditModal(hotel) {
+    this.isEditing = true;
+    this.currentHotelId = hotel.id_hotel;
+    this.hotelForm = { ...hotel };
+    this.showModal = true;
+  },
+  closeModal() {
+    this.showModal = false;
+  },
+  validateForm() {
+    if (!this.hotelForm.nombre || !this.hotelForm.ubicacion || !this.hotelForm.direccion || !this.hotelForm.telefono) {
+      alert('Todos los campos son obligatorios.');
+      return false;
+    }
+    return true;
+  },
+  async saveHotel() {
+    if (!this.validateForm()) {
+      return;
+    }
+
+    try {
+      if (this.isEditing) {
+        await updateHotel(this.currentHotelId, this.hotelForm.nombre, this.hotelForm.ubicacion, this.hotelForm.direccion, this.hotelForm.telefono);
+      } else {
+        await createHotel(this.hotelForm.nombre, this.hotelForm.ubicacion, this.hotelForm.direccion, this.hotelForm.telefono);
+      }
+      this.fetchHotels();
+      this.closeModal();
+    } catch (error) {
+      console.error('Error al guardar el hotel:', error.response ? error.response.data : error);
+    }
+  },
+  openConfirmDeleteModal(hotel) {
+    this.hotelToDelete = hotel;
+    this.showConfirmDeleteModal = true;
+  },
+  closeConfirmDeleteModal() {
+    this.showConfirmDeleteModal = false;
+    this.hotelToDelete = null;
+  },
+  async confirmDeleteHotel() {
+    try {
+      if (this.hotelToDelete) {
+        await deleteHotel(this.hotelToDelete.id_hotel);
+        this.fetchHotels();
+        this.closeConfirmDeleteModal();
+      }
+    } catch (error) {
+      console.error('Error al eliminar el hotel:', error);
+    }
+  },
+},
 };
 </script>
