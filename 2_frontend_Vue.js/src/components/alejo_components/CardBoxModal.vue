@@ -16,7 +16,7 @@
         />
       </CardBoxComponentTitle>
 
-      <div class="space-y-3">
+      <div class="space-y-3 ">
         <slot />
       </div>
 
@@ -27,6 +27,7 @@
             :label="buttonLabel"
             :color="button"
             @click="handleButtonClick"
+            class="pr-2 mr-2"
           />
           <BaseButton v-if="hasCancel" label="Cancelar" :color="button" outline @click="cancel" />
         </BaseButtons>
