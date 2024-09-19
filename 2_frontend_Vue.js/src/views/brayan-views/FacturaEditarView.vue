@@ -36,7 +36,7 @@
             Cancelar
           </button>
           <button type="submit" class="bg-blue-800 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
-            Guardar
+            Editar
           </button>
         </div>
       </form>
@@ -48,6 +48,9 @@
 import { ref, defineProps, defineEmits } from 'vue';
 import axios from 'axios';
 
+import { getAllFacturas, updateFacturaService  } from "@/services/brayan_service/FacturacionService";
+
+
 const props = defineProps({
   factura: Object,
 });
@@ -56,18 +59,32 @@ const emit = defineEmits(['update', 'close']);
 
 const updateFactura = async () => {
   try {
-    await axios.put(`/api/facturacion/${props.factura.id_facturacion}`, props.factura);
-    emit('update');
-    emit('close');
+    await updateFacturaService(
+      props.factura.id_facturacion,
+      props.factura.subtotal,
+      props.factura.impuestos,
+      props.factura.total,
+      props.factura.total_precio_productos,
+      props.factura.metodo_pago,
+      props.factura.estado,
+      props.factura.fecha_salida
+    ); 
+    alert('Factura editada exitosamente');
+    emit('update'); 
+    emit('close'); 
   } catch (error) {
-    console.error("Error al actualizar la factura:", error);
+    alert('Error al actualizar la factura: ' + (error.response?.data?.message || error.message));
   }
 };
+
 
 const cancelEdit = () => {
   emit('close');
 };
 </script>
+
+
+
 
 <style scoped>
 /* Estilos para el modal */
