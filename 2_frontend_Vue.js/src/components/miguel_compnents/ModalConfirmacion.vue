@@ -18,10 +18,12 @@
       </h1>
 
       <div class="flex justify-center mb-6">
-        <span class="text-gray-700 dark:text-gray-300 mx-2">Datos de la reserva</span>
+        <span class="text-gray-700 dark:text-gray-300 mx-2">Reserva para: </span>
+        <p class="text-gray-900 dark:text-gray-100">{{ huesped.nombre_completo }}</p>
       </div>
 
-      <div class="grid grid-cols-2 gap-4">
+      <div v-if="paso === 1" class="grid grid-cols-2 gap-4">
+        <!-- Controles para adultos y niños -->
         <div>
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Adultos</label>
           <div class="flex items-center">
@@ -70,6 +72,7 @@
           </div>
         </div>
 
+        <!-- Campos para tarifa, impuestos, fechas y estadía -->
         <div>
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tarifa</label>
           <input
@@ -92,34 +95,20 @@
 
         <div>
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Llegada</label>
-          <div class="grid grid-cols-2 gap-2">
-            <input
-              type="text"
-              v-model="llegadaDia"
-              class="block w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
-            />
-            <input
-              type="text"
-              v-model="llegadaMes"
-              class="block w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
-            />
-          </div>
+          <input
+            type="date"
+            v-model="llegadaDia"
+            class="block w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
+          />
         </div>
 
         <div>
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Salida</label>
-          <div class="grid grid-cols-2 gap-2">
-            <input
-              type="text"
-              v-model="salidaDia"
-              class="block w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
-            />
-            <input
-              type="text"
-              v-model="salidaMes"
-              class="block w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
-            />
-          </div>
+          <input
+            type="date"
+            v-model="salidaDia"
+            class="block w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
+          />
         </div>
 
         <div class="col-span-2">
@@ -132,8 +121,30 @@
         </div>
       </div>
 
+      <div v-else-if="paso === 2" class="grid grid-cols-1 gap-4">
+        <table class="w-full">
+          <thead>
+            <tr>
+              <th>Habitación</th>
+              <th>Categoría</th>
+              <th>Piso</th>
+              <th>Precio</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="habitacion in habitaciones" :key="habitacion.id_habitacion">
+              <td>{{ habitacion.numero_habitacion }}</td>
+              <td>{{ habitacion.id_categoria_habitacion }}</td>
+              <td>{{ habitacion.piso }}</td>
+              <td>{{ habitacion.precio_actual }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
       <div class="flex justify-between mt-6">
         <button
+          v-if="paso > 1"
           @click="atras"
           class="bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-200 font-semibold py-2 px-4 rounded-md hover:bg-gray-400 dark:hover:bg-gray-500 transition"
         >
@@ -151,23 +162,86 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { obtenerTodasHabitaciones } from '@/services/habitacionService'
 
 const props = defineProps({
   visible: Boolean,
   huesped: Object
 })
 
-
-
 const emit = defineEmits(['close', 'confirm'])
 
+const paso = ref(1)
+const adultos = ref(0)
+const ninos = ref(0)
+const tarifa = ref('')
+const impuestos = ref('')
+const llegadaDia = ref('')
+const salidaDia = ref('')
+const estadia = ref('')
+const habitaciones = ref([])
 
-function cerrarModal() {
+// Cerrar el modal
+const cerrarModal = () => {
   emit('close')
 }
 
-function confirmarReserva() {
+// Navegar entre pasos
+const siguiente = () => {
+  if (paso.value < 2) {
+    paso.value++
+  } else {
+    confirmarReserva()
+  }
+}
+
+const atras = () => {
+  if (paso.value > 1) {
+    paso.value--
+  }
+}
+
+const confirmarReserva = () => {
   cerrarModal()
 }
+
+// Ajustar la cantidad de adultos y niños
+const aumentarAdultos = () => {
+  adultos.value++
+}
+
+const disminuirAdultos = () => {
+  if (adultos.value > 0) {
+    adultos.value--
+  }
+}
+
+const aumentarNinos = () => {
+  ninos.value++
+}
+
+const disminuirNinos = () => {
+  if (ninos.value > 0) {
+    ninos.value--
+  }
+}
+
+const fetchHabitaciones = async () => {
+  try {
+    const response = await obtenerTodasHabitaciones()
+    habitaciones.value = Array.isArray(response.habitaciones)
+      ? response.habitaciones
+      : response.habitaciones || []
+
+    // Imprimir las habitaciones en la consola
+    console.log('Habitaciones:', habitaciones.value)
+  } catch (error) {
+    alert(error.response?.data?.detail || 'Error al obtener las habitaciones')
+  }
+}
+
+onMounted(() => {
+  fetchHabitaciones()
+})
 </script>

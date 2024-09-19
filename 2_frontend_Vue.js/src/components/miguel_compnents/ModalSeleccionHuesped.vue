@@ -51,9 +51,9 @@
       </div>
     </div>
 
-    <ModalConfirmacion 
-      :visible="mostrarConfirmacion" 
-      @close="mostrarConfirmacion = false" 
+    <ModalConfirmacion
+      :visible="mostrarConfirmacion"
+      @close="mostrarConfirmacion = false"
       :huesped="huesped"
     />
   </div>
@@ -108,6 +108,6 @@ async function buscarHuesped() {
 }
 
 function confirmarSeleccion() {
-  mostrarConfirmacion.value = true 
+  mostrarConfirmacion.value = true
 }
 </script>
