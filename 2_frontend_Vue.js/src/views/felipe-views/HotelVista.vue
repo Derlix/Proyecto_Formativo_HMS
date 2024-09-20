@@ -7,13 +7,26 @@
     <SectionMain>
       <!-- Botón para agregar hotel -->
       <BaseButton @click="openCreateModal" color="info" label="Agregar Hotel" class="mb-4" />
-
+      
+  <div class="mb-6 max-w-md mx-left">
+    <div class=" flex items-center border rounded-lg shadow-sm ">
+      <input
+        type="search"
+        id="buscarHotel"
+        placeholder="Buscar hotel por id"
+        class="flex-grow px-4 py-2 border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+        v-model="buscarHotel"
+        @input="buscar_Hotel"
+      />
+    </div>
+  </div>
       <!-- Tabla de hoteles -->
       <div class="w-full overflow-auto mb-4">
         <table>
           <thead>
             <tr>
               <th />
+              <th>ID</th>
               <th>Nombre</th>
               <th>Ubicación</th>
               <th>Dirección</th>
@@ -27,10 +40,13 @@
               <td class="border-b-0 lg:w-6 before:hidden">
           
         </td>
-              <td>{{ hotel.nombre }}</td>
-              <td>{{ hotel.ubicacion }}</td>
-              <td>{{ hotel.direccion }}</td>
-              <td>{{ hotel.telefono }}</td>
+              <td data-label="ID HOTEL">
+                {{ hotel.id_hotel }}
+              </td>
+              <td data-label="NOMBRE HOTEL" >{{ hotel.nombre }}</td>
+              <td data-label="UBICACION HOTEL" >{{ hotel.ubicacion }}</td>
+              <td data-label="DIRECCION HOTEL" >{{ hotel.direccion }}</td>
+              <td data-label="TELEFONO HOTEL" >{{ hotel.telefono }}</td>
               <td class="before:hidden lg:w-1 whitespace-nowrap">
                 <BaseButtons type="justify-start lg:justify-end" no-wrap>
                   <BaseButton @click="openEditModal(hotel)" :icon="mdiEye" small color="warning"  class="g-4" />
@@ -41,7 +57,26 @@
             </tr>
           </tbody>
         </table>
+      
       </div>
+      <div class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800 relative" style="overflow-x: auto; white-space: nowrap;">
+    <BaseLevel>
+        <BaseButtons style="display: inline-flex; overflow-x: auto; flex-wrap: nowrap;">
+            <BaseButton
+                v-for="page in TotalPages"
+                :key="page"
+                :active="page === currentPage"
+                :label="page"
+                :color="page === currentPage ? 'lightDark' : 'whiteDark'"
+                small
+                @click="currentPage = page; fetchHotels()"
+            />
+        </BaseButtons>
+        <small>Página {{ currentPage }} de {{ TotalPages }}</small>
+    </BaseLevel>
+</div>
+
+
 
       <!-- Modal para crear/editar hotel -->
       <CardBoxModal
@@ -99,8 +134,8 @@ import ModalForm from '@/components/ModalFormHotel.vue';
 import SectionMain from '@/components/SectionMain.vue';
 import CardBoxModal  from '@/components/felipe_componentes/CardBoxModal.vue';
 import { mdiEye, mdiTrashCan } from '@mdi/js';
-import { createHotel, getHotels, updateHotel, deleteHotel } from '@/services/hotelService';
-
+import { createHotel, getHotels, updateHotel, deleteHotel, getHotelsByPage, getHotelById } from '@/services/hotelService';
+import BaseLevel from '@/components/BaseLevel.vue';
 export default {
   components: {
     LayoutAuthenticated,
@@ -112,6 +147,7 @@ export default {
     ModalForm,
     SectionMain,
     CardBoxModal,
+    BaseLevel,
   },
   data() {
     return {
@@ -129,6 +165,10 @@ export default {
       hotelToDelete: null,
       mdiEye,  // Assign the icons to data directly
       mdiTrashCan,
+      TotalPages : 0,
+      currentPage : 1,
+      buscarHotel : '',
+      hotel : {},
     };
   },
   created() {
@@ -137,12 +177,35 @@ export default {
   methods: {
   async fetchHotels() {
     try {
-      const response = await getHotels();
-      this.hoteles = response.data;
+      const response = await getHotelsByPage(this.currentPage, 5);
+      this.TotalPages = response.data.total_pages;
+      this.hoteles = response.data.hoteles;
     } catch (error) {
       console.error('Error al obtener los hoteles:', error);
     }
   },
+  async buscar_Hotel() {
+  if (this.buscarHotel.trim() === '') {
+    this.fetchHotels();
+  } else {
+    // Search for a specific hotel by ID
+    try {
+      const response = await getHotelById(this.buscarHotel);
+      if (response && response.data) {
+        this.hotel = response.data;
+        this.hoteles = [this.hotel]; // Set the search result in the list
+      } else {
+        this.hoteles = []; // No hotel found
+        this.hotel = null;
+        alert('Hotel no encontrado');
+      }
+    } catch (error) {
+     
+      this.hoteles = [];
+      this.hotel = null;
+    }
+  }
+},
   openCreateModal() {
     this.isEditing = false;
     this.hotelForm = { nombre: '', ubicacion: '', direccion: '', telefono: '' };
@@ -200,6 +263,8 @@ export default {
       console.error('Error al eliminar el hotel:', error);
     }
   },
+ 
+  
 },
 };
 </script>

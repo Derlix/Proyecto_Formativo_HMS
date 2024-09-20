@@ -82,4 +82,21 @@ export const addProductoToFactura = async (id_facturacion, id_producto, cantidad
 
 
 
+
+
+  
+
+  //ESTO ES SOLO PARA OBTENER LOS PRODUCTOS Y COLOCAR EL NOMBR EEN EL INPUT DE AGRREGAR PRODUCTO A LA FACVTURA
+export const getAllProductosPrueba = async () => {
+  try {
+    const response = await api.get('/producto/get-all/');
+    return response.data; // Asume que la lista de productos está en response.data
+  } catch (error) {
+    if (error.response) {
+      throw error.response; // Devuelve el error original de la API
+    } else {
+      throw new Error('Error de red o de servidor'); // Manejar errores de red
+    }
+  }
+};
   

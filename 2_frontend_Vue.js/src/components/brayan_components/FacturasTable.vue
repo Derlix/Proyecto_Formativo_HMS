@@ -16,9 +16,26 @@ defineProps({
 
 
 
-import { getProductosFacturaById, deleteProductoFactura, updateProductoFactura, addProductoToFactura } from "@/services/brayan_service/FacturaProductoService";
-import { getAllFacturas, updateFacturaService, deleteFactura } from "@/services/brayan_service/FacturacionService";
+import { getProductosFacturaById, deleteProductoFactura, updateProductoFactura, addProductoToFactura,getAllProductosPrueba } from "@/services/brayan_service/FacturaProductoService";
+import { getAllFacturas, updateFacturaService, deleteFactura, getFacturaByPage, getFacturaByid } from "@/services/brayan_service/FacturacionService";
 
+
+//ESTO ES PARA OBTENER LOS PRODUCTOS Y PONERLOS EN EL INPUT DE AGREGAR PRODUCTO, PUTO  NICOLAS 
+const productosDisponibles = ref([]);
+
+const fetchAllProductos = async () => {
+  try {
+    const response = await getAllProductosPrueba();
+    console.log('Respuesta de la API:', response);  // Asume que la lista de productos está correctamente en response
+    productosDisponibles.value = response; // Asume que la lista de productos está correctamente en response
+  } catch (error) {
+    console.error("Error al obtener productos:", error);
+  }
+};
+
+onMounted(() => {
+  fetchAllProductos(); // Cargar la lista de productos cuando el componente se monte
+});
 
 //variables de facturas
 const facturas = ref([]);
@@ -27,15 +44,48 @@ const showEditModal = ref(false);
 const showDeleteModal = ref(false);
 const showDetalles = ref(false);
 
+const TotalPages = ref(0);
+const currentPage = ref(1);
+
+const buscarFactura = ref('');
 
 
+
+async function buscar_Factura() {
+  // Si el campo de búsqueda está vacío, se obtienen todas las facturas
+  if (buscarFactura.value.trim() === '') {
+    fetchFacturas(); 
+  } else {
+  
+    try {
+      const response = await getFacturaByid(buscarFactura.value); 
+      console.log('Respuesta de la API:', response); 
+      if (response && response.data) {
+        // Actualiza selectedFactura y facturas
+        selectedFactura.value = response.data;
+        facturas.value = [selectedFactura.value]; // Mostrar  factura encontrada
+      } else {
+        // Si no se encuentra la factura, limpiar selectedFactura pero no facturas
+        selectedFactura.value = null;
+      }
+    } catch (error) {
+      console.error('Error al encontrar la factura:', error);
+
+      // Mantener las facturas existentes en caso de error
+      selectedFactura.value = null;
+    }
+  }
+}
 
 
 //ver facturas
 const fetchFacturas = async () => {
   try {
-    const response = await getAllFacturas();
-    facturas.value = response;
+    const response = await getFacturaByPage(currentPage.value);
+    facturas.value = response.data.facturaciones;
+
+    TotalPages.value = response.data.total_pages;
+
   } catch (error) {
     console.error('Error al obtener facturas:', error.message);
     if (error.response) {
@@ -559,9 +609,13 @@ function cerrarAgregarProductoFactura() {
           class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 bg-gray-100 focus:outline-none focus:border-blue-500" />
       </div>
       <div class="mb-4">
-        <label for="id_producto" class="block text-gray-700">ID producto</label>
-        <input id="id_producto" v-model="selectedProduct.id_producto" type="number"
-          class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500" />
+        <label for="id_producto" class="block text-gray-700"> Producto</label>
+        <select id="id_producto" v-model="selectedProduct.id_producto"
+                class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500">
+          <option v-for="producto in productosDisponibles" :key="producto.id_producto" :value="producto.id_producto">
+            {{ producto.nombre_producto }}
+          </option>
+        </select>
       </div>
       <div class="mb-4">
         <label for="cantidad" class="block text-gray-700">Cantidad</label>
@@ -597,11 +651,23 @@ function cerrarAgregarProductoFactura() {
   <!-- SECCION  DE HISTORIAL DE FACTURAS-->
   <div class="relative overflow-x-auto">
     <h1 class="text-black dark:text-white text-3xl font-bold mb-3">Seccion de Facturas</h1>
+
+
+    <div class="mb-6 max-w-md mx-left">
+    <div class=" flex items-center border rounded-lg shadow-sm ">
+      <input
+        type="search"
+        id="buscarFactura"
+        placeholder="Buscar factura por ID"
+        class="flex-grow px-4 py-2 border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+        v-model="buscarFactura"
+        @input="buscar_Factura"
+      />
+    </div>
+  </div>
+
     <div class="grid grid-cols-1 md:grid-cols-5 gap-4 py-4">
-      <input type="search" placeholder="Buscar factura por ID" class="rounded-lg border border-gray-300 p-2" />
-      <button type="button" class="bg-blue-800 rounded-lg text-white p-2 hover:bg-blue-700 transition">
-        Buscar
-      </button>
+      
     </div>
     <table>
       <thead>
@@ -670,6 +736,22 @@ function cerrarAgregarProductoFactura() {
       </tbody>
     </table>
   </div>
+  <div class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800 w-96">
+    <BaseLevel>
+        <BaseButtons style="display: inline-flex; overflow-x: auto; flex-wrap: nowrap;">
+            <BaseButton
+            v-for="page in TotalPages"
+            :key="page"
+            :active="page === currentPage"
+            :label="page"
+            :color="page === currentPage ? 'lightDark' : 'whiteDark'"
+            small
+            @click="currentPage = page; fetchFacturas()"
+            />
+        </BaseButtons>
+        <small>Página {{ currentPage }} de {{ TotalPages }}</small>
+    </BaseLevel>
+    </div>
 
 
 
