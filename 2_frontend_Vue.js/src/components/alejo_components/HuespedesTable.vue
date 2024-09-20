@@ -214,109 +214,100 @@ onMounted(() => {
   @close="handleClose"
   />
 
-  <CardBoxModal v-model="activarModalEdit" title="Editar huesped"  buttonLabel="Guardar cambios" has-cancel @cancel="cancelEdit"
+  <CardBoxModal v-model="activarModalEdit" title="Editar huésped"  buttonLabel="Guardar cambios" has-cancel @cancel="cancelEdit"
   @confirm="update_Huesped " >
     <form @submit.prevent="update_Huesped()">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <!-- Primer par de campos -->
         <div class="mb-4">
-          <label for="huespedNombre_completo" class="block text-gray-700 font-medium">Nombre completo</label>
+          <label for="huespedNombre_completo" class="block text-gray-700  font-medium dark:text-white">Nombre completo</label>
           <input
             type="text"
             id="huespedNombre_completo"
-            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            class="mt-1 block w-full border-gray-300 rounded-md shado dark:text-white dark:border-gray-600 rounded-mdw-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700"
             v-model="currentHuesped.nombre_completo"
             required
           />
         </div>
         <div class="mb-4">
-          <label for="huespedTipo_documento" class="block text-gray-700 font-medium">Tipo documento</label>
+          <label for="huespedTipo_documento" class="block text-gray-700  font-medium dark:text-white">Tipo documento</label>
           <input
             type="text"
             id="huespedTipo_documento"
-            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            class="mt-1 block w-full border-gray-300 rounded-md shad dark:text-white dark:border-gray-600 rounded-mdow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700"
             v-model="currentHuesped.tipo_documento"
             required
           />
         </div>
         <!-- Segundo par de campos -->
         <div class="mb-4">
-          <label for="huespedNumero_documento" class="block text-gray-700 font-medium">Número documento</label>
+          <label for="huespedNumero_documento" class="block text-gray-700  font-medium dark:text-white">Número documento</label>
           <input
             type="text"
             id="huespedNumero_documento"
-            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            class="mt-1 block w-full border-gray-300 rounded-md shadow dark:text-white dark:border-gray-600 rounded-md-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700"
             v-model="currentHuesped.numero_documento"
             required
           />
         </div>
         <div class="mb-4">
-          <label for="huespedFecha_expedicion" class="block text-gray-700 font-medium">Fecha expedición</label>
+          <label for="huespedFecha_expedicion" class="block text-gray-700  font-medium dark:text-white">Fecha expedición</label>
           <input
             type="date"
             id="huespedFecha_expedicion"
-            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            class="mt-1 block w-full border-gray-300 rounded-md shadow dark:text-white dark:border-gray-600 rounded-md-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700"
             v-model="currentHuesped.fecha_expedicion"
             required
           />
         </div>
         <!-- Tercer par de campos -->
         <div class="mb-4">
-          <label for="huespedEmail" class="block text-gray-700 font-medium">Email</label>
+          <label for="huespedEmail" class="block text-gray-700 font-medium dark:text-white">Email</label>
           <input
             type="email"
             id="huespedEmail"
-            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700"
             v-model="currentHuesped.email"
             required
           />
         </div>
         <div class="mb-4">
-          <label for="huespedTelefono" class="block text-gray-700 font-medium">Teléfono</label>
+          <label for="huespedTelefono" class="block text-gray-700  font-medium dark:text-white">Teléfono</label>
           <input
             type="text"
             id="huespedTelefono"
-            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            class="mt-1 block w-full border-gray-300 rounded-md dark:text-white dark:border-gray-600 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700"
             v-model="currentHuesped.telefono"
             required
           />
         </div>
         <!-- Último par de campos -->
         <div class="mb-4">
-          <label for="huespedOcupacion" class="block text-gray-700 font-medium">Ocupación</label>
+          <label for="huespedOcupacion" class="block text-gray-700  font-medium dark:text-white">Ocupación</label>
           <input
             type="text"
             id="huespedOcupacion"
-            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            class="mt-1 block w-full border-gray-300 rounded-md dark:text-white dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700"
             v-model="currentHuesped.ocupacion"
             required
           />
         </div>
         <div class="mb-4">
-          <label for="huespedDireccion" class="block text-gray-700 font-medium">Dirección</label>
+          <label for="huespedDireccion" class="block text-gray-700  font-medium dark:text-white">Dirección</label>
           <input
             type="text"
             id="huespedDireccion"
-            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            class="mt-1 block w-full border-gray-300 rounded-md dark:text-white dark:bg-gray-700  dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             v-model="currentHuesped.direccion"
             required
           />
         </div>
       </div>
 
-      <!-- Botón de enviar (guardar cambios) -->
-      <!-- <div class="mt-4">
-        <BaseButton
-              type="submit"
-              label="Guardar cambios"
-              color="info"
-              small
-            /> 
-      </div> -->
     </form>
   </CardBoxModal >
 
-  <CardBoxModal v-model="activarModalDelete.visible"  v-if="activarModalDelete.huesped" title="Eliminar huesped" buttonLabel="Eliminar" button="danger" has-cancel @confirm="confirmDelete"
+  <CardBoxModal v-model="activarModalDelete.visible"  v-if="activarModalDelete.huesped" title="Eliminar huésped" buttonLabel="Eliminar" button="danger" has-cancel @confirm="confirmDelete"
   @cancel="cancelDelete" >
     <p class="text-xl">Esta seguro de eliminar a: </p>
     <b>{{ activarModalDelete.huesped.nombre_completo }}</b><br>
@@ -326,10 +317,10 @@ onMounted(() => {
   <div class="mb-6 max-w-md mx-left">
     <div class=" flex items-center border rounded-lg shadow-sm ">
       <input
-        type="search"
+        type="text"
         id="buscarHuesped"
-        placeholder="Buscar huesped por documento"
-        class="flex-grow px-4 py-2 border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+        placeholder="Buscar huésped por documento"
+        class="flex-grow px-4 py-2 rounded-lg focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:text-white dark:bg-gray-700"
         v-model="buscarHuesped"
         @input="buscar_Huesped"
       />
