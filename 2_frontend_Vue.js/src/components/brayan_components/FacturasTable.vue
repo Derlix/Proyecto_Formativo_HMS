@@ -17,7 +17,7 @@ defineProps({
 
 
 import { getProductosFacturaById, deleteProductoFactura, updateProductoFactura, addProductoToFactura } from "@/services/brayan_service/FacturaProductoService";
-import { getAllFacturas, updateFacturaService, deleteFactura } from "@/services/brayan_service/FacturacionService";
+import { getAllFacturas, updateFacturaService, deleteFactura, getFacturaByPage } from "@/services/brayan_service/FacturacionService";
 
 
 //variables de facturas
@@ -27,6 +27,9 @@ const showEditModal = ref(false);
 const showDeleteModal = ref(false);
 const showDetalles = ref(false);
 
+const TotalPages = ref(0);
+const currentPage = ref(1);
+
 
 
 
@@ -34,8 +37,11 @@ const showDetalles = ref(false);
 //ver facturas
 const fetchFacturas = async () => {
   try {
-    const response = await getAllFacturas();
-    facturas.value = response;
+    const response = await getFacturaByPage(currentPage.value);
+    facturas.value = response.data.facturaciones;
+
+    TotalPages.value = response.data.total_pages;
+
   } catch (error) {
     console.error('Error al obtener facturas:', error.message);
     if (error.response) {
@@ -670,6 +676,22 @@ function cerrarAgregarProductoFactura() {
       </tbody>
     </table>
   </div>
+  <div class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800 w-96">
+    <BaseLevel>
+        <BaseButtons style="display: inline-flex; overflow-x: auto; flex-wrap: nowrap;">
+            <BaseButton
+            v-for="page in TotalPages"
+            :key="page"
+            :active="page === currentPage"
+            :label="page"
+            :color="page === currentPage ? 'lightDark' : 'whiteDark'"
+            small
+            @click="currentPage = page; fetchFacturas()"
+            />
+        </BaseButtons>
+        <small>Página {{ currentPage }} de {{ TotalPages }}</small>
+    </BaseLevel>
+    </div>
 
 
 

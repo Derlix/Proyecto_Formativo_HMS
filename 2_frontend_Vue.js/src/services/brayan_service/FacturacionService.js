@@ -21,6 +21,8 @@ export const getAllFacturas = async () => {
   };
 
 
+
+  
   export const updateFacturaService = async (id_facturacion, subtotal, impuestos, total, total_precio_productos, metodo_pago, estado, fecha_salida) => {
     try {
       const response = await api.put(`/facturacion/update_factura/${id_facturacion}`, {
@@ -66,3 +68,16 @@ export const deleteFactura = async (id_facturacion) => {
   }
 }
   
+export const getFacturaByPage = async (page = 1, page_size = 9) => {
+  try {
+    const response = await api.get(`/facturacion/get_all_facturas_paginated?page=${page}&page_size=${page_size}`);
+    return response;
+  } catch (error) {
+    if (error.response) {
+      throw error.response; // Devuelve el error original de la API
+    } else {
+      throw new Error('Error de red o de servidor');
+    }
+  }
+};
+
