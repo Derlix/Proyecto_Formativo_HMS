@@ -68,7 +68,7 @@ export const deleteFactura = async (id_facturacion) => {
   }
 }
   
-export const getFacturaByPage = async (page = 1, page_size = 9) => {
+export const getFacturaByPage = async (page = 1, page_size = 8) => {
   try {
     const response = await api.get(`/facturacion/get_all_facturas_paginated?page=${page}&page_size=${page_size}`);
     return response;
@@ -81,3 +81,17 @@ export const getFacturaByPage = async (page = 1, page_size = 9) => {
   }
 };
 
+
+
+export const getFacturaByid = async (id_facturacion) => {
+  try {
+    const response = await api.get(`/facturacion/get_factura_by_id/?id_facturacion=${encodeURIComponent(id_facturacion)}`);
+    return response;
+  } catch (error) {
+    if (error.response) {
+      throw error.response; // Devuelve el error original de la API
+    } else {
+      throw new Error('Error de red o de servidor'); // Manejar errores de red
+    }
+  }
+};

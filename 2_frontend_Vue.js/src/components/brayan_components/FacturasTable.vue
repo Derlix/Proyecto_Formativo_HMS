@@ -17,7 +17,7 @@ defineProps({
 
 
 import { getProductosFacturaById, deleteProductoFactura, updateProductoFactura, addProductoToFactura } from "@/services/brayan_service/FacturaProductoService";
-import { getAllFacturas, updateFacturaService, deleteFactura, getFacturaByPage } from "@/services/brayan_service/FacturacionService";
+import { getAllFacturas, updateFacturaService, deleteFactura, getFacturaByPage, getFacturaByid } from "@/services/brayan_service/FacturacionService";
 
 
 //variables de facturas
@@ -30,8 +30,35 @@ const showDetalles = ref(false);
 const TotalPages = ref(0);
 const currentPage = ref(1);
 
+const buscarFactura = ref('');
 
 
+
+async function buscar_Factura() {
+  // Si el campo de búsqueda está vacío, se obtienen todas las facturas
+  if (buscarFactura.value.trim() === '') {
+    fetchFacturas(); 
+  } else {
+  
+    try {
+      const response = await getFacturaByid(buscarFactura.value); 
+      console.log('Respuesta de la API:', response); 
+      if (response && response.data) {
+        // Actualiza selectedFactura y facturas
+        selectedFactura.value = response.data;
+        facturas.value = [selectedFactura.value]; // Mostrar  factura encontrada
+      } else {
+        // Si no se encuentra la factura, limpiar selectedFactura pero no facturas
+        selectedFactura.value = null;
+      }
+    } catch (error) {
+      console.error('Error al encontrar la factura:', error);
+
+      // Mantener las facturas existentes en caso de error
+      selectedFactura.value = null;
+    }
+  }
+}
 
 
 //ver facturas
@@ -603,11 +630,23 @@ function cerrarAgregarProductoFactura() {
   <!-- SECCION  DE HISTORIAL DE FACTURAS-->
   <div class="relative overflow-x-auto">
     <h1 class="text-black dark:text-white text-3xl font-bold mb-3">Seccion de Facturas</h1>
+
+
+    <div class="mb-6 max-w-md mx-left">
+    <div class=" flex items-center border rounded-lg shadow-sm ">
+      <input
+        type="search"
+        id="buscarFactura"
+        placeholder="Buscar factura por ID"
+        class="flex-grow px-4 py-2 border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+        v-model="buscarFactura"
+        @input="buscar_Factura"
+      />
+    </div>
+  </div>
+
     <div class="grid grid-cols-1 md:grid-cols-5 gap-4 py-4">
-      <input type="search" placeholder="Buscar factura por ID" class="rounded-lg border border-gray-300 p-2" />
-      <button type="button" class="bg-blue-800 rounded-lg text-white p-2 hover:bg-blue-700 transition">
-        Buscar
-      </button>
+      
     </div>
     <table>
       <thead>
