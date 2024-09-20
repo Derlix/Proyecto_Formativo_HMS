@@ -13,6 +13,7 @@ defineProps({
   checkable: Boolean
 });
 
+
 const productos = ref([]);
 const currentProduct = ref({});
 const TotalPages = ref(0);
@@ -39,6 +40,7 @@ const fechtProducts = async () => {
     alert('Error al obtener productos: ', error);
   }
 };
+
 
 const openEditModal = (producto = {}) => {
   isEditMode.value = true;
@@ -91,7 +93,7 @@ const confirmDelete = async () => {
     await deleteProduct(producTem.id_producto);
     modalMessage.value = "Producto Eliminado con exito";
     isAlertVisible.value = true;
-    colorAlert.value = 'danger';
+    colorAlert.value = 'success';
     setTimeout(()=> {
       isAlertVisible.value = false;
     },3000)
@@ -152,8 +154,6 @@ onMounted(() => {
   <table>
     <thead>
       <tr>
-        <th v-if="checkable"/>
-        <th/>
         <th>Nombre</th>
         <th>Descripcion</th>
         <th>Precio</th>
@@ -162,7 +162,6 @@ onMounted(() => {
     </thead>
     <tbody>
       <tr v-for="producto in productos" :key="producto.id_producto">
-        <td class="border-b-0 lg:w-6 before:hidden"></td>
         <td data-label="Nombre: ">{{ producto.nombre_producto }}</td>
         <td data-label="Descripcion: ">{{ producto.descripcion }}</td>
         <td data-label="Precio: ">{{ producto.precio_actual }}</td>

@@ -48,25 +48,34 @@ const reloadPage = () => {
 };
 
 const createProducto = async () => {
-    try {
-        await createProduct(currentProduct.value.nombre_producto, currentProduct.value.descripcion, currentProduct.value.precio_actual);
-        modalMessage.value = "Producto Creado con éxito";
-        isAlertVisible.value = true;
-        colorAlert.value = 'success';
-        fechtProducts();
-        setTimeout(() => {
-            reloadPage.value = false;
-        }, 3000);
-    } catch (error) {
-        alert('Error al insertar producto: ', error);
-    }
+  try {
+    await createProduct(currentProduct.value.nombre_producto, currentProduct.value.descripcion, currentProduct.value.precio_actual);
+    modalMessage.value = "Producto Creado con éxito";
+    isAlertVisible.value = true;
+    colorAlert.value = 'success';
+    
+    fechtProducts();
+    closeModal();
+    
+    setTimeout(() => {
+        isAlertVisible.value = false;
+    }, 3000);
+  } catch (error) {
+    alert('Error al insertar producto: ', error);
+  }
 };
+
+const handleSubmit = () => {
+  createProducto();
+  reloadPage();
+};
+
 </script>
 
 
 <template>
     <CardBoxModal v-model="activarModal" title="Crear Producto" class="dark:text-white" buttonLabel="Crear Producto" has-cancel @cancel="cancelCreate" @confirm="createProducto ">
-        <form @submit.prevent="createProducto()">
+        <form @submit.prevent="handleSubmit()">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="mb-4">
                     <label for="nombre" class="block text-gray-700 font-medium dark:text-white">Nombre:</label>
