@@ -57,7 +57,7 @@ const handleLogin = async () => {
 <template>
     <LayoutGuest>
         <SectionFullScreen bg="white">
-            <CardBox is-form @submit.prevent="handleLogin" class="sm:w-5/6 md:w-3/5 lg:w-2| /6 mx-auto">
+            <CardBox is-form @submit.prevent="handleLogin" class="sm:w-3/6 md:w-3/5 lg:w-3/6 xl:w-2/6 mx-auto">
                 <div class="flex justify-center mb-4">
                     <img src="src/assets/img/sena-agro.png" alt="Logo Sena" class="w-12 sm:w-16">
                 </div>
