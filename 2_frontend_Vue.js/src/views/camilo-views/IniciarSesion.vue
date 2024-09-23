@@ -38,7 +38,14 @@ const handleLogin = async () => {
             }, 3000);
         } else {
             // Redirige a la página de dashboard si el login es exitoso
-            router.push('/dashboard') // Reemplaza '/dashboard' con la ruta que desees redirigir
+            // router.push('/dashboard') // Reemplaza '/dashboard' con la ruta que desees redirigir
+            if (authStore.user.usuario_rol === 'SuperAdmin' || authStore.user.usuario_rol === 'JefeRecepcion') {
+                router.push('/dashboard')
+            } else if (authStore.user.usuario_rol === 'Recepcionista') {
+                router.push('/dashboard')
+            }else if (authStore.user.usuario_rol === 'Cajero') {
+                router.push('/inicio-cajero')
+            }
         }
     } catch (error) {
         // Maneja errores inesperados
