@@ -20,8 +20,8 @@
       <div class="flex justify-center mb-6">
         <span class="text-gray-700 dark:text-gray-300 mx-2">Reserva para: </span>
         <p class="text-gray-900 dark:text-gray-100">{{ huesped.nombre_completo }}</p>
-      </div>
-
+      </div> 
+              
       <div v-if="paso === 1" class="grid grid-cols-2 gap-4">
         <!-- Controles para adultos y niños -->
         <div>
@@ -121,22 +121,22 @@
         </div>
       </div>
 
-      <div v-else-if="paso === 2" class="grid grid-cols-1 gap-4">
-        <table class="w-full">
+      <div v-else-if="paso === 2" class="overflow-auto">
+        <table class="table-auto w-full">
           <thead>
             <tr>
-              <th>Habitación</th>
-              <th>Categoría</th>
-              <th>Piso</th>
-              <th>Precio</th>
+              <th class="px-4 py-2">Habitación</th>
+              <th class="px-4 py-2">Categoría</th>
+              <th class="px-4 py-2">Piso</th>
+              <th class="px-4 py-2">Precio</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="habitacion in habitaciones" :key="habitacion.id_habitacion">
-              <td>{{ habitacion.numero_habitacion }}</td>
-              <td>{{ habitacion.id_categoria_habitacion }}</td>
-              <td>{{ habitacion.piso }}</td>
-              <td>{{ habitacion.precio_actual }}</td>
+              <td class="border px-4 py-2">{{ habitacion.numero_habitacion }}</td>
+              <td class="border px-4 py-2">{{ habitacion.id_categoria_habitacion }}</td>
+              <td class="border px-4 py-2">{{ habitacion.piso }}</td>
+              <td class="border px-4 py-2">{{ habitacion.precio_actual }}</td>
             </tr>
           </tbody>
         </table>
@@ -182,7 +182,6 @@ const salidaDia = ref('')
 const estadia = ref('')
 const habitaciones = ref([])
 
-// Cerrar el modal
 const cerrarModal = () => {
   emit('close')
 }
