@@ -646,15 +646,10 @@ function cerrarAgregarProductoFactura() {
 
 
 
-
-
-  <!-- SECCION  DE HISTORIAL DE FACTURAS-->
-  <div class="relative overflow-x-auto">
+  <div class="mb-6 max-w-md mx-left">
     <h1 class="text-black dark:text-white text-3xl font-bold mb-3">Seccion de Facturas</h1>
-
-
-    <div class="mb-6 max-w-md mx-left">
     <div class=" flex items-center border rounded-lg shadow-sm ">
+      
       <input
         type="search"
         id="buscarFactura"
@@ -665,6 +660,13 @@ function cerrarAgregarProductoFactura() {
       />
     </div>
   </div>
+
+
+  <!-- SECCION  DE HISTORIAL DE FACTURAS-->
+  <div class="relative overflow-x-auto">
+   
+
+
 
     <div class="grid grid-cols-1 md:grid-cols-5 gap-4 py-4">
       

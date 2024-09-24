@@ -1,7 +1,8 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { mdiFileEdit, mdiTrashCan } from '@mdi/js'
+import { mdiEye, mdiTrashCan } from '@mdi/js'
 import CardBoxModal from '@/components/alejo_components/CardBoxModal.vue'
+import NotificationBar from '../alejo_components/NotificationBar.vue' 
 import ModalAlert from '../ModalAlert.vue'
 import BaseLevel from '@/components/BaseLevel.vue'
 import BaseButtons from '@/components/BaseButtons.vue'
@@ -12,6 +13,7 @@ defineProps({
   checkable: Boolean
 });
 
+
 const productos = ref([]);
 const currentProduct = ref({});
 const TotalPages = ref(0);
@@ -20,6 +22,8 @@ const activarModalEdit = ref(false);
 const currentPage = ref(1);
 const isModalVisible = ref(false);
 const modalMessage = ref('');
+const isAlertVisible = ref(false)
+const colorAlert = ref('')
 
 const activarModalDelete = ref({
   visible: false,
@@ -37,6 +41,7 @@ const fechtProducts = async () => {
   }
 };
 
+
 const openEditModal = (producto = {}) => {
   isEditMode.value = true;
   currentProduct.value = { ...producto };
@@ -51,12 +56,28 @@ const update_Product = async () => {
       currentProduct.value.descripcion,
       currentProduct.value.precio_actual
     );
-    alert('Producto actualizado exitosamente');
+    modalMessage.value = "Producto actualizado con exito";
+    isAlertVisible.value = true;
+    colorAlert.value = 'success';
+    activarModalEdit.value = false;
+    setTimeout(()=> {
+      isAlertVisible.value = false;
+    },3000)
     fechtProducts();
   } catch (error) {
-    alert(error.data.detail);
+    modalMessage.value = error.data.detail;
+    isAlertVisible.value = true;
+    colorAlert.value = 'danger';
+    activarModalEdit.value = false;
+    setTimeout(()=> {
+      isAlertVisible.value = false;
+    },3000)
   }
 };
+
+const cancelEdit = () => {
+  activarModalEdit.value = false;
+}
 
 const openDeleteModal = (producto) => {
   activarModalDelete.value = {
@@ -70,12 +91,21 @@ const confirmDelete = async () => {
 
   try {
     await deleteProduct(producTem.id_producto);
-    alert('Producto Eliminado Con Exito');
+    modalMessage.value = "Producto Eliminado con exito";
+    isAlertVisible.value = true;
+    colorAlert.value = 'success';
+    setTimeout(()=> {
+      isAlertVisible.value = false;
+    },3000)
     fechtProducts();
     activarModalDelete.value.visible = false;
   } catch (error) {
-    console.error('Error al eliminar el Producto:', error);
-    alert('Hubo un problema al intentar eliminar el producto.');
+    modalMessage.value = error.data.detail;
+    isAlertVisible.value = true;
+    colorAlert.value = 'danger';
+    setTimeout(()=> {
+      isAlertVisible.value = false;
+    },3000)
   }
 };
 
@@ -89,20 +119,26 @@ onMounted(() => {
 </script>
 
 <template>
+  <NotificationBar
+  v-if="isAlertVisible"
+  :color="colorAlert" 
+  :description="modalMessage"
+  :visible="isModalVisible"
+  />
   <CardBoxModal v-model="activarModalEdit" title="Editar Producto" buttonLabel="Guardar cambios" has-cancel @cancel="cancelEdit" @confirm="update_Product ">
     <form @submit.prevent="update_Product()">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="mb-4">
-          <label for="nombre" class="block text-gray-700 font-medium">Nombre:</label>
-          <input type="text" id="nombre" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" v-model="currentProduct.nombre_producto" required/>
+          <label for="nombre" class="block text-gray-700 font-medium dark:text-white">Nombre:</label>
+          <input type="text" id="nombre" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-700" v-model="currentProduct.nombre_producto" required/>
         </div>
         <div class="mb-4">
-          <label for="precio" class="block text-gray-700 font-medium">Precio:</label>
-          <input type="text" id="precio" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" v-model="currentProduct.precio_actual" required/>
+          <label for="precio" class="block text-gray-700 font-medium dark:text-white">Precio:</label>
+          <input type="text" id="precio" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-700" v-model="currentProduct.precio_actual" required/>
         </div>
         <div class="mb-4">
-          <label for="descripcion" class="block text-gray-700 font-medium">Descripcion:</label>
-          <input type="text" id="descripcion" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" v-model="currentProduct.descripcion" required/>
+          <label for="descripcion" class="block text-gray-700 font-medium dark:text-white">Descripcion:</label>
+          <input type="text" id="descripcion" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-700" v-model="currentProduct.descripcion" required/>
         </div>
       </div>
     </form>
@@ -118,8 +154,6 @@ onMounted(() => {
   <table>
     <thead>
       <tr>
-        <th v-if="checkable"/>
-        <th/>
         <th>Nombre</th>
         <th>Descripcion</th>
         <th>Precio</th>
@@ -128,13 +162,12 @@ onMounted(() => {
     </thead>
     <tbody>
       <tr v-for="producto in productos" :key="producto.id_producto">
-        <td class="border-b-0 lg:w-6 before:hidden"></td>
         <td data-label="Nombre: ">{{ producto.nombre_producto }}</td>
         <td data-label="Descripcion: ">{{ producto.descripcion }}</td>
         <td data-label="Precio: ">{{ producto.precio_actual }}</td>
         <td class="before:hidden lg:w-1 whitespace-nowrap">
           <BaseButtons type="justify-start lg:justify-end" no-wrap>
-            <BaseButton color="info" :icon="mdiFileEdit" small @click="openEditModal(producto)"/>
+            <BaseButton color="info" :icon="mdiEye" small @click="openEditModal(producto)"/>
             <BaseButton color="danger" :icon="mdiTrashCan" small @click="openDeleteModal(producto)"/>
           </BaseButtons>
         </td>
