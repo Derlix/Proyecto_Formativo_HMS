@@ -29,6 +29,8 @@ const fetchHabitaciones = async () => {
     habitacionesActivas.value = habitaciones.filter(h => h.estado === 'ACTIVO').length
     habitacionesMantenimiento.value = habitaciones.filter(h => h.estado === 'MANTENIMIENTO').length
     habitacionesOcupadas.value = habitaciones.filter(h => h.estado === 'INACTIVO').length
+    habitacionesOperacion.value = habitaciones.filter(h => h.estado === 'OPERACION').length
+
   } catch (error) {
     console.error('Error al obtener habitaciones:', error)
   }
@@ -76,7 +78,7 @@ onMounted(() => {
             :color="'text-white'"
           />
           <CardBoxWidget
-            :number="habitacionesOcupadas"
+            :number="habitacionesOperacion"
             label="Habitaciones en operación"
             :icon="mdiTools"
             :cardColor="'bg-orange-600'"
