@@ -1,185 +1,111 @@
 <script setup>
 import SectionMain from '@/components/SectionMain.vue';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
+import productsTable from '@/components/nico_components/productsTable.vue';
+import NotificationBar from '@/components/alejo_components/NotificationBar.vue';
+import BaseButton from '@/components/BaseButton.vue';
+import CardBoxModal from '@/components/alejo_components/CardBoxModal.vue';
+import { createProduct, getProductsByPage } from '@/services/productService';
 import { ref } from 'vue';
-import { getProductsByPage, createProduct, updateProduct, deleteProduct } from '../../services/productService.js';
 
 const productos = ref([]);
 const currentProduct = ref({});
-const currentPage = ref(1);
 const TotalPages = ref(0);
-const isEditMode = ref(false);
-const visible = ref(false);
-const isDelete = ref(false);
-const descripcion = ref('');
-const textBoton = ref('');
+const currentPage = ref(1);
+const activarModal = ref(false);
+const colorAlert = ref('');
+const modalMessage = ref('');
+const isAlertVisible = ref(false)
+
+// Función para abrir el modal
+const openCreateModal = () => {
+  activarModal.value = true;
+};
+
+const cancelCreate = () => {
+  activarModal.value = false;
+  currentProduct.value = '';
+}
+
+
+const closeModal = () => {
+  activarModal.value = false;
+};
 
 const fechtProducts = async () => {
-  try {
-    const response = await getProductsByPage(currentPage.value);
-    productos.value = response.data.productos;
-    TotalPages.value = response.data.total_pages;
-  } catch (error) {
-    alert('Error al obtener productos: ', error);
-  }
+    try {
+        const response = await getProductsByPage(currentPage.value);
+        productos.value = response.data.productos;
+        TotalPages.value = response.data.total_pages;
+        closeModal();
+    } catch (error) {
+        alert('Error al obtener productos: ', error);
+    }
+};
+
+const reloadPage = () => {
+  window.location.reload();
 };
 
 const createProducto = async () => {
   try {
     await createProduct(currentProduct.value.nombre_producto, currentProduct.value.descripcion, currentProduct.value.precio_actual);
-    alert('Producto creado exitosamente');
+    modalMessage.value = "Producto Creado con éxito";
+    isAlertVisible.value = true;
+    colorAlert.value = 'success';
+    
     fechtProducts();
     closeModal();
+    
+    setTimeout(() => {
+        isAlertVisible.value = false;
+    }, 3000);
   } catch (error) {
     alert('Error al insertar producto: ', error);
   }
 };
 
-const updateProducto = async () => {
-  try {
-    await updateProduct(currentProduct.value.id_producto, currentProduct.value.nombre_producto, currentProduct.value.descripcion, currentProduct.value.precio_actual);
-    alert('Producto actualizado exitosamente');
-    fechtProducts();
-    closeModal();
-  } catch (error) {
-    alert('Error al actualizar producto: ', error);
-  }
+const handleSubmit = () => {
+  createProducto();
+  reloadPage();
 };
 
-const eliminarProducto = async (id_producto) => {
-  if (confirm('¿Estás seguro de que deseas eliminar este producto?')) {
-    try {
-      await deleteProduct(id_producto);
-      alert('Producto eliminado exitosamente');
-      fechtProducts(); // Refresca la lista de productos después de eliminar
-    } catch (error) {
-      alert('Error al eliminar el producto:', error);
-    }
-  }
-};
-
-const openModal = (action, producto = {}) => {
-  if (action === 'create') {
-    isEditMode.value = false;
-    isDelete.value = false;
-    descripcion.value = 'Crear Producto';
-    textBoton.value = 'Crear';
-    currentProduct.value = { nombre_producto: '', descripcion: '', precio_actual: '' };
-  } else if (action === 'update') {
-    isEditMode.value = true;
-    isDelete.value = false;
-    descripcion.value = 'Actualizar Producto';
-    textBoton.value = 'Actualizar';
-    currentProduct.value = { ...producto };
-  } else if (action === 'delete') {
-    isEditMode.value = false;
-    isDelete.value = true;
-    descripcion.value = 'Eliminar Producto';
-    textBoton.value = 'Eliminar';
-    currentProduct.value = { ...producto };
-  }
-  visible.value = true;
-};
-
-const closeModal = () => {
-  visible.value = false;
-};
-
-const nextPage = () => {
-  if (currentPage.value < TotalPages.value) {
-    currentPage.value++;
-    fechtProducts();
-  }
-};
-
-const PrevPage = () => {
-  if (currentPage.value > 1) {
-    currentPage.value--;
-    fechtProducts();
-  }
-};
-
-fechtProducts();
 </script>
 
 
 <template>
-  <LayoutAuthenticated>
-    <SectionMain class="bg-blue-100 rounded-lg">
-      <h1 class="text-black font-bold mb-8">Administrador de productos</h1>
-      <div class="grid grid-cols-4 gap-2">
-        <button @click="openModal('create')" class="bg-blue-800 rounded-lg text-white">Crear Producto</button>
-        <span></span>
-        <div class="grid grid-cols-5 col-span-2">
-          <input type="search" placeholder="Buscar Producto" class="rounded-l-md col-span-4">
-          <button class="bg-blue-800 p-1 text-white rounded-r-md hover:text-black focus:outline-none">
-            <i class="mdi mdi-magnify text-xl"></i>
-          </button>
-        </div>
-      </div>
-
-      <!-- Tabla de productos -->
-      <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-6">
-        <table class="w-full text-sm text-center rtl:text-right text-black font-medium dark:text-gray-100">
-          <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-            <tr>
-              <th>ID</th>
-              <th>Nombre Producto</th>
-              <th>Descripción</th>
-              <th>Precio</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="producto in productos" :key="producto.id_producto">
-              <td>{{ producto.id_producto }}</td>
-              <td>{{ producto.nombre_producto }}</td>
-              <td>{{ producto.descripcion }}</td>
-              <td>{{ producto.precio_actual }}</td>
-              <td class="text-center">
-                <button @click="openModal('update', producto)" class="m-1 text-green-500 rounded-md hover:text-black focus:outline-none">Actualizar</button>
-                <button @click="eliminarProducto(producto.id_producto)" class="m-1 text-red-500 rounded-md hover:text-black focus:outline-none">Eliminar</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Paginación -->
-      <div class="flex items-center justify-center space-x-4 py-4">
-        <button class="bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed" @click="PrevPage" :disabled="currentPage === 1">Anterior</button>
-        <span class="text-gray-700 font-medium">Página {{ currentPage }} de {{ TotalPages }}</span>
-        <button class="bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed" @click="nextPage" :disabled="currentPage === TotalPages">Siguiente</button>
-      </div>
-
-      <!-- Modal de Crear/Actualizar/Eliminar -->
-      <div v-if="visible" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-        <div class="bg-blue-100 p-6 rounded-lg shadow-lg max-w-2xl w-full">
-          <p class="text-black mb-4 rounded border-opacity-10 font-bold text-2xl text-center pt-3 pb-2">{{ descripcion }}</p>
-          <div class="p-6">
-            <form @submit.prevent="isEditMode ? updateProducto() : createProducto()">
-              <div class="grid grid-cols-2 gap-3">
+    <CardBoxModal v-model="activarModal" title="Crear Producto" class="dark:text-white" buttonLabel="Crear Producto" has-cancel @cancel="cancelCreate" @confirm="createProducto ">
+        <form @submit.prevent="handleSubmit()">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="mb-4">
-                  <label for="nombre" class="block text-gray-700">Nombre del producto</label>
-                  <input v-model="currentProduct.nombre_producto" :disabled="isDelete" type="text" id="nombre" class="w-full px-3 py-2 border rounded" required />
+                    <label for="nombre" class="block text-gray-700 font-medium dark:text-white">Nombre:</label>
+                    <input type="text" id="nombre" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-700" v-model="currentProduct.nombre_producto" required/>
                 </div>
                 <div class="mb-4">
-                  <label for="precio" class="block text-gray-700">Precio</label>
-                  <input v-model="currentProduct.precio_actual" :disabled="isDelete" type="number" step="0.01" id="precio" class="w-full px-3 py-2 border rounded" required />
+                    <label for="precio" class="block text-gray-700 font-medium dark:text-white">Precio:</label>
+                    <input type="text" id="precio" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-700" v-model="currentProduct.precio_actual" required/>
                 </div>
-              </div>
-              <div class="mb-4">
-                <label for="descripcion" class="block text-gray-700">Descripción</label>
-                <input v-model="currentProduct.descripcion" :disabled="isDelete" type="text" id="descripcion" class="w-full px-3 py-2 border rounded h-16" required />
-              </div>
-              <div class="flex justify-center space-x-4">
-                <button type="submit" class="bg-green-800 text-white px-4 py-2 rounded">{{ textBoton }}</button>
-                <button type="button" class="bg-red-500 text-white px-4 py-2 rounded" @click="closeModal">Cancelar</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </SectionMain>
-  </LayoutAuthenticated>
+                <div class="mb-4">
+                    <label for="descripcion" class="block text-gray-700 font-medium dark:text-white">Descripcion:</label>
+                    <input type="text" id="descripcion" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-700" v-model="currentProduct.descripcion" required/>
+                </div>
+            </div>
+        </form>
+    </CardBoxModal>
+    <LayoutAuthenticated>
+        <SectionMain class=" rounded-lg">
+            <h1 class="text-black dark:text-white text-2xl font-bold mb-8">Historial Productos</h1>
+            <NotificationBar
+            v-if="isAlertVisible"
+            :color="colorAlert" 
+            :description="modalMessage"
+            :visible="isModalVisible"
+            />
+            <div>
+                <BaseButton @click="openCreateModal" color="info" label="Agregar Producto" class="mb-4" />
+            </div>
+            <productsTable></productsTable>
+        </SectionMain>
+    </LayoutAuthenticated>
 </template>
+

@@ -18,17 +18,17 @@
           {{ errorMessage }}
         </div>
 
-        <div class="flex items-center justify-between mt-4">
-          <div class="text-sm">
-            <a @click.prevent="goToLogin" class="cursor-pointer font-medium text-indigo-600 hover:text-indigo-500">Volver al Inicio de Sesión</a>
-          </div>
-        </div>
-
         <div>
           <button type="submit"
             class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
             Enviar Enlace de Recuperación
           </button>
+        </div>
+
+        <div class="mt-4 text-center">
+          <div class="text-sm">
+            <a @click.prevent="goToLogin" class="cursor-pointer font-medium text-indigo-600 hover:text-indigo-500">Volver al Inicio de Sesión</a>
+          </div>
         </div>
       </form>
     </div>

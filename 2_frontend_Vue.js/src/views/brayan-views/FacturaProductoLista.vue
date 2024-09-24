@@ -22,20 +22,20 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(producto, index) in datos_productos" :key="producto.id_factura_producto"
+                <tr v-for="(producto, index) in productos" :key="producto.factura_producto.id_factura_producto"
                     :class="{'bg-blue-50': index % 2 === 0, 'bg-white': index % 2 !== 0}">
-                  <td class="px-2 py-1 dark:text-dark">{{ producto.id_facturacion }}</td>
-                  <td class="px-2 py-1 dark:text-dark">{{ producto.id_factura_producto }}</td>
-                  <td class="px-4 py-1 dark:text-dark">{{ producto.id_producto }}</td>
-                  <td class="px-4 py-1 dark:text-dark">{{ producto.cantidad }}</td>
-                  <td class="px-4 py-1 dark:text-dark">{{ producto.precio_unitario }}</td>
-                  <td class="px-4 py-1 dark:text-dark">{{ producto.nombre }}</td>
-                  <td class="px-4 py-1 dark:text-dark">{{ producto.descripcion }}</td>
-                  <td class="px-4 py-1 dark:text-dark">{{ producto.precio_actual }}</td>
+                  <td class="px-2 py-1 dark:text-dark">{{ props.factura?.id_facturacion }}</td>
+                  <td class="px-2 py-1 dark:text-dark">{{ producto.factura_producto.id_factura_producto}}</td>
+                  <td class="px-4 py-1 dark:text-dark">{{ producto.factura_producto?.id_producto || 'N/A' }}</td>
+                  <td class="px-4 py-1 dark:text-dark">{{ producto.factura_producto?.cantidad || 'N/A' }}</td>
+                  <td class="px-4 py-1 dark:text-dark">{{ producto.factura_producto?.precio_unitario || 'N/A' }}</td>
+                  <td class="px-4 py-1 dark:text-dark">{{ producto.productos?.nombre_producto || 'N/A' }}</td>
+                  <td class="px-4 py-1 dark:text-dark">{{ producto.productos?.descripcion || 'N/A' }}</td>
+                  <td class="px-4 py-1 dark:text-dark">{{ producto.productos?.precio_actual || 'N/A' }}</td>
                   <td class="px-4 py-1">
                     <div class="flex justify-center space-x-2">
-                      <a href="#" @click.prevent="openEditModal(producto)" class="} hover:underline  text-blue-600  dark:text-blue-600 font-bold">Editar</a>
-                      <a href="#" @click.prevent="openDeleteModal(producto)" class="}hover:underline  text-red-600  dark:text-red-600 font-bold">Eliminar</a>
+                      <a href="#" @click.prevent="openEditModal(producto)" class="hover:underline text-blue-600 dark:text-blue-600 font-bold">Editar</a>
+                      <a href="#" @click.prevent="openDeleteModal(producto)" class="hover:underline text-red-600 dark:text-red-600 font-bold">Eliminar</a>
                     </div>
                   </td>
                 </tr>
@@ -52,7 +52,7 @@
             v-if="showEditModal"
             :producto="selectedProduct"
             @close="closeEditModal"
-            @save="saveProductEdits"
+            @save="handleUpdate"
           />
 
           <!-- Modal para eliminar producto -->
@@ -60,8 +60,9 @@
             v-if="showDeleteModal"
             :producto="selectedProduct"
             @close="closeDeleteModal"
-            @save="handleDelete"
+            @delete="handleDelete"
           />
+
         </div>
       </div>
     </SectionMain>
@@ -69,47 +70,64 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import ProductoFacturaEditar from './ProductoFacturaEditar.vue';
 import ProductoFacturaEliminar from './ProductoFacturaEliminar.vue';
+import { getProductosFacturaById } from "@/services/brayan_service/FacturaProductoService";
 
 
-const datos_productos = ref([
-  {
-    id_facturacion: 1,
-    id_factura_producto: 1,
-    id_producto: 'P001',
-    cantidad: 2,
-    precio_unitario: 10.0,
-    nombre: 'Producto A',
-    descripcion: 'Descripción del producto A',
-    precio_actual: 20.0
-  },
-  {
-    id_facturacion: 1,
-    id_factura_producto: 2,
-    id_producto: 'P002',
-    cantidad: 1,
-    precio_unitario: 15.0,
-    nombre: 'Producto B',
-    descripcion: 'Descripción del producto B',
-    precio_actual: 15.0
+const props = defineProps({
+  factura: Object,
+});
+
+const productos = ref([]);
+const selectedProduct = ref(null);
+
+const fetchProductos = async () => {
+  try {
+    if (props.factura && props.factura.id_facturacion) {
+      const response = await getProductosFacturaById(props.factura.id_facturacion);
+      console.log(response); // Verifica la estructura de la respuesta
+      if (response && response.productos) {
+        productos.value = response.productos; // Asegúrate de asignar la lista de productos
+      } else {
+        console.error('No se encontraron productos en la respuesta:', response);
+      }
+    }
+  } catch (error) {
+    console.error('Error al obtener productos de la factura:', error);
   }
-]);
+};
+
+watch(() => props.factura, fetchProductos, { immediate: true });
+
+
+
+
+
 
 const showDeleteModal = ref(false);
 const showEditModal = ref(false);
-const selectedProduct = ref(null);
 
 const openEditModal = (producto) => {
-  selectedProduct.value = { ...producto };
-  showEditModal.value = true;
+  if (producto && producto.factura_producto) {
+    selectedProduct.value = { ...producto };
+    showEditModal.value = true;
+  } else {
+    console.error('Producto no válido:', producto);
+  }
 };
 
 const openDeleteModal = (producto) => {
-  selectedProduct.value = { ...producto };
-  showDeleteModal.value = true;
+  if (producto && producto.factura_producto && producto.factura_producto.id_factura_producto) {
+    selectedProduct.value = { ...producto };
+    showDeleteModal.value = true;
+  } else {
+    console.error('Producto no válido:', producto);
+  }
 };
+
+
 
 const closeEditModal = () => {
   showEditModal.value = false;
@@ -119,16 +137,30 @@ const closeDeleteModal = () => {
   showDeleteModal.value = false;
 };
 
-const saveProductEdits = (updatedProduct) => {
-  const index = datos_productos.value.findIndex(p => p.id_factura_producto === updatedProduct.id_factura_producto);
-  if (index !== -1) {
-    datos_productos.value[index] = { ...datos_productos.value[index], ...updatedProduct };
-  }
-};
 
-const handleDelete = (factura) => {
-  // Logic to delete factura from the list
-};
+async function handleUpdate() {
+  try {
+    await fetchProductos(); 
+    
+    closeEditModal(); 
+  } catch (error) {
+   
+    console.error('Error al actualizar la factura:', error);
+  }
+}
+
+
+
+async function handleDelete() {
+  try {
+    await fetchProductos();  
+    closeDeleteModal();   
+  } catch (error) {
+    alert('Error al eliminar el producto de la factura:', error);
+  }
+}
+
+
 </script>
 
 <style scoped>

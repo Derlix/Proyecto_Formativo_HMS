@@ -1,39 +1,36 @@
 <script setup>
-import { computed, ref, onMounted } from 'vue'
-import { useMainStore } from '@/stores/main'
-import {
-  mdiChartTimelineVariant,
-} from '@mdi/js'
-import * as chartConfig from '@/components/Charts/chart.config.js'
-import SectionMain from '@/components/SectionMain.vue'
-import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
-import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue'
+import { ref, onMounted } from 'vue';
+import { getAllHistorialReservas } from '@/services/busta_service/HistorialReservasService'; // Importar el servicio
 
-const chartData = ref(null)
+import SectionMain from '@/components/SectionMain.vue';
+import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
+import TitleIconOnly from '@/components/TitleIconOnly.vue'
+import { mdiChartTimelineVariant } from '@mdi/js';
 
-const fillChartData = () => {
-  chartData.value = chartConfig.sampleChartData()
-}
+const reservas = ref([]); // Variable para almacenar las reservas
+
+const fetchReservas = async () => {
+  try {
+    const data = await getAllHistorialReservas(); // Llamar al servicio para obtener los datos
+    reservas.value = data; // Guardar los datos en la variable
+  } catch (error) {
+    console.error('Error al obtener el historial de reservas:', error);
+    alert('Ocurrió un error al obtener el historial de reservas.');
+  }
+};
 
 onMounted(() => {
-  fillChartData()
-})
-
-const mainStore = useMainStore()
-
-const clientBarItems = computed(() => mainStore.clients.slice(0, 4))
-
-const transactionBarItems = computed(() => mainStore.history)
+  fetchReservas(); // Llamar a fetchReservas cuando se monte el componente
+});
 </script>
 
 <template>
   <LayoutAuthenticated>
-    <sectionMain>
-      <SectionTitleLineWithButton :icon="mdiChartTimelineVariant" title="Historial de Reservas"></SectionTitleLineWithButton>
-    </sectionMain>
+    <SectionMain>
+      <TitleIconOnly :icon="mdiChartTimelineVariant" title="Historial de reservas" />
+    </SectionMain>
 
-    <sectionMain>
-
+    <SectionMain>
       <table class="table-auto w-full border-collapse border border-gray-300 dark:border-gray-600">
         <thead>
           <tr class="bg-gray-200 dark:bg-gray-800">
@@ -47,36 +44,26 @@ const transactionBarItems = computed(() => mainStore.history)
           </tr>
         </thead>
         <tbody>
-          <tr class="bg-white dark:bg-gray-900">
-            <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">565</td>
-            <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">2024-02-03</td>
-            <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">2024-02-06</td>
-            <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Adolfo Gomez</td>
-            <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">103242390</td>
-            <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">$50,000</td>
+          <tr v-for="reserva in reservas" :key="reserva.id_reserva" class="bg-white dark:bg-gray-900">
+            <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">{{ reserva.id_reserva }}</td>
+            <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">{{ reserva.fecha_reserva }}</td>
+            <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">{{ reserva.fecha_reserva }}</td>
+            <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">{{ reserva.huesped.nombre_completo }}</td>
+            <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">{{ reserva.huesped.numero_documento }}</td>
+            <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">{{ reserva.valor_deposito }}</td>
             <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">
               <span
-                class="inline-block px-3 py-1 text-xs font-semibold text-green-700 bg-green-200 rounded-full dark:text-green-100 dark:bg-green-600">
-                Activo
-              </span>
-            </td>
-          </tr>
-          <tr class="bg-white dark:bg-gray-900">
-            <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">205</td>
-            <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">2024-02-05</td>
-            <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">2024-02-09</td>
-            <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">Juan Gomez</td>
-            <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">1022000</td>
-            <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">$80,000</td>
-            <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">
-              <span
-                class="inline-block px-3 py-1 text-xs font-semibold text-green-700 bg-green-200 rounded-full dark:text-green-100 dark:bg-green-600">
-                Activo
+                :class="{
+                  'inline-block px-3 py-1 text-xs font-semibold text-green-700 bg-green-200 rounded-full dark:text-green-100 dark:bg-green-600': reserva.estado_reserva === 'ACTIVO',
+                  'inline-block px-3 py-1 text-xs font-semibold text-red-700 bg-red-200 rounded-full dark:text-red-100 dark:bg-red-600': reserva.estado_reserva !== 'ACTIVO'
+                }"
+              >
+                {{ reserva.estado_reserva }}
               </span>
             </td>
           </tr>
         </tbody>
       </table>
-    </sectionMain>
+    </SectionMain>
   </LayoutAuthenticated>
 </template>
