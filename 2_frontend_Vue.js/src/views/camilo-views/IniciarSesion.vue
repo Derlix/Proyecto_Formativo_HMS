@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive,onMounted } from 'vue'
 import { useAuthStore } from '@/stores' // Importa el store de autenticación
 import { useRouter } from 'vue-router'
 import { mdiAccount, mdiAsterisk } from '@mdi/js'
@@ -14,7 +14,7 @@ import LayoutGuest from '@/layouts/LayoutGuest.vue'
 const form = reactive({
     login: '',
     pass: '',
-    remember: true
+    remember: false
 })
 
 const router = useRouter()
@@ -24,6 +24,15 @@ const authStore = useAuthStore()
 const email = ref('')
 const password = ref('')
 const errorMessage = ref(null) // Añade una propiedad para el mensaje de error
+
+// Cuando el componente se monte, revisamos si hay un email en localStorage
+onMounted(() => {
+  const storedEmail = localStorage.getItem('email')
+  if (storedEmail) {
+    email.value = storedEmail // Establece el valor del input email con el email almacenado
+    form.remember = true // Marca el checkbox "Recordarme" si el email está guardado
+  }
+})
 
 // Método para manejar el login
 const handleLogin = async () => {
@@ -37,6 +46,12 @@ const handleLogin = async () => {
                 errorMessage.value = null;
             }, 3000);
         } else {
+            if (form.remember) {
+                localStorage.setItem('email', email.value) // Guarda el email en localStorage si "Recordarme" está marcado
+            } else {
+                localStorage.removeItem('email') // Elimina el email de localStorage si el usuario no marca "Recordarme"
+            }
+
             // Redirige a la página de dashboard si el login es exitoso
             // router.push('/dashboard') // Reemplaza '/dashboard' con la ruta que desees redirigir
             if (authStore.user.usuario_rol === 'SuperAdmin' || authStore.user.usuario_rol === 'JefeRecepcion') {
@@ -102,7 +117,7 @@ const handleLogin = async () => {
                     v-model="form.remember"
                     name="remember"
                     label="Recordarme"
-                    :input-value="true"
+                    :inputValue="form.remember"
                 />
 
                 <div class="text-center m-1">
