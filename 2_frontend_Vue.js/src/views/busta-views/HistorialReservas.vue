@@ -90,7 +90,7 @@ onMounted(() => {
           <p><strong>Tipo de Documento:</strong> {{ selectedHuesped.tipo_documento }}</p>
           <p><strong>Número de Documento:</strong> {{ selectedHuesped.numero_documento }}</p>
           <p><strong>Fecha de Expedición:</strong> {{ selectedHuesped.fecha_expedicion }}</p>
-          <p><strong>Email:</strong> {{ selectedHuesped.mail }}</p>
+          <p><strong>Email:</strong> {{ selectedHuesped.email }}</p>
           <p><strong>Teléfono:</strong> {{ selectedHuesped.telefono }}</p>
           <p><strong>Ocupación:</strong> {{ selectedHuesped.ocupacion }}</p>
           <p><strong>Dirección:</strong> {{ selectedHuesped.direccion }}</p>
