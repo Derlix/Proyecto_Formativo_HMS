@@ -124,5 +124,11 @@ export default [
     label: 'Lista pasajeros',
     icon: mdiReproduction,
     modulo: 'huespedes'
+  },{
+    to: '/control-usuarios',
+    label: 'Control Usuarios',
+    icon: mdiReproduction,
+    modulo: 'usuarios'
   }
+
 ]

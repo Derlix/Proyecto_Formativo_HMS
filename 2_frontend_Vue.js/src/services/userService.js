@@ -36,7 +36,7 @@ export const getUserByEmail = async (email) => {
 // Función para obtener todos los usuarios con paginación
 export const getUsersByPage = async (page = 1, pageSize = 10) => {
   try {
-    const response = await api.get(`/users/users-by-page/?page=${page}&page_size=${pageSize}`);
+    const response = await api.get(`/usuarios/usuarios-por-pagina/?page=${page}&page_size=${pageSize}`);
     return response;
   } catch (error) {
     if (error.response) {
