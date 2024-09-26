@@ -861,7 +861,7 @@ function cerrarAgregarProductoFactura() {
         <table class="">
           <thead>
             <tr>
-              <th class=" text-sm">ID Factura Producto</th>
+           
               <th class=" text-sm">ID Producto</th>
               <th class=" text-sm">Cantidad</th>
               <th class=" text-sm">Precio Unitario</th>
@@ -872,7 +872,6 @@ function cerrarAgregarProductoFactura() {
           </thead>
           <tbody class="text-sm">
             <tr v-for="producto in productos" :key="producto.factura_producto.id_factura_producto">
-              <td data-label="ID factura_producto">{{ producto.factura_producto.id_factura_producto }}</td>
               <td data-label="ID producto">{{ producto.factura_producto.id_producto || 'N/A' }}</td>
               <td data-label="cantidad">{{ producto.factura_producto.cantidad || 'N/A' }}</td>
               <td data-label="precio unitario">{{ producto.factura_producto.precio_unitario || 'N/A' }}</td>
