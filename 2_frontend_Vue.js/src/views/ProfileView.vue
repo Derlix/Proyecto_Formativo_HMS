@@ -13,6 +13,7 @@ import BaseButtons from '@/components/BaseButtons.vue'
 import UserCard from '@/components/UserCard.vue'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue'
+import {updatePassword} from '@/services/userService'
 
 const mainStore = useMainStore()
 
@@ -31,8 +32,23 @@ const submitProfile = () => {
   mainStore.setUser(profileForm)
 }
 
-const submitPass = () => {
-  //
+const submitPass = async () => {
+  if (passwordForm.password === passwordForm.password_confirmation){
+    try {
+    const response = await updatePassword(
+      passwordForm.password_current,
+      passwordForm.password
+    );
+
+      console.log('Password updated successfully:', response);
+    } catch (error) {
+      console.error('Error updating password:', error);
+    }
+  }else{
+    alert("Campos de contraseña son diferentes");
+  }
+  
+
 }
 </script>
 
