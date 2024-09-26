@@ -18,6 +18,12 @@ export default [
     modulo: 'home_recepcionista' // Asumiendo que el dashboard es para usuarios
   },
   {
+    to: '/inicio-jefe-recepcionista',
+    icon: mdiMonitor,
+    label: 'Jefe recepcion',
+    modulo: 'home_recepcionista'
+  },
+  {
     to: '/inicio-cajero',
     icon: mdiMonitor,
     label: 'Inicio Cajero',

@@ -21,6 +21,7 @@ import TranspasoParticulares from '@/views/arce-views/TranspasoParticulares.vue'
 import InformacionReserva from '@/views/arce-views/InformacionReserva.vue'
 import InicioCajero from '@/views/arce-views/InicioCajero.vue'
 import VistaHabitaciones from '@/views/camilo-views/VistaHabitaciones.vue'
+import InicioJefeRecepcionista from '@/views/arce-views/DashboardAdmin.vue'
 
 
 const routes = [
@@ -32,6 +33,16 @@ const routes = [
     name: 'inicio_cajero',
     component: InicioCajero,
     meta: { requiresAuth: true}
+  },
+  {
+    meta: {
+      title: 'InicioJefeRecepcionista'
+    },
+    path: '/inicio-jefe-recepcionista',
+    name: 'inicio_jefe_recepcionista',
+    component: InicioJefeRecepcionista,
+    meta: { requiresAuth: true}
+
   },
   {
     meta: {
