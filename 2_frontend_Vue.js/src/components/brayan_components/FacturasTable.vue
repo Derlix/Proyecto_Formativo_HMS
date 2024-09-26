@@ -613,7 +613,7 @@ function cerrarAgregarProductoFactura() {
         <select id="id_producto" v-model="selectedProduct.id_producto"
                 class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500">
           <option v-for="producto in productosDisponibles" :key="producto.id_producto" :value="producto.id_producto">
-            {{ producto.nombre_producto }}
+            {{ producto.nombre_producto}} / $: {{ producto.precio_actual }}
           </option>
         </select>
       </div>
