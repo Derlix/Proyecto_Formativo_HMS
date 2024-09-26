@@ -2,7 +2,8 @@
 import { ref, onMounted } from 'vue'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import AlertaCrearReserva from '@/components/miguel_compnents/AlertaCrearReserva.vue'
-import { obtenerTodasHabitaciones } from '@/services/habitacionService'
+import { obtenerTodasHabitaciones } from '@/services/habitacionService';
+
 
 const showModal = ref(false)
 const habitaciones = ref([]) 
@@ -11,6 +12,7 @@ const cargarHabitaciones = async () => {
   try {
     const response = await obtenerTodasHabitaciones() 
     habitaciones.value = response.data 
+    console.log(habitaciones.value)
   } catch (error) {
     console.error("Error al cargar las habitaciones:", error)
   }
@@ -55,7 +57,6 @@ onMounted(() => {
               <th class="px-4 py-2">Habitación</th>
               <th class="px-4 py-2">Tipo</th>
               <th class="px-4 py-2">Piso</th>
-              <th v-for="day in 30" :key="day" class="px-4 py-2">{{ day }}</th>
             </tr>
           </thead>
           <tbody>
@@ -63,14 +64,6 @@ onMounted(() => {
               <td class="px-4 py-2">{{ habitacion.numero_habitacion }}</td>
               <td class="px-4 py-2">{{ habitacion.id_categoria_habitacion }}</td>
               <td class="px-4 py-2">{{ habitacion.piso }}</td>
-              <td v-for="day in 30" :key="day" class="px-4 py-2">
-                <span v-if="habitacion.estado === 'ACTIVO'" class="block bg-green-100 dark:bg-green-700 text-green-800 dark:text-green-200 text-sm rounded px-2 py-1">
-                  Activo
-                </span>
-                <span v-else class="block bg-red-100 dark:bg-red-700 text-red-800 dark:text-red-200 text-sm rounded px-2 py-1">
-                  Inactivo
-                </span>
-              </td>
             </tr>
           </tbody>
         </table>
