@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { getAllHistorialReservas } from '@/services/busta_service/HistorialReservasService';
 import { getHuespedByDocument } from '@/services/huespedService';
 import SectionMain from '@/components/SectionMain.vue';
@@ -10,11 +10,13 @@ import { mdiChartTimelineVariant } from '@mdi/js';
 const reservas = ref([]);
 const isHuespedModalVisible = ref(false);
 const selectedHuesped = ref(null);
+const currentPage = ref(1);
+const itemsPerPage = ref(5); // Número de reservas por página
 
 const fetchReservas = async () => {
   try {
     const data = await getAllHistorialReservas();
-    reservas.value = data;
+    reservas.value = data.reverse(); // Invertir el orden para mostrar del último al primero
   } catch (error) {
     console.error('Error al obtener el historial de reservas:', error);
     alert('Ocurrió un error al obtener el historial de reservas.');
@@ -29,6 +31,28 @@ const openHuespedModal = async (numero_documento) => {
   } catch (error) {
     console.error('Error al obtener el huésped:', error);
     alert('Ocurrió un error al obtener los datos del huésped.');
+  }
+};
+
+const totalPages = computed(() => {
+  return Math.ceil(reservas.value.length / itemsPerPage.value);
+});
+
+const paginatedReservas = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage.value;
+  const end = start + itemsPerPage.value;
+  return reservas.value.slice(start, end);
+});
+
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++;
+  }
+};
+
+const prevPage = () => {
+  if (currentPage.value > 1) {
+    currentPage.value--;
   }
 };
 
@@ -58,7 +82,7 @@ onMounted(() => {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="reserva in reservas" :key="reserva.id_reserva" class="bg-white dark:bg-gray-900">
+          <tr v-for="reserva in paginatedReservas" :key="reserva.id_reserva" class="bg-white dark:bg-gray-900">
             <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">{{ reserva.id_reserva }}</td>
             <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">{{ reserva.fecha_reserva }}</td>
             <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">{{ reserva.fecha_reserva }}</td>
@@ -79,6 +103,12 @@ onMounted(() => {
           </tr>
         </tbody>
       </table>
+      
+      <div class="flex justify-between mt-4">
+        <button @click="prevPage" :disabled="currentPage === 1" class="bg-gray-300 text-gray-700 px-4 py-2 rounded">Anterior</button>
+        <span>Página {{ currentPage }} de {{ totalPages }}</span>
+        <button @click="nextPage" :disabled="currentPage === totalPages" class="bg-gray-300 text-gray-700 px-4 py-2 rounded">Siguiente</button>
+      </div>
     </SectionMain>
 
     <!-- Modal para mostrar información del huésped -->
