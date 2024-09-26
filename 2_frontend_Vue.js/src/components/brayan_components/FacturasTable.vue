@@ -613,7 +613,7 @@ function cerrarAgregarProductoFactura() {
         <select id="id_producto" v-model="selectedProduct.id_producto"
                 class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500">
           <option v-for="producto in productosDisponibles" :key="producto.id_producto" :value="producto.id_producto">
-            {{ producto.nombre_producto }}
+            {{ producto.nombre_producto}} / $: {{ producto.precio_actual }}
           </option>
         </select>
       </div>
@@ -682,7 +682,7 @@ function cerrarAgregarProductoFactura() {
           <th class="">Impuestos</th>
           <th class="">Total</th>
           <th class="">Total Precio Productos</th>
-          <th class="">Método de Pago</th>
+          <th class="">Método de Pago Factura</th>
           <th class="">Estado</th>
           <th class="">Fecha Salida</th>
           <th class="">ID Reserva</th>
@@ -692,7 +692,7 @@ function cerrarAgregarProductoFactura() {
           <th class="">Fecha Reserva</th>
           <th class="">Empresa</th>
           <th class="">Valor Depósito</th>
-          <th class="">Forma de Pago</th>
+          <th class="">Forma de Pago Reserva</th>
           <th class="">Nombre</th>
           <th class="">N° Documento</th>
           <th class="">Acciones</th>
@@ -708,7 +708,7 @@ function cerrarAgregarProductoFactura() {
           <td data-label="Impuestos">{{ factura.impuestos }}</td>
           <td data-label="Total">{{ factura.total }}</td>
           <td data-label="Total Precio Productos">{{ factura.total_precio_productos }}</td>
-          <td data-label="Método de Pago">{{ factura.metodo_pago }}</td>
+          <td data-label="Método de Pago Factura">{{ factura.metodo_pago }}</td>
           <td data-label="Estado">{{ factura.estado }}</td>
           <td data-label="Fecha de Salida">{{ factura.fecha_salida }}</td>
           <td data-label="ID Reserva">{{ factura.reserva.id_reserva }}</td>
@@ -718,7 +718,7 @@ function cerrarAgregarProductoFactura() {
           <td data-label="Fecha Reserva">{{ factura.reserva.fecha_reserva }}</td>
           <td data-label="Empresa">{{ factura.reserva.empresa }}</td>
           <td data-label="Valor Depósito">{{ factura.reserva.valor_deposito }}</td>
-          <td data-label="Forma de Pago">{{ factura.reserva.forma_pago }}</td>
+          <td data-label="Forma de Pago Reserva">{{ factura.reserva.forma_pago }}</td>
           <td data-label="Nombre Completo">{{ factura.huesped.nombre_completo }}</td>
           <td data-label="Número de Documento">{{ factura.huesped.numero_documento }}</td>
           <td class="before:hidden lg:w-1 whitespace-nowrap">
@@ -861,7 +861,7 @@ function cerrarAgregarProductoFactura() {
         <table class="">
           <thead>
             <tr>
-              <th class=" text-sm">ID Factura Producto</th>
+           
               <th class=" text-sm">ID Producto</th>
               <th class=" text-sm">Cantidad</th>
               <th class=" text-sm">Precio Unitario</th>
@@ -872,7 +872,6 @@ function cerrarAgregarProductoFactura() {
           </thead>
           <tbody class="text-sm">
             <tr v-for="producto in productos" :key="producto.factura_producto.id_factura_producto">
-              <td data-label="ID factura_producto">{{ producto.factura_producto.id_factura_producto }}</td>
               <td data-label="ID producto">{{ producto.factura_producto.id_producto || 'N/A' }}</td>
               <td data-label="cantidad">{{ producto.factura_producto.cantidad || 'N/A' }}</td>
               <td data-label="precio unitario">{{ producto.factura_producto.precio_unitario || 'N/A' }}</td>

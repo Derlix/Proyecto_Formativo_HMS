@@ -20,8 +20,8 @@
       <div class="flex justify-center mb-6">
         <span class="text-gray-700 dark:text-gray-300 mx-2">Reserva para: </span>
         <p class="text-gray-900 dark:text-gray-100">{{ huesped.nombre_completo }}</p>
-      </div> 
-              
+      </div>
+
       <div v-if="paso === 1" class="grid grid-cols-2 gap-4">
         <!-- Controles para adultos y niños -->
         <div>
@@ -120,23 +120,36 @@
           />
         </div>
       </div>
-
-      <div v-else-if="paso === 2" class="overflow-auto">
-        <table class="table-auto w-full">
+      <div
+        v-else-if="paso === 2"
+        class="overflow-x-auto bg-gray-50 dark:bg-gray-800 rounded-lg shadow-md p-4 max-h-64"
+      >
+        <table class="min-w-full bg-white dark:bg-gray-700 border border-gray-300">
           <thead>
-            <tr>
+            <tr class="bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200">
               <th class="px-4 py-2">Habitación</th>
               <th class="px-4 py-2">Categoría</th>
               <th class="px-4 py-2">Piso</th>
               <th class="px-4 py-2">Precio</th>
+              <th class="px-4 py-2">Acción</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="habitacion in habitaciones" :key="habitacion.id_habitacion">
-              <td class="border px-4 py-2">{{ habitacion.numero_habitacion }}</td>
-              <td class="border px-4 py-2">{{ habitacion.id_categoria_habitacion }}</td>
-              <td class="border px-4 py-2">{{ habitacion.piso }}</td>
-              <td class="border px-4 py-2">{{ habitacion.precio_actual }}</td>
+            <tr
+              v-for="  habitacion in habitaciones.filter((h) => h.estado === 'ACTIVO')"
+              :key="habitacion.id_habitacion"
+              class="hover:bg-gray-100 dark:hover:bg-gray-600"
+            >
+            <TableCheckboxCell v-if="checkable" @checked="checked($event, client)" />
+              <td class="border px-4 py-2 dark:text-white">{{ habitacion.numero_habitacion }}</td>
+              <td class="border px-4 py-2 dark:text-white">
+                {{ habitacion.id_categoria_habitacion }}
+              </td>
+              <td class="border px-4 py-2 dark:text-white">{{ habitacion.piso }}</td>
+              <td class="border px-4 py-2 dark:text-white">{{ habitacion.precio_actual }}</td>
+              <td class="border px-4 py-2">
+                <input type="checkbox">
+              </td>
             </tr>
           </tbody>
         </table>
@@ -226,21 +239,25 @@ const disminuirNinos = () => {
   }
 }
 
-const fetchHabitaciones = async () => {
+const cargarHabitaciones = async () => {
   try {
     const response = await obtenerTodasHabitaciones()
-    habitaciones.value = Array.isArray(response.habitaciones)
-      ? response.habitaciones
-      : response.habitaciones || []
-
-    // Imprimir las habitaciones en la consola
-    console.log('Habitaciones:', habitaciones.value)
+    habitaciones.value = response.data
+    console.log(habitaciones.value)
   } catch (error) {
-    alert(error.response?.data?.detail || 'Error al obtener las habitaciones')
+    console.error('Error al cargar las habitaciones:', error)
+  }
+}
+
+const checked = (isChecked, client) => {
+  if (isChecked) {
+    checkedRows.value.push(client)
+  } else {
+    checkedRows.value = remove(checkedRows.value, (row) => row.id === client.id)
   }
 }
 
 onMounted(() => {
-  fetchHabitaciones()
+  cargarHabitaciones()
 })
 </script>
