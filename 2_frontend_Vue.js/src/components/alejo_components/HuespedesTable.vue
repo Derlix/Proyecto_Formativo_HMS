@@ -2,11 +2,10 @@
 import { ref, onMounted } from 'vue'
 import { mdiEye, mdiTrashCan } from '@mdi/js'
 import CardBoxModal from '@/components/alejo_components/CardBoxModal.vue'
-import ModalAlert from '../ModalAlert.vue'
 import BaseLevel from '@/components/BaseLevel.vue'
 import BaseButtons from '@/components/BaseButtons.vue'
 import BaseButton from '@/components/BaseButton.vue'
-import { getHuespedByPage, deleteHuesped, updateHuesped, getHuespedByDocument} from '@/services/huespedService';
+import { getHuespedByPage, deleteHuesped, updateHuesped, getAllHuespedes } from '@/services/huespedService';
 import NotificationBar from '@/components/alejo_components/NotificationBar.vue'
 
 defineProps({
@@ -14,8 +13,10 @@ defineProps({
 })
 
 const huespedes = ref([]);
+const allhuespedes = ref([]);
+const originalHuespedes = ref([]);
+const buscarHuesped = ref(''); 
 const currentHuesped = ref({});
-const buscarHuesped = ref('');
 const TotalPages = ref(0);
 const currentPage = ref(1);
 const isEditMode = ref(false);
@@ -29,61 +30,70 @@ const activarModalDelete = ref({
   huesped: null
 });
 
+const fetchAllHuespedes = async () => {
+  try {
+    const response = await getAllHuespedes();
+    allhuespedes.value = response.data;
+    console.log('all huespedes:',allhuespedes.value);
+  } catch (error) {
+    alert(error.response?.data?.detail || 'Error al obtener los huéspedes');
+  }
+}; 
+fetchAllHuespedes();
 
 
 
-
-
-const fetchHuespedes = async () => {
+const fetchHuespedesByPage = async () => {
   try {
     const response = await getHuespedByPage(currentPage.value);
-
+    
     const activos = response.data.huespedes.filter(huesped => huesped.huesped_estado === true);
-
     huespedes.value = activos;
-
+    originalHuespedes.value = activos;
+    console.log(huespedes.value);
+    console.log('Total de huéspedes activos:', activos.length);
     TotalPages.value = response.data.total_pages;
   } catch (error) {
     alert(error.response?.data?.detail || 'Error al obtener los huéspedes');
   }
-};
+}; 
 
-
-
-async function buscar_Huesped() {
-  if (buscarHuesped.value.trim() === '') {
-    fetchHuespedes();
-  } else {
-    // Buscar un huésped específico
-    try {
-      const response = await getHuespedByDocument(buscarHuesped.value);
-      if (response && response.data) {
-        currentHuesped.value = response.data;
-        if (currentHuesped.value.huesped_estado){
-          huespedes.value = [currentHuesped.value]; 
+    // Filtra las categorías según la búsqueda
+const filterHuespedes = () => {
+  if (buscarHuesped.value === '') {
+    fetchHuespedesByPage();
+  }else {
+    console.log(buscarHuesped.value);
+    const query = buscarHuesped.value.toLowerCase();
+    huespedes.value = [...originalHuespedes.value];   
+    huespedes.value.forEach(huesped => {
+      if(huesped.huesped_estado){
+        const filterResult = allhuespedes.value.filter(huesped =>
+        huesped.numero_documento && 
+        huesped.numero_documento.toLowerCase().includes(query)
+        );
+        if(filterResult.length === 0){
+          modalMessage.value = 'Huésped no encontrado';
+          isAlertVisible.value = true;
+          colorAlert.value = 'danger';
+          activarModalEdit.value = false;
+          setTimeout(() => {
+          isAlertVisible.value = false;
+          }, 2000);
+          huespedes.value = [];
         }else {
-          modalMessage.value = 'El huésped ha sido eliminado';
-          isModalVisible.value = true;
+          huespedes.value = filterResult;
+          
         }
-      }else {
-        huespedes.value = []; // No se encontró el huésped
-        currentHuesped.value = null;
-        modalMessage.value = 'El huésped no existe';
-        isModalVisible.value = true;
       }
-    } catch (error) {
-      console.error('Error al encontrar huésped:', error);
-      huespedes.value = [];
-      currentHuesped.value = null;
-      
-    }
+    });
+    console.log("huespedes filtrados", huespedes.value);
+    
+
+   
   }
 };
 
-const handleClose = () => {
-  isModalVisible.value = false;
-  buscarHuesped.value = "";
-};
 
 
 
@@ -117,7 +127,7 @@ const update_Huesped = async () => {
     }, 3000);
     //cierra el modal en tres segundos
 
-    await fetchHuespedes();
+    await fetchHuespedesByPage();
   } catch (error) {
     modalMessage.value = error.data.detail;
     isAlertVisible.value = true;
@@ -163,7 +173,7 @@ const confirmDelete = async () => {
       isAlertVisible.value = false;
     }, 3000);
 
-    await fetchHuespedes(); // Actualiza la lista de huéspedes
+    await fetchHuespedesByPage(); // Actualiza la lista de huéspedes
     activarModalDelete.value.visible = false; 
   } catch (error) {
     modalMessage.value = error.data.detail;
@@ -193,7 +203,7 @@ const formatDate = (dateString) => {
 
 
 onMounted(() => {
-  fetchHuespedes();
+  fetchHuespedesByPage();
 });
 
 </script>
@@ -206,117 +216,101 @@ onMounted(() => {
   :visible="isModalVisible"
   />
 
-  <ModalAlert
-  v-if="isModalVisible"
-  :descripcion="modalMessage"
-  textBoton="Cerrar"
-  :visible="isModalVisible"
-  @close="handleClose"
-  />
 
-  <CardBoxModal v-model="activarModalEdit" title="Editar huesped"  buttonLabel="Guardar cambios" has-cancel @cancel="cancelEdit"
+  <CardBoxModal v-model="activarModalEdit" title="Editar huésped"  buttonLabel="Guardar cambios" has-cancel @cancel="cancelEdit"
   @confirm="update_Huesped " >
     <form @submit.prevent="update_Huesped()">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <!-- Primer par de campos -->
         <div class="mb-4">
-          <label for="huespedNombre_completo" class="block text-gray-700 font-medium">Nombre completo</label>
+          <label for="huespedNombre_completo" class="block text-gray-700  font-medium dark:text-white">Nombre completo</label>
           <input
             type="text"
             id="huespedNombre_completo"
-            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            class="mt-1 block w-full border-gray-300 rounded-md shado dark:text-white dark:border-gray-600 rounded-mdw-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700"
             v-model="currentHuesped.nombre_completo"
             required
           />
         </div>
         <div class="mb-4">
-          <label for="huespedTipo_documento" class="block text-gray-700 font-medium">Tipo documento</label>
+          <label for="huespedTipo_documento" class="block text-gray-700  font-medium dark:text-white">Tipo documento</label>
           <input
             type="text"
             id="huespedTipo_documento"
-            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            class="mt-1 block w-full border-gray-300 rounded-md shad dark:text-white dark:border-gray-600 rounded-mdow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700"
             v-model="currentHuesped.tipo_documento"
             required
           />
         </div>
         <!-- Segundo par de campos -->
         <div class="mb-4">
-          <label for="huespedNumero_documento" class="block text-gray-700 font-medium">Número documento</label>
+          <label for="huespedNumero_documento" class="block text-gray-700  font-medium dark:text-white">Número documento</label>
           <input
             type="text"
             id="huespedNumero_documento"
-            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            class="mt-1 block w-full border-gray-300 rounded-md shadow dark:text-white dark:border-gray-600 rounded-md-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700"
             v-model="currentHuesped.numero_documento"
             required
           />
         </div>
         <div class="mb-4">
-          <label for="huespedFecha_expedicion" class="block text-gray-700 font-medium">Fecha expedición</label>
+          <label for="huespedFecha_expedicion" class="block text-gray-700  font-medium dark:text-white">Fecha expedición</label>
           <input
             type="date"
             id="huespedFecha_expedicion"
-            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            class="mt-1 block w-full border-gray-300 rounded-md shadow dark:text-white dark:border-gray-600 rounded-md-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700"
             v-model="currentHuesped.fecha_expedicion"
             required
           />
         </div>
         <!-- Tercer par de campos -->
         <div class="mb-4">
-          <label for="huespedEmail" class="block text-gray-700 font-medium">Email</label>
+          <label for="huespedEmail" class="block text-gray-700 font-medium dark:text-white">Email</label>
           <input
             type="email"
             id="huespedEmail"
-            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700"
             v-model="currentHuesped.email"
             required
           />
         </div>
         <div class="mb-4">
-          <label for="huespedTelefono" class="block text-gray-700 font-medium">Teléfono</label>
+          <label for="huespedTelefono" class="block text-gray-700  font-medium dark:text-white">Teléfono</label>
           <input
             type="text"
             id="huespedTelefono"
-            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            class="mt-1 block w-full border-gray-300 rounded-md dark:text-white dark:border-gray-600 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700"
             v-model="currentHuesped.telefono"
             required
           />
         </div>
         <!-- Último par de campos -->
         <div class="mb-4">
-          <label for="huespedOcupacion" class="block text-gray-700 font-medium">Ocupación</label>
+          <label for="huespedOcupacion" class="block text-gray-700  font-medium dark:text-white">Ocupación</label>
           <input
             type="text"
             id="huespedOcupacion"
-            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            class="mt-1 block w-full border-gray-300 rounded-md dark:text-white dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700"
             v-model="currentHuesped.ocupacion"
             required
           />
         </div>
         <div class="mb-4">
-          <label for="huespedDireccion" class="block text-gray-700 font-medium">Dirección</label>
+          <label for="huespedDireccion" class="block text-gray-700  font-medium dark:text-white">Dirección</label>
           <input
             type="text"
             id="huespedDireccion"
-            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            class="mt-1 block w-full border-gray-300 rounded-md dark:text-white dark:bg-gray-700  dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             v-model="currentHuesped.direccion"
             required
           />
         </div>
       </div>
 
-      <!-- Botón de enviar (guardar cambios) -->
-      <!-- <div class="mt-4">
-        <BaseButton
-              type="submit"
-              label="Guardar cambios"
-              color="info"
-              small
-            /> 
-      </div> -->
     </form>
   </CardBoxModal >
 
-  <CardBoxModal v-model="activarModalDelete.visible"  v-if="activarModalDelete.huesped" title="Eliminar huesped" buttonLabel="Eliminar" button="danger" has-cancel @confirm="confirmDelete"
+  <CardBoxModal v-model="activarModalDelete.visible"  v-if="activarModalDelete.huesped" title="Eliminar huésped" buttonLabel="Eliminar" button="danger" has-cancel @confirm="confirmDelete"
   @cancel="cancelDelete" >
     <p class="text-xl">Esta seguro de eliminar a: </p>
     <b>{{ activarModalDelete.huesped.nombre_completo }}</b><br>
@@ -324,15 +318,15 @@ onMounted(() => {
   </CardBoxModal>
 
   <div class="mb-6 max-w-md mx-left">
-    <div class=" flex items-center border rounded-lg shadow-sm ">
+    <div class=" flex items-center border rounded-lg shadow-sm">
       <input
-        type="search"
-        id="buscarHuesped"
-        placeholder="Buscar huesped por documento"
-        class="flex-grow px-4 py-2 border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+        type="text"
+        placeholder="Buscar huésped por documento"
+        class="search-input flex-grow px-4 py-2 rounded-lg focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:text-white dark:bg-gray-700 " 
         v-model="buscarHuesped"
-        @input="buscar_Huesped"
+        @input="filterHuespedes"
       />
+
     </div>
   </div>
 
@@ -406,7 +400,7 @@ onMounted(() => {
             :label="page"
             :color="page === currentPage ? 'lightDark' : 'whiteDark'"
             small
-            @click="currentPage = page; fetchHuespedes()"
+            @click="currentPage = page; fetchHuespedesByPage()"
             />
         </BaseButtons>
         <small>Página {{ currentPage }} de {{ TotalPages }}</small>

@@ -79,3 +79,22 @@ export const deleteUser = async (userId) => {
     }
   }
 };
+
+// /usuarios/actualizar-password
+
+// Función para actualizar un usuario
+export const updatePassword = async (current_password, new_password) => {
+  try {
+    const response = await api.put(`/usuarios/actualizar-password`, {
+      current_password: current_password,
+      new_password: new_password
+    });
+    return response;
+  } catch (error) {
+    if (error.response) {
+      throw error.response; // Devuelve el error original de la API
+    } else {
+      throw new Error('Error de red o de servidor'); // Manejar errores de red
+    }
+  }
+};
