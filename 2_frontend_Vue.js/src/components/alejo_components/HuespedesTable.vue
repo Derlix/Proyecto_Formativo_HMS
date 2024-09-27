@@ -2,11 +2,10 @@
 import { ref, onMounted } from 'vue'
 import { mdiEye, mdiTrashCan } from '@mdi/js'
 import CardBoxModal from '@/components/alejo_components/CardBoxModal.vue'
-import ModalAlert from '../ModalAlert.vue'
 import BaseLevel from '@/components/BaseLevel.vue'
 import BaseButtons from '@/components/BaseButtons.vue'
 import BaseButton from '@/components/BaseButton.vue'
-import { getHuespedByPage, deleteHuesped, updateHuesped, getHuespedByDocument} from '@/services/huespedService';
+import { getHuespedByPage, deleteHuesped, updateHuesped, getAllHuespedes } from '@/services/huespedService';
 import NotificationBar from '@/components/alejo_components/NotificationBar.vue'
 
 defineProps({
@@ -14,8 +13,10 @@ defineProps({
 })
 
 const huespedes = ref([]);
+const allhuespedes = ref([]);
+const originalHuespedes = ref([]);
+const buscarHuesped = ref(''); 
 const currentHuesped = ref({});
-const buscarHuesped = ref('');
 const TotalPages = ref(0);
 const currentPage = ref(1);
 const isEditMode = ref(false);
@@ -29,61 +30,70 @@ const activarModalDelete = ref({
   huesped: null
 });
 
+const fetchAllHuespedes = async () => {
+  try {
+    const response = await getAllHuespedes();
+    allhuespedes.value = response.data;
+    console.log('all huespedes:',allhuespedes.value);
+  } catch (error) {
+    alert(error.response?.data?.detail || 'Error al obtener los huéspedes');
+  }
+}; 
+fetchAllHuespedes();
 
 
 
-
-
-const fetchHuespedes = async () => {
+const fetchHuespedesByPage = async () => {
   try {
     const response = await getHuespedByPage(currentPage.value);
-
+    
     const activos = response.data.huespedes.filter(huesped => huesped.huesped_estado === true);
-
     huespedes.value = activos;
-
+    originalHuespedes.value = activos;
+    console.log(huespedes.value);
+    console.log('Total de huéspedes activos:', activos.length);
     TotalPages.value = response.data.total_pages;
   } catch (error) {
     alert(error.response?.data?.detail || 'Error al obtener los huéspedes');
   }
-};
+}; 
 
-
-
-async function buscar_Huesped() {
-  if (buscarHuesped.value.trim() === '') {
-    fetchHuespedes();
-  } else {
-    // Buscar un huésped específico
-    try {
-      const response = await getHuespedByDocument(buscarHuesped.value);
-      if (response && response.data) {
-        currentHuesped.value = response.data;
-        if (currentHuesped.value.huesped_estado){
-          huespedes.value = [currentHuesped.value]; 
+    // Filtra las categorías según la búsqueda
+const filterHuespedes = () => {
+  if (buscarHuesped.value === '') {
+    fetchHuespedesByPage();
+  }else {
+    console.log(buscarHuesped.value);
+    const query = buscarHuesped.value.toLowerCase();
+    huespedes.value = [...originalHuespedes.value];   
+    huespedes.value.forEach(huesped => {
+      if(huesped.huesped_estado){
+        const filterResult = allhuespedes.value.filter(huesped =>
+        huesped.numero_documento && 
+        huesped.numero_documento.toLowerCase().includes(query)
+        );
+        if(filterResult.length === 0){
+          modalMessage.value = 'Huésped no encontrado';
+          isAlertVisible.value = true;
+          colorAlert.value = 'danger';
+          activarModalEdit.value = false;
+          setTimeout(() => {
+          isAlertVisible.value = false;
+          }, 2000);
+          huespedes.value = [];
         }else {
-          modalMessage.value = 'El huésped ha sido eliminado';
-          isModalVisible.value = true;
+          huespedes.value = filterResult;
+          
         }
-      }else {
-        huespedes.value = []; // No se encontró el huésped
-        currentHuesped.value = null;
-        modalMessage.value = 'El huésped no existe';
-        isModalVisible.value = true;
       }
-    } catch (error) {
-      console.error('Error al encontrar huésped:', error);
-      huespedes.value = [];
-      currentHuesped.value = null;
-      
-    }
+    });
+    console.log("huespedes filtrados", huespedes.value);
+    
+
+   
   }
 };
 
-const handleClose = () => {
-  isModalVisible.value = false;
-  buscarHuesped.value = "";
-};
 
 
 
@@ -117,7 +127,7 @@ const update_Huesped = async () => {
     }, 3000);
     //cierra el modal en tres segundos
 
-    await fetchHuespedes();
+    await fetchHuespedesByPage();
   } catch (error) {
     modalMessage.value = error.data.detail;
     isAlertVisible.value = true;
@@ -163,7 +173,7 @@ const confirmDelete = async () => {
       isAlertVisible.value = false;
     }, 3000);
 
-    await fetchHuespedes(); // Actualiza la lista de huéspedes
+    await fetchHuespedesByPage(); // Actualiza la lista de huéspedes
     activarModalDelete.value.visible = false; 
   } catch (error) {
     modalMessage.value = error.data.detail;
@@ -193,7 +203,7 @@ const formatDate = (dateString) => {
 
 
 onMounted(() => {
-  fetchHuespedes();
+  fetchHuespedesByPage();
 });
 
 </script>
@@ -206,13 +216,6 @@ onMounted(() => {
   :visible="isModalVisible"
   />
 
-  <ModalAlert
-  v-if="isModalVisible"
-  :descripcion="modalMessage"
-  textBoton="Cerrar"
-  :visible="isModalVisible"
-  @close="handleClose"
-  />
 
   <CardBoxModal v-model="activarModalEdit" title="Editar huésped"  buttonLabel="Guardar cambios" has-cancel @cancel="cancelEdit"
   @confirm="update_Huesped " >
@@ -315,15 +318,15 @@ onMounted(() => {
   </CardBoxModal>
 
   <div class="mb-6 max-w-md mx-left">
-    <div class=" flex items-center border rounded-lg shadow-sm ">
+    <div class=" flex items-center border rounded-lg shadow-sm">
       <input
         type="text"
-        id="buscarHuesped"
         placeholder="Buscar huésped por documento"
-        class="flex-grow px-4 py-2 rounded-lg focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:text-white dark:bg-gray-700"
+        class="search-input flex-grow px-4 py-2 rounded-lg focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:text-white dark:bg-gray-700 " 
         v-model="buscarHuesped"
-        @input="buscar_Huesped"
+        @input="filterHuespedes"
       />
+
     </div>
   </div>
 
@@ -397,7 +400,7 @@ onMounted(() => {
             :label="page"
             :color="page === currentPage ? 'lightDark' : 'whiteDark'"
             small
-            @click="currentPage = page; fetchHuespedes()"
+            @click="currentPage = page; fetchHuespedesByPage()"
             />
         </BaseButtons>
         <small>Página {{ currentPage }} de {{ TotalPages }}</small>
