@@ -77,6 +77,24 @@
       </button>
     </div>
   </div>
+
+    <!-- Modal de alerta -->
+    <div v-if="alertVisible" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+      <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg max-w-sm w-full">
+        <h2 class="text-2xl font-semibold text-center mb-4 text-green-600 dark:text-green-400">
+          Huésped creado con éxito
+        </h2>
+        <p class="text-center text-gray-600 dark:text-gray-300 mb-4">
+          El nuevo huésped ha sido añadido a la base de datos.
+        </p>
+        <div class="flex justify-center">
+          <button @click="cerrarAlerta" 
+            class="bg-blue-600 text-white py-2 px-6 rounded-md hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition">
+            Aceptar
+          </button>
+        </div>
+      </div>
+    </div>
 </template>
 
 <script setup>
@@ -100,9 +118,15 @@ const huesped = ref({
   direccion: ''
 })
 
+const alertVisible = ref(false);
+
 const cerrarModal = () => {
   emit('close')
 }
+
+const cerrarAlerta = () => {
+  alertVisible.value = false;
+};
 
 const crearhuesped = async () => {
   // Validar campos
@@ -134,7 +158,10 @@ const crearhuesped = async () => {
       huesped.value.direccion
     );
     console.log('Huésped creado con éxito:', response);
+    
+    // Cerrar el modal y mostrar la alerta
     cerrarModal();
+    alertVisible.value = true; // Mostrar la alerta
   } catch (error) {
     if (error.response) {
       console.error('Detalles del error:', error.response.data);
@@ -143,6 +170,4 @@ const crearhuesped = async () => {
     }
   }
 };
-
-
 </script>
