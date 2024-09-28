@@ -72,10 +72,10 @@ const submitPass = async () => {
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <CardBox is-form @submit.prevent="submitProfile">
           <FormField label="Avatar" help="Max 500kb">
-            <FormFilePicker label="Upload" />
+            <FormFilePicker label="Cargar" />
           </FormField>
 
-          <FormField label="Name" help="Required. Your name">
+          <FormField label="Nombre:" help="Requiere. Tu nombre">
             <FormControl
               v-model="profileForm.name"
               :icon="mdiAccount"
@@ -84,7 +84,7 @@ const submitPass = async () => {
               autocomplete="username"
             />
           </FormField>
-          <FormField label="E-mail" help="Required. Your e-mail">
+          <FormField label="Correo:" help="Requiere. Tu correo">
             <FormControl
               v-model="profileForm.email"
               :icon="mdiMail"
@@ -97,14 +97,13 @@ const submitPass = async () => {
 
           <template #footer>
             <BaseButtons>
-              <BaseButton color="info" type="submit" label="Submit" />
-              <BaseButton color="info" label="Options" outline />
+              <BaseButton color="info" type="submit" label="Enviar" />
             </BaseButtons>
           </template>
         </CardBox>
 
         <CardBox is-form @submit.prevent="submitPass">
-          <FormField label="Current password" help="Required. Your current password">
+          <FormField label="Contraseña actual:" help="Requiere. Tu contraseña actual">
             <FormControl
               v-model="passwordForm.password_current"
               :icon="mdiAsterisk"
@@ -117,7 +116,7 @@ const submitPass = async () => {
 
           <BaseDivider />
 
-          <FormField label="New password" help="Required. New password">
+          <FormField label="Nueva contraseña:" help="Requiere. Nueva contraseña">
             <FormControl
               v-model="passwordForm.password"
               :icon="mdiFormTextboxPassword"
@@ -128,7 +127,7 @@ const submitPass = async () => {
             />
           </FormField>
 
-          <FormField label="Confirm password" help="Required. New password one more time">
+          <FormField label="Confimar contraseña:" help="Requiere. Nueva contraseña una vez más">
             <FormControl
               v-model="passwordForm.password_confirmation"
               :icon="mdiFormTextboxPassword"
@@ -141,8 +140,7 @@ const submitPass = async () => {
 
           <template #footer>
             <BaseButtons>
-              <BaseButton type="submit" color="info" label="Submit" />
-              <BaseButton color="info" label="Options" outline />
+              <BaseButton type="submit" color="info" label="Enviar" />
             </BaseButtons>
           </template>
         </CardBox>

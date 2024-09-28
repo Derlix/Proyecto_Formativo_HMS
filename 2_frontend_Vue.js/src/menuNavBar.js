@@ -25,13 +25,13 @@ export default [
     menu: [
       {
         icon: mdiAccount,
-        label: 'My Profile',
+        label: 'Mi perfil',
         to: '/profile'
       },
-      {
-        icon: mdiCogOutline,
-        label: 'Settings'
-      },
+      // {
+      //   icon: mdiCogOutline,
+      //   label: 'Settings'
+      // },
     ]
   },
   {
