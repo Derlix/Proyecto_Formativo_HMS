@@ -9,6 +9,11 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@fullcalendar/core": "^6.1.15",
+    "@fullcalendar/daygrid": "^6.1.15",
+    "@fullcalendar/interaction": "^6.1.15",
+    "@fullcalendar/resource-timeline": "^6.1.15",
+    "@fullcalendar/vue3": "^6.1.15",
     "@mdi/js": "^7.0.96",
     "axios": "^1.7.7",
     "chart.js": "^4.4.0",

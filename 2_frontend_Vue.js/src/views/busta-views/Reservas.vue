@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import AlertaCrearReserva from '@/components/miguel_compnents/AlertaCrearReserva.vue'
 import { obtenerTodasHabitaciones } from '@/services/habitacionService'
-
+import Calendario from '@/components/arias_components/Calendario.vue'
 const showModal = ref(false)
 const habitaciones = ref([])
 
@@ -55,6 +55,8 @@ onMounted(() => {
           Registrar comprobante de descuento
         </button>
       </div>
+
+      <Calendario />
 
       <div class="overflow-x-auto">
         <table class="table-auto w-full border-collapse text-left">
