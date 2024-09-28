@@ -1,5 +1,5 @@
 <script setup>
-import { reactive } from 'vue'
+import { ref, reactive } from 'vue'
 import { useMainStore } from '@/stores/main'
 import { mdiAccount, mdiMail, mdiAsterisk, mdiFormTextboxPassword, mdiGithub } from '@mdi/js'
 import SectionMain from '@/components/SectionMain.vue'
@@ -13,9 +13,14 @@ import BaseButtons from '@/components/BaseButtons.vue'
 import UserCard from '@/components/UserCard.vue'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue'
-import {updatePassword} from '@/services/userService'
+import { updatePassword } from '@/services/userService'
+import NotificationBar from '@/components/alejo_components/NotificationBar.vue';
 
 const mainStore = useMainStore()
+const modalMessage = ref('');
+const isAlertVisible = ref(false);
+const colorAlert = ref('');
+const isModalVisible = ref(false);
 
 const profileForm = reactive({
   name: mainStore.userName,
@@ -33,22 +38,38 @@ const submitProfile = () => {
 }
 
 const submitPass = async () => {
-  if (passwordForm.password === passwordForm.password_confirmation){
+  if (passwordForm.password === passwordForm.password_confirmation) {
     try {
-    const response = await updatePassword(
-      passwordForm.password_current,
-      passwordForm.password
-    );
+      const response = await updatePassword(
+        passwordForm.password_current,
+        passwordForm.password
+      );
+      modalMessage.value = "Contraseña actualizada con éxito";
+      isAlertVisible.value = true;
+      colorAlert.value = 'success';
 
-      console.log('Password updated successfully:', response);
+      setTimeout(() => {
+        isAlertVisible.value = false;
+      }, 10000);
+
     } catch (error) {
-      console.error('Error updating password:', error);
-    }
-  }else{
-    alert("Campos de contraseña son diferentes");
-  }
-  
+      modalMessage.value = 'Error al actualizar la contraseña';
+      isAlertVisible.value = true;
+      colorAlert.value = 'danger';
 
+      setTimeout(() => {
+        isAlertVisible.value = false;
+      }, 10000);
+    }
+  } else {
+    modalMessage.value = 'Las contraseñas no coinciden';
+    isAlertVisible.value = true;
+    colorAlert.value = 'danger';
+
+    setTimeout(() => {
+      isAlertVisible.value = false;
+    }, 10000);
+  }
 }
 </script>
 
@@ -103,6 +124,12 @@ const submitPass = async () => {
         </CardBox>
 
         <CardBox is-form @submit.prevent="submitPass">
+          <NotificationBar
+            v-if="isAlertVisible"
+            :color="colorAlert" 
+            :description="modalMessage"
+            :visible="isModalVisible"
+          />
           <FormField label="Contraseña actual:" help="Requiere. Tu contraseña actual">
             <FormControl
               v-model="passwordForm.password_current"
