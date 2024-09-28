@@ -12,9 +12,25 @@ export const useMainStore = defineStore('main', () => {
   const userRole = computed(() => authStore.user?.usuario_rol || 'undefined');
   const userID = computed(() => authStore.user?.user_id || 'undefined');
 
-
-
-  const userAvatar = computed(() => authStore.user?.usuario_foto || `src/assets/img/recepcionista.png`);
+  const userAvatar = computed(() => {
+    if (authStore.user?.usuario_foto) {
+      return authStore.user.usuario_foto;
+    } else {
+      if (userRole.value === 'SuperAdmin') {
+        return 'src/assets/img/super-admin.png';
+      } else if (userRole.value === 'Recepcionista') {
+        return 'src/assets/img/recepcionista.png';
+      } else if (userRole.value === 'Cajero') {
+        return 'src/assets/img/cajero.png';
+      } else if (userRole.value === 'AuditorNocturno') {
+        return 'src/assets/img/auditor-nocturno.png';
+      } else if (userRole.value === 'JefeRecepcion') {
+        return 'src/assets/img/jefe-recepcion.png';
+      } else {
+        return 'src/assets/img/default.png';
+      }
+    }
+  });
 
   const isFieldFocusRegistered = ref(false)
 
