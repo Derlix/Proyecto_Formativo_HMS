@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
-import { obtenerTodasHabitaciones } from '@/services/juanca_service/habitacionService';
+import { info_habitaciones } from '@/services/arce_service/informePasajeroService';
 import SectionMain from '@/components/SectionMain.vue';
 import TitleIconOnly from '@/components/TitleIconOnly.vue';
 import { mdiBallotOutline } from '@mdi/js';
@@ -13,7 +13,7 @@ const resumenPorPiso = ref([]);
 // Función para obtener las habitaciones
 const obtenerHabitaciones = async () => {
     try {
-        const response = await obtenerTodasHabitaciones();
+        const response = await info_habitaciones();
         habitaciones.value = response.data;
         agruparPorPiso();
         generarResumen();
@@ -38,7 +38,7 @@ const agruparPorPiso = () => {
 const generarResumen = () => {
     resumenPorPiso.value = Object.entries(habitacionesPorPiso.value).map(([piso, habitaciones]) => {
         const habitacionesActivas = habitaciones.filter(h => h.estado === 'ACTIVO');
-        const totalMonto = habitacionesActivas.reduce((sum, habitacion) => sum + parseFloat(habitacion.precio_actual), 0);
+        const totalMonto = habitacionesActivas.reduce((sum, habitacion) => sum + habitacion.precio_actual, 0);
         
         return {
             piso,
@@ -78,7 +78,7 @@ onMounted(() => {
                             class="border-b border-gray-200 hover:bg-gray-100"
                         >
                             <td class="py-3 px-6 text-left whitespace-nowrap">{{ habitacion.numero_habitacion }}</td>
-                            <td class="py-3 px-6 text-left">{{ habitacion.id_categoria_habitacion }}</td>
+                            <td class="py-3 px-6 text-left">{{ habitacion.categoria.tipo_habitacion }}</td>
                             <td class="py-3 px-6 text-left">{{ habitacion.estado }}</td>
                             <td class="py-3 px-6 text-left">{{ habitacion.precio_actual }}</td>
                         </tr>
@@ -86,7 +86,7 @@ onMounted(() => {
                 </table>
             </div>
 
-            <h2 class="text-xl font-bold mt-8">Recopilacion habitaciones activas</h2>
+            <h2 class="text-xl font-bold mt-8">Recopilación habitaciones activas</h2>
             <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden lg:table mt-4">
                 <thead>
                     <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
