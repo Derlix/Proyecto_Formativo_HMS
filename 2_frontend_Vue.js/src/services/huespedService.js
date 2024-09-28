@@ -4,18 +4,21 @@ import api from './api'; // Asegúrate de que `api.js` esté configurado adecuad
 export const createHuesped = async (nombre_completo, tipo_documento, numero_documento, fecha_expedicion, email, telefono, ocupacion, direccion) => {
   try {
     const response = await api.post('/huespedes/create_huesped', {
-      nombre_completo: nombre_completo,
-      tipo_documento: tipo_documento,
-      numero_documento: numero_documento,
-      fecha_expedicion: fecha_expedicion,
-      mail: email,
-      telefono: telefono,
-      ocupacion: ocupacion,
-      direccion: direccion,
+      nombre_completo,
+      tipo_documento,
+      numero_documento,
+      fecha_expedicion,
+      email,
+      telefono,
+      ocupacion,
+      direccion,
     });
-    return response;
+
+    console.log('Respuesta de la API:', response); // Para depurar
+    return response.data; // Devolver solo los datos de respuesta
   } catch (error) {
     if (error.response) {
+      console.error('Detalles del error:', error.response.data); // Mostrar detalles del error
       throw error.response; // Devuelve el error original de la API
     } else {
       throw new Error('Error de red o de servidor');

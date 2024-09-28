@@ -39,7 +39,6 @@
     <ModalCrearHuesped
       :visible="mostrarModalCrearHuesped"
       @close="cerrarModalCrearHuesped"
-      @crearHuesped="crearHuesped"
     />
     <ModalSeleccionHuesped
       :visible="mostrarHuespedExistente"
@@ -79,9 +78,5 @@ function abrirHuespedExistente() {
   mostrarHuespedExistente.value = true
 }
 
-function crearHuesped(nuevoHuesped) {
-  console.log('Huésped creado:', nuevoHuesped)
-  // Aquí puedes agregar la lógica para manejar el nuevo huésped
-  cerrarModalCrearHuesped() // Cierra el modal de creación de huésped
-}
+
 </script>
