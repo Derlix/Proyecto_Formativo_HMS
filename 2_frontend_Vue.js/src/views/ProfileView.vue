@@ -1,5 +1,5 @@
 <script setup>
-import { reactive } from 'vue'
+import { ref, reactive } from 'vue'
 import { useMainStore } from '@/stores/main'
 import { mdiAccount, mdiMail, mdiAsterisk, mdiFormTextboxPassword, mdiGithub } from '@mdi/js'
 import SectionMain from '@/components/SectionMain.vue'
@@ -13,9 +13,14 @@ import BaseButtons from '@/components/BaseButtons.vue'
 import UserCard from '@/components/UserCard.vue'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue'
-import {updatePassword} from '@/services/userService'
+import { updatePassword } from '@/services/userService'
+import NotificationBar from '@/components/alejo_components/NotificationBar.vue';
 
 const mainStore = useMainStore()
+const modalMessage = ref('');
+const isAlertVisible = ref(false);
+const colorAlert = ref('');
+const isModalVisible = ref(false);
 
 const profileForm = reactive({
   name: mainStore.userName,
@@ -33,22 +38,38 @@ const submitProfile = () => {
 }
 
 const submitPass = async () => {
-  if (passwordForm.password === passwordForm.password_confirmation){
+  if (passwordForm.password === passwordForm.password_confirmation) {
     try {
-    const response = await updatePassword(
-      passwordForm.password_current,
-      passwordForm.password
-    );
+      const response = await updatePassword(
+        passwordForm.password_current,
+        passwordForm.password
+      );
+      modalMessage.value = "Contraseña actualizada con éxito";
+      isAlertVisible.value = true;
+      colorAlert.value = 'success';
 
-      console.log('Password updated successfully:', response);
+      setTimeout(() => {
+        isAlertVisible.value = false;
+      }, 10000);
+
     } catch (error) {
-      console.error('Error updating password:', error);
-    }
-  }else{
-    alert("Campos de contraseña son diferentes");
-  }
-  
+      modalMessage.value = 'Error al actualizar la contraseña';
+      isAlertVisible.value = true;
+      colorAlert.value = 'danger';
 
+      setTimeout(() => {
+        isAlertVisible.value = false;
+      }, 10000);
+    }
+  } else {
+    modalMessage.value = 'Las contraseñas no coinciden';
+    isAlertVisible.value = true;
+    colorAlert.value = 'danger';
+
+    setTimeout(() => {
+      isAlertVisible.value = false;
+    }, 10000);
+  }
 }
 </script>
 
@@ -72,10 +93,10 @@ const submitPass = async () => {
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <CardBox is-form @submit.prevent="submitProfile">
           <FormField label="Avatar" help="Max 500kb">
-            <FormFilePicker label="Upload" />
+            <FormFilePicker label="Cargar" />
           </FormField>
 
-          <FormField label="Name" help="Required. Your name">
+          <FormField label="Nombre:" help="Requiere. Tu nombre">
             <FormControl
               v-model="profileForm.name"
               :icon="mdiAccount"
@@ -84,7 +105,7 @@ const submitPass = async () => {
               autocomplete="username"
             />
           </FormField>
-          <FormField label="E-mail" help="Required. Your e-mail">
+          <FormField label="Correo:" help="Requiere. Tu correo">
             <FormControl
               v-model="profileForm.email"
               :icon="mdiMail"
@@ -97,14 +118,19 @@ const submitPass = async () => {
 
           <template #footer>
             <BaseButtons>
-              <BaseButton color="info" type="submit" label="Submit" />
-              <BaseButton color="info" label="Options" outline />
+              <BaseButton color="info" type="submit" label="Enviar" />
             </BaseButtons>
           </template>
         </CardBox>
 
         <CardBox is-form @submit.prevent="submitPass">
-          <FormField label="Current password" help="Required. Your current password">
+          <NotificationBar
+            v-if="isAlertVisible"
+            :color="colorAlert" 
+            :description="modalMessage"
+            :visible="isModalVisible"
+          />
+          <FormField label="Contraseña actual:" help="Requiere. Tu contraseña actual">
             <FormControl
               v-model="passwordForm.password_current"
               :icon="mdiAsterisk"
@@ -117,7 +143,7 @@ const submitPass = async () => {
 
           <BaseDivider />
 
-          <FormField label="New password" help="Required. New password">
+          <FormField label="Nueva contraseña:" help="Requiere. Nueva contraseña">
             <FormControl
               v-model="passwordForm.password"
               :icon="mdiFormTextboxPassword"
@@ -128,7 +154,7 @@ const submitPass = async () => {
             />
           </FormField>
 
-          <FormField label="Confirm password" help="Required. New password one more time">
+          <FormField label="Confimar contraseña:" help="Requiere. Nueva contraseña una vez más">
             <FormControl
               v-model="passwordForm.password_confirmation"
               :icon="mdiFormTextboxPassword"
@@ -141,8 +167,7 @@ const submitPass = async () => {
 
           <template #footer>
             <BaseButtons>
-              <BaseButton type="submit" color="info" label="Submit" />
-              <BaseButton color="info" label="Options" outline />
+              <BaseButton type="submit" color="info" label="Enviar" />
             </BaseButtons>
           </template>
         </CardBox>

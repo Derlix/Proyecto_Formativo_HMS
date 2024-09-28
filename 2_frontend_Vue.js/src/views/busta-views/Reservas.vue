@@ -61,7 +61,7 @@ onMounted(() => {
           <thead class="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100">
             <tr>
               <th class="px-4 py-2">Habitación</th>
-              <th class="px-4 py-2">Vista</th>
+              <th class="px-4 py-2">caracteristicas</th>
               <th class="px-4 py-2">Piso</th>
               <th class="px-4 py-2">Estado</th>
               <th class="px-4 py-2">Precio</th>
