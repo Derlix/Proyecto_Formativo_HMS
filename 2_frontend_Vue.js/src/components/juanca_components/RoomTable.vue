@@ -16,7 +16,7 @@
         :visible="showModal"
         :habitacion="habitacionSeleccionada"
         @close="cerrarModal"
-        @save="guardarHabitacion"
+        @save="obtenerHabitaciones"
       />
 
       <!-- Modal para mostrar detalles de la habitación -->
@@ -39,16 +39,16 @@
       </CardBoxModal>
 
       <!-- Tabla de habitaciones -->
-      <table class="table-auto w-full border-collapse border border-gray-300 dark:border-gray-600">
+      <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden block lg:table">
         <thead>
-          <tr class="bg-gray-200 dark:bg-gray-800">
-            <th class="border border-gray-300 dark:border-gray-600 px-4 py-2">Número</th>
-            <th class="border border-gray-300 dark:border-gray-600 px-4 py-2">Piso</th>
-            <th class="border border-gray-300 dark:border-gray-600 px-4 py-2">Categoría</th>
-            <th class="border border-gray-300 dark:border-gray-600 px-4 py-2">Estado</th>
-            <th class="border border-gray-300 dark:border-gray-600 px-4 py-2">Precio</th>
-            <th class="border border-gray-300 dark:border-gray-600 px-4 py-2">Características</th>
-            <th class="border border-gray-300 dark:border-gray-600 px-4 py-2">Acciones</th>
+          <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+            <th class="py-3 px-6 text-left">Número</th>
+            <th class="py-3 px-6 text-left">Piso</th>
+            <th class="py-3 px-6 text-left">Categoría</th>
+            <th class="py-3 px-6 text-left">Estado</th>
+            <th class="py-3 px-6 text-left">Precio</th>
+            <th class="py-3 px-6 text-left">Características</th>
+            <th class="py-3 px-6 text-center">Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -59,17 +59,8 @@
           >
             <td class="py-3 px-6 text-left">{{ habitacion.numero_habitacion }}</td>
             <td class="py-3 px-6 text-left">{{ habitacion.piso }}</td>
-            <td class="py-3 px-6 text-left">{{ habitacion.categoria ? habitacion.categoria.tipo_habitacion: 'N/A' }}</td>
-            <td class="py-3 px-6 text-left">
-              <span :class="{
-                  'inline-block px-3 py-1 text-xs font-semibold rounded-full': true,
-                  'text-green-700 bg-green-200 dark:text-green-100 dark:bg-green-600': habitacion.estado === 'ACTIVO',
-                  'text-yellow-700 bg-yellow-200 dark:text-yellow-100 dark:bg-yellow-600': habitacion.estado === 'MANTENIMIENTO',
-                  'text-red-700 bg-red-200 dark:text-red-100 dark:bg-red-600': habitacion.estado === 'INACTIVO'
-                }">
-                {{ habitacion.estado }}
-              </span>
-            </td>
+            <td class="py-3 px-6 text-left">{{ habitacion.id_categoria_habitacion }}</td>
+            <td class="py-3 px-6 text-left">{{ habitacion.estado }}</td>
             <td class="py-3 px-6 text-left">{{ habitacion.precio_actual }}</td>
             <td class="py-3 px-6 text-left">
               <button
@@ -105,9 +96,10 @@ import { ref, onMounted } from 'vue';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import RoomModal from '@/components/juanca_components/RoomModal.vue';
 import RoomDetailsModal from '@/components/juanca_components/RoomDetailsModal.vue';
-import CardBoxModal from '@/components/CardBoxModal.vue';
-import { obtenerTodasHabitaciones, eliminarHabitacion} from '@/services/juanca_service/habitacionService';
+import CardBoxModal from '@/components/CardBoxModal.vue'; // Modal para confirmar eliminación
+import { obtenerTodasHabitaciones, eliminarHabitacion } from '@/services/juanca_service/habitacionService';
 
+// Referencias y estados
 const habitaciones = ref([]);
 const showModal = ref(false);
 const showDetailsModal = ref(false);
@@ -116,6 +108,7 @@ const habitacionSeleccionada = ref({});
 const habitacionDetalles = ref({});
 const habitacionAEliminar = ref(null);
 
+// Obtener todas las habitaciones
 const obtenerHabitaciones = async () => {
   try {
     const response = await obtenerTodasHabitaciones();
@@ -125,11 +118,13 @@ const obtenerHabitaciones = async () => {
   }
 };
 
+// Función para ver detalles de la habitación
 const verDetalles = (habitacion) => {
   habitacionDetalles.value = habitacion;
   showDetailsModal.value = true;
 };
 
+// Función para eliminar una habitación confirmada
 const eliminarHabitacionConfirmada = async () => {
   try {
     await eliminarHabitacion(habitacionAEliminar.value);
@@ -141,16 +136,19 @@ const eliminarHabitacionConfirmada = async () => {
   }
 };
 
+// Función para confirmar la eliminación de una habitación
 const confirmarEliminacion = (id_habitacion) => {
   habitacionAEliminar.value = id_habitacion;
   showConfirmModal.value = true;
 };
 
+// Función para editar una habitación
 const editarHabitacion = (habitacion) => {
   habitacionSeleccionada.value = habitacion;
   showModal.value = true;
 };
 
+// Función para mostrar el modal de crear una nueva habitación
 const mostrarModalCrear = () => {
   habitacionSeleccionada.value = {
     id_habitacion: null,
@@ -159,23 +157,34 @@ const mostrarModalCrear = () => {
     id_categoria_habitacion: '',
     estado: '',
     precio_actual: '',
-    caracteristicas: {},
+    caracteristicas: {
+      nombre_caracteristicas: '',
+      adicional: '',
+    },
   };
   showModal.value = true;
 };
 
-const guardarHabitacion = () => {
-  // Llamar la función de API para guardar o actualizar habitación
-  obtenerHabitaciones();
-  cerrarModal();
-};
-
+// Función para cerrar el modal
 const cerrarModal = () => {
   showModal.value = false;
-  habitacionSeleccionada.value = {};
 };
 
+// Obtener las habitaciones al montar el componente
 onMounted(() => {
   obtenerHabitaciones();
 });
 </script>
+
+<style scoped>
+/* Ajusta el tamaño del modal */
+.modal-content {
+  max-width: 600px;
+  margin: auto;
+}
+
+/* Personaliza el tamaño de los botones */
+button {
+  padding: 10px 15px;
+}
+</style>
