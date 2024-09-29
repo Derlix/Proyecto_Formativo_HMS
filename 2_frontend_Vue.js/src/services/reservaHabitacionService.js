@@ -78,3 +78,16 @@ export const crearReservaHabitacion = async (id_reserva, id_habitacion, num_adul
     }
   };
   
+
+  export const obtenertodasReservasHabitacion = async () => {
+    try {
+      const response = await api.get('/Reserva-habitacion/get_all');
+      return response;
+    } catch (error) {
+      if (error.response) {
+        throw error.response; // Devuelve el error original de la API
+      } else {
+        throw new Error('Error de red o de servidor');
+      }
+    }
+  };
