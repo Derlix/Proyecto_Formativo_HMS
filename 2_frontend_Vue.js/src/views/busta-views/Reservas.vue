@@ -3,8 +3,10 @@ import { ref, onMounted } from 'vue'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import AlertaCrearReserva from '@/components/miguel_compnents/AlertaCrearReserva.vue'
 import { obtenerTodasHabitaciones } from '@/services/habitacionService'
+import ModalCambiarHabitacion from '@/components/miguel_compnents/ModalCambiarHabitacion.vue'
 import Calendario from '@/components/arias_components/Calendario.vue'
-const showModal = ref(false)
+const showModalCambiarHabitacion = ref(false)
+const showModalCrearReserva = ref(false)
 const habitaciones = ref([])
 
 const cargarHabitaciones = async () => {
@@ -29,19 +31,22 @@ onMounted(() => {
 
       <div class="flex justify-center space-x-4 py-4">
         <button
-          @click="showModal = true"
+          @click="showModalCrearReserva = true"
           class="bg-blue-600 dark:bg-blue-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 transition"
         >
           Crear reserva
         </button>
-
-        <AlertaCrearReserva :mostrarModal="showModal" @cerrar="showModal = false" />
-
+        
+        <AlertaCrearReserva :mostrarModal="showModalCrearReserva" @cerrar="showModalCrearReserva = false" />
+    
         <button
+          @click="showModalCambiarHabitacion = true"
           class="bg-blue-600 dark:bg-blue-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 transition"
         >
           Cambiar habitación
         </button>
+        
+        <ModalCambiarHabitacion :mostrarModal="showModalCambiarHabitacion" @cerrar="showModalCambiarHabitacion = false" />
 
         <button
           class="bg-blue-600 dark:bg-blue-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 transition"
