@@ -14,13 +14,14 @@ defineProps({
   checkable: Boolean
 })
 
-
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 import { getProductosFacturaById, deleteProductoFactura, updateProductoFactura, addProductoToFactura,getAllProductosPrueba } from "@/services/brayan_service/FacturaProductoService";
 import { getAllFacturas, updateFacturaService, deleteFactura, getFacturaByPage, getFacturaByid } from "@/services/brayan_service/FacturacionService";
 
 
-//ESTO ES PARA OBTENER LOS PRODUCTOS Y PONERLOS EN EL INPUT DE AGREGAR PRODUCTO, PUTO  NICOLAS 
+//ESTO ES PARA OBTENER LOS PRODUCTOS Y PONERLOS EN EL INPUT DE AGREGAR PRODUCTO, te odio  NICOLAS 
 const productosDisponibles = ref([]);
 
 const fetchAllProductos = async () => {
@@ -49,6 +50,12 @@ const currentPage = ref(1);
 
 const buscarFactura = ref('');
 
+
+
+const metodosDePago = ['EFECTIVO', 'TARJETA', 'TRANSFERENCIA'];
+
+    // Lista predefinida de estados (puedes ajustar estos valores según tu caso)
+    const estados = ['PAGADA', 'PENDIENTE', 'CANCELADA'];
 
 
 async function buscar_Factura() {
@@ -389,9 +396,59 @@ function cerrarAgregarProductoFactura() {
   closeAgregarProductosModal();
 }
 
+const downloadPDF = () => {
+  const facturaDetalles = document.getElementById('facturaDetalles');
 
+  // Guarda el estado actual del estilo
+  const originalMaxHeight = facturaDetalles.style.maxHeight;
+  facturaDetalles.style.maxHeight = 'none'; // Elimina el límite de altura
+
+  // Captura el contenido del modal
+  html2canvas(facturaDetalles, { scale: 1, width: facturaDetalles.offsetWidth, height: facturaDetalles.scrollHeight }).then((canvas) => {
+    const imgData = canvas.toDataURL('image/png', 1);
+    const pdf = new jsPDF();
+
+    const imgWidth = 190; // Ancho del PDF
+    const pageHeight = pdf.internal.pageSize.height;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    let heightLeft = imgHeight;
+
+    let position = 0;
+
+    // Agregar la primera imagen
+    pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+    heightLeft -= pageHeight;
+
+    // Manejar el contenido que excede la altura de la página
+    while (heightLeft >= 0) {
+      position = heightLeft - imgHeight;
+      pdf.addPage();
+      pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+    }
+
+    // Almacenar el PDF
+    pdf.save('factura.pdf');
+
+    // Restaura el estilo original
+    facturaDetalles.style.maxHeight = originalMaxHeight;
+  }).catch((error) => {
+    console.error('Error al generar el PDF:', error);
+    // Restaura el estilo original en caso de error
+    facturaDetalles.style.maxHeight = originalMaxHeight;
+  });
+}
+
+
+
+function fechaActual() {
+  const hoy = new Date();
+
+  return hoy.toLocaleDateString('es-ES'); // Cambia el idioma según sea necesario
+}
 
 </script>
+
 
 <template>
 
@@ -430,17 +487,25 @@ function cerrarAgregarProductoFactura() {
           </div>
           <!-- Tercer par de campos -->
           <div class="mb-4">
-            <label for="facturaMetodoPago" class="block text-gray-700 dark:text-gray-300 font-medium">Método de
-              Pago</label>
-            <input type="text" id="facturaMetodoPago"
-              class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-300 sm:text-sm"
-              v-model="selectedFactura.metodo_pago" required />
+            <label for="facturaMetodoPago" class="block text-gray-700">Método de Pago</label>
+            <select id="facturaMetodoPago" v-model="selectedFactura.metodo_pago"
+                    class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500">
+              <!-- Lista de métodos de pago predefinidos -->
+              <option v-for="metodo in metodosDePago" :key="metodo" :value="metodo">
+                {{ metodo }}
+              </option>
+            </select>
           </div>
+
           <div class="mb-4">
-            <label for="facturaEstado" class="block text-gray-700 dark:text-gray-300 font-medium">Estado</label>
-            <input type="text" id="facturaEstado"
-              class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-300 sm:text-sm"
-              v-model="selectedFactura.estado" required />
+            <label for="facturaEstado" class="block text-gray-700">Estado</label>
+            <select id="facturaEstado" v-model="selectedFactura.estado"
+                    class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500">
+              <!-- Lista de estados predefinidos -->
+              <option v-for="estado in estados" :key="estado" :value="estado">
+                {{ estado }}
+              </option>
+            </select>
           </div>
           <!-- Último par de campos -->
           <div class="mb-4">
@@ -677,24 +742,27 @@ function cerrarAgregarProductoFactura() {
           <th v-if="checkable" />
 
           <th class="">ID Facturación</th>
-          <th class="">ID Check-in</th>
+           <!--<th class="">ID Check-in</th>-->
+          <th class="">Nombre</th>
+          <th class="">N° Documento</th>
+          <th class="">Email</th>
+          <th class="">Telefono</th>
           <th class="">Subtotal</th>
           <th class="">Impuestos</th>
-          <th class="">Total</th>
           <th class="">Total Precio Productos</th>
+          <th class="">Total a pagar</th>
           <th class="">Método de Pago Factura</th>
           <th class="">Estado</th>
           <th class="">Fecha Salida</th>
-          <th class="">ID Reserva</th>
+          <!-- <th class="">ID Reserva</th>
           <th class="">Medio Llegada</th>
           <th class="">Llegada Situación</th>
           <th class="">Equipaje</th>
           <th class="">Fecha Reserva</th>
           <th class="">Empresa</th>
           <th class="">Valor Depósito</th>
-          <th class="">Forma de Pago Reserva</th>
-          <th class="">Nombre</th>
-          <th class="">N° Documento</th>
+          <th class="">Forma de Pago Reserva</th>-->
+       
           <th class="">Acciones</th>
 
         </tr>
@@ -703,24 +771,27 @@ function cerrarAgregarProductoFactura() {
         <tr v-for="factura in facturas" :key="factura.id_facturacion">
 
           <td data-label="ID Facturación">{{ factura.id_facturacion }}</td>
-          <td data-label="ID Check-In">{{ factura.check_in.id_check_in }}</td>
+            <!--<td data-label="ID Check-In">{{ factura.check_in.id_check_in }}</td>-->
+          <td data-label="Nombre Completo">{{ factura.huesped.nombre_completo }}</td>
+          <td data-label="Número de Documento">{{ factura.huesped.numero_documento }}</td>
+          <td data-label="Email">{{ factura.huesped.email }}</td>
+          <td data-label="Telfono">{{ factura.huesped.telefono }}</td>
           <td data-label="Subtotal">{{ factura.subtotal }}</td>
           <td data-label="Impuestos">{{ factura.impuestos }}</td>
-          <td data-label="Total">{{ factura.total }}</td>
           <td data-label="Total Precio Productos">{{ factura.total_precio_productos }}</td>
+          <td data-label="Total a pagar">{{ factura.total }}</td>    
           <td data-label="Método de Pago Factura">{{ factura.metodo_pago }}</td>
           <td data-label="Estado">{{ factura.estado }}</td>
           <td data-label="Fecha de Salida">{{ factura.fecha_salida }}</td>
-          <td data-label="ID Reserva">{{ factura.reserva.id_reserva }}</td>
+         <!-- <td data-label="ID Reserva">{{ factura.reserva.id_reserva }}</td>
           <td data-label="Medio de Llegada">{{ factura.check_in.medio_llegada }}</td>
           <td data-label="Llegada Situación">{{ factura.check_in.llegada_situacion }}</td>
           <td data-label="Equipaje">{{ factura.check_in.equipaje }}</td>
           <td data-label="Fecha Reserva">{{ factura.reserva.fecha_reserva }}</td>
           <td data-label="Empresa">{{ factura.reserva.empresa }}</td>
           <td data-label="Valor Depósito">{{ factura.reserva.valor_deposito }}</td>
-          <td data-label="Forma de Pago Reserva">{{ factura.reserva.forma_pago }}</td>
-          <td data-label="Nombre Completo">{{ factura.huesped.nombre_completo }}</td>
-          <td data-label="Número de Documento">{{ factura.huesped.numero_documento }}</td>
+          <td data-label="Forma de Pago Reserva">{{ factura.reserva.forma_pago }}</td>-->
+
           <td class="before:hidden lg:w-1 whitespace-nowrap">
             <BaseButtons type="justify-start lg:justify-end" no-wrap>
               <BaseButton color="primary" :icon="mdiEyeCheckOutline" small @click="openDetallesmodal(factura)">
@@ -759,17 +830,33 @@ function cerrarAgregarProductoFactura() {
 
   <!-- VER INFO DE LA FACTURA-->
   <!-- CardBox para mostrar información de la factura y productos asociados -->
-  <CardLista v-model="showDetalles">
-    <!-- Sección de Información de la Factura -->
-   
-    <div class="mb-6 ">
-      <div class="max-h-96 overflow-y-auto  ">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <h1 class="font-bold text-lg mb-4" >Detalles de la Factura</h1>
-          <img src="src/assets/img/sena-agro.png" alt="" style="width: 50px; height: 50px; margin-right: 10px;">
+  <CardLista v-model="showDetalles" >
+    <!-- Sección de Información de la Factura --> 
+    <div class="mb-2 overflow-y-auto max-h-96 " id="facturaDetalles" >
+    <div > 
+      <div class="flex justify-between items-center mb-1" >
+        <h1 class="font-bold text-lg" style="font-size: 26px; color: darkgreen;">DETALLES DE LA FACTURA</h1>
+        
+        <div class="flex items-center">
+          
+          <img src="src/assets/img/sena-agro.png" alt="" style="width: 70px; margin-right: 5px;"> 
         </div>
-
-
+        
+      </div>
+      <div>
+        <h2 class="font-bold">Fecha: {{ fechaActual() }}</h2>
+      </div>
+      <div class="mb-4 mt-4 mr-5 flex flex-wrap justify-between">
+        <div class="w-full md:w-1/2 mb-2">
+          
+          <h2 class="font-bold mb-3">Cliente: {{ selectedFactura?.huesped?.nombre_completo }}</h2>
+          <h2 class="font-bold">Documento: {{ selectedFactura?.huesped?.numero_documento }}</h2>
+        </div>
+        <div class="w-full md:w-1/2 mb-2">
+          <h2 class="font-bold mb-3">Email: {{ selectedFactura?.huesped?.email }}</h2>
+          <h2 class="font-bold">Teléfono: {{ selectedFactura?.huesped?.telefono }}</h2>
+        </div>
+      </div>
         <table>
           <thead>
             <tr>
@@ -782,30 +869,10 @@ function cerrarAgregarProductoFactura() {
               <td data-label="Campo">ID Facturación</td>
               <td data-label="Valor">{{ selectedFactura?.id_facturacion }}</td>
             </tr>
-            <tr>
+             <!-- <tr>
               <td data-label="Campo">ID Check-In</td>
               <td data-label="Valor">{{ selectedFactura?.check_in?.id_check_in }}</td>
-            </tr>
-            <tr>
-              <td data-label="Campo">Subtotal</td>
-              <td data-label="Valor">{{ selectedFactura?.subtotal }}</td>
-            </tr>
-            <tr>
-              <td data-label="Campo">Impuestos</td>
-              <td data-label="Valor">{{ selectedFactura?.impuestos }}</td>
-            </tr>
-            <tr>
-              <td data-label="Campo">Total</td>
-              <td data-label="Valor">{{ selectedFactura?.total }}</td>
-            </tr>
-            <tr>
-              <td data-label="Campo">Total Precio Productos</td>
-              <td data-label="Valor">{{ selectedFactura?.total_precio_productos }}</td>
-            </tr>
-            <tr>
-              <td data-label="Campo">Método de Pago</td>
-              <td data-label="Valor">{{ selectedFactura?.metodo_pago }}</td>
-            </tr>
+            </tr>-->    
             <tr>
               <td data-label="Campo">Estado</td>
               <td data-label="Valor">{{ selectedFactura?.estado }}</td>
@@ -814,10 +881,10 @@ function cerrarAgregarProductoFactura() {
               <td data-label="Campo">Fecha de Salida</td>
               <td data-label="Valor">{{ selectedFactura?.fecha_salida }}</td>
             </tr>
-            <tr>
+            <!--<tr>
               <td data-label="Campo">ID Reserva</td>
               <td data-label="Valor">{{ selectedFactura?.reserva?.id_reserva }}</td>
-            </tr>
+            </tr>--> 
             <tr>
               <td data-label="Campo">Medio de Llegada</td>
               <td data-label="Valor">{{ selectedFactura?.check_in?.medio_llegada }}</td>
@@ -843,22 +910,20 @@ function cerrarAgregarProductoFactura() {
               <td data-label="Valor">{{ selectedFactura?.reserva?.valor_deposito }}</td>
             </tr>
             <tr>
-              <td data-label="Campo">Forma de Pago</td>
+              <td data-label="Campo">Forma de Pago-Reserva</td>
               <td data-label="Valor">{{ selectedFactura?.reserva?.forma_pago }}</td>
             </tr>
+           
             <tr>
-              <td data-label="Campo">Nombre Completo</td>
-              <td data-label="Valor">{{ selectedFactura?.huesped?.nombre_completo }}</td>
+              <td data-label="Campo">Método de Pago Factura</td>
+              <td data-label="Valor">{{ selectedFactura?.metodo_pago }}</td>
             </tr>
-            <tr>
-              <td data-label="Campo">Número de Documento</td>
-              <td data-label="Valor">{{ selectedFactura?.huesped?.numero_documento }}</td>
-            </tr>
+            
           </tbody>
         </table>
 
-        <h3 class="text-lg font-semibold mb-4 mt-8">Productos Asociados</h3>
-        <table class="">
+        <h3 class="text-lg font-semibold mb-3 mt-2">Productos Asociados</h3>
+        <table class="mb-2" style="border: black  1px solid;">
           <thead>
             <tr>
            
@@ -867,7 +932,7 @@ function cerrarAgregarProductoFactura() {
               <th class=" text-sm">Precio Unitario</th>
               <th class=" text-sm">Nombre</th>
               <th class=" text-sm">Descripción</th>
-              <th class=" text-sm">Precio Actual</th>
+          
             </tr>
           </thead>
           <tbody class="text-sm">
@@ -877,16 +942,30 @@ function cerrarAgregarProductoFactura() {
               <td data-label="precio unitario">{{ producto.factura_producto.precio_unitario || 'N/A' }}</td>
               <td data-label="nombre">{{ producto.productos.nombre_producto || 'N/A' }}</td>
               <td data-label="descripcion">{{ producto.productos.descripcion || 'N/A' }}</td>
-              <td data-label="precio total">{{ producto.productos.precio_actual || 'N/A' }}</td>
             </tr>
+            
+            
           </tbody>
         </table>
+        <div class="mt-5 w-full md:w-1/2 mb-2" style="display: flex; flex-direction: column;">
+            <div class="font-bold" data-label="Valor"  style="font-size: 16px;">Total precio productos: {{ selectedFactura?.total_precio_productos }}</div>
+            <div class="font-bold" data-label="Valor" style="font-size: 16px;">Subtotal: {{ selectedFactura?.subtotal }}</div>
+            <div class="font-bold" data-label="Valor" style="font-size: 16px;">Impuestos: {{ selectedFactura?.impuestos }}</div>
+            <div class="font-bold" data-label="Valor" style="font-size: 17px;">TOTAL A PAGAR: {{ selectedFactura?.total }}</div>
+        </div>
+
       </div>
       <BaseButton type="button" @click="cerrarListaProductosModal"
         class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition">
         Cerrar
       </BaseButton>
+    
     </div>
+    <button @click="downloadPDF()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
+            Descargar PDF
+      </button>
+      
+   
   </CardLista>
 
 
