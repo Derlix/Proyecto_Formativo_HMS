@@ -170,13 +170,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { obtenerTodasHabitaciones } from '@/services/habitacionService'
 import { crearReserva } from '@/services/reservaService'
 import { crearReservaHabitacion } from '@/services/reservaHabitacionService'
 
 const props = defineProps({
-  visible: Boolean,
+  visible: Boolean,  // Prop que controla la visibilidad del modal
   huesped: Object
 })
 
@@ -193,7 +193,6 @@ const habitaciones = ref([])
 const deposito = ref('')
 const forma_pago = ref('')
 const habitacionSeleccionada = ref(null)
-
 
 const seleccionarHabitacion = (id_habitacion) => {
   habitacionSeleccionada.value = id_habitacion
@@ -264,7 +263,46 @@ const cargarHabitaciones = async () => {
   }
 }
 
+// Manejo de los modales y el historial de navegación
+const modalStack = ref([])  // Pila de modales abiertos
+
+const handlePopState = () => {
+  if (modalStack.value.length > 0) {
+    modalStack.value.pop() // Elimina el último modal del historial
+    if (modalStack.value.length === 0) {
+      emit('close')  // Cierra el modal si no hay más en la pila
+    }
+  }
+}
+
+const openModal = () => {
+  modalStack.value.push('reservaModal')  // Añade el modal al historial
+  window.history.pushState({}, '', '')  // Añade un nuevo estado al historial
+}
+
+const closeModal = () => {
+  emit('close')
+  modalStack.value = []  // Limpia la pila de modales
+  window.history.back()  // Vuelve al estado anterior
+}
+
 onMounted(() => {
-  cargarHabitaciones()
+  window.addEventListener('popstate', handlePopState)  // Escucha el evento "popstate"
+  if (props.visible) {
+    openModal()  // Abre el modal al montar si está visible
+  }
 })
+
+watch(() => props.visible, (newValue) => {
+  if (newValue) {
+    openModal()
+  }
+})
+
+onUnmounted(() => {
+  window.removeEventListener('popstate', handlePopState)  // Elimina el listener al desmontar
+  modalStack.value = []  // Limpia la pila de modales al desmontar
+})
+
+cargarHabitaciones()
 </script>
