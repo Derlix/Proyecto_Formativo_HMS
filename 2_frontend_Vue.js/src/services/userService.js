@@ -92,7 +92,7 @@ export const updateCurrentUser = async (fullName, email, userRole, userStatus, f
     if (userStatus !== undefined) formData.append('usuario_estado', userStatus);
     if (fileImg) formData.append('file_img', fileImg);
 
-    const response = await api.put(`/usuarios/update-user`, formData, {
+    const response = await api.put(`/usuarios/update-self/`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
