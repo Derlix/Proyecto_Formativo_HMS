@@ -1,12 +1,13 @@
 import api from './api'; // Asegúrate de que `api.js` esté configurado adecuadamente
 
 // Función para crear un nuevo usuario
-export const createUser = async (fullName, email, userRole, passhash) => {
+export const createUser = async (fullName, email, userRole, img_profile, passhash) => {
   try {
     const response = await api.post('/users/create', {
       full_name: fullName,
       mail: email,
       user_role: userRole,
+      img_profile: img_profile,
       passhash: passhash
     });
     return response;
