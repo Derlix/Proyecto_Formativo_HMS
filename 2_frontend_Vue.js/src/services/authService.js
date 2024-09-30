@@ -60,7 +60,7 @@ export const register = async (fullName, email, userRole, password) => {
 // Función para enviar código de reseteo de contraseña
 export const requestResetCode = async (email) => {
   try {
-    const response = await api.post(`/access/request-reset-code?email=${encodeURIComponent(email)}`, '', {
+    const response = await api.post(`login/request-reset-code?email=${encodeURIComponent(email)}`, '', {
       headers: {
         'accept': 'application/json'
       }
@@ -78,7 +78,7 @@ export const requestResetCode = async (email) => {
 // Función para verificar código y actualizar contraseña
 export const changePassword = async (email, newPassword, code) => {
   try {
-    const response = await api.post('/access/change-password', {
+    const response = await api.post('/login/change-password', {
       email,
       new_password: newPassword,
       code

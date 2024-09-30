@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useMainStore } from '@/stores/main'
 import { mdiCheckDecagram } from '@mdi/js'
 import BaseLevel from '@/components/BaseLevel.vue'
@@ -7,12 +7,26 @@ import UserAvatarCurrentUser from '@/components/UserAvatarCurrentUser.vue'
 import CardBox from '@/components/CardBox.vue'
 // import FormCheckRadio from '@/components/FormCheckRadio.vue'
 import PillTag from '@/components/PillTag.vue'
+import { getIpLocation } from '@/services/busta_service/IPService'
 
 const mainStore = useMainStore()
 
 const userName = computed(() => mainStore.userName)
 const userRole = computed(() => mainStore.userRole)
+const dataIP = ref(null)
 
+const obtenerDataIP = async () => {
+  try {
+    const response = await getIpLocation()
+    dataIP.value = response
+  } catch (error) {
+    console.error('Error al cargar datos de IP:', error)
+  }
+}
+
+onMounted(() => {
+  obtenerDataIP()
+})
 
 const userSwitchVal = ref(false)
 </script>
@@ -35,8 +49,8 @@ const userSwitchVal = ref(false)
           Hola, <b>{{ userName }}</b
           >!
         </h1>
-        <p class="text-base">Rol: <b>{{ userRole }}</b></p>
-        <p>Last login <b>12 mins ago</b> from <b>127.0.0.1</b></p>
+        <p class="text-base">Rol: <b>{{ userRole }}</b>.</p>
+        <p>Conexion actual en: <b>{{ dataIP?.city || 'unknown' }},{{ dataIP?.country || 'unknown' }}</b>.</p>
         <div class="flex justify-center md:block">
           <PillTag label="Verified" color="info" :icon="mdiCheckDecagram" />
         </div>

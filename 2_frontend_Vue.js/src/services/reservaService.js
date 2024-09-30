@@ -90,3 +90,24 @@ export const obtenertodasReservas = async () => {
     }
   };
   
+
+
+// huespedService.js
+
+export const obtenerReservasPorHuesped = async (numero_documento) => {
+  try {
+    const response = await api.get(`/reservas/reservas/huesped/${numero_documento}`, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('access_token')}` // Incluye el token si es necesario
+      }
+    });
+    return response;
+  } catch (error) {
+    if (error.response) {
+      throw error.response; // Devuelve el error original de la API
+    } else {
+      throw new Error('Error de red o de servidor');
+    }
+  }
+}
+

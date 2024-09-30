@@ -24,6 +24,7 @@ const asideMenuItemActiveStyle = computed(() =>
 
 const isDropdownActive = ref(false)
 
+
 const componentClass = computed(() => [
   props.isDropdownList ? 'py-3 px-6 text-sm' : 'py-3',
   hasColor.value
@@ -43,7 +44,7 @@ const menuClick = (event) => {
 </script>
 
 <template>
-  <li>
+  <li >
     <component
       :is="item.to ? RouterLink : 'a'"
       v-slot="vSlot"

@@ -3,7 +3,7 @@
   <div v-if="loading" class="spinner-overlay">
     <div class="spinner-container">
       <!-- Imagen personalizada del spinner -->
-      <img src="@/assets/img/loading.gif" alt="Loading..." class="spinner-image">
+      <img src="https://res.cloudinary.com/dbe0nouku/image/upload/f_auto,q_auto/v1/actions/tbijj2txyfwiuuwitfse" alt="Loading..." class="spinner-image">
     </div>
   </div>
 </template>

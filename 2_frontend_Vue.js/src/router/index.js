@@ -13,7 +13,7 @@ import GestorHotel from '@/views/busta-views/GestorHotel.vue'
 import Error404 from '@/views/camilo-views/404.vue'
 import IniciarSesion from '@/views/camilo-views/IniciarSesion.vue'
 import Registrar from '@/views/camilo-views/Registrar.vue'
-import Recuperar from '@/views/camilo-views/Recuperar_contraseña.vue'
+import Recuperar from '@/views/camilo-views/RecuperarContrasena.vue'
 import MovimientoPasajeros from '@/views/camilo-views/MovimientoPasajerosCorrespondiente.vue'
 import InformePasajeros from '@/views/arce-views/InformePasajeros.vue'
 import TarjetaReserva from '@/views/arce-views/TarjetaReserva.vue'
@@ -22,7 +22,7 @@ import InformacionReserva from '@/views/arce-views/InformacionReserva.vue'
 import InicioCajero from '@/views/arce-views/InicioCajero.vue'
 import VistaHabitaciones from '@/views/camilo-views/VistaHabitaciones.vue'
 import InicioJefeRecepcionista from '@/views/arce-views/DashboardAdmin.vue'
-
+import UsuariosView from '@/views/arias_views/UsuariosView.vue'
 
 const routes = [
   {
@@ -279,6 +279,15 @@ const routes = [
     path: '/lista-pasajeros',
     name: 'lista pasajeros',
     component: ListaPasajeros,
+    meta: { requiresAuth: true}
+  },
+  {
+    meta: {
+      title: 'Control de usuarios'
+    },
+    path: '/control-usuarios',
+    name: 'controUsuario',
+    component: UsuariosView,
     meta: { requiresAuth: true}
   }
 
