@@ -20,6 +20,7 @@ const selectOptions = [
 const form = reactive({
   actual_tipo_cc: selectOptions[0],
   nuevo_tipo_cc: selectOptions[0],
+  monto: "$100.000.00"
 })
 
 // Función para manejar el envío del formulario
@@ -47,6 +48,10 @@ const submit = () => {
         <FormField label="Transferir A">
           <FormControl v-model="form.nuevo_tipo_cc" :options="selectOptions" />
           <FormControl v-model="form.nuervo_numero_cc" type="text" placeholder="Número documento" required=""/>
+        </FormField>
+
+        <FormField label="Monto transferencia">
+          <FormControl v-model="form.monto"  type="text" placeholder="" disabled="true" />
         </FormField>
 
         <template #footer>
