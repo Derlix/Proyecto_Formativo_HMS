@@ -27,33 +27,26 @@ const form = reactive({
 const submit = () => {
   console.log('Formulario enviado:', form)
 }
-
 </script>
 
 <template>
   <LayoutAuthenticated>
     <SectionMain>
-
       <TitleIconOnly :icon="mdiBallotOutline" title="Transpaso cuenta" />
-
       <CardBox form @submit.prevent="submit">
-
         <FormField label="Cuenta actual">
           <FormControl v-model="form.actual_tipo_cc" :options="selectOptions" />
           <FormControl v-model="form.actual_numero_cc" type="text" placeholder="Número documento" required=""/>
         </FormField>
-
         <BaseDivider />
-
         <FormField label="Transferir A">
           <FormControl v-model="form.nuevo_tipo_cc" :options="selectOptions" />
           <FormControl v-model="form.nuervo_numero_cc" type="text" placeholder="Número documento" required=""/>
         </FormField>
-
+        <BaseDivider />
         <FormField label="Monto transferencia">
           <FormControl v-model="form.monto"  type="text" placeholder="" disabled="true" />
         </FormField>
-
         <template #footer>
           <BaseButtons>
             <BaseButton type="submit" color="info" label="Tranferir" />
