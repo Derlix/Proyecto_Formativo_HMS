@@ -76,6 +76,11 @@ export default [
     label: 'Huespedes',
     icon: mdiReproduction,
     modulo: 'huespedes'
+  },{
+    to: '/habitaciones',
+    label: 'Habitaciones',
+    icon: mdiFileChart,
+    modulo: 'habitacion'
   },
   {
     to: '/comprobante-descuento',

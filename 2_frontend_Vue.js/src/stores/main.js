@@ -11,10 +11,18 @@ export const useMainStore = defineStore('main', () => {
   const userEmail = computed(() => authStore.user?.email || 'undefined');
   const userRole = computed(() => authStore.user?.usuario_rol || 'undefined');
   const userID = computed(() => authStore.user?.user_id || 'undefined');
+  // Sirve para mostrar la imagen de perfil del usuario
+  const userProfile = computed(() => {
+    return authStore.user?.img_profile ? `${import.meta.env.VITE_API_URL}/${authStore.user.img_profile}` : null;
+  });
 
+  // Función para obtener la imagen de perfil del usuario
   const userAvatar = computed(() => {
-    if (authStore.user?.usuario_foto) {
-      return authStore.user.usuario_foto;
+    // Si el usuario tiene una imagen de perfil, la devuelve
+    if (userProfile.value) {
+      console.log(userProfile.value);
+      return userProfile.value;
+      // Si no tiene imagen de perfil, devuelve una imagen por defecto según el rol
     } else {
       if (userRole.value === 'SuperAdmin') {
         return 'src/assets/img/super-admin.png';
@@ -31,7 +39,7 @@ export const useMainStore = defineStore('main', () => {
       }
     }
   });
-
+  
   const isFieldFocusRegistered = ref(false)
 
   const clients = ref([])

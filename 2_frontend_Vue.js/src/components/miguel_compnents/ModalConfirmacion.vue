@@ -56,7 +56,7 @@
           >
           <input
             type="number"
-            v-model="num_ninos"
+            v-model="num_niños"
             class="block w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
             placeholder="Ingrese el numero de niños"
           />
@@ -111,14 +111,14 @@
       </div>
 
 
-      <div v-if="paso === 3" class="overflow-x-auto bg-gray-50 dark:bg-gray-800 rounded-lg shadow-md p-4 max-h-64">
+      <div v-if="paso === 2" class="overflow-x-auto bg-gray-50 dark:bg-gray-800 rounded-lg shadow-md p-4 max-h-64">
         <table class="min-w-full bg-white dark:bg-gray-700 border-gray-300">
           <thead>
             <tr class="bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200">
               <th class="px-4 py-2">ID Reserva</th>
               <th class="px-4 py-2">Fecha de Reserva</th>
-              <th class="px-4 py-2">Fecha de Llegada</th>
-              <th class="px-4 py-2">Fecha de Salida</th>
+              <!-- <th class="px-4 py-2">Fecha de Llegada</th>
+              <th class="px-4 py-2">Fecha de Salida</th> -->
               <th class="px-4 py-2">Estado</th>
             </tr>
           </thead>
@@ -126,9 +126,17 @@
             <tr v-for="reserva in reservas" :key="reserva.id_reserva" class="hover:bg-gray-100 dark:hover:bg-gray-600">
               <td class="border px-4 py-2 dark:text-white">{{ reserva.id_reserva }}</td>
               <td class="border px-4 py-2 dark:text-white">{{ reserva.fecha_reserva }}</td>
-              <td class="border px-4 py-2 dark:text-white">{{ reserva.fecha_llegada }}</td>
-              <td class="border px-4 py-2 dark:text-white">{{ reserva.fecha_salida }}</td>
+              <!-- <td class="border px-4 py-2 dark:text-white">{{ reserva.fecha_llegada }}</td>
+              <td class="border px-4 py-2 dark:text-white">{{ reserva.fecha_salida }}</td> -->
               <td class="border px-4 py-2 dark:text-white">{{ reserva.estado_reserva }}</td>
+              <td class="border px-4 py-2 flex justify-center items-center">
+                <input
+                  type="checkbox"
+                  :value="reserva.id_reserva"
+                  v-model="seleccionaridReservaSeleccionada"
+                  @change="seleccionaridReserva(reserva.id_reserva)"
+                />
+              </td>
             </tr>
           </tbody>
         </table>
@@ -136,7 +144,7 @@
       
 
       <div
-        v-else-if="paso === 2"
+        v-else-if="paso === 3"
         class="overflow-x-auto bg-gray-50 dark:bg-gray-800 rounded-lg shadow-md p-4 max-h-64"
       >
         <table class="min-w-full bg-white dark:bg-gray-700 border-gray-300">
@@ -213,16 +221,22 @@ const fecha_reserva = ref('')
 const fecha_llegada = ref('')
 const fecha_salida = ref('')
 const num_adultos = ref('')
-const num_ninos = ref('')
+const num_niños = ref('')
 const empresa = ref('')
 const habitaciones = ref([])
 const deposito = ref('')
 const forma_pago = ref('')
 const habitacionSeleccionada = ref(null)
+const seleccionaridReservaSeleccionada = ref(null)
 
 const seleccionarHabitacion = (id_habitacion) => {
   habitacionSeleccionada.value = id_habitacion
   console.log('Habitación seleccionada:', habitacionSeleccionada.value) 
+}
+
+const seleccionaridReserva = (id_reserva) => {
+  seleccionaridReservaSeleccionada.value = id_reserva
+  console.log('ID Reserva seleccionada:', seleccionaridReservaSeleccionada.value) 
 }
 
  // Aquí almacenaremos las reservas del huésped
@@ -241,24 +255,26 @@ const cargarReservasDelHuesped = async () => {
 // Cargar las reservas cuando se monte el componente
 onMounted(() => {
   if (props.huesped && props.huesped.numero_documento) {
-    cargarReservasDelHuesped(); // Ejecuta la función para cargar y mostrar las reservas
+    cargarReservasDelHuesped();
   }
 });
 
-cargarReservasDelHuesped();
 
 const siguiente = async () => {
   if (paso.value === 1) {
     await confirmarReserva()
   }
   if (paso.value === 2) {
+    await cargarReservasDelHuesped()
+  }
+  if (paso.value === 3) {
     if (!habitacionSeleccionada.value) {
       console.error('Por favor, selecciona una habitación antes de continuar.')
       return
     }
     await confirmarReservaHabitacion()
   }
-  if (paso.value < 3) {
+  if (paso.value < 4) {
     paso.value++
   }
 }
@@ -289,10 +305,10 @@ const confirmarReserva = async () => {
 const confirmarReservaHabitacion = async () => {
   try {
     const response = await crearReservaHabitacion(
-      idReservaCreada, // Usa el ID de la reserva creada
+      seleccionaridReservaSeleccionada.value, // Actualmenete no se está guardando el id de la reserva creada
       habitacionSeleccionada.value,
       num_adultos.value,
-      num_ninos.value,
+      num_niños.value,
       fecha_llegada.value,
       fecha_salida.value
     )
