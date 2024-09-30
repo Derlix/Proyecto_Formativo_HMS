@@ -1,12 +1,12 @@
 import api from './api'; 
 
-export const crearReservaHabitacion = async (id_reserva, id_habitacion, num_adultos, num_ninos, fecha_entrada, fecha_salida_propuesta) => {
+export const crearReservaHabitacion = async (id_reserva, id_habitacion, num_adultos, num_niños, fecha_entrada, fecha_salida_propuesta) => {
   try {
     const response = await api.post('/Reserva-habitacion/crear-reserva', {
       id_reserva: id_reserva,
       id_habitacion: id_habitacion,
       num_adultos: num_adultos,
-      num_ninos: num_ninos,
+      num_niños: num_niños,
       fecha_entrada: fecha_entrada,
       fecha_salida_propuesta: fecha_salida_propuesta,
     });
@@ -40,13 +40,13 @@ export const crearReservaHabitacion = async (id_reserva, id_habitacion, num_adul
 
 
 
-  export const actualizarReservaHabitacion = async (id_reserva, id_habitacion, num_adultos, num_ninos, fecha_entrada, fecha_salida_propuesta) => {
+  export const actualizarReservaHabitacion = async (id_reserva, id_habitacion, num_adultos, num_niños, fecha_entrada, fecha_salida_propuesta) => {
     try {
       const response = await api.put(`/Reserva-habitacion/update/${id_reserva}`, {
         id_reserva: id_reserva,
         id_habitacion: id_habitacion,
         num_adultos: num_adultos,
-        num_ninos: num_ninos,
+        num_niños: num_niños,
         fecha_entrada: fecha_entrada,
         fecha_salida_propuesta: fecha_salida_propuesta,
       });
