@@ -3,7 +3,7 @@ import api from '../api';
 // Función para crear una nueva habitación
 export const crearHabitacion = async (estado, piso, precio_actual, id_usuario, numero_habitacion, id_categoria_habitacion) => {
   try {
-    const response = await api.post('/habitacion/', {
+    const response = await api.post('/habitacion/create_room', {
       estado,
       piso,
       precio_actual,
@@ -29,7 +29,7 @@ export const crearHabitacion = async (estado, piso, precio_actual, id_usuario, n
 // Función para obtener todas las habitaciones
 export const obtenerTodasHabitaciones = async () => {
   try {
-    const response = await api.get('/habitacion/', {
+    const response = await api.get('/habitacion/get_all_rooms', {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('access_token')}` // Incluye el token de autenticación
       }
@@ -47,7 +47,7 @@ export const obtenerTodasHabitaciones = async () => {
 // Función para obtener una habitación por su ID
 export const obtenerHabitacionPorId = async (id_habitacion) => {
   try {
-    const response = await api.get(`/habitacion/${id_habitacion}`, {
+    const response = await api.get(`/habitacion/get_room_by_id/${id_habitacion}`, {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('access_token')}` // Incluye el token de autenticación
       }
@@ -65,7 +65,17 @@ export const obtenerHabitacionPorId = async (id_habitacion) => {
 // Función para actualizar una habitación existente (PUT)
 export const actualizarHabitacion = async (id_habitacion, estado, piso, precio_actual, id_usuario, numero_habitacion, id_categoria_habitacion) => {
   try {
-    const response = await api.put(`/habitacion/${id_habitacion}`, {
+    console.log("Datos enviados:", {
+      estado,
+      piso,
+      precio_actual,
+      id_usuario,
+      numero_habitacion,
+      id_categoria_habitacion
+    });
+
+    const response = await api.put(`/habitacion/update_room_by_id/${id_habitacion}`, {
+
       estado,
       piso,
       precio_actual,
@@ -93,17 +103,22 @@ export const actualizarHabitacion = async (id_habitacion, estado, piso, precio_a
 // Función para eliminar una habitación
 export const eliminarHabitacion = async (id_habitacion) => {
   try {
-    const response = await api.delete(`/habitacion/${id_habitacion}`, {
+    const response = await api.delete(`/habitacion/delete_room_by_id/${id_habitacion}`, {
       headers: {
-        'Authorization': `Bearer ${localStorage.getItem('access_token')}` // Incluye el token de autenticación
+        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
       }
     });
     return response;
   } catch (error) {
     if (error.response) {
+      // Imprime información detallada del error
+      console.error('Error status:', error.response.status);
+      console.error('Error data:', error.response.data);
+      console.error('Error headers:', error.response.headers);
       throw error; // Lanza el error para que lo maneje el store
     } else {
-      throw new Error('Error de red o de servidor'); // Manejar errores de red
+      console.error('Error de red o de servidor:', error.message);
+      throw new Error('Error de red o de servidor');
     }
   }
 };

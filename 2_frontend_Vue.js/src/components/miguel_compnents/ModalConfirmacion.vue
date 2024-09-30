@@ -110,7 +110,31 @@
         </div>
       </div>
 
-      <!-- Paso 2 - Selección de habitación -->
+
+      <div v-if="paso === 3" class="overflow-x-auto bg-gray-50 dark:bg-gray-800 rounded-lg shadow-md p-4 max-h-64">
+        <table class="min-w-full bg-white dark:bg-gray-700 border-gray-300">
+          <thead>
+            <tr class="bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200">
+              <th class="px-4 py-2">ID Reserva</th>
+              <th class="px-4 py-2">Fecha de Reserva</th>
+              <th class="px-4 py-2">Fecha de Llegada</th>
+              <th class="px-4 py-2">Fecha de Salida</th>
+              <th class="px-4 py-2">Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="reserva in reservas" :key="reserva.id_reserva" class="hover:bg-gray-100 dark:hover:bg-gray-600">
+              <td class="border px-4 py-2 dark:text-white">{{ reserva.id_reserva }}</td>
+              <td class="border px-4 py-2 dark:text-white">{{ reserva.fecha_reserva }}</td>
+              <td class="border px-4 py-2 dark:text-white">{{ reserva.fecha_llegada }}</td>
+              <td class="border px-4 py-2 dark:text-white">{{ reserva.fecha_salida }}</td>
+              <td class="border px-4 py-2 dark:text-white">{{ reserva.estado_reserva }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+
       <div
         v-else-if="paso === 2"
         class="overflow-x-auto bg-gray-50 dark:bg-gray-800 rounded-lg shadow-md p-4 max-h-64"
@@ -170,18 +194,20 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { obtenerTodasHabitaciones } from '@/services/habitacionService'
 import { crearReserva } from '@/services/reservaService'
 import { crearReservaHabitacion } from '@/services/reservaHabitacionService'
+import { obtenerReservasPorHuesped } from '@/services/reservaService' 
+
 
 const props = defineProps({
-  visible: Boolean,
+  visible: Boolean,  // Prop que controla la visibilidad del modal
   huesped: Object
 })
 
 const emit = defineEmits(['close', 'confirm'])
-
+const reservas = ref([]);
 const paso = ref(1)
 const fecha_reserva = ref('')
 const fecha_llegada = ref('')
@@ -194,11 +220,32 @@ const deposito = ref('')
 const forma_pago = ref('')
 const habitacionSeleccionada = ref(null)
 
-
 const seleccionarHabitacion = (id_habitacion) => {
   habitacionSeleccionada.value = id_habitacion
   console.log('Habitación seleccionada:', habitacionSeleccionada.value) 
 }
+
+ // Aquí almacenaremos las reservas del huésped
+
+// Función para cargar las reservas por número de documento
+const cargarReservasDelHuesped = async () => {
+  try {
+    const response = await obtenerReservasPorHuesped(props.huesped.numero_documento);
+    reservas.value = response.data;  // Asigna las reservas obtenidas
+    console.log('Reservas del huésped:', reservas.value); // Imprime las reservas en la consola
+  } catch (error) {
+    console.error('Error al obtener reservas:', error); // Imprime el error si falla la petición
+  }
+};
+
+// Cargar las reservas cuando se monte el componente
+onMounted(() => {
+  if (props.huesped && props.huesped.numero_documento) {
+    cargarReservasDelHuesped(); // Ejecuta la función para cargar y mostrar las reservas
+  }
+});
+
+cargarReservasDelHuesped();
 
 const siguiente = async () => {
   if (paso.value === 1) {
@@ -264,7 +311,49 @@ const cargarHabitaciones = async () => {
   }
 }
 
+// Manejo de los modales y el historial de navegación
+const modalStack = ref([])  // Pila de modales abiertos
+
+const handlePopState = () => {
+  if (modalStack.value.length > 0) {
+    modalStack.value.pop() // Elimina el último modal del historial
+    if (modalStack.value.length === 0) {
+      emit('close')  // Cierra el modal si no hay más en la pila
+    }
+  }
+}
+
+const openModal = () => {
+  modalStack.value.push('reservaModal')  // Añade el modal al historial
+  window.history.pushState({}, '', '')  // Añade un nuevo estado al historial
+}
+
+const closeModal = () => {
+  emit('close')
+  modalStack.value = []  // Limpia la pila de modales
+  window.history.back()  // Vuelve al estado anterior
+}
+
 onMounted(() => {
-  cargarHabitaciones()
+  window.addEventListener('popstate', handlePopState)  // Escucha el evento "popstate"
+  if (props.visible) {
+    openModal()  // Abre el modal al montar si está visible
+  }
 })
+
+watch(() => props.visible, (newValue) => {
+  if (newValue) {
+    openModal()
+  }
+})
+
+onUnmounted(() => {
+  window.removeEventListener('popstate', handlePopState)  // Elimina el listener al desmontar
+  modalStack.value = []  // Limpia la pila de modales al desmontar
+})
+
+cargarHabitaciones()
+
+
+
 </script>
