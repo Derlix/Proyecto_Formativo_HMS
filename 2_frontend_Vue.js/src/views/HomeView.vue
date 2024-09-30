@@ -13,7 +13,7 @@ import {
   mdiMinusCircle,
   mdiTools,
 } from '@mdi/js'
-import { obtenerTodasHabitaciones } from '@/services/habitacionService'
+import { obtenerTodasHabitacion } from '@/services/habitacionService'
 
 const showModal = ref(false)
 const showModalSalidas = ref(false)
