@@ -21,15 +21,17 @@ const totalHabitaciones = ref(0)
 const habitacionesActivas = ref(0)
 const habitacionesMantenimiento = ref(0)
 const habitacionesOcupadas = ref(0)
+const habitacionesOperacion = ref(0)
 
 const fetchHabitaciones = async () => {
   try {
-    const habitaciones = await obtenerTodasHabitaciones()
+    const habitaciones = await obtenerTodasHabitacion()
     totalHabitaciones.value = habitaciones.length
     habitacionesActivas.value = habitaciones.filter(h => h.estado === 'ACTIVO').length
     habitacionesMantenimiento.value = habitaciones.filter(h => h.estado === 'MANTENIMIENTO').length
     habitacionesOcupadas.value = habitaciones.filter(h => h.estado === 'INACTIVO').length
     habitacionesOperacion.value = habitaciones.filter(h => h.estado === 'OPERACION').length
+
 
   } catch (error) {
     console.error('Error al obtener habitaciones:', error)

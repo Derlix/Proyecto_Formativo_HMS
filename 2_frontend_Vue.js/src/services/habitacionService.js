@@ -25,7 +25,7 @@ export const crearHabitacion = async (estado, piso, precio_actual, id_usuario, n
 
 export const obtenerTodasHabitaciones = async () => {
   try {
-    const response = await api.get('/habitacion/get_all_rooms/');
+    const response = await api.get('/habitacion/get_all_rooms');
     return response; 
   } catch (error) {
     console.error('Error al obtener habitaciones:', error);
@@ -33,6 +33,16 @@ export const obtenerTodasHabitaciones = async () => {
   }
 };
 
+
+export const obtenerTodasHabitacion = async () => {
+  try {
+    const response = await api.get('/habitacion/get_all_rooms');
+    return response.data; 
+  } catch (error) {
+    console.error('Error al obtener habitaciones:', error);
+    throw error; // Re-lanza el error para manejarlo en el componente
+  }
+};
 // export const obtenerTodasHabitacion = async (estado, piso, precio_actual, id_usuario, numero_habitacion, id_categoria_habitacion, id_habitacion) => {
 //     try {
 //       const response = await api.get('/habitacion/get_all', {
