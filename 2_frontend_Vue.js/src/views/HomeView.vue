@@ -100,10 +100,9 @@ onMounted(() => {
               <button @click="showModal = true" class="bg-blue-600 h-12 rounded-lg my-6 font-bold hover:bg-blue-900 text-white">Registrar Entrada</button>
               <button @click="showModalSalidas = true" class="bg-blue-600 h-12 text-white rounded-lg my-6 font-bold hover:bg-blue-900">Registrar Salida</button>
 
-              <!-- Mostrar modal de registrar entrada -->
               <ModalRegistrarEntrada :visible="showModal" @close="showModal = false" />
+              
 
-              <!-- Modal para registrar salida -->
               <ModalRegistrarSalida :visible="showModalSalidas" @close="showModalSalidas = false"/>
             </div>
 
