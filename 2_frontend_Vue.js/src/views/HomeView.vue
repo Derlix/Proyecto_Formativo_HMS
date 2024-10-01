@@ -51,7 +51,7 @@ onMounted(() => {
 <template>
   <LayoutAuthenticated>
     <sectionMain>
-      <TitleIconOnly :icon="mdiBallotOutline" title="Transpaso cuenta" />
+      <TitleIconOnly :icon="mdiBallotOutline" title="Estado de habitaciones" />
 
         <div class="grid grid-cols-1 gap-6 lg:grid-cols-3 mt-6">
           <CardBoxWidget
