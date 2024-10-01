@@ -108,7 +108,7 @@ import ModalForm from '@/components/ModalFormHotel.vue';
 import SectionMain from '@/components/SectionMain.vue';
 import CardBoxModal  from '@/components/felipe_componentes/CardBoxModal.vue';
 import { mdiEye, mdiTrashCan } from '@mdi/js';
-import { getCuentaHuespedByIdReserva, getCuentaHuespedByIdHuesped} from '@/services/felipe_services/cuentaHuespedService';
+import { getCuentaHuespedByIdReserva, getCuentaHuespedByIdHuesped} from '@/services/cuentaHuespedService';
 import BaseLevel from '@/components/BaseLevel.vue';
     export default {
       components: {
