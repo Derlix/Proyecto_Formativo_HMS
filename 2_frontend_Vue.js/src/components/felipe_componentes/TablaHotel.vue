@@ -127,7 +127,7 @@ import ModalForm from '@/components/ModalFormHotel.vue';
 import SectionMain from '@/components/SectionMain.vue';
 import CardBoxModal  from '@/components/felipe_componentes/CardBoxModal.vue';
 import { mdiEye, mdiTrashCan } from '@mdi/js';
-import { createHotel, getHotels, updateHotel, deleteHotel, getHotelsByPage, getHotelById } from '@/services/hotelService';
+import { createHotel, getHotels, updateHotel, deleteHotel, getHotelsByPage, getHotelById } from '@/services/felipe_services/hotelService';
 import BaseLevel from '@/components/BaseLevel.vue';
     export default {
       components: {
