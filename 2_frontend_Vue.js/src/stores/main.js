@@ -46,18 +46,25 @@ export const useMainStore = defineStore('main', () => {
   const history = ref([])
 
   function setUser(payload) {
+    const user = JSON.parse(localStorage.getItem('user')) || {};
+
     if (payload.name) {
-      userName.value = payload.name
+      user.nombre_completo = payload.name;
     }
     if (payload.email) {
-      userEmail.value = payload.email
+      user.email = payload.email;
     }
     if (payload.usuario_rol) {
-      userRole.value = payload.usuario_rol
+      user.usuario_rol = payload.usuario_rol;
     }
     if (payload.user_id) {
-      userID.value = payload.user_id
+      user.user_id = payload.user_id;
     }
+
+    // Actualiza el store de autenticación
+    authStore.user = { ...authStore.user, ...user };
+
+    localStorage.setItem('user', JSON.stringify(user));
   }
 
   function fetchSampleClients() {

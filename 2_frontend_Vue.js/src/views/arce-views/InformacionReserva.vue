@@ -1,127 +1,141 @@
 <script setup>
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
+import SectionMain from '@/components/SectionMain.vue';
+import { mdiBallotOutline } from '@mdi/js';
+import TitleIconOnly from '@/components/TitleIconOnly.vue';
+import SectionTitle from '@/components/SectionTitle.vue';
+import CardBox from '@/components/CardBox.vue';
+import { reactive } from 'vue';
+import { info_habitaciones } from '@/services/arce_service/informePasajeroService';
+
+const infoHuesped = reactive({
+    nombre: "María Pérez",
+    email: "maria.perez@example.com",
+    telefono: "5551234567",
+    ocupacion: "Ingeniera"
+})
+
+const infoReserva = reactive({
+    tipo: "Suite",
+    habitacion: "101",
+    cantidad: 2,
+    cambio: "No",
+    comprovante: "comprovante_12345.pdf",
+})
+
+const infoCheck = reactive({
+    llegada: "2024-10-01",
+    salida: "2024-10-05",
+})
+
+const infoDinero = reactive({
+    adelanto: "$150.00",
+    medio: "Tarjeta de Crédito",
+})
+
+// Función p
+
 </script>
 
 <template>
     <LayoutAuthenticated>
-        <div class="m-10">
+        <SectionMain>
+            <TitleIconOnly :icon="mdiBallotOutline" title="Información reserva" />
 
-            <h2 class="text-2xl font-bold mb-4">Información de Reserva</h2>
             <div class="flex justify-end">
-                <button class="bg-gray-500 text-white py-2 px-4 rounded m-1">Factura temporal</button>
-                <button class="bg-gray-500 text-white py-2 px-4 rounded m-1">Crear check-out</button>
-                <button class="bg-green-500 text-white py-2 px-4 rounded m-1">Complementada con éxito</button>
+                <button
+                    class="bg-blue-600 h-12 rounded-lg my-6 font-bold hover:bg-blue-900 text-white py-2 px-4 m-1">Factura
+                    temporal</button>
+                <button
+                    class="bg-blue-600 h-12 rounded-lg my-6 font-bold hover:bg-blue-900 text-white py-2 px-4 m-1">Crear
+                    check-out</button>
+                <button
+                    class="bg-blue-600 h-12 rounded-lg my-6 font-bold hover:bg-blue-900 text-white py-2 px-4 m-1">Complementada
+                    con éxito</button>
             </div>
 
-            <div class="rounded overflow-hidden shadow-lg mt-5">
-                <div class="">
-                    <div class="font-bold text-white mb-2 color2 px-6 py-4">Información de huesped</div>
+            <CardBox class="shadow-md">
+                <SectionTitle>Información de huesped</SectionTitle>
 
-                    <div class="flex flex-wrap mb-4 px-6 py-4">
-                        <div class="flex flex-row w-full items-center justify-between">
-                            <p class="text-gray-700 text-base">Reservado por: Juan Arias</p>
-                            <p class="text-gray-700 text-base">Email: juan@gmail.com</p>
-                            <p class="text-gray-700 text-base">Telefono: 1231231230</p>
-                            <p class="text-gray-700 text-base">Ocupacion: Docente</p>
-                        </div>
-                    </div>
-
-                    <div class="px-6 py-4">
-                        <div class="font-bold text-xl mb-2">Observaciones</div>
-                        <textarea class="w-1/2 h-24 p-2 border rounded"></textarea>
-                    </div>
-                </div>
-            </div>
-
-
-
-            <div class="flex">
-
-                <div class="rounded overflow-hidden shadow-lg mt-5 w-1/2">
-                    <div class="font-bold text-white mb-2 color2 px-6 py-4">Información de reserva</div>
-                    <div class="m-8">
-                        <div class="space-y-2">
-                            <div class="flex justify-between">
-                                <p class="text-lg font-semibold text-gray-800">Tipo de habitación:</p>
-                                <p class="text-base text-gray-700">Sencilla</p>
-                            </div>
-
-                            <div class="flex justify-between">
-                                <p class="text-lg font-semibold text-gray-800">Habitación:</p>
-                                <p class="text-base text-gray-700">1010</p>
-                            </div>
-
-                            <div class="flex justify-between">
-                                <p class="text-lg font-semibold text-gray-800">Cantidad de Personas:</p>
-                                <p class="text-base text-gray-700">3</p>
-                            </div>
-
-                            <div class="flex justify-between">
-                                <p class="text-lg font-semibold text-gray-800">Cambio de Reserva:</p>
-                                <p class="text-base text-gray-700">Sin cambios</p>
-                            </div>
-
-                            <div class="flex justify-between">
-                                <p class="text-lg font-semibold text-gray-800">Comprobante de Reserva:</p>
-                                <p class="text-base text-gray-700">No registrado</p>
-                            </div>
-                        </div>
-
+                <div class="flex flex-wrap mb-4 px-6 py-4">
+                    <div class="flex flex-row w-full items-center justify-between">
+                        <p class="text-gray-700 text-base">Nombre: {{ infoHuesped.nombre }}</p>
+                        <p class="text-gray-700 text-base">Email: {{ infoHuesped.email }}</p>
+                        <p class="text-gray-700 text-base">Teléfono: {{ infoHuesped.telefono }}</p>
+                        <p class="text-gray-700 text-base">Ocupación: {{ infoHuesped.ocupacion }}</p>
                     </div>
                 </div>
 
-                <div class="w-1/2 ml-4">
-
-                    <!-- Bloque de Check-in y check-out -->
-                    <div class="rounded overflow-hidden shadow-lg mt-5 w-full">
-                        <div>
-                            <div class="font-bold text-white mb-2 color2 px-6 py-4">Check-in y check-out</div>
-                            <div class="flex flex-wrap mb-4 px-6 py-4">
-                                <div class="flex flex-row w-full items-center justify-between">
-                                    <p class="text-gray-700 text-base">Llegada: 20/05/07</p>
-                                    <p class="text-gray-700 text-base">Salida: 25/05/07</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Bloque de Información de dinero -->
-                    <div class="rounded overflow-hidden shadow-lg mt-5 w-full">
-                        <div>
-                            <div class="font-bold text-white mb-2 color2 px-6 py-4">Información de dinero</div>
-                            <div class="flex flex-wrap mb-4 px-6 py-4">
-                                <div class="flex flex-row w-full items-center justify-between">
-                                    <p class="text-gray-700 text-base">Adelanto: $500000</p>
-                                    <p class="text-gray-700 text-base">Medio de pago: Efectivo</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
+                <div class="px-6 py-4">
+                    <div class="font-bold text-xl mb-2">Observaciones</div>
+                    <textarea class="w-1/2 h-24 p-2 border rounded"></textarea>
                 </div>
+            </CardBox>
 
+            <div class="flex mt-6">
+                <CardBox class="shadow-md w-1/2">
+                    <SectionTitle>Información de reserva</SectionTitle>
 
+                    <div class="m-6">
+                        <div class="space-y-6">
+                            <div class="flex justify-between">
+                                <p class="text-lg">Tipo de habitación:</p>
+                                <p class="text-base text-gray-700">{{ infoReserva.tipo }}</p>
+                            </div>
+
+                            <div class="flex justify-between">
+                                <p class="text-lg">Habitación:</p>
+                                <p class="text-base text-gray-700">{{ infoReserva.habitacion }}</p>
+                            </div>
+
+                            <div class="flex justify-between">
+                                <p class="text-lg">Cantidad de Personas:</p>
+                                <p class="text-base text-gray-700">{{ infoReserva.cantidad }}</p>
+                            </div>
+
+                            <div class="flex justify-between">
+                                <p class="text-lg">Cambio de Reserva:</p>
+                                <p class="text-base text-gray-700">{{ infoReserva.cambio }}</p>
+                            </div>
+
+                            <div class="flex justify-between">
+                                <p class="text-lg">Comprobante de Reserva:</p>
+                                <p class="text-base text-gray-700">{{ infoReserva.comprovante }}</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </CardBox>
+
+                <div class="w-1/2 ml-6">
+
+                    <CardBox class="shadow-md">
+                        <SectionTitle>Check-in y check-out</SectionTitle>
+                        <div class="flex flex-wrap mb-4 px-6 py-4">
+                            <div class="flex flex-row w-full items-center justify-between">
+                                <p class="text-gray-700 text-base">Llegada:{{ infoCheck.llegada }}</p>
+                                <p class="text-gray-700 text-base">Salida: {{ infoCheck.salida }}</p>
+                            </div>
+                        </div>
+                    </CardBox>
+
+                    <CardBox class="shadow-md mt-6">
+                        <SectionTitle>Información de dinero</SectionTitle>
+
+                        <div class="flex flex-wrap mb-4 px-6 py-4">
+                            <div class="flex flex-row w-full items-center justify-between">
+                                <p class="text-gray-700 text-base">Adelanto: {{ infoDinero.adelanto }}</p>
+                                <p class="text-gray-700 text-base">Medio de pago: {{ infoDinero.medio }}</p>
+                            </div>
+                        </div>
+                    </CardBox>
+                </div>
             </div>
-
-
-
 
             <div class="flex justify-end mt-5">
                 <button class="bg-green-500 text-white py-2 px-4 rounded m-1">¿Necesitas ayuda?</button>
             </div>
 
-
-        </div>
+        </SectionMain>
     </LayoutAuthenticated>
 </template>
-
-
-<style scoped>
-.color1 {
-    background-color: #EFF8FF;
-}
-
-.color2 {
-    background-color: #6287B4;
-}
-</style>

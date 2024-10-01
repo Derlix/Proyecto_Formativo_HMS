@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { useMainStore } from '@/stores/main'
 import { mdiAccount, mdiMail, mdiAsterisk, mdiFormTextboxPassword, mdiGithub } from '@mdi/js'
 import SectionMain from '@/components/SectionMain.vue'
@@ -13,12 +13,13 @@ import BaseButtons from '@/components/BaseButtons.vue'
 import UserCard from '@/components/UserCard.vue'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue'
-import { updatePassword } from '@/services/userService'
+import { updatePassword, updateCurrentUser } from '@/services/userService'
 import NotificationBar from '@/components/alejo_components/NotificationBar.vue';
 
 const mainStore = useMainStore()
 const modalMessage = ref('');
 const isAlertVisible = ref(false);
+const isAlertUserVisible = ref(false);
 const colorAlert = ref('');
 const isModalVisible = ref(false);
 
@@ -32,9 +33,53 @@ const passwordForm = reactive({
   password: '',
   password_confirmation: ''
 })
+// mainStore.setUser(profileForm)
 
-const submitProfile = () => {
-  mainStore.setUser(profileForm)
+const submitProfile = async () => {
+  if (profileForm.name !== mainStore.userName || profileForm.email !== mainStore.userEmail) {
+    try {
+      const response = await updateCurrentUser(
+        profileForm.name,
+        profileForm.email
+      );
+
+      modalMessage.value = "Perfil actualizado con éxito";
+      isAlertUserVisible.value = true;
+      colorAlert.value = 'success';
+
+      setTimeout(() => {
+        isAlertUserVisible.value = false;
+      }, 10000);
+
+      // Update the main store with the new user data
+      mainStore.setUser({
+        name: profileForm.name,
+        email: profileForm.email
+      });
+
+      console.log('Profile actualizado');
+    } catch (error) {
+
+      modalMessage.value = 'Error al actualizar el perfil';
+      isAlertUserVisible.value = true;
+      colorAlert.value = 'danger';
+
+      setTimeout(() => {
+        isAlertUserVisible.value = false;
+      }, 10000);
+
+    }
+  } else {
+    modalMessage.value = 'No hay cambios en el perfil';
+
+    isAlertUserVisible.value = true;
+    colorAlert.value = 'danger';
+    
+    setTimeout(() => {
+      isAlertUserVisible.value = false;
+    }, 10000);
+  
+  }
 }
 
 const submitPass = async () => {
@@ -95,6 +140,13 @@ const submitPass = async () => {
           <FormField label="Avatar" help="Max 500kb">
             <FormFilePicker label="Cargar" />
           </FormField>
+
+          <NotificationBar
+            v-if="isAlertUserVisible"
+            :color="colorAlert" 
+            :description="modalMessage"
+            :visible="isModalVisible"
+          />
 
           <FormField label="Nombre:" help="Requiere. Tu nombre">
             <FormControl
