@@ -25,7 +25,7 @@ import CardBox from '@/components/CardBox.vue';
 
             <TitleIconOnly :icon="mdiBallotOutline" title="Jefe Recepcionista Home" />
 
-            <SectionTitle first>Estado de habitaciones</SectionTitle>
+            <SectionTitle>Estado de habitaciones</SectionTitle>
 
             <div class="grid grid-cols-1 gap-6   lg:grid-cols-3 mt-4 text-white">
                 <CardBoxWidget :number="50" label="Habitaciones totales" :icon="mdiBed" :cardColor="'bg-sky-500'" />
@@ -43,7 +43,7 @@ import CardBox from '@/components/CardBox.vue';
             </div>
 
             <CardBox class="shadow-md">
-                <SectionTitle first>Registro entrada y salida</SectionTitle>
+                <SectionTitle>Registro entrada y salida</SectionTitle>
                 <div class="grid grid-cols-2 gap-6">
                     <button class="bg-blue-600 h-12 rounded-lg my-6 font-bold hover:bg-blue-900 text-white">Registrar entrada</button>
                     <button class="bg-blue-600 h-12 rounded-lg my-6 font-bold hover:bg-blue-900 text-white">Registrar salida</button>
@@ -51,7 +51,6 @@ import CardBox from '@/components/CardBox.vue';
             </CardBox>
 
             <SectionTitle first>Transacciones</SectionTitle>
-
 
             <div class="grid grid-cols-1 gap-4 lg:grid-cols-2 mt-4 text-white">
                 <CardBoxWidget :number="50" label="Pagos recibidos" :icon="mdiBed" :cardColor="'bg-emerald-500'" />

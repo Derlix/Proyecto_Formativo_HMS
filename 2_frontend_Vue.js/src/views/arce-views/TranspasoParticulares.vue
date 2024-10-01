@@ -16,7 +16,7 @@ const selectOptions = [
   { id: '2', label: 'Cédula de Ciudadanía' },
   { id: '3', label: 'Tarjeta de Identidad' },
 ]
-
+ 
 const form = reactive({
   actual_tipo_cc: selectOptions[0],
   nuevo_tipo_cc: selectOptions[0],
