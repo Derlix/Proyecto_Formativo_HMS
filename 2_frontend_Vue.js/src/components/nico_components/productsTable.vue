@@ -190,7 +190,7 @@ onMounted(() => {
         </BaseButtons>
         <small>Página {{ currentPage }} de {{ TotalPages }}</small>
     </BaseLevel>
-    </div>
+  </div>
 
   <ModalAlert v-if="isModalVisible" :descripcion="modalMessage" textBoton="Cerrar" :visible="isModalVisible" @close="handleClose"/>
 </template>
