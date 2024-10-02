@@ -81,7 +81,7 @@ onMounted(() => {
                             <td class="py-3 px-6 text-left whitespace-nowrap">{{ habitacion.numero_habitacion }}</td>
                             <td class="py-3 px-6 text-left">{{ habitacion.categoria.tipo_habitacion }}</td>
                             <td class="py-3 px-6 text-left">{{ habitacion.estado }}</td>
-                            <td class="py-3 px-6 text-left">{{ habitacion.precio_actual }}</td>
+                            <td class="py-3 px-6 text-left">$ {{ habitacion.precio_actual }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -106,7 +106,7 @@ onMounted(() => {
                         class="hover:bg-gray-100">
                         <td class="py-3 px-6 text-left">{{ resumen.piso }}</td>
                         <td class="py-3 px-6 text-left">{{ resumen.totalHabitacionesActivas }}</td>
-                        <td class="py-3 px-6 text-left">{{ resumen.montoTotal.toFixed(2) }}</td>
+                        <td class="py-3 px-6 text-left">$ {{ resumen.montoTotal.toFixed(2) }}</td>
                     </tr>
                 </tbody>
             </table>
