@@ -4,7 +4,6 @@
   <div>
     <img
       :src="userAvatar"
-      :alt="userName"
       @error="onImgError"
       class="rounded-full block h-auto w-full max-w-full bg-gray-100 dark:bg-slate-800"
     />
