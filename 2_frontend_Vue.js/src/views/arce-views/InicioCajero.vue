@@ -21,14 +21,15 @@ import {
 <template>
     <LayoutAuthenticated>
         <SectionMain>
-            <TitleIconOnly :icon="mdiBallotOutline" title="Transpaso cuenta" />
             
-            <CardBox>
+            <TitleIconOnly :icon="mdiBallotOutline" title="Manejo de caja" />
+
+            <CardBox class="mt-6">
                 <div class="flex justify-between text-lg font-bold">
                     <h1>Dinero inicial: $120000</h1>
                     <h1>Dinero final en caja: $180000</h1>
                 </div>
-            </CardBox>
+            </CardBox>  
 
             <div class="grid grid-cols-1 gap-4   lg:grid-cols-3 mb-6 mt-4 text-white">
                 <CardBoxWidget :number="50" label="Pagos recibidos" :icon="mdiCurrencyUsd"

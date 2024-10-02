@@ -7,7 +7,14 @@ import {
   mdiFileChart,
   mdiViewGridPlus,
   mdiExitRun,
-  mdiReproduction
+  mdiReproduction,
+  mdiAccountGroup,
+  mdiAccountSupervisorCircle,
+  mdiDoorOpen,
+  mdiReceiptTextOutline,
+  mdiCityVariantOutline,
+  mdiFoodForkDrink,
+  mdiCardAccountDetails,
 } from '@mdi/js'
 
 export default [
@@ -74,65 +81,65 @@ export default [
   {
     to: '/huespedes',
     label: 'Huespedes',
-    icon: mdiReproduction,
+    icon: mdiAccountSupervisorCircle,
     modulo: 'huespedes'
   },{
     to: '/habitaciones',
     label: 'Habitaciones',
-    icon: mdiFileChart,
+    icon: mdiDoorOpen ,
     modulo: 'habitacion'
   },
-  {
+  /* {
     to: '/comprobante-descuento',
     label: 'Com. Descuento',
     icon: mdiTicket,
     modulo: 'facturacion'
-  },
+  }, */
   {
     to: '/informe-ama-llaves',
     label: 'Inf. Ama llaves',
     icon: mdiFileChart,
     modulo: 'habitacion'
   },
-  {
+  /* {
     to: '/gestor-hoteles',
     label: 'Gestor de hoteles',
     icon: mdiViewGridPlus,
     modulo: 'hoteles'
-  },
+  }, */
   {
     to: '/checkOut',
     label: 'CheckOut',
-    icon: mdiExitRun,
+    icon: mdiExitRun ,
     modulo: 'check_in'
   },
   {
     to: '/productos',
     label: 'Productos',
-    icon: mdiReproduction,
+    icon: mdiFoodForkDrink ,
     modulo: 'productos'
   },
   {
     to: '/hoteles',
     label: 'Hoteles',
-    icon: mdiMonitor,
+    icon: mdiCityVariantOutline ,
     modulo: 'hoteles'
   },
   {
     to: '/facturas',
     label: 'Facturas',
-    icon: mdiReproduction,
+    icon: mdiReceiptTextOutline ,
     modulo: 'facturacion'
   },
-  {
+  /* {
     to: '/lista-pasajeros',
     label: 'Lista pasajeros',
     icon: mdiReproduction,
     modulo: 'huespedes'
-  },{
+  }, */{
     to: '/control-usuarios',
     label: 'Control Usuarios',
-    icon: mdiReproduction,
+    icon: mdiAccountGroup,
     modulo: 'usuarios'
   }
 
