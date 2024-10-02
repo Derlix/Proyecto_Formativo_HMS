@@ -1,5 +1,3 @@
-
-
 import {
   mdiMonitor,
   mdiCalendar,
@@ -13,11 +11,10 @@ import {
   mdiAccountGroup,
   mdiAccountSupervisorCircle,
   mdiDoorOpen,
+  mdiReceiptTextOutline,
   mdiCityVariantOutline,
-  mdiInvoice,
-  mdiInvoiceCheckOutline,
   mdiFoodForkDrink,
-  mdiCardAccountDetails 
+  mdiCardAccountDetails,
 } from '@mdi/js'
 
 export default [
@@ -113,7 +110,7 @@ export default [
   {
     to: '/checkOut',
     label: 'CheckOut',
-    icon: mdiInvoiceCheckOutline ,
+    icon: mdiExitRun ,
     modulo: 'check_in'
   },
   {
@@ -131,7 +128,7 @@ export default [
   {
     to: '/facturas',
     label: 'Facturas',
-    icon: mdiInvoice ,
+    icon: mdiReceiptTextOutline ,
     modulo: 'facturacion'
   },
   /* {
