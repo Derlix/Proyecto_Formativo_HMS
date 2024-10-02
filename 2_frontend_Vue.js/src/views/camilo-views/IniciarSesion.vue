@@ -10,6 +10,9 @@ import FormField from '@/components/FormField.vue'
 import FormControl from '@/components/FormControl.vue'
 import BaseButton from '@/components/BaseButton.vue'
 import LayoutGuest from '@/layouts/LayoutGuest.vue'
+import { useDarkModeStore } from '@/stores/darkMode.js'
+const darkModeStore = useDarkModeStore()
+
 
 const form = reactive({
     login: '',
@@ -32,6 +35,7 @@ onMounted(() => {
     email.value = storedEmail // Establece el valor del input email con el email almacenado
     form.remember = true // Marca el checkbox "Recordarme" si el email está guardado
   }
+  darkModeStore.set(false)
 })
 
 // Método para manejar el login
