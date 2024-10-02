@@ -11,7 +11,11 @@ import { getIpLocation } from '@/services/busta_service/IPService'
 
 const mainStore = useMainStore()
 
-const userName = computed(() => mainStore.userName)
+const userName = computed(() => {
+  const fullName = mainStore.userName || '';
+  const firstName = fullName.split(' ')[0]
+  return firstName.length > 16 ? firstName.substring(0, 16) : firstName
+})
 const userRole = computed(() => mainStore.userRole)
 const dataIP = ref(null)
 
