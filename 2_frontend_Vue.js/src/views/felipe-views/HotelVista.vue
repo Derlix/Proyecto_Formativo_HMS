@@ -2,9 +2,7 @@
   <LayoutAuthenticated>
     <SectionMain>
       <SectionTitleLineWithButton title="Administración De Hoteles" />
-    </SectionMain>
-
-    <SectionMain>
+      
       <!-- Botón para agregar hotel -->
       <BaseButton @click="openCreateModal" color="info" label="Agregar Hotel" class="mb-4" />
       
