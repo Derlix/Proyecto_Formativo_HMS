@@ -59,16 +59,16 @@ const infoDinero = reactive({
 
                 <div class="flex flex-wrap mb-4 px-6 py-4">
                     <div class="flex flex-row w-full items-center justify-between">
-                        <p class="text-gray-700 text-base">Nombre: {{ infoHuesped.nombre }}</p>
-                        <p class="text-gray-700 text-base">Email: {{ infoHuesped.email }}</p>
-                        <p class="text-gray-700 text-base">Teléfono: {{ infoHuesped.telefono }}</p>
-                        <p class="text-gray-700 text-base">Ocupación: {{ infoHuesped.ocupacion }}</p>
+                        <p class="text-base">Nombre: {{ infoHuesped.nombre }}</p>
+                        <p class="text-base">Email: {{ infoHuesped.email }}</p>
+                        <p class="text-base">Teléfono: {{ infoHuesped.telefono }}</p>
+                        <p class="text-base">Ocupación: {{ infoHuesped.ocupacion }}</p>
                     </div>
                 </div>
 
                 <div class="px-6 py-4">
                     <div class="font-bold text-xl mb-2">Observaciones</div>
-                    <textarea class="w-1/2 h-24 p-2 border rounded"></textarea>
+                    <textarea class="w-1/2 h-24 p-2 border rounded text-black"></textarea>
                 </div>
             </CardBox>
 
@@ -80,27 +80,27 @@ const infoDinero = reactive({
                         <div class="space-y-6">
                             <div class="flex justify-between">
                                 <p class="text-lg">Tipo de habitación:</p>
-                                <p class="text-base text-gray-700">{{ infoReserva.tipo }}</p>
+                                <p class="text-base">{{ infoReserva.tipo }}</p>
                             </div>
 
                             <div class="flex justify-between">
                                 <p class="text-lg">Habitación:</p>
-                                <p class="text-base text-gray-700">{{ infoReserva.habitacion }}</p>
+                                <p class="text-base">{{ infoReserva.habitacion }}</p>
                             </div>
 
                             <div class="flex justify-between">
                                 <p class="text-lg">Cantidad de Personas:</p>
-                                <p class="text-base text-gray-700">{{ infoReserva.cantidad }}</p>
+                                <p class="text-base">{{ infoReserva.cantidad }}</p>
                             </div>
 
                             <div class="flex justify-between">
                                 <p class="text-lg">Cambio de Reserva:</p>
-                                <p class="text-base text-gray-700">{{ infoReserva.cambio }}</p>
+                                <p class="text-base">{{ infoReserva.cambio }}</p>
                             </div>
 
                             <div class="flex justify-between">
                                 <p class="text-lg">Comprobante de Reserva:</p>
-                                <p class="text-base text-gray-700">{{ infoReserva.comprovante }}</p>
+                                <p class="text-base">{{ infoReserva.comprovante }}</p>
                             </div>
                         </div>
 
@@ -113,8 +113,8 @@ const infoDinero = reactive({
                         <SectionTitle>Check-in y check-out</SectionTitle>
                         <div class="flex flex-wrap mb-4 px-6 py-4">
                             <div class="flex flex-row w-full items-center justify-between">
-                                <p class="text-gray-700 text-base">Llegada:{{ infoCheck.llegada }}</p>
-                                <p class="text-gray-700 text-base">Salida: {{ infoCheck.salida }}</p>
+                                <p class=" text-base">Llegada:{{ infoCheck.llegada }}</p>
+                                <p class=" text-base">Salida: {{ infoCheck.salida }}</p>
                             </div>
                         </div>
                     </CardBox>
@@ -124,8 +124,8 @@ const infoDinero = reactive({
 
                         <div class="flex flex-wrap mb-4 px-6 py-4">
                             <div class="flex flex-row w-full items-center justify-between">
-                                <p class="text-gray-700 text-base">Adelanto: {{ infoDinero.adelanto }}</p>
-                                <p class="text-gray-700 text-base">Medio de pago: {{ infoDinero.medio }}</p>
+                                <p class=" text-base">Adelanto: {{ infoDinero.adelanto }}</p>
+                                <p class=" text-base">Medio de pago: {{ infoDinero.medio }}</p>
                             </div>
                         </div>
                     </CardBox>

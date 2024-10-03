@@ -13,7 +13,6 @@ import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.
       <TablaHotel></TablaHotel>
     </SectionMain>
 
-   
   </LayoutAuthenticated>
 </template>
 

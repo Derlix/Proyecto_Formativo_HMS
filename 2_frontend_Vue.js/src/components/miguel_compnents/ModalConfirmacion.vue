@@ -110,8 +110,10 @@
         </div>
       </div>
 
-
-      <div v-if="paso === 2" class="overflow-x-auto bg-gray-50 dark:bg-gray-800 rounded-lg shadow-md p-4 max-h-64">
+      <div
+        v-if="paso === 2"
+        class="overflow-x-auto bg-gray-50 dark:bg-gray-800 rounded-lg shadow-md p-4 max-h-64"
+      >
         <table class="min-w-full bg-white dark:bg-gray-700 border-gray-300">
           <thead>
             <tr class="bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200">
@@ -123,7 +125,11 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="reserva in reservas" :key="reserva.id_reserva" class="hover:bg-gray-100 dark:hover:bg-gray-600">
+            <tr
+              v-for="reserva in reservas"
+              :key="reserva.id_reserva"
+              class="hover:bg-gray-100 dark:hover:bg-gray-600"
+            >
               <td class="border px-4 py-2 dark:text-white">{{ reserva.id_reserva }}</td>
               <td class="border px-4 py-2 dark:text-white">{{ reserva.fecha_reserva }}</td>
               <!-- <td class="border px-4 py-2 dark:text-white">{{ reserva.fecha_llegada }}</td>
@@ -141,7 +147,6 @@
           </tbody>
         </table>
       </div>
-      
 
       <div
         v-else-if="paso === 3"
@@ -181,6 +186,81 @@
           </tbody>
         </table>
       </div>
+      <!-- Alerta de éxito -->
+      <div
+        v-if="showSuccessAlert"
+        class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 dark:bg-opacity-70 text-black dark:text-white"
+      >
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-sm w-full relative">
+          <button
+            @click="closeAlert"
+            class="absolute top-2 right-2 text-gray-600 dark:text-gray-300"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            Reserva realizada con éxito
+          </h3>
+          <p>La reserva se ha completado correctamente.</p>
+          <button
+            @click="closeAlert"
+            class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg w-full"
+          >
+            Cerrar
+          </button>
+        </div>
+      </div>
+
+      <!-- Alerta de error -->
+      <div
+        v-if="showError"
+        class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 dark:bg-opacity-70 text-black dark:text-white"
+      >
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-sm w-full relative">
+          <button
+            @click="closeError"
+            class="absolute top-2 right-2 text-gray-600 dark:text-gray-300"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            Error al realizar la reserva
+          </h3>
+          <p>Hubo un problema al procesar la reserva. Intenta nuevamente.</p>
+          <button
+            @click="closeError"
+            class="mt-4 bg-red-600 text-white px-4 py-2 rounded-lg w-full"
+          >
+            Cerrar
+          </button>
+        </div>
+      </div>
 
       <div class="flex justify-between mt-6">
         <button
@@ -206,16 +286,15 @@ import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { obtenerTodasHabitaciones } from '@/services/habitacionService'
 import { crearReserva } from '@/services/reservaService'
 import { crearReservaHabitacion } from '@/services/reservaHabitacionService'
-import { obtenerReservasPorHuesped } from '@/services/reservaService' 
-
+import { obtenerReservasPorHuesped } from '@/services/reservaService'
 
 const props = defineProps({
-  visible: Boolean,  // Prop que controla la visibilidad del modal
+  visible: Boolean, // Prop que controla la visibilidad del modal
   huesped: Object
 })
 
 const emit = defineEmits(['close', 'confirm'])
-const reservas = ref([]);
+const reservas = ref([])
 const paso = ref(1)
 const fecha_reserva = ref('')
 const fecha_llegada = ref('')
@@ -228,52 +307,70 @@ const deposito = ref('')
 const forma_pago = ref('')
 const habitacionSeleccionada = ref(null)
 const seleccionaridReservaSeleccionada = ref(null)
+const showSuccessAlert = ref(false) // Estado para mostrar la alerta
 
 const seleccionarHabitacion = (id_habitacion) => {
   habitacionSeleccionada.value = id_habitacion
-  console.log('Habitación seleccionada:', habitacionSeleccionada.value) 
+  console.log('Habitación seleccionada:', habitacionSeleccionada.value)
 }
 
 const seleccionaridReserva = (id_reserva) => {
   seleccionaridReservaSeleccionada.value = id_reserva
-  console.log('ID Reserva seleccionada:', seleccionaridReservaSeleccionada.value) 
+  console.log('ID Reserva seleccionada:', seleccionaridReservaSeleccionada.value)
 }
-
- // Aquí almacenaremos las reservas del huésped
 
 // Función para cargar las reservas por número de documento
 const cargarReservasDelHuesped = async () => {
   try {
-    const response = await obtenerReservasPorHuesped(props.huesped.numero_documento);
-    reservas.value = response.data;  // Asigna las reservas obtenidas
-    console.log('Reservas del huésped:', reservas.value); // Imprime las reservas en la consola
+    const response = await obtenerReservasPorHuesped(props.huesped.numero_documento)
+    reservas.value = response.data // Asigna las reservas obtenidas
+    console.log('Reservas del huésped:', reservas.value) // Imprime las reservas en la consola
   } catch (error) {
-    console.error('Error al obtener reservas:', error); // Imprime el error si falla la petición
+    console.error('Error al obtener reservas:', error) // Imprime el error si falla la petición
   }
-};
+}
 
 // Cargar las reservas cuando se monte el componente
 onMounted(() => {
   if (props.huesped && props.huesped.numero_documento) {
-    cargarReservasDelHuesped();
+    cargarReservasDelHuesped()
   }
-});
+})
+
+// Vigila el paso actual para cargar reservas si es necesario
+watch(paso, (nuevoPaso) => {
+  if (nuevoPaso === 2) {
+    cargarReservasDelHuesped()
+  }
+})
+
+// Método para cerrar la alerta
+const closeAlert = () => {
+  showSuccessAlert.value = false // Cerrar la alerta
+  closeModal()
+}
+
+// Método para finalizar el paso 3
+const finalizarPaso3 = async () => {
+  if (!habitacionSeleccionada.value) {
+    console.error('Por favor, selecciona una habitación antes de continuar.')
+    return
+  }
+
+  await confirmarReservaHabitacion() // Llama a la función para confirmar la reserva de habitación
+
+  showSuccessAlert.value = true
+}
 
 
+// Método para avanzar en los pasos
 const siguiente = async () => {
   if (paso.value === 1) {
     await confirmarReserva()
+  } else if (paso.value === 3) {
+    await finalizarPaso3() // Llama a la función que finaliza el paso 3
   }
-  if (paso.value === 2) {
-    await cargarReservasDelHuesped()
-  }
-  if (paso.value === 3) {
-    if (!habitacionSeleccionada.value) {
-      console.error('Por favor, selecciona una habitación antes de continuar.')
-      return
-    }
-    await confirmarReservaHabitacion()
-  }
+
   if (paso.value < 4) {
     paso.value++
   }
@@ -285,9 +382,10 @@ const atras = () => {
   }
 }
 
+// Confirmar la reserva
 const confirmarReserva = async () => {
   try {
-      const response = await crearReserva(
+    const response = await crearReserva(
       fecha_reserva.value,
       empresa.value,
       parseFloat(deposito.value),
@@ -302,10 +400,11 @@ const confirmarReserva = async () => {
   }
 }
 
+// Confirmar la reserva de habitación
 const confirmarReservaHabitacion = async () => {
   try {
     const response = await crearReservaHabitacion(
-      seleccionaridReservaSeleccionada.value, // Actualmenete no se está guardando el id de la reserva creada
+      seleccionaridReservaSeleccionada.value, // ID de la reserva creada
       habitacionSeleccionada.value,
       num_adultos.value,
       num_niños.value,
@@ -314,10 +413,14 @@ const confirmarReservaHabitacion = async () => {
     )
     console.log('Habitación reservada exitosamente:', response.data)
   } catch (error) {
-    console.error('Error al crear la reserva de la habitación:', error.response ? error.response.data : error)
+    console.error(
+      'Error al crear la reserva de la habitación:',
+      error.response ? error.response.data : error
+    )
   }
 }
 
+// Cargar las habitaciones
 const cargarHabitaciones = async () => {
   try {
     const response = await obtenerTodasHabitaciones()
@@ -328,48 +431,47 @@ const cargarHabitaciones = async () => {
 }
 
 // Manejo de los modales y el historial de navegación
-const modalStack = ref([])  // Pila de modales abiertos
+const modalStack = ref([]) // Pila de modales abiertos
 
 const handlePopState = () => {
   if (modalStack.value.length > 0) {
     modalStack.value.pop() // Elimina el último modal del historial
     if (modalStack.value.length === 0) {
-      emit('close')  // Cierra el modal si no hay más en la pila
+      emit('close') // Cierra el modal si no hay más en la pila
     }
   }
 }
 
 const openModal = () => {
-  modalStack.value.push('reservaModal')  // Añade el modal al historial
-  window.history.pushState({}, '', '')  // Añade un nuevo estado al historial
+  modalStack.value.push('reservaModal') // Añade el modal al historial
+  window.history.pushState({}, '', '') // Añade un nuevo estado al historial
 }
 
 const closeModal = () => {
   emit('close')
-  modalStack.value = []  // Limpia la pila de modales
-  window.history.back()  // Vuelve al estado anterior
+  modalStack.value = [] // Limpia la pila de modales
 }
 
 onMounted(() => {
-  window.addEventListener('popstate', handlePopState)  // Escucha el evento "popstate"
+  window.addEventListener('popstate', handlePopState) // Escucha el evento "popstate"
   if (props.visible) {
-    openModal()  // Abre el modal al montar si está visible
+    openModal() // Abre el modal al montar si está visible
   }
 })
 
-watch(() => props.visible, (newValue) => {
-  if (newValue) {
-    openModal()
+watch(
+  () => props.visible,
+  (newValue) => {
+    if (newValue) {
+      openModal()
+    }
   }
-})
+)
 
 onUnmounted(() => {
-  window.removeEventListener('popstate', handlePopState)  // Elimina el listener al desmontar
-  modalStack.value = []  // Limpia la pila de modales al desmontar
+  window.removeEventListener('popstate', handlePopState) // Elimina el listener al desmontar
+  modalStack.value = [] // Limpia la pila de modales al desmontar
 })
 
 cargarHabitaciones()
-
-
-
 </script>

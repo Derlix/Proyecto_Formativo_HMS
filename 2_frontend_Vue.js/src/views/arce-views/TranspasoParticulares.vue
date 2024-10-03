@@ -33,7 +33,7 @@ const submit = () => {
   <LayoutAuthenticated>
     <SectionMain>
       <TitleIconOnly :icon="mdiBallotOutline" title="Transpaso cuenta" />
-      <CardBox form @submit.prevent="submit">
+      <CardBox form @submit.prevent="submit" class="mt-6">
         <FormField label="Cuenta actual">
           <FormControl v-model="form.actual_tipo_cc" :options="selectOptions" />
           <FormControl v-model="form.actual_numero_cc" type="text" placeholder="Número documento" required=""/>

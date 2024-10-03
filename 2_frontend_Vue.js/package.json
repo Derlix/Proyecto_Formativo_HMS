@@ -14,7 +14,7 @@
     "@fullcalendar/interaction": "^6.1.15",
     "@fullcalendar/resource-timeline": "^6.1.15",
     "@fullcalendar/vue3": "^6.1.15",
-    "@mdi/js": "^7.0.96",
+    "@mdi/js": "^7.4.47",
     "axios": "^1.7.7",
     "chart.js": "^4.4.0",
     "html2canvas": "^1.4.1",

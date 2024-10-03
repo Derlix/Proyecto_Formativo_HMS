@@ -10,6 +10,9 @@ import FormField from '@/components/FormField.vue'
 import FormControl from '@/components/FormControl.vue'
 import BaseButton from '@/components/BaseButton.vue'
 import LayoutGuest from '@/layouts/LayoutGuest.vue'
+import { useDarkModeStore } from '@/stores/darkMode.js'
+const darkModeStore = useDarkModeStore()
+
 
 const form = reactive({
     login: '',
@@ -32,6 +35,7 @@ onMounted(() => {
     email.value = storedEmail // Establece el valor del input email con el email almacenado
     form.remember = true // Marca el checkbox "Recordarme" si el email está guardado
   }
+  darkModeStore.set(false)
 })
 
 // Método para manejar el login
@@ -78,7 +82,7 @@ const handleLogin = async () => {
 
 <template>
     <LayoutGuest>
-        <SectionFullScreen bg="white">
+        <SectionFullScreen>
             <CardBox is-form @submit.prevent="handleLogin" class="sm:w-3/6 md:w-3/5 lg:w-3/6 xl:w-2/6 mx-auto">
                 <div class="flex justify-center mb-4">
                     <img src="src/assets/img/sena-agro.png" alt="Logo Sena" class="w-12 sm:w-16">
