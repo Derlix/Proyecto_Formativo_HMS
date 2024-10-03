@@ -5,8 +5,10 @@ import AlertaCrearReserva from '@/components/miguel_compnents/AlertaCrearReserva
 import { obtenerTodasHabitaciones } from '@/services/habitacionService'
 import ModalCambiarHabitacion from '@/components/miguel_compnents/ModalCambiarHabitacion.vue'
 import Calendario from '@/components/arias_components/Calendario.vue'
+import ModalTarjetaReserva from '@/components/alejo_components/ModalTarjetaReserva.vue'
 const showModalCambiarHabitacion = ref(false)
 const showModalCrearReserva = ref(false)
+const showModalTarjetaReserva = ref(false)
 const habitaciones = ref([])
 
 const cargarHabitaciones = async () => {
@@ -59,6 +61,14 @@ onMounted(() => {
         >
           Registrar comprobante de descuento
         </button>
+
+        <button
+          @click="showModalTarjetaReserva = true"
+          class="bg-blue-600 dark:bg-blue-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 transition"
+        >
+          Tarjeta Reserva
+        </button>
+        <ModalTarjetaReserva :isVisible="showModalTarjetaReserva"  title="" @close="showModalTarjetaReserva = false"  />
       </div>
 
       <Calendario />

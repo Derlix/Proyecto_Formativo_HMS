@@ -21,7 +21,7 @@ import { getProductosFacturaById, deleteProductoFactura, updateProductoFactura, 
 import { getAllFacturas, updateFacturaService, deleteFactura, getFacturaByPage, getFacturaByid } from "@/services/brayan_service/FacturacionService";
 
 
-//ESTO ES PARA OBTENER LOS PRODUCTOS Y PONERLOS EN EL INPUT DE AGREGAR PRODUCTO, te odio  NICOLAS 
+//ESTO ES PARA OBTENER LOS PRODUCTOS Y PONERLOS EN EL INPUT DE AGREGAR PRODUCTO, te odio  NICOLAS
 const productosDisponibles = ref([]);
 
 const fetchAllProductos = async () => {
@@ -61,12 +61,12 @@ const metodosDePago = ['EFECTIVO', 'TARJETA', 'TRANSFERENCIA'];
 async function buscar_Factura() {
   // Si el campo de búsqueda está vacío, se obtienen todas las facturas
   if (buscarFactura.value.trim() === '') {
-    fetchFacturas(); 
+    fetchFacturas();
   } else {
-  
+
     try {
-      const response = await getFacturaByid(buscarFactura.value); 
-      console.log('Respuesta de la API:', response); 
+      const response = await getFacturaByid(buscarFactura.value);
+      console.log('Respuesta de la API:', response);
       if (response && response.data) {
         // Actualiza selectedFactura y facturas
         selectedFactura.value = response.data;
@@ -570,6 +570,7 @@ function fechaActual() {
               <th>ID Factura Producto</th>
               <th>ID Producto</th>
               <th>Cantidad</th>
+              <th>Fecha</th>
               <th>Precio U</th>
               <th>Nombre</th>
               <th>Descripción</th>
@@ -583,6 +584,7 @@ function fechaActual() {
               <td :data-label="'ID Factura Producto'">{{ producto.factura_producto.id_factura_producto }}</td>
               <td :data-label="'ID Producto'">{{ producto.factura_producto?.id_producto || 'N/A' }}</td>
               <td :data-label="'Cantidad'">{{ producto.factura_producto?.cantidad || 'N/A' }}</td>
+              <td :data-label="'Cantidad'">{{ producto.factura_producto?.fecha || 'N/A' }}</td>
               <td :data-label="'Precio U'">{{ producto.factura_producto?.precio_unitario || 'N/A' }}</td>
               <td :data-label="'Nombre'">{{ producto.productos?.nombre_producto || 'N/A' }}</td>
               <td :data-label="'Descripción'">{{ producto.productos?.descripcion || 'N/A' }}</td>
@@ -714,7 +716,7 @@ function fechaActual() {
   <div class="mb-6 max-w-md mx-left">
     <h1 class="text-black dark:text-white text-3xl font-bold mb-3">Seccion de Facturas</h1>
     <div class=" flex items-center border rounded-lg shadow-sm ">
-      
+
       <input
         type="search"
         id="buscarFactura"
@@ -729,12 +731,12 @@ function fechaActual() {
 
   <!-- SECCION  DE HISTORIAL DE FACTURAS-->
   <div class="relative overflow-x-auto">
-   
+
 
 
 
     <div class="grid grid-cols-1 md:grid-cols-5 gap-4 py-4">
-      
+
     </div>
     <table>
       <thead>
@@ -762,7 +764,7 @@ function fechaActual() {
           <th class="">Empresa</th>
           <th class="">Valor Depósito</th>
           <th class="">Forma de Pago Reserva</th>-->
-       
+
           <th class="">Acciones</th>
 
         </tr>
@@ -779,7 +781,7 @@ function fechaActual() {
           <td data-label="Subtotal">{{ factura.subtotal }}</td>
           <td data-label="Impuestos">{{ factura.impuestos }}</td>
           <td data-label="Total Precio Productos">{{ factura.total_precio_productos }}</td>
-          <td data-label="Total a pagar">{{ factura.total }}</td>    
+          <td data-label="Total a pagar">{{ factura.total }}</td>
           <td data-label="Método de Pago Factura">{{ factura.metodo_pago }}</td>
           <td data-label="Estado">{{ factura.estado }}</td>
           <td data-label="Fecha de Salida">{{ factura.fecha_salida }}</td>
@@ -831,24 +833,24 @@ function fechaActual() {
   <!-- VER INFO DE LA FACTURA-->
   <!-- CardBox para mostrar información de la factura y productos asociados -->
   <CardLista v-model="showDetalles" >
-    <!-- Sección de Información de la Factura --> 
+    <!-- Sección de Información de la Factura -->
     <div class="mb-2 overflow-y-auto max-h-96 " id="facturaDetalles" >
-    <div > 
+    <div >
       <div class="flex justify-between items-center mb-1" >
         <h1 class="font-bold text-lg" style="font-size: 26px; color: darkgreen;">DETALLES DE LA FACTURA</h1>
-        
+
         <div class="flex items-center">
-          
-          <img src="src/assets/img/sena-agro.png" alt="" style="width: 70px; margin-right: 5px;"> 
+
+          <img src="src/assets/img/sena-agro.png" alt="" style="width: 70px; margin-right: 5px;">
         </div>
-        
+
       </div>
       <div>
         <h2 class="font-bold">Fecha: {{ fechaActual() }}</h2>
       </div>
       <div class="mb-4 mt-4 mr-5 flex flex-wrap justify-between">
         <div class="w-full md:w-1/2 mb-2">
-          
+
           <h2 class="font-bold mb-3">Cliente: {{ selectedFactura?.huesped?.nombre_completo }}</h2>
           <h2 class="font-bold">Documento: {{ selectedFactura?.huesped?.numero_documento }}</h2>
         </div>
@@ -872,7 +874,7 @@ function fechaActual() {
              <!-- <tr>
               <td data-label="Campo">ID Check-In</td>
               <td data-label="Valor">{{ selectedFactura?.check_in?.id_check_in }}</td>
-            </tr>-->    
+            </tr>-->
             <tr>
               <td data-label="Campo">Estado</td>
               <td data-label="Valor">{{ selectedFactura?.estado }}</td>
@@ -884,7 +886,7 @@ function fechaActual() {
             <!--<tr>
               <td data-label="Campo">ID Reserva</td>
               <td data-label="Valor">{{ selectedFactura?.reserva?.id_reserva }}</td>
-            </tr>--> 
+            </tr>-->
             <tr>
               <td data-label="Campo">Medio de Llegada</td>
               <td data-label="Valor">{{ selectedFactura?.check_in?.medio_llegada }}</td>
@@ -913,12 +915,12 @@ function fechaActual() {
               <td data-label="Campo">Forma de Pago-Reserva</td>
               <td data-label="Valor">{{ selectedFactura?.reserva?.forma_pago }}</td>
             </tr>
-           
+
             <tr>
               <td data-label="Campo">Método de Pago Factura</td>
               <td data-label="Valor">{{ selectedFactura?.metodo_pago }}</td>
             </tr>
-            
+
           </tbody>
         </table>
 
@@ -926,13 +928,13 @@ function fechaActual() {
         <table class="mb-2" style="border: black  1px solid;">
           <thead>
             <tr>
-           
+
               <th class=" text-sm">ID Producto</th>
               <th class=" text-sm">Cantidad</th>
               <th class=" text-sm">Precio Unitario</th>
               <th class=" text-sm">Nombre</th>
               <th class=" text-sm">Descripción</th>
-          
+
             </tr>
           </thead>
           <tbody class="text-sm">
@@ -943,8 +945,8 @@ function fechaActual() {
               <td data-label="nombre">{{ producto.productos.nombre_producto || 'N/A' }}</td>
               <td data-label="descripcion">{{ producto.productos.descripcion || 'N/A' }}</td>
             </tr>
-            
-            
+
+
           </tbody>
         </table>
         <div class="mt-5 w-full md:w-1/2 mb-2" style="display: flex; flex-direction: column;">
@@ -959,13 +961,13 @@ function fechaActual() {
         class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition">
         Cerrar
       </BaseButton>
-    
+
     </div>
     <button @click="downloadPDF()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
             Descargar PDF
       </button>
-      
-   
+
+
   </CardLista>
 
 
@@ -1002,7 +1004,7 @@ td {
 }
 
 /* #tabla_productos{
-  
+
 }
 */
 </style>

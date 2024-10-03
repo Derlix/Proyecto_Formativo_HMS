@@ -1,9 +1,12 @@
 <script setup>
+import { ref } from 'vue'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import SectionMain from '@/components/SectionMain.vue';
 import TitleIconOnly from '@/components/TitleIconOnly.vue';
 import CardBoxWidget from '@/components/CardBoxWidget.vue'
 import SectionTitle from '@/components/SectionTitle.vue';
+import ModalRegistrarEntrada from '@/components/ModalRegistrarEntrada.vue'
+import ModalRegistrarSalida from '@/components/ModalRegistrarSalida.vue'
 import { mdiBallotOutline } from '@mdi/js';
 import {
     mdiBroom,
@@ -16,7 +19,8 @@ import {
     mdiCashCheck
 } from '@mdi/js'
 import CardBox from '@/components/CardBox.vue';
-
+const showModal = ref(false)
+const showModalSalidas = ref(false)
 </script>
 
 <template>
@@ -45,8 +49,10 @@ import CardBox from '@/components/CardBox.vue';
             <CardBox class="shadow-md">
                 <SectionTitle>Registro entrada y salida</SectionTitle>
                 <div class="grid grid-cols-2 gap-6">
-                    <button class="bg-blue-600 h-12 rounded-lg my-6 font-bold hover:bg-blue-900 text-white">Registrar entrada</button>
-                    <button class="bg-blue-600 h-12 rounded-lg my-6 font-bold hover:bg-blue-900 text-white">Registrar salida</button>
+                    <button @click="showModal = true" class="bg-blue-600 h-12 rounded-lg my-6 font-bold hover:bg-blue-900 text-white">Registrar entrada</button>
+                    <button @click="showModalSalidas = true" class="bg-blue-600 h-12 rounded-lg my-6 font-bold hover:bg-blue-900 text-white">Registrar salida</button>
+                    <ModalRegistrarEntrada :visible="showModal" @close="showModal = false" />
+                    <ModalRegistrarSalida :visible="showModalSalidas" @close="showModalSalidas = false"/>
                 </div>
             </CardBox>
 
