@@ -52,7 +52,7 @@
                   <td class="before:hidden lg:w-1 whitespace-nowrap">
                     <BaseButtons type="justify-start lg:justify-end" no-wrap>
                         <BaseButton @click="openEditModal(hotel)" :icon="mdiEye" small color="warning"  class="g-4" />
-                        <BaseButton @click="openConfirmDeleteModal(hotel)" :icon="mdiTrashCan" small color="danger"  class="g-4" />
+                        <BaseButton @click="openConfirmDeleteModal(cuenta)" :icon="mdiTrashCan" small color="danger"  class="g-4" />
                    
                     </BaseButtons>
                   </td>
@@ -94,7 +94,17 @@
               <button @click="isReservaModalVisible = false" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded">Cerrar</button>
             </div>
        </div>
-
+         <!-- Modal de confirmación de eliminación -->
+         <CardBoxModal
+            v-model="showConfirmDeleteModal"
+            title="Confirmar eliminación"
+            buttonLabel="Eliminar"
+            hasCancel
+            @confirm="confirmDeletecuenta"
+            @cancel="closeConfirmDeleteModal"
+          >
+            <p>¿Estás seguro de que deseas eliminar esta cuenta?</p>
+          </CardBoxModal>
 
 </template>
 <script>
@@ -108,7 +118,7 @@ import ModalForm from '@/components/ModalFormHotel.vue';
 import SectionMain from '@/components/SectionMain.vue';
 import CardBoxModal  from '@/components/felipe_componentes/CardBoxModal.vue';
 import { mdiEye, mdiTrashCan } from '@mdi/js';
-import { getCuentaHuespedByIdReserva, getCuentaHuespedByIdHuesped} from '@/services/felipe_services/cuentaHuespedService';
+import { getCuentaHuespedByIdReserva, getCuentaHuespedByIdHuesped, deleteCuentaHuesped} from '@/services/felipe_services/cuentaHuespedService';
 import BaseLevel from '@/components/BaseLevel.vue';
     export default {
       components: {
@@ -133,6 +143,8 @@ import BaseLevel from '@/components/BaseLevel.vue';
       isLoading: false,
       isReservaModalVisible: false,
       isHuespedModalVisible: false,
+      showConfirmDeleteModal: false,
+      cuentaToDelete: null,
       reservaDetails: {},
       huespedDetails: {},
       mdiEye,  // Assign the icons to data directly
@@ -208,7 +220,26 @@ import BaseLevel from '@/components/BaseLevel.vue';
   this.selectedReserva = cuenta.id_reserva; // Asegúrate de que esto sea correcto según la respuesta de la API
   this.isReservaModalVisible = true;
 
- }
+ },
+      openConfirmDeleteModal(cuenta) {
+        this.cuentaToDelete = cuenta;
+        this.showConfirmDeleteModal = true;
+      },
+      closeConfirmDeleteModal() {
+        this.showConfirmDeleteModal = false;
+        this.cuentaToDelete = null;
+      },
+      async confirmDeletecuenta() {
+        try {
+          if (this.cuentaToDelete) {
+            await deleteCuentaHuesped(this.cuentaToDelete.id_cuenta);
+            this.fetchCuentasReserva();
+            this.closeConfirmDeleteModal();
+          }
+        } catch (error) {
+          console.error('Error al eliminar el hotel:', error);
+        }
+      },
 
   },
 }

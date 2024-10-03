@@ -75,7 +75,7 @@ export const getCuentaHuespedByIdCuenta = async (idCuenta) => {
     
     export const deleteCuentaHuesped = async (idCuenta) => {
       try {
-        const response = await api.delete(`/delete-cuenta_huesped/${idCuenta}`);
+        const response = await api.delete(`/cuenta-huesped/delete-cuenta_huesped/${idCuenta}`);
         return response.data;
       } catch (error) {
         console.error('Error al eliminar la cuenta de huésped:', error);
