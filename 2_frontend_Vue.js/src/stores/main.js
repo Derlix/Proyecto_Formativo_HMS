@@ -11,6 +11,12 @@ export const useMainStore = defineStore('main', () => {
   const userEmail = computed(() => authStore.user?.email || 'undefined');
   const userRole = computed(() => authStore.user?.usuario_rol || 'undefined');
   const userID = computed(() => authStore.user?.user_id || 'undefined');
+  const userIdHotel = computed(() => authStore.user?.id_hotel || 'undefined');
+  // Condicion para saber si es de noche
+  // if (moment().format('HH') >= 20 || moment().format('HH') < 6) {
+  //   console.log('Es de noche');
+  // }
+
   // Sirve para mostrar la imagen de perfil del usuario
   const userProfile = computed(() => {
     return authStore.user?.img_profile ? `${import.meta.env.VITE_API_URL}/${authStore.user.img_profile}` : null;
@@ -20,7 +26,6 @@ export const useMainStore = defineStore('main', () => {
   const userAvatar = computed(() => {
     // Si el usuario tiene una imagen de perfil, la devuelve
     if (userProfile.value) {
-      console.log(userProfile.value);
       return userProfile.value;
       // Si no tiene imagen de perfil, devuelve una imagen por defecto según el rol
     } else {
@@ -93,6 +98,7 @@ export const useMainStore = defineStore('main', () => {
     userName,
     userEmail,
     userAvatar,
+    userIdHotel,
     isFieldFocusRegistered,
     clients,
     history,
