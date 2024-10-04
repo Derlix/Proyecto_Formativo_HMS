@@ -1,0 +1,205 @@
+<script setup>
+import { onMounted, ref } from 'vue';
+import { mdiEye, mdiTrashCan } from '@mdi/js';
+import { createReport, getReportByPage, updateReport } from '@/services/informeLlavesService';
+import SectionMain from '@/components/SectionMain.vue';
+import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
+import BaseButtons from '@/components/BaseButtons.vue';
+import BaseButton from '@/components/BaseButton.vue';
+import BaseLevel from '@/components/BaseLevel.vue';
+import CardBoxModal from '@/components/alejo_components/CardBoxModal.vue';
+import NotificationBar from '@/components/alejo_components/NotificationBar.vue';
+
+const reports = ref([]);
+const TotalPages = ref(0);
+const currentPage = ref(1);
+const isModalOpen = ref(false);
+const isEditing = ref(false);  // Para identificar si estamos editando o creando
+const currentReport = ref({
+    id_informe: '',
+    id_habitacion: '',
+    estado_reportado: ''
+});
+
+const colorAlert = ref('');
+const modalMessage = ref('');
+const isAlertVisible = ref(false);
+
+// Abrir modal para crear o editar informe
+const openModal = (report = null) => {
+    isModalOpen.value = true;
+    
+    if(isEditing.value == false){
+        console.log("editar")
+        if (report) {
+            currentReport.value = { id_informe: report.id_informe ,id_habitacion: report.habitacion.id_habitacion, estado_reportado: report.estado_reportado };  // Cargar informe existente
+            isEditing.value = false;
+        }
+    }else{
+        console.log("crear")
+        currentReport.value = { id_informe: '', id_habitacion: '', estado_reportado: '' };
+        isEditing.value = false;
+    }
+  isModalOpen.value = true;
+};
+
+// Cerrar modal y limpiar los datos
+const closeModal = () => {
+  isModalOpen.value = false;
+  currentReport.value = { id_habitacion: '', estado_reportado: '' };
+};
+
+// Obtener lista de informes con paginación
+const fetchReports = async () => {
+  try {
+    const response = await getReportByPage(currentPage.value);
+    reports.value = response.data.informes || [];
+    TotalPages.value = response.data.total_pages || 0;
+
+    if (currentPage.value > TotalPages.value) {
+      currentPage.value = TotalPages.value;
+    }
+    closeModal();
+  } catch (error) {
+    alert('Error al obtener informes: ', error);
+  }
+};
+
+// Guardar o actualizar informe
+const saveReport = async () => {
+  try {
+    if (!currentReport.value.id_habitacion || !currentReport.value.estado_reportado) {
+      alert('Por favor, completa todos los campos antes de guardar.');
+      return;
+    }
+
+    if (isEditing.value) {
+      await updateReport(
+        currentReport.value.id_informe,
+        currentReport.value.id_habitacion,
+        currentReport.value.estado_reportado
+      );
+      modalMessage.value = "Informe actualizado con éxito";
+    } else {
+      await createReport( currentReport.value.id_habitacion, currentReport.value.estado_reportado);
+      modalMessage.value = "Informe creado con éxito";
+    }
+
+    colorAlert.value = 'success';
+    isAlertVisible.value = true;
+    
+    fetchReports();  // Recargar informes
+    closeModal();  // Cerrar modal
+
+    setTimeout(() => {
+      isAlertVisible.value = false;
+    }, 3000);
+  } catch (error) {
+    modalMessage.value = 'Error al guardar informe';
+    colorAlert.value = 'danger';
+    isAlertVisible.value = true;
+
+    console.error('Error al guardar informe:', error);
+  }
+};
+
+// Inicializar lista de informes al cargar la vista
+onMounted(() => {
+  fetchReports();
+});
+</script>
+
+<template>
+  <CardBoxModal 
+    v-model="isModalOpen" 
+    :title="isEditing ? 'Editar Informe' : 'Crear Informe'"
+    :buttonLabel="isEditing ? 'Guardar cambios' : 'Crear Informe'" 
+    has-cancel 
+    @cancel="closeModal" 
+    @confirm="saveReport"
+  >
+    <form @submit.prevent="saveReport">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="mb-4">
+          <label for="id_habitacion" class="block text-gray-700 font-medium dark:text-white">Habitación:</label>
+          <input type="number" id="id_habitacion" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-700" v-model="currentReport.id_habitacion" required/>
+        </div>
+        <div class="mb-4">
+          <label for="estado_reportado" class="block text-gray-700 font-medium dark:text-white">Estado Reportado:</label>
+          <select id="estado_reportado" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-700" v-model="currentReport.estado_reportado" required>
+            <option value="LIMPIA">LIMPIA</option>
+            <option value="SUCIA">SUCIA</option>
+            <option value="EN REPARACIÓN">EN REPARACIÓN</option>
+          </select>
+        </div>
+      </div>
+    </form>
+  </CardBoxModal>
+
+  <LayoutAuthenticated>
+    <SectionMain>
+      <h1 class="text-black dark:text-white text-2xl font-bold mb-8">Informes De Ama De Llaves</h1>
+      
+      <!-- Barra de notificación -->
+      <NotificationBar 
+        v-if="isAlertVisible" 
+        :color="colorAlert" 
+        :description="modalMessage" 
+        :visible="isAlertVisible" 
+      />
+      
+      <div>
+        <BaseButton @click="openModal" color="info" label="Agregar Informe" class="mb-4" />
+      </div>
+
+      <!-- Tabla de informes -->
+      <table>
+        <thead>
+          <tr>
+            <th>Informe N°</th>
+            <th>Habitación</th>
+            <th>Estado Reportado</th>
+            <th>Estado Habitación</th>
+            <th>Piso</th>
+            <th>Fecha</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="report in reports" :key="report.id_informe">
+            <td data-label="Informe: ">{{ report.id_informe }}</td>
+            <td data-label="Habitación: ">{{ report.habitacion.numero_habitacion }}</td>
+            <td data-label="Estado Reportado: ">{{ report.estado_reportado }}</td>
+            <td data-label="Estado Habitación: ">{{ report.habitacion.estado }}</td>
+            <td data-label="Piso: ">{{ report.habitacion.piso }}</td>
+            <td data-label="Fecha: ">{{ report.fecha_informe }}</td>
+            <td class="before:hidden lg:w-1 whitespace-nowrap">
+              <BaseButtons type="justify-start lg:justify-end" no-wrap>
+                <BaseButton color="info" :icon="mdiEye" small @click="openModal(report)" />
+                <BaseButton color="danger" :icon="mdiTrashCan" small @click="openDeleteModal(report)" />
+              </BaseButtons>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <!-- Paginación -->
+      <div class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800">
+        <BaseLevel>
+          <BaseButtons>
+            <BaseButton
+              v-for="page in TotalPages"
+              :key="page"
+              :active="page === currentPage"
+              :label="page"
+              :color="page === currentPage ? 'lightDark' : 'whiteDark'"
+              small
+              @click="currentPage = page; fetchReports()"
+            />
+          </BaseButtons>
+          <small>Página {{ currentPage }} de {{ TotalPages }}</small>
+        </BaseLevel>
+      </div>
+    </SectionMain>
+  </LayoutAuthenticated>
+</template>
