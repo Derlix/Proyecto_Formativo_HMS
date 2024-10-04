@@ -459,32 +459,7 @@ function fechaActual() {
       <form @submit.prevent="updateFactura">
         <div class="grid grid-cols-2 sm:grid-cols-2  gap-4">
           <!-- Primer par de campos -->
-          <div class="mb-4">
-            <label for="facturaSubtotal" class="block text-gray-700 dark:text-gray-300 font-medium">Subtotal</label>
-            <input type="number" id="facturaSubtotal"
-              class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-300 sm:text-sm"
-              v-model="selectedFactura.subtotal" required />
-          </div>
-          <div class="mb-4">
-            <label for="facturaImpuestos" class="block text-gray-700 dark:text-gray-300 font-medium">Impuestos</label>
-            <input type="number" id="facturaImpuestos"
-              class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-300 sm:text-sm"
-              v-model="selectedFactura.impuestos" required />
-          </div>
-          <!-- Segundo par de campos -->
-          <div class="mb-4">
-            <label for="facturaTotal" class="block text-gray-700 dark:text-gray-300 font-medium">Total</label>
-            <input type="number" id="facturaTotal"
-              class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-300 sm:text-sm"
-              v-model="selectedFactura.total" required />
-          </div>
-          <div class="mb-4">
-            <label for="facturaTotalPrecioProductos" class="block text-gray-700 dark:text-gray-300 font-medium">Total
-              Precio Productos</label>
-            <input type="number" id="facturaTotalPrecioProductos"
-              class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-300 sm:text-sm"
-              v-model="selectedFactura.total_precio_productos" required />
-          </div>
+         
           <!-- Tercer par de campos -->
           <div class="mb-4">
             <label for="facturaMetodoPago" class="block text-gray-700">Método de Pago</label>
