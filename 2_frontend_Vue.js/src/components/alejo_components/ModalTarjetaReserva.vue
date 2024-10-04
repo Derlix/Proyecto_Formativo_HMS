@@ -352,7 +352,7 @@ const generarPDF = () => {
 
   img.onerror = function () {
     console.error("Error loading image");
-    doc.save('reserva.pdf'); // Guarda el PDF incluso si hay un error al cargar la imagen
+    doc.save('Tarjeta_Reserva.pdf'); // Guarda el PDF incluso si hay un error al cargar la imagen
   };
 };
 
