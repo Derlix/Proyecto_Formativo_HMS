@@ -617,8 +617,7 @@ function fechaActual() {
   <!-- CARDBOX PARA ELIMINAR PRODUCTO DE UNA FACTURA -->
   <CardModalBrayan v-model="showDeleteProductosModal" title="Eliminar Producto">
     <p id="texto_" class="mb-4">
-      ¿Está seguro que desea eliminar el Producto con el ID factura-producto {{
-        selectedProduct.factura_producto?.id_factura_producto }} de la factura?
+      ¿Está seguro que desea eliminar el Producto de la factura?
     </p>
 
     <div class="flex justify-end">
@@ -645,7 +644,7 @@ function fechaActual() {
       <div class="mb-4">
         <label for="fecha" class="block text-gray-700">Fecha</label>
         <input type="date" id="fecha" v-model="selectedProduct.fecha"
-          class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500" />
+          class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500" required/>
       </div>
       <div class="mb-4">
         <label for="precio_unitario" class="block text-gray-700">Precio Unitario</label>
