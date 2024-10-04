@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import axios from 'axios'
+// import axios from 'axios'
 import { useAuthStore } from '@/stores' // Importa el store de autenticación
 
 export const useMainStore = defineStore('main', () => {
@@ -65,6 +65,9 @@ export const useMainStore = defineStore('main', () => {
     if (payload.user_id) {
       user.user_id = payload.user_id;
     }
+    if (payload.id_hotel) {
+      user.id_hotel = payload.id_hotel;
+    }
 
     // Actualiza el store de autenticación
     authStore.user = { ...authStore.user, ...user };
@@ -72,27 +75,27 @@ export const useMainStore = defineStore('main', () => {
     localStorage.setItem('user', JSON.stringify(user));
   }
 
-  function fetchSampleClients() {
-    axios
-      .get(`data-sources/clients.json?v=3`)
-      .then((result) => {
-        clients.value = result?.data?.data
-      })
-      .catch((error) => {
-        alert(error.message)
-      })
-  }
+  // function fetchSampleClients() {
+  //   axios
+  //     .get(`data-sources/clients.json?v=3`)
+  //     .then((result) => {
+  //       clients.value = result?.data?.data
+  //     })
+  //     .catch((error) => {
+  //       alert(error.message)
+  //     })
+  // }
 
-  function fetchSampleHistory() {
-    axios
-      .get(`data-sources/history.json`)
-      .then((result) => {
-        history.value = result?.data?.data
-      })
-      .catch((error) => {
-        alert(error.message)
-      })
-  }
+  // function fetchSampleHistory() {
+  //   axios
+  //     .get(`data-sources/history.json`)
+  //     .then((result) => {
+  //       history.value = result?.data?.data
+  //     })
+  //     .catch((error) => {
+  //       alert(error.message)
+  //     })
+  // }
 
   return {
     userName,
@@ -105,7 +108,7 @@ export const useMainStore = defineStore('main', () => {
     userRole,
     userID,
     setUser,
-    fetchSampleClients,
-    fetchSampleHistory
+    // fetchSampleClients,
+    // fetchSampleHistory
   }
 })

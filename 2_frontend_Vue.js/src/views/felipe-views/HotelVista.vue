@@ -2,6 +2,10 @@
   <LayoutAuthenticated>
     <SectionMain>
       <SectionTitleLineWithButton title="Administración De Hoteles" />
+
+      <div class="text-right">
+        <p class="py-5 text-xl">ID del hotel que opera actualmente: <span class="font-bold">{{ userIdHotel }}</span></p>
+      </div>
       
       <!-- Botón para agregar hotel -->
       <BaseButton @click="openCreateModal" color="info" label="Agregar Hotel" class="mb-4" />
@@ -47,6 +51,7 @@
               <td data-label="TELEFONO HOTEL" >{{ hotel.telefono }}</td>
               <td class="before:hidden lg:w-1 whitespace-nowrap">
                 <BaseButtons type="justify-start lg:justify-end" no-wrap>
+                  <BaseButton @click="openCambiarHotelModal(hotel)"  :icon="mdiRotateRight" small color="success"  class="g-4" />
                   <BaseButton @click="openEditModal(hotel)" :icon="mdiEye" small color="warning"  class="g-4" />
                   <BaseButton @click="openConfirmDeleteModal(hotel)" :icon="mdiTrashCan" small color="danger"  class="g-4" />
                 </BaseButtons>
@@ -104,6 +109,19 @@
         </form>
       </CardBoxModal>
 
+      <!-- Modal de cambiar id de hotel -->
+      <CardBoxModal
+        v-model="showModalCambiarHotelId"
+        title="Confirmar cambio de hotel"
+        buttonLabel="Cambiar hotel"
+        hasCancel
+        @confirm="confirmCambiarHotel"
+        @cancel="closeConfirmCambiarHotelModal"
+      >
+        <p>¿Estás seguro de que deseas cambiar a este hotel?</p>
+      </CardBoxModal>
+       
+
       <!-- Modal de confirmación de eliminación -->
       <CardBoxModal
         v-model="showConfirmDeleteModal"
@@ -122,6 +140,8 @@
 </template>
 
 <script>
+import { computed, ref, onMounted } from 'vue'
+import { useMainStore } from '@/stores/main'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import FormField from '@/components/FormField.vue';
 import FormControl from '@/components/FormControl.vue';
@@ -131,9 +151,13 @@ import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.
 import ModalForm from '@/components/ModalFormHotel.vue';
 import SectionMain from '@/components/SectionMain.vue';
 import CardBoxModal  from '@/components/felipe_componentes/CardBoxModal.vue';
-import { mdiEye, mdiTrashCan } from '@mdi/js';
+import { mdiEye, mdiTrashCan,mdiRotateRight } from '@mdi/js';
 import { createHotel, getHotels, updateHotel, deleteHotel, getHotelsByPage, getHotelById } from '@/services/hotelService';
 import BaseLevel from '@/components/BaseLevel.vue';
+import {updateIdHotel} from '@/services/busta_service/CambiarHotelService'
+const mainStore = useMainStore()
+// const userIdHotel = computed(() => mainStore.userIdHotel)
+// console.log(userIdHotel.value)
 export default {
   components: {
     LayoutAuthenticated,
@@ -147,6 +171,11 @@ export default {
     CardBoxModal,
     BaseLevel,
   },
+  computed: {
+    userIdHotel() {
+      return mainStore.userIdHotel;
+    }
+  },
   data() {
     return {
       hoteles: [],
@@ -158,11 +187,14 @@ export default {
       },
       showModal: false,
       showConfirmDeleteModal: false,
+      showModalCambiarHotelId: false,
       isEditing: false,
       currentHotelId: null,
       hotelToDelete: null,
+      hotelToCambiar: null,
       mdiEye,  // Assign the icons to data directly
       mdiTrashCan,
+      mdiRotateRight,
       TotalPages : 0,
       currentPage : 1,
       buscarHotel : '',
@@ -209,6 +241,11 @@ export default {
     this.hotelForm = { nombre: '', ubicacion: '', direccion: '', telefono: '' };
     this.showModal = true;
   },
+  openCambiarHotelModal() {
+    this.isEditing = false;
+    this.hotelForm = { nombre: '', ubicacion: '', direccion: '', telefono: '' };
+    this.showModal = true;
+  },
   openEditModal(hotel) {
     this.isEditing = true;
     this.currentHotelId = hotel.id_hotel;
@@ -250,6 +287,14 @@ export default {
     this.showConfirmDeleteModal = false;
     this.hotelToDelete = null;
   },
+  openCambiarHotelModal(hotel) {
+      this.hotelToCambiar = hotel; // Asigna el hotel a hotelToCambiar
+      this.showModalCambiarHotelId = true;
+  },
+  closeConfirmCambiarHotelModal() {
+    this.showModalCambiarHotelId = false;
+    this.hotelToCambiar = null;
+  },
   async confirmDeleteHotel() {
     try {
       if (this.hotelToDelete) {
@@ -261,8 +306,23 @@ export default {
       console.error('Error al eliminar el hotel:', error);
     }
   },
- 
-  
-},
+  // cambiar hotel por id del hotel seleccionado
+  async confirmCambiarHotel() {
+      try {
+        if (this.hotelToCambiar) {
+          await updateIdHotel(this.hotelToCambiar.id_hotel);
+
+          mainStore.setUser({
+            id_hotel: this.hotelToCambiar.id_hotel
+          });
+
+          this.fetchHotels();
+          this.closeConfirmCambiarHotelModal();
+        }
+      } catch (error) {
+        console.error('Error al cambiar el hotel:', error);
+      }
+    },
+  },
 };
 </script>

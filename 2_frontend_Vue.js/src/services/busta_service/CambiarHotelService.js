@@ -1,9 +1,9 @@
-import api from './api';
+import api from '../api';
 
 export const updateIdHotel = async (NuevoIdHotel) => {
   try {
     const response = await api.put(`/usuarios/cambiar-hotel/`, {
-        nuevo_id_hotel: NuevoIdHotel,
+      id_hotel: NuevoIdHotel,
     });
     return response;
   } catch (error) {
