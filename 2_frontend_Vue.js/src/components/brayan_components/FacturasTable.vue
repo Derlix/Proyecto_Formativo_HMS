@@ -128,7 +128,7 @@ const updateFactura = async () => {
     emit('update');
     emit('close');
   } catch (error) {
-    alert('Error al actualizar la factura: ' + (error.response?.data?.message || error.message));
+    alert('Hubo un Error al actualizar la factura ');
   }
 };
 
@@ -147,7 +147,7 @@ const confirmDelete = async () => {
     if (error.response?.status === 400) {
       alert('No se puede eliminar la factura porque tiene productos asociados. Elimine los productos primero.');
     } else {
-      alert('Error al eliminar la factura: ' + (error.response?.data?.message || error.message));
+      alert('Error al eliminar la factura, talvez no tenga permisos para eliminarla' );
     }
   }
 };
@@ -261,7 +261,7 @@ const addProducto = async () => {
     resetSelectedProduct();
   } catch (error) {
     console.error('Error al agregar el producto:', error); // Imprime el error para depurar
-    alert('Error al agregar el producto: ' + (error.response?.data?.message || error.message));
+    alert('Hubo un Error al agregar el producto, intente de nuevo');
   }
 };
 
@@ -288,7 +288,7 @@ const confirmDeleteProducto = async () => {
     fetchProductos();
     closeDeleteProductosModal();
   } catch (error) {
-    alert('Error al eliminar el producto: ' + (error.response?.data?.message || error.message));
+    alert('Hubo un Error al eliminar el producto, , intente de nuevo');
   }
 };
 
@@ -307,7 +307,7 @@ const updateProducto = async () => {
     fetchProductos();
     closeEditProductosModal();
   } catch (error) {
-    alert('Error al actualizar el producto de la factura: ' + (error.response?.data?.message || error.message));
+    alert('Hubo un Error al actualizar el producto de la factura, intente de nuevo');
   }
 };
 
