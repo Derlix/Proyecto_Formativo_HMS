@@ -673,11 +673,11 @@ function fechaActual() {
       <div class="mb-4">
         <label for="id_facturacion" class="block text-gray-700">ID facturación</label>
         <input id="id_facturacion" v-model="selectedFactura.id_facturacion" type="number" disabled
-          class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 bg-gray-100 focus:outline-none focus:border-blue-500" />
+          class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 bg-gray-100 focus:outline-none focus:border-blue-500"  required/>
       </div>
       <div class="mb-4">
         <label for="id_producto" class="block text-gray-700"> Producto</label>
-        <select id="id_producto" v-model="selectedProduct.id_producto"
+        <select id="id_producto" v-model="selectedProduct.id_producto" required
                 class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500">
           <option v-for="producto in productosDisponibles" :key="producto.id_producto" :value="producto.id_producto">
             {{ producto.nombre_producto}} / $: {{ producto.precio_actual }}
@@ -687,17 +687,17 @@ function fechaActual() {
       <div class="mb-4">
         <label for="cantidad" class="block text-gray-700">Cantidad</label>
         <input id="cantidad" v-model="selectedProduct.cantidad" type="number"
-          class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500" />
+          class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500" required />
       </div>
       <div class="mb-4">
         <label for="fecha" class="block text-gray-700">Fecha</label>
         <input id="fecha" v-model="selectedProduct.fecha" type="date"
-          class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500" />
+          class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500" required />
       </div>
       <div class="mb-4">
         <label for="precio_unitario" class="block text-gray-700">Precio Unitario</label>
         <input id="precio_unitario" v-model="selectedProduct.precio_unitario" type="text"
-          class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500" />
+          class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500"  required/>
       </div>
       <div class="flex justify-end">
         <button type="button" @click="cerrarAgregarProductoFactura"
@@ -751,6 +751,7 @@ function fechaActual() {
           <th class="">Telefono</th>
           <th class="">Subtotal</th>
           <th class="">Impuestos</th>
+          <th class="">ID descuento</th>
           <th class="">Total Precio Productos</th>
           <th class="">Total a pagar</th>
           <th class="">Método de Pago Factura</th>
@@ -780,6 +781,7 @@ function fechaActual() {
           <td data-label="Telfono">{{ factura.huesped.telefono }}</td>
           <td data-label="Subtotal">{{ factura.subtotal }}</td>
           <td data-label="Impuestos">{{ factura.impuestos }}</td>
+          <td data-label="Impuestos">{{ factura.id_descuento }}</td>
           <td data-label="Total Precio Productos">{{ factura.total_precio_productos }}</td>
           <td data-label="Total a pagar">{{ factura.total }}</td>
           <td data-label="Método de Pago Factura">{{ factura.metodo_pago }}</td>
@@ -953,6 +955,7 @@ function fechaActual() {
             <div class="font-bold" data-label="Valor"  style="font-size: 16px;">Total precio productos: {{ selectedFactura?.total_precio_productos }}</div>
             <div class="font-bold" data-label="Valor" style="font-size: 16px;">Subtotal: {{ selectedFactura?.subtotal }}</div>
             <div class="font-bold" data-label="Valor" style="font-size: 16px;">Impuestos: {{ selectedFactura?.impuestos }}</div>
+            <div class="font-bold" data-label="Valor" style="font-size: 16px;">ID descuento: {{ selectedFactura?.id_descuento }}</div>
             <div class="font-bold" data-label="Valor" style="font-size: 17px;">TOTAL A PAGAR: {{ selectedFactura?.total }}</div>
         </div>
 
