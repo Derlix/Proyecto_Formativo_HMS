@@ -128,7 +128,7 @@ const updateFactura = async () => {
     emit('update');
     emit('close');
   } catch (error) {
-    alert('Error al actualizar la factura: ' + (error.response?.data?.message || error.message));
+    alert('Hubo un Error al actualizar la factura ');
   }
 };
 
@@ -147,7 +147,7 @@ const confirmDelete = async () => {
     if (error.response?.status === 400) {
       alert('No se puede eliminar la factura porque tiene productos asociados. Elimine los productos primero.');
     } else {
-      alert('Error al eliminar la factura: ' + (error.response?.data?.message || error.message));
+      alert('Error al eliminar la factura, talvez no tenga permisos para eliminarla' );
     }
   }
 };
@@ -261,7 +261,7 @@ const addProducto = async () => {
     resetSelectedProduct();
   } catch (error) {
     console.error('Error al agregar el producto:', error); // Imprime el error para depurar
-    alert('Error al agregar el producto: ' + (error.response?.data?.message || error.message));
+    alert('Hubo un Error al agregar el producto, intente de nuevo');
   }
 };
 
@@ -288,7 +288,7 @@ const confirmDeleteProducto = async () => {
     fetchProductos();
     closeDeleteProductosModal();
   } catch (error) {
-    alert('Error al eliminar el producto: ' + (error.response?.data?.message || error.message));
+    alert('Hubo un Error al eliminar el producto, , intente de nuevo');
   }
 };
 
@@ -307,7 +307,7 @@ const updateProducto = async () => {
     fetchProductos();
     closeEditProductosModal();
   } catch (error) {
-    alert('Error al actualizar el producto de la factura: ' + (error.response?.data?.message || error.message));
+    alert('Hubo un Error al actualizar el producto de la factura, intente de nuevo');
   }
 };
 
@@ -459,32 +459,7 @@ function fechaActual() {
       <form @submit.prevent="updateFactura">
         <div class="grid grid-cols-2 sm:grid-cols-2  gap-4">
           <!-- Primer par de campos -->
-          <div class="mb-4">
-            <label for="facturaSubtotal" class="block text-gray-700 dark:text-gray-300 font-medium">Subtotal</label>
-            <input type="number" id="facturaSubtotal"
-              class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-300 sm:text-sm"
-              v-model="selectedFactura.subtotal" required />
-          </div>
-          <div class="mb-4">
-            <label for="facturaImpuestos" class="block text-gray-700 dark:text-gray-300 font-medium">Impuestos</label>
-            <input type="number" id="facturaImpuestos"
-              class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-300 sm:text-sm"
-              v-model="selectedFactura.impuestos" required />
-          </div>
-          <!-- Segundo par de campos -->
-          <div class="mb-4">
-            <label for="facturaTotal" class="block text-gray-700 dark:text-gray-300 font-medium">Total</label>
-            <input type="number" id="facturaTotal"
-              class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-300 sm:text-sm"
-              v-model="selectedFactura.total" required />
-          </div>
-          <div class="mb-4">
-            <label for="facturaTotalPrecioProductos" class="block text-gray-700 dark:text-gray-300 font-medium">Total
-              Precio Productos</label>
-            <input type="number" id="facturaTotalPrecioProductos"
-              class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-300 sm:text-sm"
-              v-model="selectedFactura.total_precio_productos" required />
-          </div>
+         
           <!-- Tercer par de campos -->
           <div class="mb-4">
             <label for="facturaMetodoPago" class="block text-gray-700">Método de Pago</label>
@@ -617,8 +592,7 @@ function fechaActual() {
   <!-- CARDBOX PARA ELIMINAR PRODUCTO DE UNA FACTURA -->
   <CardModalBrayan v-model="showDeleteProductosModal" title="Eliminar Producto">
     <p id="texto_" class="mb-4">
-      ¿Está seguro que desea eliminar el Producto con el ID factura-producto {{
-        selectedProduct.factura_producto?.id_factura_producto }} de la factura?
+      ¿Está seguro que desea eliminar el Producto de la factura?
     </p>
 
     <div class="flex justify-end">
@@ -645,7 +619,7 @@ function fechaActual() {
       <div class="mb-4">
         <label for="fecha" class="block text-gray-700">Fecha</label>
         <input type="date" id="fecha" v-model="selectedProduct.fecha"
-          class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500" />
+          class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500" required/>
       </div>
       <div class="mb-4">
         <label for="precio_unitario" class="block text-gray-700">Precio Unitario</label>
@@ -673,11 +647,11 @@ function fechaActual() {
       <div class="mb-4">
         <label for="id_facturacion" class="block text-gray-700">ID facturación</label>
         <input id="id_facturacion" v-model="selectedFactura.id_facturacion" type="number" disabled
-          class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 bg-gray-100 focus:outline-none focus:border-blue-500" />
+          class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 bg-gray-100 focus:outline-none focus:border-blue-500"  required/>
       </div>
       <div class="mb-4">
         <label for="id_producto" class="block text-gray-700"> Producto</label>
-        <select id="id_producto" v-model="selectedProduct.id_producto"
+        <select id="id_producto" v-model="selectedProduct.id_producto" required
                 class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500">
           <option v-for="producto in productosDisponibles" :key="producto.id_producto" :value="producto.id_producto">
             {{ producto.nombre_producto}} / $: {{ producto.precio_actual }}
@@ -687,17 +661,17 @@ function fechaActual() {
       <div class="mb-4">
         <label for="cantidad" class="block text-gray-700">Cantidad</label>
         <input id="cantidad" v-model="selectedProduct.cantidad" type="number"
-          class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500" />
+          class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500" required />
       </div>
       <div class="mb-4">
         <label for="fecha" class="block text-gray-700">Fecha</label>
         <input id="fecha" v-model="selectedProduct.fecha" type="date"
-          class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500" />
+          class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500" required />
       </div>
       <div class="mb-4">
         <label for="precio_unitario" class="block text-gray-700">Precio Unitario</label>
         <input id="precio_unitario" v-model="selectedProduct.precio_unitario" type="text"
-          class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500" />
+          class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500"  required/>
       </div>
       <div class="flex justify-end">
         <button type="button" @click="cerrarAgregarProductoFactura"
@@ -751,6 +725,7 @@ function fechaActual() {
           <th class="">Telefono</th>
           <th class="">Subtotal</th>
           <th class="">Impuestos</th>
+          <th class="">ID descuento</th>
           <th class="">Total Precio Productos</th>
           <th class="">Total a pagar</th>
           <th class="">Método de Pago Factura</th>
@@ -780,6 +755,7 @@ function fechaActual() {
           <td data-label="Telfono">{{ factura.huesped.telefono }}</td>
           <td data-label="Subtotal">{{ factura.subtotal }}</td>
           <td data-label="Impuestos">{{ factura.impuestos }}</td>
+          <td data-label="Impuestos">{{ factura.id_descuento }}</td>
           <td data-label="Total Precio Productos">{{ factura.total_precio_productos }}</td>
           <td data-label="Total a pagar">{{ factura.total }}</td>
           <td data-label="Método de Pago Factura">{{ factura.metodo_pago }}</td>
@@ -953,6 +929,7 @@ function fechaActual() {
             <div class="font-bold" data-label="Valor"  style="font-size: 16px;">Total precio productos: {{ selectedFactura?.total_precio_productos }}</div>
             <div class="font-bold" data-label="Valor" style="font-size: 16px;">Subtotal: {{ selectedFactura?.subtotal }}</div>
             <div class="font-bold" data-label="Valor" style="font-size: 16px;">Impuestos: {{ selectedFactura?.impuestos }}</div>
+            <div class="font-bold" data-label="Valor" style="font-size: 16px;">ID descuento: {{ selectedFactura?.id_descuento }}</div>
             <div class="font-bold" data-label="Valor" style="font-size: 17px;">TOTAL A PAGAR: {{ selectedFactura?.total }}</div>
         </div>
 
