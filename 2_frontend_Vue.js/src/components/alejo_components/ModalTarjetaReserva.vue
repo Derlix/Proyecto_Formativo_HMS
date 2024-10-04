@@ -347,7 +347,7 @@ const generarPDF = () => {
     doc.addImage(imgData, 'PNG', imgX, imgY, imgWidth, imgHeight); // Agregar imagen al PDF
 
     // Guarda el PDF después de que se haya agregado la imagen
-    doc.save('reserva.pdf');
+    doc.save('Tarjeta_Reserva.pdf');
   };
 
   img.onerror = function () {
