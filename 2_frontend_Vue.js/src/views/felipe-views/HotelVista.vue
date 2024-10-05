@@ -112,13 +112,14 @@
       <!-- Modal de cambiar id de hotel -->
       <CardBoxModal
         v-model="showModalCambiarHotelId"
-        title="Confirmar cambio de hotel"
-        buttonLabel="Cambiar hotel"
+        title="Cambiar de hotel"
+        buttonLabel="Confirmar"
         hasCancel
         @confirm="confirmCambiarHotel"
         @cancel="closeConfirmCambiarHotelModal"
       >
-        <p>¿Estás seguro de que deseas cambiar a este hotel?</p>
+      <!-- Mostrar mensaje y id del hotel al que va cambiar -->
+        <p class="text-center text-base">¿Estás seguro de cambiar a <b>{{ hotelToCambiar?.nombre }}</b>?</p> 
       </CardBoxModal>
        
 
@@ -175,6 +176,9 @@ export default {
     userIdHotel() {
       return mainStore.userIdHotel;
     }
+  },
+  onMounted: () => {
+    fetchHotels();
   },
   data() {
     return {

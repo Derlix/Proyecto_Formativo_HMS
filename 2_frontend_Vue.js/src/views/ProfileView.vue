@@ -15,6 +15,7 @@ import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue'
 import { updatePassword, updateCurrentUser } from '@/services/userService'
 import NotificationBar from '@/components/alejo_components/NotificationBar.vue';
+import TitleIconOnly from '@/components/TitleIconOnly.vue'
 
 const mainStore = useMainStore()
 const modalMessage = ref('');
@@ -121,17 +122,8 @@ const submitPass = async () => {
 <template>
   <LayoutAuthenticated>
     <SectionMain>
-      <SectionTitleLineWithButton :icon="mdiAccount" title="Perfil" main>
-        <BaseButton
-          href="https://github.com/justboil/admin-one-vue-tailwind"
-          target="_blank"
-          :icon="mdiGithub"
-          label="Star on GitHub"
-          color="contrast"
-          rounded-full
-          small
-        />
-      </SectionTitleLineWithButton>
+      <TitleIconOnly :icon="mdiAccount" title="Perfil" />
+
 
       <UserCard class="mb-6" />
 
