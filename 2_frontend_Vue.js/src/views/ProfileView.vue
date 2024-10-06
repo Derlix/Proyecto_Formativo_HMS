@@ -23,6 +23,7 @@ const isAlertVisible = ref(false);
 const isAlertUserVisible = ref(false);
 const colorAlert = ref('');
 const isModalVisible = ref(false);
+const imageFile = ref(null);
 
 const profileForm = reactive({
   name: mainStore.userName,
@@ -36,12 +37,23 @@ const passwordForm = reactive({
 })
 // mainStore.setUser(profileForm)
 
+const onImageChange = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    imageFile.value = file;
+  }
+};
+
 const submitProfile = async () => {
-  if (profileForm.name !== mainStore.userName || profileForm.email !== mainStore.userEmail) {
+  if (profileForm.name !== mainStore.userName || profileForm.email !== mainStore.userEmail || imageFile.value) {
     try {
+      // Asegúrate de pasar correctamente el rol, estado y la imagen
       const response = await updateCurrentUser(
-        profileForm.name,
-        profileForm.email
+        profileForm.name, // fullName
+        profileForm.email, // email
+        mainStore.userRole, // userRole (debe ser un valor texto o numérico, no un archivo)
+        mainStore.userStatus, // userStatus (debe ser el estado, si lo tienes)
+        imageFile.value // imageFile (archivo de imagen seleccionado)
       );
 
       modalMessage.value = "Perfil actualizado con éxito";
@@ -52,36 +64,33 @@ const submitProfile = async () => {
         isAlertUserVisible.value = false;
       }, 10000);
 
-      // Update the main store with the new user data
+      // Actualiza el store principal con los nuevos datos
       mainStore.setUser({
         name: profileForm.name,
         email: profileForm.email
       });
 
-      console.log('Profile actualizado');
     } catch (error) {
-
-      modalMessage.value = 'Error al actualizar el perfil';
+      // Captura el error y muéstralo en la consola
+      console.error("Error al actualizar el perfil:", error);
+      modalMessage.value = 'Error al actualizar el perfil. Verifica la consola para más detalles.';
       isAlertUserVisible.value = true;
       colorAlert.value = 'danger';
 
       setTimeout(() => {
         isAlertUserVisible.value = false;
       }, 10000);
-
     }
   } else {
     modalMessage.value = 'No hay cambios en el perfil';
-
     isAlertUserVisible.value = true;
     colorAlert.value = 'danger';
-    
+
     setTimeout(() => {
       isAlertUserVisible.value = false;
     }, 10000);
-  
   }
-}
+};
 
 const submitPass = async () => {
   if (passwordForm.password === passwordForm.password_confirmation) {
@@ -130,7 +139,7 @@ const submitPass = async () => {
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <CardBox is-form @submit.prevent="submitProfile">
           <FormField label="Avatar" help="Max 500kb">
-            <FormFilePicker label="Cargar" />
+            <FormFilePicker label="Cargar" @change="onImageChange" accept="image/*" />
           </FormField>
 
           <NotificationBar
