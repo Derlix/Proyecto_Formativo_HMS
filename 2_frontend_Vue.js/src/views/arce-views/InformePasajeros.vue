@@ -64,52 +64,58 @@ onMounted(() => {
             <div v-for="(habitaciones, piso) in habitacionesPorPiso" :key="piso">
                 <SectionTitle>Piso {{ piso }}</SectionTitle>
                 
-                <table class="min-w-full rounded-lg shadow-md overflow-hidden lg:table mt-4">
-                    <thead>
-                        <tr class="text-sm leading-normal">
-                            <th class="py-3 px-6 text-left">Habitación</th>
-                            <th class="py-3 px-6 text-left">Categoría</th>
-                            <th class="py-3 px-6 text-left">Estado</th>
-                            <th class="py-3 px-6 text-left">Precio</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr 
-                            v-for="habitacion in habitaciones" 
-                            :key="habitacion.id_habitacion" 
-                        >
-                            <td class="py-3 px-6 text-left whitespace-nowrap">{{ habitacion.numero_habitacion }}</td>
-                            <td class="py-3 px-6 text-left">{{ habitacion.categoria.tipo_habitacion }}</td>
-                            <td class="py-3 px-6 text-left">{{ habitacion.estado }}</td>
-                            <td class="py-3 px-6 text-left">$ {{ habitacion.precio_actual }}</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full rounded-lg shadow-md lg:table mt-4">
+                        <thead>
+                            <tr class="text-sm leading-normal">
+                                <th class="py-3 px-6 text-left">Habitación</th>
+                                <th class="py-3 px-6 text-left">Categoría</th>
+                                <th class="py-3 px-6 text-left">Estado</th>
+                                <th class="py-3 px-6 text-left">Precio</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr 
+                                v-for="habitacion in habitaciones" 
+                                :key="habitacion.id_habitacion" 
+                                class="hover:bg-gray-100"
+                            >
+                                <td class="py-3 px-6 text-left whitespace-nowrap" data-label="Habitación">{{ habitacion.numero_habitacion }}</td>
+                                <td class="py-3 px-6 text-left" data-label="Categoría">{{ habitacion.categoria.tipo_habitacion }}</td>
+                                <td class="py-3 px-6 text-left" data-label="Estado">{{ habitacion.estado }}</td>
+                                <td class="py-3 px-6 text-left" data-label="Precio">$ {{ habitacion.precio_actual }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             <BaseDivider/>
 
             <SectionTitle>Recopilación de habitaciones activas</SectionTitle>
 
-            <table class="min-w-full rounded-lg shadow-md overflow-hidden lg:table mt-4">
-                <thead>
-                    <tr class="text-sm leading-normal">
-                        <th class="py-3 px-6 text-left">Piso</th>
-                        <th class="py-3 px-6 text-left">Habitaciones Activas</th>
-                        <th class="py-3 px-6 text-left">Monto Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr 
-                        v-for="resumen in resumenPorPiso" 
-                        :key="resumen.piso" 
-                        class="hover:bg-gray-100">
-                        <td class="py-3 px-6 text-left">{{ resumen.piso }}</td>
-                        <td class="py-3 px-6 text-left">{{ resumen.totalHabitacionesActivas }}</td>
-                        <td class="py-3 px-6 text-left">$ {{ resumen.montoTotal.toFixed(2) }}</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="overflow-x-auto">
+                <table class="min-w-full rounded-lg shadow-md lg:table mt-4">
+                    <thead>
+                        <tr class="text-sm leading-normal">
+                            <th class="py-3 px-6 text-left">Piso</th>
+                            <th class="py-3 px-6 text-left">Habitaciones Activas</th>
+                            <th class="py-3 px-6 text-left">Monto Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr 
+                            v-for="resumen in resumenPorPiso" 
+                            :key="resumen.piso" 
+                            class="hover:bg-gray-100"
+                        >
+                            <td class="py-3 px-6 text-left" data-label="Piso">{{ resumen.piso }}</td>
+                            <td class="py-3 px-6 text-left" data-label="Habitaciones Activas">{{ resumen.totalHabitacionesActivas }}</td>
+                            <td class="py-3 px-6 text-left" data-label="Monto Total">$ {{ resumen.montoTotal.toFixed(2) }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </SectionMain>
     </LayoutAuthenticated>
 </template>
