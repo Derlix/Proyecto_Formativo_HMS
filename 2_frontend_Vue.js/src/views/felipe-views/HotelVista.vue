@@ -10,9 +10,13 @@ import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.
   <LayoutAuthenticated>
     <SectionMain>
       <SectionTitleLineWithButton title="Administración De Hoteles" />
+
+      <div class="text-right">
+        <p class="py-5 text-xl">ID del hotel que opera actualmente: <span class="font-bold">{{ userIdHotel }}</span></p>
+      </div>
+      
       <TablaHotel></TablaHotel>
     </SectionMain>
 
   </LayoutAuthenticated>
 </template>
-

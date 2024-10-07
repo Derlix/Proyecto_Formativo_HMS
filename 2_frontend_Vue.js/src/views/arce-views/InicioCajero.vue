@@ -15,7 +15,49 @@ import {
   mdiBallotOutline
 } from '@mdi/js'
 import { obtenerTodasHabitacion } from '@/services/habitacionService'
+import { getAllFacturas } from '@/services/brayan_service/FacturacionService'
+import { obtenerTodasCuentasHuesped } from '@/services/cuentahuespedService'
+import ModalRegistrarFondos from '@/components/miguel_compnents/ModalRegistrarFondos.vue'
+
+
+const showModalRegistrarFondos = ref(false)
 const habitacionesMantenimiento = ref(0)
+const depositosEmitidos = ref(0)
+const facturasEmitidas = ref(0)
+const facturasProceso = ref(0)
+
+const fetchCuentas = async () => {
+  try {
+    const response = await obtenerTodasCuentasHuesped()
+    const cuentas = response.data 
+    
+    if (Array.isArray(cuentas)) {
+      depositosEmitidos.value = cuentas.filter(
+        (c) => c.id_reserva.valor_deposito > 0
+      ).length
+    } else {
+      console.error('La respuesta no es un array:', cuentas)
+    }
+  } catch (error) {
+    console.error('Error al obtener cuentas:', error)
+  }
+}
+
+
+const fetchFacturas = async () => {
+  try {
+    const facturas = await getAllFacturas()
+    facturasEmitidas.value = facturas.filter(
+      (f) => f.estado === 'PAGADA'
+    ).length
+    facturasProceso.value = facturas.filter(
+      (f) => f.estado === 'PENDIENTE'
+    ).length
+  } catch (error) {
+    console.error('Error al obtener facturas:', error)
+  }
+}
+
 
 const fetchHabitaciones = async () => {
   try {
@@ -29,6 +71,8 @@ const fetchHabitaciones = async () => {
 }
 
 onMounted(() => {
+  fetchCuentas()
+  fetchFacturas()
   fetchHabitaciones()
 })
 </script>
@@ -47,19 +91,19 @@ onMounted(() => {
 
       <div class="grid grid-cols-1 gap-4 lg:grid-cols-3 mb-6 mt-4 text-white">
         <CardBoxWidget
-          :number="50"
+          :number="facturasEmitidas"
           label="Pagos recibidos"
           :icon="mdiCurrencyUsd"
           :cardColor="'bg-green-500'"
         />
         <CardBoxWidget
-          :number="50"
+          :number="depositosEmitidos"
           label="Depósitos recibidos"
           :icon="mdiCash"
           :cardColor="'bg-sky-500'"
         />
         <CardBoxWidget
-          :number="50"
+          :number="facturasEmitidas"
           label="Facturas emitidas"
           :icon="mdiFileDocument"
           :cardColor="'bg-blue-950'"
@@ -69,7 +113,7 @@ onMounted(() => {
       <div class="flex gap-4 text-white">
         <CardBoxWidget
           class="flex-1"
-          :number="50"
+          :number="facturasProceso"
           label="Facturas en proceso recibidos"
           :icon="mdiInboxArrowDown"
           :cardColor="'bg-amber-500'"
@@ -87,9 +131,12 @@ onMounted(() => {
         <CardBox class="shadow-md">
           <SectionTitle>Registro Fondos Caja de Recepción</SectionTitle>
           <div class="grid grid-cols-2 gap-4">
-            <button class="bg-blue-600 h-12 rounded-lg font-bold hover:bg-blue-900 text-white">
+            <button 
+            @click="showModalRegistrarFondos = true"
+            class="bg-blue-600 h-12 rounded-lg font-bold hover:bg-blue-900 text-white">
               Registrar Fondos
             </button>
+            <ModalRegistrarFondos :visible="showModalRegistrarFondos" @cerrar="showModalRegistrarFondos = false" />
             <button class="bg-blue-600 h-12 rounded-lg font-bold hover:bg-blue-900 text-white">
               Ver todos los registros
             </button>

@@ -6,7 +6,7 @@ import Home from '@/views/HomeView.vue'
 import Profile from '@/views/ProfileView.vue'
 import Reservas from '@/views/busta-views/Reservas.vue'
 import HistorialReservas from '@/views/busta-views/HistorialReservas.vue'
-import InformeAmaLlaves from '@/views/busta-views/InformeAmaLlaves.vue'
+import InformeAmaLlaves from '@/views/nico-views/InformeAmaLlaves.vue'
 import ListaPasajeros from '@/views/busta-views/ListaPasajeros.vue'
 import ComprobanteDescuentos from '@/views/busta-views/ComprobanteDescuentos.vue'
 import GestorHotel from '@/views/busta-views/GestorHotel.vue'
@@ -42,6 +42,16 @@ const routes = [
     path: '/inicio-jefe-recepcionista',
     name: 'inicio_jefe_recepcionista',
     component: InicioJefeRecepcionista,
+    meta: { requiresAuth: true}
+
+  },
+  {
+    meta: {
+      title: 'comprobante-descuento'
+    },
+    path: '/comprobante-descuento',
+    name: 'comprobante_descuento',
+    component: ComprobanteDescuentos,
     meta: { requiresAuth: true}
 
   },

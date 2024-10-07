@@ -32,6 +32,10 @@ onMounted(() => {
   obtenerDataIP()
 })
 
+onMounted(() => {
+  mainStore.fetchADatosUsuario();
+});
+
 const userSwitchVal = ref(false)
 </script>
 
@@ -55,9 +59,9 @@ const userSwitchVal = ref(false)
         </h1>
         <p class="text-base">Rol: <b>{{ userRole }}</b>.</p>
         <p>Conexion actual en: <b>{{ dataIP?.city || 'unknown' }},{{ dataIP?.country || 'unknown' }}</b>.</p>
-        <div class="flex justify-center md:block">
-          <PillTag label="Verified" color="info" :icon="mdiCheckDecagram" />
-        </div>
+        <!-- <div class="flex justify-center md:block">
+          <PillTag label="Verificado" color="info" :icon="mdiCheckDecagram" />
+        </div> -->
       </div>
     </BaseLevel>
   </CardBox>

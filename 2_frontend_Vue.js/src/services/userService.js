@@ -83,14 +83,16 @@ export const updateUser = async (userId, fullName, email, userRole, userStatus, 
 };
 
 // Función para actualizar el usuario actual
-export const updateCurrentUser = async (fullName, email, userRole, userStatus, fileImg) => {
+export const updateCurrentUser = async (fullName, email, userRole, userStatus, fileImg = null) => {
   try {
     const formData = new FormData();
     if (fullName) formData.append('nombre_completo', fullName);
     if (email) formData.append('email', email);
     if (userRole) formData.append('usuario_rol', userRole);
     if (userStatus !== undefined) formData.append('usuario_estado', userStatus);
-    if (fileImg) formData.append('file_img', fileImg);
+    if (fileImg) {
+      formData.append('file_img', fileImg);
+    }
 
     const response = await api.put(`/usuarios/update-self/`, formData, {
       headers: {

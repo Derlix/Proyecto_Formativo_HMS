@@ -71,7 +71,7 @@ export const getProductsByPage = async(page = 1, pageSize = 10) => {
         return response;
     } catch (error) {
         if (error.response) {
-            throw error.response; // Devuelve el error original de la API
+            throw error.response;
         } else {
             throw new Error('Error de red o de servidor');
         }   

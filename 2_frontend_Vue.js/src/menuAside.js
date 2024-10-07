@@ -37,6 +37,12 @@ export default [
     modulo: 'home_cajero',
   },
   {
+    to: '/comprobante-descuento',
+    label: 'Com. Descuento',
+    icon: mdiTicket,
+    modulo: 'facturacion'
+  },
+  {
     to: '/informe-pasajeros',
     icon: mdiMonitor,
     label: 'informe pasajeros',
@@ -89,12 +95,6 @@ export default [
     icon: mdiDoorOpen ,
     modulo: 'habitacion'
   },
-  /* {
-    to: '/comprobante-descuento',
-    label: 'Com. Descuento',
-    icon: mdiTicket,
-    modulo: 'facturacion'
-  }, */
   {
     to: '/informe-ama-llaves',
     label: 'Inf. Ama llaves',
