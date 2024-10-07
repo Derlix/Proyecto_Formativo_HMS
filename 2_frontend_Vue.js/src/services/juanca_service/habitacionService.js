@@ -62,6 +62,25 @@ export const obtenerHabitacionPorId = async (id_habitacion) => {
   }
 };
 
+// Función para obtener habitaciones paginadas
+export const obtenerHabitacionesPaginadas = async (page = 1, pageSize = 10) => {
+  try {
+    const response = await api.get(`/habitacion/paginated-habitaciones-detalles/?page=${page}&page_size=${pageSize}`, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('access_token')}` // Incluye el token de autenticación
+      }
+    });
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      console.error('Error de la API:', error.response.data);
+      throw new Error(error.response.data.detail || 'Error al procesar la solicitud');
+    } else {
+      throw new Error('Error de red o de servidor');
+    }
+  }
+};
+
 // Función para actualizar una habitación existente (PUT)
 export const actualizarHabitacion = async (id_habitacion, estado, piso, precio_actual, id_usuario, numero_habitacion, id_categoria_habitacion) => {
   try {
