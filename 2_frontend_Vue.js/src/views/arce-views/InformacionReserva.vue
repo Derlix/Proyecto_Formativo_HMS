@@ -1,18 +1,50 @@
 <script setup>
-import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
+import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import SectionMain from '@/components/SectionMain.vue';
 import { mdiBallotOutline } from '@mdi/js';
 import TitleIconOnly from '@/components/TitleIconOnly.vue';
 import SectionTitle from '@/components/SectionTitle.vue';
 import CardBox from '@/components/CardBox.vue';
-import { reactive } from 'vue';
+import { reactive, onMounted } from 'vue';
+import { getHuespedByDocument } from '@/services/huespedService';
+
+const numeroDocumento = '1012345678'; // Cédula fija
 
 const infoHuesped = reactive({
-    nombre: "María Pérez",
-    email: "maria.perez@example.com",
-    telefono: "5551234567",
-    ocupacion: "Ingeniera"
-})
+    nombre: "",
+    email: "",
+    telefono: "",
+    ocupacion: ""
+});
+
+const error = reactive({
+    message: null
+});
+
+const fetchHuesped = async () => {
+    try {
+        const response = await getHuespedByDocument(numeroDocumento);
+        error.message = null; // Limpiar el error si la llamada fue exitosa
+
+        // Asignar los datos necesarios a infoHuesped
+        infoHuesped.nombre = response.data.nombre_completo; 
+        infoHuesped.email = response.data.email;
+        infoHuesped.telefono = response.data.telefono;
+        infoHuesped.ocupacion = response.data.ocupacion;
+    } catch (err) {
+        error.message = err.response ? err.response.data : 'Error de red o de servidor';
+        // Limpiar los datos del huésped si hay un error
+        infoHuesped.nombre = "";
+        infoHuesped.email = "";
+        infoHuesped.telefono = "";
+        infoHuesped.ocupacion = "";
+    }
+};
+
+// Llamar a la función al montar el componente
+onMounted(() => {
+    fetchHuesped();
+});
 
 const infoReserva = reactive({
     tipo: "Suite",
@@ -20,17 +52,17 @@ const infoReserva = reactive({
     cantidad: 2,
     cambio: "No",
     comprovante: "comprovante_12345.pdf",
-})
+});
 
 const infoCheck = reactive({
     llegada: "2024-10-01",
     salida: "2024-10-05",
-})
+});
 
 const infoDinero = reactive({
     adelanto: "$150.00",
     medio: "Tarjeta de Crédito",
-})
+});
 </script>
 
 <template>
@@ -39,15 +71,9 @@ const infoDinero = reactive({
             <TitleIconOnly :icon="mdiBallotOutline" title="Información reserva" />
 
             <div class="flex flex-col sm:flex-row justify-end mb-4">
-                <button
-                    class="bg-blue-600 h-12 rounded-lg my-2 font-bold hover:bg-blue-900 text-white py-2 px-4 mx-1">Factura
-                    temporal</button>
-                <button
-                    class="bg-blue-600 h-12 rounded-lg my-2 font-bold hover:bg-blue-900 text-white py-2 px-4 mx-1">Crear
-                    check-out</button>
-                <button
-                    class="bg-blue-600 h-12 rounded-lg my-2 font-bold hover:bg-blue-900 text-white py-2 px-4 mx-1">Complementada
-                    con éxito</button>
+                <button class="bg-blue-600 h-12 rounded-lg my-2 font-bold hover:bg-blue-900 text-white py-2 px-4 mx-1">Factura temporal</button>
+                <button class="bg-blue-600 h-12 rounded-lg my-2 font-bold hover:bg-blue-900 text-white py-2 px-4 mx-1">Crear check-out</button>
+                <button class="bg-blue-600 h-12 rounded-lg my-2 font-bold hover:bg-blue-900 text-white py-2 px-4 mx-1">Complementada con éxito</button>
             </div>
 
             <CardBox class="shadow-md mb-4">
