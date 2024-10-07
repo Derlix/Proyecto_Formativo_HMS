@@ -141,6 +141,12 @@ export default [
     label: 'Control Usuarios',
     icon: mdiAccountGroup,
     modulo: 'usuarios'
+  },
+  {
+    to: '/cuenta-huesped',
+    label: 'Cuentas Huesped',
+    icon: mdiCardAccountDetails,
+    modulo: 'usuarios'
   }
 
 ]
