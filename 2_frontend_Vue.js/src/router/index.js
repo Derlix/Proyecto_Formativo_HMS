@@ -24,6 +24,7 @@ import VistaHabitaciones from '@/views/camilo-views/VistaHabitaciones.vue'
 import InicioJefeRecepcionista from '@/views/arce-views/DashboardAdmin.vue'
 import UsuariosView from '@/views/arias_views/UsuariosView.vue'
 
+
 const routes = [
   {
     meta: {
@@ -299,7 +300,16 @@ const routes = [
     name: 'controUsuario',
     component: UsuariosView,
     meta: { requiresAuth: true}
-  }
+  },
+  {
+    meta: {
+      title: 'Cuenta Huesped'
+    },
+    path: '/cuenta-huesped',
+    name: 'cuenta Huesped',
+    component: () => import('@/views/felipe-views/CuentaHuespedView.vue'),
+    meta: { requiresAuth: true}
+  },
 
   
 ]
