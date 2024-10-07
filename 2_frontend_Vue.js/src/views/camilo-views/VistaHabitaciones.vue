@@ -19,12 +19,14 @@
         @save="guardarHabitacion"
       />
 
+
       <!-- Modal para mostrar detalles de la habitación -->
       <RoomDetailsModal
         :visible="showDetailsModal"
         :habitacion="habitacionDetalles"
         @close="showDetailsModal = false"
       />
+
 
       <!-- Modal para confirmar eliminación -->
       <CardBoxModal
@@ -38,64 +40,80 @@
         <p>¿Estás seguro de que deseas eliminar esta habitación?</p>
       </CardBoxModal>
 
-      <!-- Tabla de habitaciones -->
-      <table class="table-auto w-full border-collapse border border-gray-300 dark:border-gray-600">
-        <thead>
-          <tr class="bg-gray-200 dark:bg-gray-800">
-            <th class="border border-gray-300 dark:border-gray-600 px-4 py-2">Número</th>
-            <th class="border border-gray-300 dark:border-gray-600 px-4 py-2">Piso</th>
-            <th class="border border-gray-300 dark:border-gray-600 px-4 py-2">Categoría</th>
-            <th class="border border-gray-300 dark:border-gray-600 px-4 py-2">Estado</th>
-            <th class="border border-gray-300 dark:border-gray-600 px-4 py-2">Precio</th>
-            <th class="border border-gray-300 dark:border-gray-600 px-4 py-2">Características</th>
-            <th class="border border-gray-300 dark:border-gray-600 px-4 py-2">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="habitacion in habitaciones"
-            :key="habitacion.id_habitacion"
-            class="border-b border-gray-200 hover:bg-gray-100"
-          >
-            <td class="py-3 px-6 text-left">{{ habitacion.numero_habitacion }}</td>
-            <td class="py-3 px-6 text-left">{{ habitacion.piso }}</td>
-            <td class="py-3 px-6 text-left">{{ habitacion.categoria ? habitacion.categoria.tipo_habitacion: 'N/A' }}</td>
-            <td class="py-3 px-6 text-left">
-              <span :class="{
-                  'inline-block px-3 py-1 text-xs font-semibold rounded-full': true,
-                  'text-green-700 bg-green-200 dark:text-green-100 dark:bg-green-600': habitacion.estado === 'ACTIVO',
-                  'text-yellow-700 bg-yellow-200 dark:text-yellow-100 dark:bg-yellow-600': habitacion.estado === 'MANTENIMIENTO',
-                  'text-red-700 bg-red-200 dark:text-red-100 dark:bg-red-600': habitacion.estado === 'INACTIVO'
-                }">
-                {{ habitacion.estado }}
-              </span>
-            </td>
-            <td class="py-3 px-6 text-left">{{ habitacion.precio_actual }}</td>
-            <td class="py-3 px-6 text-left">
-              <button
-                @click="verDetalles(habitacion)"
-                class="bg-yellow-500 text-white px-2 py-1 rounded-md ml-2 shadow-sm hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500"
-              >
-                Detalles
-              </button>
-            </td>
-            <td class="py-3 px-6 text-center">
-              <button
-                @click="editarHabitacion(habitacion)"
-                class="bg-blue-500 text-white px-4 py-2 rounded-md mr-2 shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                Editar
-              </button>
-              <button
-                @click="confirmarEliminacion(habitacion.id_habitacion)"
-                class="bg-red-500 text-white px-4 py-2 rounded-md shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
-              >
-                Eliminar
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+
+      <!-- Tabla de habitacion -->
+      <div class="w-full overflow-auto mb-4">
+        <table>
+          <thead>
+            <tr>
+              <th />
+              <th>ID</th>
+              <th>Número Habitación</th>
+              <th>Estado</th>
+              <th>Piso</th>
+              <th>Precio Actual</th>
+              <th>Acciones</th>
+              <th />
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="habitaciones in habitacion" :key="habitaciones.id_habitacion">
+              <td class="border-b-0 lg:w-6 before:hidden"></td>
+              <td data-label="ID HABITACION">{{ habitaciones.id_habitacion }}</td>
+              <td data-label="NUMERO HABITACION">{{ habitaciones.numero_habitacion }}</td>
+              <td data-label="ESTADO">{{ habitaciones.estado }}</td>
+              <td data-label="PISO">{{ habitaciones.piso }}</td>
+              <td data-label="PRECIO ACTUAL">{{ habitaciones.precio_actual }}</td>
+              <td class="before:hidden lg:w-1 whitespace-nowrap">
+                <BaseButtons type="justify-start lg:justify-end" no-wrap>
+                  <!-- Botón de Detalles (color amarillo) -->
+                  <BaseButton
+                    @click="verDetalles(habitaciones)"
+                    :icon="mdiEye"
+                    small
+                    color="warning"
+                  />
+
+                  <!-- Botón de Editar (color verde con el ícono de editar) -->
+                  <BaseButton
+                    @click="editarHabitacion(habitaciones)"
+                    :icon="mdiNoteEdit"
+                    small
+                    color="success"
+                  />
+
+                  <!-- Botón de Eliminar (color rojo) -->
+                  <BaseButton
+                    @click="confirmarEliminacion(habitaciones.id_habitacion)"
+                    :icon="mdiTrashCan"
+                    small
+                    color="danger"
+                  />
+                </BaseButtons>
+              </td>
+
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800 relative" style="overflow-x: auto; white-space: nowrap;">
+        <BaseLevel>
+          <small>Página {{ currentPage }} de {{ totalPaginas }}</small>
+          <br>
+          <BaseButtons style="display: inline-flex; overflow-x: auto; flex-wrap: nowrap;">
+            <BaseButton
+              v-for="page in totalPaginas"
+              :key="page"
+              :active="page === currentPage"
+              :label="page"
+              :color="page === currentPage ? 'lightDark' : 'whiteDark'"
+              small
+              @click="currentPage = page; obtenerHabitaciones(currentPage)"
+            />
+          </BaseButtons>
+        </BaseLevel>
+      </div>
+
     </div>
   </LayoutAuthenticated>
 </template>
@@ -106,24 +124,32 @@ import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import RoomModal from '@/components/juanca_components/RoomModal.vue';
 import RoomDetailsModal from '@/components/juanca_components/RoomDetailsModal.vue';
 import CardBoxModal from '@/components/CardBoxModal.vue';
-import { obtenerTodasHabitaciones, eliminarHabitacion} from '@/services/juanca_service/habitacionService';
+import BaseButton from '@/components/BaseButton.vue';
+import BaseButtons from '@/components/BaseButtons.vue';
+import { mdiEye, mdiTrashCan,mdiNoteEdit } from '@mdi/js';
+import { obtenerHabitacionesPaginadas, eliminarHabitacion} from '@/services/juanca_service/habitacionService';
 
-const habitaciones = ref([]);
+const habitacion = ref([]);
 const showModal = ref(false);
 const showDetailsModal = ref(false);
 const showConfirmModal = ref(false);
 const habitacionSeleccionada = ref({});
 const habitacionDetalles = ref({});
 const habitacionAEliminar = ref(null);
+const totalPaginas = ref(0); // Cambiado a ref
+const currentPage = ref(1); // Cambiado a ref
 
-const obtenerHabitaciones = async () => {
+const obtenerHabitaciones = async (page = 1) => {
   try {
-    const response = await obtenerTodasHabitaciones();
-    habitaciones.value = response.data;
+    const response = await obtenerHabitacionesPaginadas(page, 10);
+    console.log("Respuesta de la API:", response); // Para ver la respuesta completa
+    habitacion.value = response.habitacion; // Cambia aquí
+    totalPaginas.value = response.total_paginas; // Cambia aquí
   } catch (error) {
-    console.error("Error al obtener las habitaciones:", error.message);
+    console.error("Error al obtener las habitacion:", error.message);
   }
 };
+
 
 const verDetalles = (habitacion) => {
   habitacionDetalles.value = habitacion;
