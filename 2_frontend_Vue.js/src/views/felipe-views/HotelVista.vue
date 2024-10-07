@@ -119,7 +119,7 @@
         @cancel="closeConfirmCambiarHotelModal"
       >
       <!-- Mostrar mensaje y id del hotel al que va cambiar -->
-        <p class="text-center text-base">¿Estás seguro de cambiar a <b>{{ hotelToCambiar?.nombre }}</b>?</p> 
+        <p class="text-center text-2xl">¿Estás seguro de cambiar a <b class="text-blue-600	">{{ hotelToCambiar?.nombre }}</b>?</p> 
       </CardBoxModal>
        
 

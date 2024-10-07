@@ -1,7 +1,7 @@
 <script setup>
 import { mdiForwardburger, mdiBackburger, mdiMenu } from '@mdi/js'
-import { ref, computed } from 'vue'
-// import { useMainStore } from '@/stores/main'
+import { ref, computed, onMounted } from 'vue'
+import { useMainStore } from '@/stores/main'
 import { useRouter } from 'vue-router'
 import menuAside from '@/menuAside.js'
 import menuNavBar from '@/menuNavBar.js'
@@ -18,12 +18,16 @@ import FooterBar from '@/components/FooterBar.vue'
 const layoutAsidePadding = 'xl:pl-60'
 const darkModeStore = useDarkModeStore()
 const LogoutModeStore = useLogoutModeStore()
-// const mainStore = useMainStore()
+const mainStore = useMainStore()
 const authStore = useAuthStore() // Usar el store de autenticación
 const router = useRouter()
 
 const isAsideMobileExpanded = ref(false)
 const isAsideLgActive = ref(false)
+
+// onMounted(() => {
+//   mainStore.fetchADatosUsuario();
+// });
 
 // const userRole = computed(() => mainStore.userRole)
 
