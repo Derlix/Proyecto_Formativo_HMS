@@ -1,11 +1,30 @@
 import api from '@/services/api';
-export const createCuentaHuesped = async (cuentaHuespedData) => {
+
+
+export const createCuentaHuesped = async (id_reserva, id_huesped, tipo_movimiento, monto , estado, fecha_movimiento) => {
   try {
-    const response = await api.post('/create_cuenta_huesped', cuentaHuespedData);
-    return response.data;
+    const payload = {
+      id_reserva,
+      id_huesped,
+      tipo_movimiento,
+      monto,
+      estado,
+      fecha_movimiento,
+    };
+
+    const response = await api.post('/cuenta-huesped/create_cuenta_huesped', payload, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    return response;
   } catch (error) {
-    console.error('Error al crear la cuenta de huésped:', error);
-    throw error.response.data.detail;
+    if (error.response) {
+      throw error.response; // Devuelve el error original de la API
+    } else {
+      throw new Error('Error de red o de servidor');
+    }
   }
 };
 
@@ -53,7 +72,8 @@ export const getCuentaHuespedByIdCuenta = async (idCuenta) => {
     
     export const updateCuentaHuesped = async (idCuenta, cuentaHuespedData) => {
       try {
-        const response = await api.put('/update-cuenta_huesped', { id_cuenta: idCuenta, ...cuentaHuespedData });
+        const response = await api.put(`/cuenta-huesped/update-cuenta_huesped/?id_cuenta=${idCuenta}`, cuentaHuespedData);
+
         return response.data;
       } catch (error) {
         console.error('Error al actualizar la cuenta de huésped:', error);
@@ -63,7 +83,7 @@ export const getCuentaHuespedByIdCuenta = async (idCuenta) => {
 
     export const getCuentasHuespedesByPage = async (page = 1, pageSize = 10) => {
       try {
-        const response = await api.get('/cuenta_huespedes-by-page', {
+        const response = await api.get(`/cuenta-huesped/cuenta_huespedes-by-page/?page=${page}&page_size=${pageSize}`, {
           params: { page, page_size: pageSize }
         });
         return response;
@@ -75,7 +95,7 @@ export const getCuentaHuespedByIdCuenta = async (idCuenta) => {
     
     export const deleteCuentaHuesped = async (idCuenta) => {
       try {
-        const response = await api.delete(`/delete-cuenta_huesped/${idCuenta}`);
+        const response = await api.delete(`/cuenta-huesped/delete-cuenta_huesped/${idCuenta}`);
         return response.data;
       } catch (error) {
         console.error('Error al eliminar la cuenta de huésped:', error);
