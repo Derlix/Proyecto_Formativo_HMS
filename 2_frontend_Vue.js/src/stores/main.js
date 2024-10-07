@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import axios from 'axios'
-import { useAuthStore } from '@/stores' // Importa el store de autenticación
+import { useAuthStore } from '@/stores' // Importar el store de autenticación
+import { getUserByEmail } from '@/services/userService' // Importar la función para obtener información del usuario por email
 
 export const useMainStore = defineStore('main', () => {
 
@@ -12,43 +12,19 @@ export const useMainStore = defineStore('main', () => {
   const userRole = computed(() => authStore.user?.usuario_rol || 'undefined');
   const userID = computed(() => authStore.user?.user_id || 'undefined');
   const userIdHotel = computed(() => authStore.user?.id_hotel || 'undefined');
-  // Condicion para saber si es de noche
-  // if (moment().format('HH') >= 20 || moment().format('HH') < 6) {
-  //   console.log('Es de noche');
-  // }
 
-  // Sirve para mostrar la imagen de perfil del usuario
+  // Usado para mostrar la imagen de perfil del usuario
   const userProfile = computed(() => {
     return authStore.user?.img_profile ? `${import.meta.env.VITE_API_URL}/${authStore.user.img_profile}` : null;
   });
 
-  // Función para obtener la imagen de perfil del usuario
+  // Función para obtener la imagen de avatar del usuario
   const userAvatar = computed(() => {
-    // Si el usuario tiene una imagen de perfil, la devuelve
-    if (userProfile.value) {
-      return userProfile.value;
-      // Si no tiene imagen de perfil, devuelve una imagen por defecto según el rol
-    } else {
-      if (userRole.value === 'SuperAdmin') {
-        return 'src/assets/img/super-admin.png';
-      } else if (userRole.value === 'Recepcionista') {
-        return 'src/assets/img/recepcionista.png';
-      } else if (userRole.value === 'Cajero') {
-        return 'src/assets/img/cajero.png';
-      } else if (userRole.value === 'AuditorNocturno') {
-        return 'src/assets/img/auditor-nocturno.png';
-      } else if (userRole.value === 'JefeRecepcion') {
-        return 'src/assets/img/jefe-recepcion.png';
-      } else {
-        return 'src/assets/img/default.png';
-      }
-    }
-  });
+  if (userProfile.value) {
+    return userProfile.value;
+  }});
   
   const isFieldFocusRegistered = ref(false)
-
-  const clients = ref([])
-  const history = ref([])
 
   function setUser(payload) {
     const user = JSON.parse(localStorage.getItem('user')) || {};
@@ -65,34 +41,44 @@ export const useMainStore = defineStore('main', () => {
     if (payload.user_id) {
       user.user_id = payload.user_id;
     }
+    if (payload.id_hotel) {
+      user.id_hotel = payload.id_hotel;
+    }
+    if (payload.img_profile) {
+      user.img_profile = payload.img_profile;
+    }
 
-    // Actualiza el store de autenticación
+    // Actualizar el store de autenticación
     authStore.user = { ...authStore.user, ...user };
 
     localStorage.setItem('user', JSON.stringify(user));
   }
 
-  function fetchSampleClients() {
-    axios
-      .get(`data-sources/clients.json?v=3`)
-      .then((result) => {
-        clients.value = result?.data?.data
-      })
-      .catch((error) => {
-        alert(error.message)
-      })
-  }
+  const fetchADatosUsuario = async () => {
+    if (typeof getUserByEmail !== 'function') {
+      // Si getUserByEmail no está disponible, usar datos del localStorage
+      const user = JSON.parse(localStorage.getItem('user')) || {};
+      authStore.user = { ...authStore.user, ...user };
+      return;
+    }
+    try {
+      const response = await getUserByEmail(userEmail.value);
+      setUser({
+        name: response.data.nombre_completo,
+        email: response.data.email,
+        usuario_rol: response.data.usuario_rol,
+        user_id: response.data.id_usuario,
+        id_hotel: response.data.id_hotel,
+        img_profile: response.data.img_profile
+      });
+    } catch (error) {
+      // Si hay un error, usar datos del localStorage
+      const user = JSON.parse(localStorage.getItem('user')) || {};
+      authStore.user = { ...authStore.user, ...user };
+    }
+  };
 
-  function fetchSampleHistory() {
-    axios
-      .get(`data-sources/history.json`)
-      .then((result) => {
-        history.value = result?.data?.data
-      })
-      .catch((error) => {
-        alert(error.message)
-      })
-  }
+  // fetchADatosUsuario();
 
   return {
     userName,
@@ -100,12 +86,9 @@ export const useMainStore = defineStore('main', () => {
     userAvatar,
     userIdHotel,
     isFieldFocusRegistered,
-    clients,
-    history,
     userRole,
     userID,
     setUser,
-    fetchSampleClients,
-    fetchSampleHistory
+    fetchADatosUsuario
   }
 })
