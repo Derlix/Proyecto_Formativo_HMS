@@ -1,50 +1,77 @@
 <script setup>
-import { computed, ref, onMounted } from 'vue'
-import { useMainStore } from '@/stores/main'
-import {
-  mdiAccountMultiple,
-  mdiCartOutline,
-  mdiChartTimelineVariant,
-  mdiMonitorCellphone,
-  mdiReload,
-  mdiGithub,
-  mdiChartPie
-} from '@mdi/js'
-import * as chartConfig from '@/components/Charts/chart.config.js'
-import LineChart from '@/components/Charts/LineChart.vue'
+import { ref } from 'vue'
+import TitleIconOnly from '@/components/TitleIconOnly.vue'
+import FormControl from '@/components/FormControl.vue'
+import FormField from '@/components/FormField.vue'
+import SectionTitle from '@/components/SectionTitle.vue'
 import SectionMain from '@/components/SectionMain.vue'
-import CardBoxWidget from '@/components/CardBoxWidget.vue'
-import CardBox from '@/components/CardBox.vue'
-import TableSampleClients from '@/components/TableSampleClients.vue'
-import NotificationBar from '@/components/NotificationBar.vue'
-import BaseButton from '@/components/BaseButton.vue'
-import CardBoxTransaction from '@/components/CardBoxTransaction.vue'
-import CardBoxClient from '@/components/CardBoxClient.vue'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
-import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue'
-import SectionBannerStarOnGitHub from '@/components/SectionBannerStarOnGitHub.vue'
+import BaseButton from '@/components/BaseButton.vue'
+import BaseButtons from '@/components/BaseButtons.vue'
 
-const chartData = ref(null)
+import {
+  mdiBallotOutline,
+} from '@mdi/js'
 
-const fillChartData = () => {
-  chartData.value = chartConfig.sampleChartData()
+// Aquí puedes definir cualquier ref o reactive que necesites para el formulario
+const form = ref({
+  habitacion: '',
+  huesped: '',
+  descripcion: '',
+  descuento: '',
+  elaboradoPor: '',
+  autorizadoPor: '',
+});
+
+const submitForm = () => {
+  console.log('Formulario enviado', form.value);
 }
-
-onMounted(() => {
-  fillChartData()
-})
-
-const mainStore = useMainStore()
-
-const clientBarItems = computed(() => mainStore.clients.slice(0, 4))
-
-const transactionBarItems = computed(() => mainStore.history)
 </script>
 
 <template>
   <LayoutAuthenticated>
-    <sectionMain>
-        <SectionTitleLineWithButton :icon="mdiChartTimelineVariant" title="Comprobante de descuentos"></SectionTitleLineWithButton>
-    </sectionMain>
+    <SectionMain>
+
+      <TitleIconOnly :icon="mdiBallotOutline" title="Descuentos" />
+
+      <SectionTitle>Registrar descuento</SectionTitle>
+
+      <form @submit.prevent="submitForm" class="mt-6">
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <FormField label="Habitación">
+            <FormControl v-model="form.habitacion" type="text" required />
+          </FormField>
+          <FormField label="Huésped">
+            <FormControl v-model="form.huesped" type="text" required />
+          </FormField>
+        </div>
+
+        <FormField label="Descripción">
+          <FormControl v-model="form.descripcion" type="text" required />
+        </FormField>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <FormField label="Descuento">
+            <FormControl v-model="form.descuento" type="text" required />
+          </FormField>
+          <FormField label="Elaborado por">
+            <FormControl v-model="form.elaboradoPor" type="text" required />
+          </FormField>
+          <FormField label="Autorizado por">
+            <FormControl v-model="form.autorizadoPor" type="text" required />
+          </FormField>
+        </div>
+
+        <div class="flex justify-between">
+          <BaseButtons>
+            <BaseButton type="submit" color="info" label="Submit" />
+            <BaseButton type="reset" color="info" outline label="Reset" />
+          </BaseButtons>
+        </div>
+
+      </form>
+      
+    </SectionMain>
   </LayoutAuthenticated>
 </template>

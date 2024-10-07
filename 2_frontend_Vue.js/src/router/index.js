@@ -46,6 +46,16 @@ const routes = [
   },
   {
     meta: {
+      title: 'comprobante-descuento'
+    },
+    path: '/comprobante-descuento',
+    name: 'comprobante_descuento',
+    component: ComprobanteDescuentos,
+    meta: { requiresAuth: true}
+
+  },
+  {
+    meta: {
       title: 'InformePasajeros'
     },
     path: '/informe-pasajeros',

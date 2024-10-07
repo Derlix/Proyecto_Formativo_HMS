@@ -28,8 +28,8 @@ const fetchHabitaciones = async () => {
         
         habitaciones.totales = data.length;
         habitaciones.disponibles = data.filter(habitacion => habitacion.estado === 'ACTIVO').length;
-        habitaciones.ocupadas = data.filter(habitacion => habitacion.estado === 'OCUPADO').length;
-        habitaciones.limpieza = data.filter(habitacion => habitacion.estado === 'LIMPIEZA').length;
+        habitaciones.ocupadas = data.filter(habitacion => habitacion.estado === 'INACTIVO').length;
+        habitaciones.limpieza = data.filter(habitacion => habitacion.estado === 'OPERACION').length;
         habitaciones.mantenimiento = data.filter(habitacion => habitacion.estado === 'MANTENIMIENTO').length;
     } catch (error) {
         console.error('Error al cargar habitaciones:', error);
