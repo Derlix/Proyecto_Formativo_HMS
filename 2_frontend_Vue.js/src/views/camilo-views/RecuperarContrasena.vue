@@ -25,14 +25,20 @@ const sendResetCode = async () => {
     // Validar email antes de enviar
     if (!email.value.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
         errorMessage.value = "Por favor, ingresa un correo electrónico válido."
+        setTimeout(() => {
+                errorMessage.value = null;
+            }, 3000);
         return
     }
 
     try {
         await requestResetCode(email.value)
-        showPasswordForm.value = true // Mostrar el formulario para introducir el código y la nueva contraseña
+        showPasswordForm.value = true
     } catch (err) {
         errorMessage.value = err.response?.data?.detail || "Error enviando el código. Intente de nuevo."
+        setTimeout(() => {
+                errorMessage.value = null;
+            }, 3000);
     }
 }
 
@@ -42,6 +48,9 @@ const resetPassword = async () => {
     // Validar que las contraseñas coincidan
     if (newPassword.value !== confirmPassword.value) {
         errorMessage.value = "Las contraseñas no coinciden."
+        setTimeout(() => {
+                errorMessage.value = null;
+            }, 3000);
         return
     }
 
@@ -51,6 +60,9 @@ const resetPassword = async () => {
         router.push("/") // Redirigir a la página de inicio después de cambiar la contraseña
     } catch (err) {
         errorMessage.value = err.response?.data?.detail || "Error actualizando la contraseña. Verifique el código."
+        setTimeout(() => {
+                errorMessage.value = null;
+            }, 3000);
     }
 }
 </script>
@@ -72,7 +84,7 @@ const resetPassword = async () => {
                 <!-- Formulario de envío de código -->
                 <form v-if="!showPasswordForm" @submit.prevent="sendResetCode" class="user">
                     <FormField label="Email" help="Ingresa Tu Correo Valido.">
-                        <FormControl v-model="email" :icon="mdiEmail" name="login" autocomplete="usermail" />
+                        <FormControl v-model="email" :icon="mdiEmail" name="login" autocomplete="usermail" required/>
                     </FormField>
 
                     <div class="mb-7">
@@ -88,15 +100,15 @@ const resetPassword = async () => {
                 <!-- Formulario para cambiar la contraseña después de enviar el código -->
                 <form v-if="showPasswordForm" @submit.prevent="resetPassword" class="user">
                     <FormField label="Nueva Contraseña" help="Ingresa Tu Nueva Contraseña.">
-                        <FormControl v-model="newPassword" :icon="mdiAsterisk" type="password" name="new-password" />
+                        <FormControl v-model="newPassword" :icon="mdiAsterisk" type="password" name="new-password" required/>
                     </FormField>
 
                     <FormField label="Confirmar Contraseña" help="Confirma Tu Nueva Contraseña.">
-                        <FormControl v-model="confirmPassword" :icon="mdiAsterisk" type="password" name="confirm-password" />
+                        <FormControl v-model="confirmPassword" :icon="mdiAsterisk" type="password" name="confirm-password" required/>
                     </FormField>
 
                     <FormField label="Código" help="Ingresa el código enviado a tu correo.">
-                        <FormControl v-model="code" :icon="mdiCodeEqual" name="code" />
+                        <FormControl v-model="code" :icon="mdiCodeEqual" name="code" required/>
                     </FormField>
 
                     <div class="mb-7">

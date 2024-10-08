@@ -83,6 +83,9 @@ const saveReport = async () => {
         }, 3000);
     } catch (error) {
         modalMessage.value = 'Error al guardar informe';
+        setTimeout(() => {
+            isAlertVisible.value = false;
+        }, 3000);
         colorAlert.value = 'danger';
         isAlertVisible.value = true;
     }
@@ -113,6 +116,9 @@ const confirmDelete = async () => {
         }, 3000);
     } catch (error) {
         modalMessage.value = 'Error al eliminar informe';
+        setTimeout(() => {
+            isAlertVisible.value = false;
+        }, 3000);
         colorAlert.value = 'danger';
         isAlertVisible.value = true;
     }

@@ -32,7 +32,10 @@ const fetchProducts = async () => {
         productos.value = response.data.productos;
         TotalPages.value = response.data.total_pages;
     } catch (error) {
-        alert('Error al obtener productos: ', error);
+        modalMessage.value = 'Error al obtener productos';
+        colorAlert.value = 'danger';
+        isAlertVisible.value = true;
+        setTimeout(() => { isAlertVisible.value = false; }, 3000);
     }
 };
 
@@ -70,6 +73,7 @@ const saveProduct = async () => {
     } catch (error) {
         modalMessage.value = 'Error al guardar el producto';
         colorAlert.value = 'danger';
+        setTimeout(() => { isAlertVisible.value = false; }, 3000);
         isAlertVisible.value = true;
     }
 };
@@ -89,6 +93,7 @@ const confirmDelete = async () => {
         setTimeout(() => { isAlertVisible.value = false; }, 3000);
     } catch (error) {
         modalMessage.value = 'Error al eliminar el producto';
+        setTimeout(() => { isAlertVisible.value = false; }, 3000);
         colorAlert.value = 'danger';
         isAlertVisible.value = true;
     }
@@ -154,7 +159,7 @@ onMounted(() => {
                 </div>
                 <div class="mb-4">
                     <label for="precio" class="block text-gray-700 font-medium dark:text-white">Precio:</label>
-                    <input type="number" id="precio" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-700 dark:text-white" v-model="currentProduct.precio_actual" required />
+                    <input type="number" id="precio" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-700 dark:text-white" v-model="currentProduct.precio_actual" min="1" required />
                 </div>
                 <div class="mb-4">
                     <label for="descripcion" class="block text-gray-700 font-medium dark:text-white">Descripción:</label>
