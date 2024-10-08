@@ -101,12 +101,7 @@ export default [
     icon: mdiFileChart,
     modulo: 'habitacion'
   },
-  /* {
-    to: '/gestor-hoteles',
-    label: 'Gestor de hoteles',
-    icon: mdiViewGridPlus,
-    modulo: 'hoteles'
-  }, */
+
   {
     to: '/checkOut',
     label: 'CheckOut',
