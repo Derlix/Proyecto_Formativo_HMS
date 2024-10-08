@@ -7,7 +7,7 @@
         type="search"
         id="buscarReserva"
         placeholder="Buscar Cuenta por número de reserva"
-        class="w-full md:flex-grow px-4 py-2 border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+        class="text-light w-full md:flex-grow px-4 py-2 border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
         v-model="buscarReserva"
       />
       <input
