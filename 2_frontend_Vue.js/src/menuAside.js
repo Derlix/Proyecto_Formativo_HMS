@@ -142,6 +142,12 @@ export default [
     icon: mdiAccountGroup,
     modulo: 'usuarios'
   },
+    /* {
+    to: '/comprobante-descuento',
+    label: 'Com. Descuento',
+    icon: mdiTicket,
+    modulo: 'facturacion'
+  },*/
   {
     to: '/cuenta-huesped',
     label: 'Cuentas Huesped',
