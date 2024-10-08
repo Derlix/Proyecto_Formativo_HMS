@@ -44,7 +44,7 @@ const selectedFactura = ref({});
 const showEditModal = ref(false);
 const showDeleteModal = ref(false);
 const showDetalles = ref(false);
-
+const facturasOriginales = ref([]);
 const TotalPages = ref(0);
 const currentPage = ref(1);
 
@@ -85,21 +85,32 @@ async function buscar_Factura() {
 }
 
 
+const filtrarFacturasPorEstado = () => {
+  const estadoSeleccionado = selectedFactura.value.estado;
+
+  if (estadoSeleccionado === "") {
+    // Si el estado es "Ninguna", mostrar todas las facturas
+    facturas.value = [...facturasOriginales.value];
+  } else {
+    // Filtrar facturas basadas en el estado seleccionado
+    facturas.value = facturasOriginales.value.filter(factura => factura.estado === estadoSeleccionado);
+  }
+};
+
+
+
 //ver facturas
 const fetchFacturas = async () => {
   try {
     const response = await getFacturaByPage(currentPage.value);
     facturas.value = response.data.facturaciones;
-
+    facturasOriginales.value = [...facturas.value]; // Guardamos todas las facturas sin filtrar
     TotalPages.value = response.data.total_pages;
-
   } catch (error) {
     console.error('Error al obtener facturas:', error.message);
-    if (error.response) {
-      console.error('Error en la respuesta:', error.response);
-    }
   }
 };
+
 
 onMounted(() => {
   fetchFacturas();
@@ -399,45 +410,61 @@ function cerrarAgregarProductoFactura() {
 const downloadPDF = () => {
   const facturaDetalles = document.getElementById('facturaDetalles');
 
-  // Guarda el estado actual del estilo
+  // Almacenar el estilo original
+  const originalBackgroundColor = facturaDetalles.style.backgroundColor;
+  const originalColor = facturaDetalles.style.color;
+
+  // Cambiar temporalmente a un tema claro
+  facturaDetalles.style.backgroundColor = 'white';
+  facturaDetalles.style.color = 'black';
+
+  // Elimina el límite de altura para la captura completa del contenido
   const originalMaxHeight = facturaDetalles.style.maxHeight;
-  facturaDetalles.style.maxHeight = 'none'; // Elimina el límite de altura
+  facturaDetalles.style.maxHeight = 'none'; 
 
-  // Captura el contenido del modal
-  html2canvas(facturaDetalles, { scale: 1, width: facturaDetalles.offsetWidth, height: facturaDetalles.scrollHeight }).then((canvas) => {
-    const imgData = canvas.toDataURL('image/png', 1);
-    const pdf = new jsPDF();
+  // Captura el contenido del modal con html2canvas
+  html2canvas(facturaDetalles, { scale: 1, width: facturaDetalles.offsetWidth, height: facturaDetalles.scrollHeight })
+    .then((canvas) => {
+      const imgData = canvas.toDataURL('image/png', 1);
+      const pdf = new jsPDF();
 
-    const imgWidth = 190; // Ancho del PDF
-    const pageHeight = pdf.internal.pageSize.height;
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-    let heightLeft = imgHeight;
+      const imgWidth = 190; // Ancho del PDF
+      const pageHeight = pdf.internal.pageSize.height;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      let heightLeft = imgHeight;
 
-    let position = 0;
+      let position = 0;
 
-    // Agregar la primera imagen
-    pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-    heightLeft -= pageHeight;
-
-    // Manejar el contenido que excede la altura de la página
-    while (heightLeft >= 0) {
-      position = heightLeft - imgHeight;
-      pdf.addPage();
+      // Agregar la primera imagen
       pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
       heightLeft -= pageHeight;
-    }
 
-    // Almacenar el PDF
-    pdf.save('factura.pdf');
+      // Manejar el contenido que excede la altura de la página
+      while (heightLeft >= 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
 
-    // Restaura el estilo original
-    facturaDetalles.style.maxHeight = originalMaxHeight;
-  }).catch((error) => {
-    console.error('Error al generar el PDF:', error);
-    // Restaura el estilo original en caso de error
-    facturaDetalles.style.maxHeight = originalMaxHeight;
-  });
-}
+      // Guardar el PDF
+      pdf.save('factura.pdf');
+
+      // Restaurar el estilo original
+      facturaDetalles.style.backgroundColor = originalBackgroundColor;
+      facturaDetalles.style.color = originalColor;
+      facturaDetalles.style.maxHeight = originalMaxHeight;
+    })
+    .catch((error) => {
+      console.error('Error al generar el PDF:', error);
+      
+      // Restaurar el estilo original en caso de error
+      facturaDetalles.style.backgroundColor = originalBackgroundColor;
+      facturaDetalles.style.color = originalColor;
+      facturaDetalles.style.maxHeight = originalMaxHeight;
+    });
+};
+
 
 
 
@@ -689,17 +716,30 @@ function fechaActual() {
 
   <div class="mb-6 max-w-md mx-left">
     <h1 class="text-black dark:text-white text-3xl font-bold mb-3">Seccion de Facturas</h1>
-    <div class=" flex items-center border rounded-lg shadow-sm ">
-
+    <div class="flex items-center space-x-4">
+    <!-- Input de búsqueda -->
+    <div class="flex items-center border rounded-lg shadow-sm flex-grow">
       <input
         type="search"
         id="buscarFactura"
         placeholder="Buscar factura por ID"
-        class="flex-grow px-4 py-2 border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+        class="w-full px-4 py-2 border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
         v-model="buscarFactura"
         @input="buscar_Factura"
       />
     </div>
+    
+    <!-- Filtro de estado -->
+    <div class="flex items-center" style="width: 200px;">
+      <h2 class="mr-3 text-sm">Filtrar por:</h2>
+      <select id="facturaEstado" v-model="selectedFactura.estado" class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500 text-sm" @change="filtrarFacturasPorEstado">
+        <option value="">Ninguna</option> 
+        <option v-for="estado in estados" :key="estado" :value="estado">
+          {{ estado }}
+        </option>
+      </select>
+    </div>
+  </div>
   </div>
 
 
@@ -985,3 +1025,5 @@ td {
 }
 */
 </style>
+
+
