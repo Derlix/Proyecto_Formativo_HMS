@@ -30,6 +30,7 @@ export const crear_descuento = async (descuento) => {
         });
         return response.data; // Retorna el descuento creado
     } catch (error) {
+        console.error('Error al crear descuento:', error); // Agrega un registro de error
         if (error.response) {
             throw error.response; // Devuelve el error original de la API
         } else {

@@ -9,20 +9,24 @@ import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import BaseButton from '@/components/BaseButton.vue';
 import BaseButtons from '@/components/BaseButtons.vue';
 import { info_descuentos, crear_descuento } from '@/services/arce_service/descuentoService';
-import {
-  mdiBallotOutline,
-} from '@mdi/js';
+import { mdiBallotOutline } from '@mdi/js';
 
 const form = ref({
   tipo_descuento: '',
   porcentaje_descuento: 0,
-  fecha_aplicacion: "",
+  fecha_aplicacion: new Date().toISOString(), // Inicializa con la fecha actual
   quien_aplico: '',
 });
 
 const descuentos = ref([]);
+const errorMessage = ref('');
 
 const submitForm = async () => {
+  if (form.value.porcentaje_descuento < 0 || form.value.porcentaje_descuento > 100) {
+    errorMessage.value = 'El porcentaje debe estar entre 0 y 100.';
+    return;
+  }
+
   try {
     const nuevoDescuento = {
       tipo_descuento: form.value.tipo_descuento,
@@ -35,15 +39,11 @@ const submitForm = async () => {
     console.log('Descuento creado:', respuesta);
 
     await fetchDescuentos();
+    resetForm(); // Resetea el formulario después de la creación
 
-    form.value = {
-      tipo_descuento: '',
-      porcentaje_descuento: 0,
-      fecha_aplicacion: new Date().toISOString(),
-      quien_aplico: '',
-    };
   } catch (error) {
     console.error('Error al crear descuento:', error);
+    errorMessage.value = 'Hubo un error al crear el descuento. Intenta nuevamente.';
   }
 };
 
@@ -55,6 +55,17 @@ const fetchDescuentos = async () => {
   }
 };
 
+// Resetea el formulario
+const resetForm = () => {
+  form.value = {
+    tipo_descuento: '',
+    porcentaje_descuento: 0,
+    fecha_aplicacion: new Date().toISOString(),
+    quien_aplico: '',
+  };
+  errorMessage.value = ''; // Limpia el mensaje de error
+};
+
 // Llama a fetchDescuentos cuando el componente se monta
 onMounted(fetchDescuentos);
 </script>
@@ -62,9 +73,7 @@ onMounted(fetchDescuentos);
 <template>
   <LayoutAuthenticated>
     <SectionMain>
-
       <TitleIconOnly :icon="mdiBallotOutline" title="Descuentos" />
-
       <SectionTitle>Registrar descuento</SectionTitle>
 
       <form @submit.prevent="submitForm" class="mt-6">
@@ -80,12 +89,13 @@ onMounted(fetchDescuentos);
         <div class="flex justify-between">
           <BaseButtons>
             <BaseButton type="submit" color="info" label="Registrar" />
-            <BaseButton type="reset" color="info" outline label="Reset" />
+            <BaseButton type="button" color="info" outline label="Reset" @click="resetForm" />
           </BaseButtons>
         </div>
+
+        <p v-if="errorMessage" class="text-red-500">{{ errorMessage }}</p> <!-- Mensaje de error -->
       </form>
 
-      <!-- Tabla para mostrar descuentos -->
       <SectionTitle>Lista de Descuentos</SectionTitle>
       <table class="min-w-full mt-4">
         <thead>
@@ -105,7 +115,6 @@ onMounted(fetchDescuentos);
           </tr>
         </tbody>
       </table>
-
     </SectionMain>
   </LayoutAuthenticated>
 </template>
