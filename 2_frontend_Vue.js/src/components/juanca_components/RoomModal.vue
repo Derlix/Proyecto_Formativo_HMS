@@ -3,37 +3,42 @@
     <div class="bg-white w-full max-w-lg mx-auto rounded-lg shadow-lg p-6">
       <h2 class="text-2xl font-bold mb-4">{{ isEditing ? 'Editar' : 'Crear' }} Habitación</h2>
       <form @submit.prevent="guardarHabitacion">
-        <!-- Campos del formulario -->
         <div class="mb-4">
           <label for="numero_habitacion" class="block text-sm font-medium text-gray-700">Número de Habitación</label>
           <input
             id="numero_habitacion"
             v-model="form.numero_habitacion"
-            type="text"
             required
             class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
           />
         </div>
+
         <div class="mb-4">
           <label for="piso" class="block text-sm font-medium text-gray-700">Piso</label>
           <input
             id="piso"
-            v-model="form.piso"
             type="number"
+            v-model="form.piso"
             required
             class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
           />
         </div>
+
         <div class="mb-4">
           <label for="id_categoria_habitacion" class="block text-sm font-medium text-gray-700">Categoría de Habitación</label>
-          <input
+          <select
             id="id_categoria_habitacion"
             v-model="form.id_categoria_habitacion"
-            type="text"
             required
             class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
-          />
+          >
+            <option value="">Seleccionar Categoría</option>
+            <option v-for="categoria in categorias" :key="categoria.id_categoria_habitacion" :value="categoria.id_categoria_habitacion">
+              {{ categoria.tipo_habitacion }} <!-- Mostrar el nombre de la categoría -->
+            </option>
+          </select>
         </div>
+
         <div class="mb-4">
           <label for="estado" class="block text-sm font-medium text-gray-700">Estado</label>
           <select
@@ -48,31 +53,31 @@
             <option value="MANTENIMIENTO">Mantenimiento</option>
           </select>
         </div>
+
         <div class="mb-4">
           <label for="precio_actual" class="block text-sm font-medium text-gray-700">Precio Actual</label>
           <input
             id="precio_actual"
-            v-model="form.precio_actual"
             type="number"
-            step="0.01"
+            v-model="form.precio_actual"
             required
             class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
           />
         </div>
 
-        <div class="flex justify-end space-x-4">
+        <div class="flex justify-between">
           <button
             type="button"
             @click="close"
-            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-500 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+            class="bg-red-500 text-white px-4 py-2 rounded-md"
           >
             Cancelar
           </button>
           <button
             type="submit"
-            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            class="bg-blue-500 text-white px-4 py-2 rounded-md"
           >
-            {{ isEditing ? 'Actualizar' : 'Guardar' }}
+            {{ isEditing ? 'Actualizar' : 'Crear' }}
           </button>
         </div>
       </form>
@@ -81,19 +86,20 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
-import { crearHabitacion, actualizarHabitacion } from '../../services/juanca_service/habitacionService'; // Importar servicios
+import { ref, computed, watch, onMounted } from 'vue';
+import { crearHabitacion, actualizarHabitacion } from '@/services/juanca_service/habitacionService';
 import { useMainStore } from '@/stores/main';
+import { obtenerCategoriasHabitacion } from '@/services/juanca_service/categoriaService';
 
 const mainStore = useMainStore();
-const userID = computed(() => mainStore.userID); // Obtener el ID del usuario desde el store
+const userID = computed(() => mainStore.userID);
 
 const props = defineProps({
   visible: Boolean,
-  habitacion: Object, // La habitación que se editará
+  habitacion: Object,
 });
 
-const emit = defineEmits(['close', 'save']); // Emite eventos para cerrar o guardar
+const emit = defineEmits(['close', 'save']);
 
 const form = ref({
   id_habitacion: null,
@@ -104,38 +110,59 @@ const form = ref({
   precio_actual: '',
 });
 
-// Computed para saber si estamos editando
-const isEditing = computed(() => !!form.value.id_habitacion);
+const categorias = ref([]);
 
-// Actualiza el formulario cuando cambia la habitación pasada por props
-watch(() => props.habitacion, (newHabitacion) => {
-  form.value = newHabitacion ? { ...newHabitacion } : {
-    id_habitacion: null,
-    numero_habitacion: '',
-    piso: '',
-    id_categoria_habitacion: '',
-    estado: '',
-    precio_actual: '',
-  };
+// Cargar las categorías al inicializar el componente
+const cargarCategorias = async () => {
+  try {
+    categorias.value = await obtenerCategoriasHabitacion();
+    console.log('Categorías cargadas:', categorias.value); // Verifica las categorías cargadas
+  } catch (error) {
+    console.error('Error al cargar las categorías:', error);
+  }
+};
+
+onMounted(async () => {
+  await cargarCategorias();
 });
 
-// Función para cerrar el modal
+// Observa los cambios en la habitación y asigna los valores al formulario
+watch(() => props.habitacion, (newHabitacion) => {
+  if (newHabitacion) {
+    form.value = {
+      id_habitacion: newHabitacion.id_habitacion,
+      numero_habitacion: newHabitacion.numero_habitacion,
+      piso: newHabitacion.piso,
+      id_categoria_habitacion: newHabitacion.id_categoria_habitacion, // Asegúrate de que esto coincida
+      estado: newHabitacion.estado,
+      precio_actual: newHabitacion.precio_actual,
+    };
+  } else {
+    form.value = {
+      id_habitacion: null,
+      numero_habitacion: '',
+      piso: '',
+      id_categoria_habitacion: '',
+      estado: '',
+      precio_actual: '',
+    };
+  }
+});
+
+// Funciones para cerrar el formulario y guardar los datos
 const close = () => {
   emit('close');
 };
 
-// Función para guardar o actualizar la habitación
 const guardarHabitacion = async () => {
   try {
     const habitacionData = { ...form.value, id_usuario: userID.value };
 
-    // Verifica si hay un id_usuario válido
     if (!habitacionData.id_usuario) {
       throw new Error('ID del usuario es requerido');
     }
 
-    if (isEditing.value) {
-      // Actualizar habitación existente
+    if (form.value.id_habitacion) { // Si estamos editando
       await actualizarHabitacion(
         habitacionData.id_habitacion,
         habitacionData.estado,
@@ -145,8 +172,7 @@ const guardarHabitacion = async () => {
         habitacionData.numero_habitacion,
         habitacionData.id_categoria_habitacion
       );
-    } else {
-      // Crear nueva habitación
+    } else { // Si estamos creando
       await crearHabitacion(
         habitacionData.estado,
         habitacionData.piso,
@@ -161,22 +187,25 @@ const guardarHabitacion = async () => {
     close();
   } catch (error) {
     console.error('Error al guardar la habitación:', error.message);
-    if (error.response) {
-      alert(`Error al guardar la habitación: ${error.response.data.detail || error.response.data.message}`);
-    } else {
-      alert(`Error al guardar la habitación: ${error.message}`);
-    }
+    alert(`Error al guardar la habitación: ${error.message}`);
   }
 };
 </script>
 
 <style scoped>
+/* Fijar color de las letras para que no cambien */
+label, input, select, option {
+  color: #333; /* Color de texto fijo */
+}
+
+/* Asegurar que no cambien el color en foco o hover */
+input:focus, select:focus {
+  outline: none;
+  border-color: #333; /* También asegurar que el borde no cambie de color */
+}
+
 .modal-content {
   max-width: 600px;
   margin: auto;
-}
-
-button {
-  padding: 10px 15px;
 }
 </style>

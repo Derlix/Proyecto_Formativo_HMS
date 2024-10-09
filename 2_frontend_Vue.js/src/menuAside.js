@@ -101,12 +101,7 @@ export default [
     icon: mdiFileChart,
     modulo: 'habitacion'
   },
-  /* {
-    to: '/gestor-hoteles',
-    label: 'Gestor de hoteles',
-    icon: mdiViewGridPlus,
-    modulo: 'hoteles'
-  }, */
+
   {
     to: '/checkOut',
     label: 'CheckOut',
@@ -140,6 +135,18 @@ export default [
     to: '/control-usuarios',
     label: 'Control Usuarios',
     icon: mdiAccountGroup,
+    modulo: 'usuarios'
+  },
+    /* {
+    to: '/comprobante-descuento',
+    label: 'Com. Descuento',
+    icon: mdiTicket,
+    modulo: 'facturacion'
+  },*/
+  {
+    to: '/cuenta-huesped',
+    label: 'Cuentas Huesped',
+    icon: mdiCardAccountDetails,
     modulo: 'usuarios'
   }
 

@@ -1,7 +1,7 @@
 <script setup>
 import SectionMain from '@/components/SectionMain.vue';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
-import TablaHotel from '@/components/felipe_componentes/TablaHotel.vue';
+import TablaCuentaHuesped from '@/components/felipe_componentes/TablaCuentaHuesped.vue';
 import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
 
 </script>
@@ -9,9 +9,11 @@ import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.
 <template>
   <LayoutAuthenticated>
     <SectionMain>
-      <SectionTitleLineWithButton title="Administración De Hoteles" />      
-      <TablaHotel></TablaHotel>
+      <SectionTitleLineWithButton title="Cuenta Huesped" />
+      <TablaCuentaHuesped />
     </SectionMain>
 
+   
   </LayoutAuthenticated>
 </template>
+

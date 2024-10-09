@@ -1,4 +1,4 @@
-import api from './api';
+import api from '@/services/api';
 
 export const createHotel = async (nombre, ubicacion, direccion, telefono) => {
   try {

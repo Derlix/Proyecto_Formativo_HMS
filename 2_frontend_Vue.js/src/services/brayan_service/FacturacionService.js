@@ -68,7 +68,7 @@ export const deleteFactura = async (id_facturacion) => {
   }
 }
   
-export const getFacturaByPage = async (page = 1, page_size = 8) => {
+export const getFacturaByPage = async (page = 1, page_size = 10) => {
   try {
     const response = await api.get(`/facturacion/get_all_facturas_paginated?page=${page}&page_size=${page_size}`);
     return response;

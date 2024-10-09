@@ -22,42 +22,34 @@ const form = reactive({
 
 const router = useRouter()
 const authStore = useAuthStore()
-
-// Define las propiedades reactivas para el email, la contraseña y el mensaje de error
 const email = ref('')
 const password = ref('')
-const errorMessage = ref(null) // Añade una propiedad para el mensaje de error
+const errorMessage = ref(null)
 
-// Cuando el componente se monte, revisamos si hay un email en localStorage
 onMounted(() => {
-  const storedEmail = localStorage.getItem('email')
-  if (storedEmail) {
-    email.value = storedEmail // Establece el valor del input email con el email almacenado
-    form.remember = true // Marca el checkbox "Recordarme" si el email está guardado
-  }
-  darkModeStore.set(false)
+    const storedEmail = localStorage.getItem('email')
+    if (storedEmail) {
+        email.value = storedEmail
+        form.remember = true
+    }
+    darkModeStore.set(false)
 })
 
-// Método para manejar el login
 const handleLogin = async () => {
     try {
-        await authStore.login(email.value, password.value) // Llama al método de login del store
+        await authStore.login(email.value, password.value)
 
         if (authStore.authError) {
-            // Si hay un error de autenticación, establece el mensaje de error
             errorMessage.value = authStore.authError
             setTimeout(() => {
                 errorMessage.value = null;
             }, 3000);
         } else {
             if (form.remember) {
-                localStorage.setItem('email', email.value) // Guarda el email en localStorage si "Recordarme" está marcado
+                localStorage.setItem('email', email.value)
             } else {
-                localStorage.removeItem('email') // Elimina el email de localStorage si el usuario no marca "Recordarme"
+                localStorage.removeItem('email')
             }
-
-            // Redirige a la página de dashboard si el login es exitoso
-            // router.push('/dashboard') // Reemplaza '/dashboard' con la ruta que desees redirigir
             if (authStore.user.usuario_rol === 'SuperAdmin' || authStore.user.usuario_rol === 'JefeRecepcion') {
                 router.push('/dashboard')
             } else if (authStore.user.usuario_rol === 'Recepcionista') {
@@ -67,7 +59,6 @@ const handleLogin = async () => {
             }
         }
     } catch (error) {
-        // Maneja errores inesperados
         errorMessage.value = 'Error durante el login: ' + error.message
     }
     return {
@@ -95,7 +86,7 @@ const handleLogin = async () => {
                 </div>
 
                 <FormField label="Email" help="Por Favor Ingrese Su Correo">
-                    <FormControl v-model="email" :icon="mdiAccount" name="login" autocomplete="usermail" />
+                    <FormControl v-model="email" :icon="mdiAccount" name="login" autocomplete="usermail" required/>
                 </FormField>
 
                 <FormField label="Contraseña" help="Por favor ingrese su contraseña">
@@ -105,6 +96,7 @@ const handleLogin = async () => {
                         type="password"
                         name="password"
                         autocomplete="current-password"
+                        required
                     />
                 </FormField>
 

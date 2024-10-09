@@ -1,125 +1,212 @@
 <template>
-  <div v-if="visible" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 dark:bg-opacity-70 text-black dark:text-white">
-    <div class="bg-white dark:bg-gray-800 p-8 sm:p-12 rounded-lg shadow-lg max-w-2xl w-full relative">
+  <div
+    v-if="visible"
+    class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 dark:bg-opacity-70 text-black dark:text-white"
+  >
+    <div
+      class="bg-white dark:bg-gray-800 p-8 sm:p-12 rounded-lg shadow-lg max-w-2xl w-full relative"
+    >
       <!-- Botón de cerrar -->
       <button @click="close" class="absolute top-4 right-4 text-gray-600 dark:text-gray-300">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          />
         </svg>
       </button>
 
-      <h2 class="text-2xl mb-6 font-semibold text-gray-900 dark:text-white">Movimiento de pasajeros - ENTRADA</h2>
+      <h2 class="text-2xl mb-6 font-semibold text-gray-900 dark:text-white">
+        Movimiento de pasajeros - ENTRADA
+      </h2>
 
-      <div class="grid grid-cols-2 gap-4 mb-5">
-        <div>
-          <label for="documento" class="block mb-1 text-sm font-medium">Documento</label>
-          <input
-            type="text"
-            id="documento"
-            v-model="documento"
-            @blur="buscarReserva"
-            class="w-full rounded-lg p-2 bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600"
-          >
+      <!-- Step 1: Reservation List -->
+      <div v-if="currentStep === 1">
+        <div class="overflow-x-auto bg-gray-50 dark:bg-gray-800 rounded-lg shadow-md p-4 max-h-64">
+          <table class="min-w-full bg-white dark:bg-gray-700 border-gray-300">
+            <thead>
+              <tr class="bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200">
+                <th class="px-4 py-2">Nombre Completo</th>
+                <th class="px-4 py-2">Fecha Reserva</th>
+                <th class="px-4 py-2">Habitación</th>
+                <th class="px-4 py-2">Estado Habitación</th>
+                <th class="px-4 py-2">Accion</th>
+
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="reserva in reservas"
+                :key="reserva.id_reserva"
+                class="hover:bg-gray-100 dark:hover:bg-gray-600"
+              >
+                <td class="border px-4 py-2 dark:text-white">
+                  {{ reserva.huesped.nombre_completo }}
+                </td>
+                <td class="border px-4 py-2 dark:text-white">{{ reserva.fecha_entrada }}</td>
+                <td class="border px-4 py-2 dark:text-white">
+                  {{ reserva.habitacion.numero_habitacion }}
+                </td>
+                <td class="border px-4 py-2 dark:text-white">{{ reserva.habitacion.estado }}</td>
+                <td class="border px-4 py-2 text-center">
+                  <div class="flex justify-center items-center">
+                    <input
+                      type="radio"
+                      :value="reserva.id_reserva"
+                      v-model="seleccionaridReservaSeleccionada"
+                      @change="seleccionaridReserva(reserva.id_reserva)"
+                    />
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-        <div>
-          <label for="nombre" class="block mb-1 text-sm font-medium">Nombre Completo</label>
-          <input
-            type="text"
-            id="nombre"
-            v-model="nombre"
-            :disabled="!reservaEncontrada"
-            class="w-full rounded-lg p-2 bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600"
-          >
-        </div>
-        <div>
-          <label for="habitacion" class="block mb-1 text-sm font-medium">Habitación</label>
-          <input
-            type="text"
-            id="habitacion"
-            v-model="numeroHabitacion"
-            :disabled="!reservaEncontrada"
-            class="w-full rounded-lg p-2 bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600"
-          >
-        </div>
-        <!-- Medio de llegada select -->
-        <div>
-          <label for="medioLlegada" class="block mb-1 text-sm font-medium">Medio de Llegada</label>
+        <button 
+        @click="nextStep" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg"
+        :disabled="!seleccionaridReservaSeleccionada"
+        >
+          Siguiente
+        </button>
+      </div>
+
+      <!-- Step 2: Arrival Situation -->
+      <div v-else-if="currentStep === 2">
+        <div class="mb-4">
+          <label for="llegada" class="block mb-1 text-sm font-medium">Situación de llegada</label>
           <select
-            id="medioLlegada"
-            v-model="medioLlegada"
-            class="w-full rounded-lg p-2 bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600"
-          >
-            <option value="AEREO">AÉREO</option>
-            <option value="TERRESTRE">TERRESTRE</option>
-          </select>
-        </div>
-        <!-- Situación de llegada select -->
-        <div>
-          <label for="situacionLlegada" class="block mb-1 text-sm font-medium">Situación de Llegada</label>
-          <select
-            id="situacionLlegada"
+            id="llegada"
             v-model="situacionLlegada"
             class="w-full rounded-lg p-2 bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600"
           >
-            <option value="CON RESERVA">CON RESERVA</option>
-            <option value="SIN RESERVA">SIN RESERVA</option>
+            <option value="CON RESERVA">Con reserva</option>
+            <option value="SIN RESERVA">Sin reserva</option>
           </select>
         </div>
-        <!-- Equipaje select -->
-        <div>
+
+        <div class="mb-4">
+          <label for="mediollegada" class="block mb-1 text-sm font-medium">Medio de llegada</label>
+          <select
+            id="mediollegada"
+            v-model="mediollegada"
+            class="w-full rounded-lg p-2 bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600"
+          >
+            <option value="AEREO">Aereo</option>
+            <option value="TERRESTRE">Terrestre</option>
+          </select>
+        </div>
+
+        <div class="mb-4">
           <label for="equipaje" class="block mb-1 text-sm font-medium">Equipaje</label>
           <select
             id="equipaje"
             v-model="equipaje"
             class="w-full rounded-lg p-2 bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600"
           >
-            <option value="SI">SI</option>
-            <option value="NO">NO</option>
+            <option value="SI">Si</option>
+            <option value="NO">No</option>
           </select>
         </div>
+
+        <!-- ALERTA DE EXITO -->
+        <div
+          v-if="showSuccess"
+          class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 dark:bg-opacity-70 text-black dark:text-white"
+        >
+          <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-sm w-full relative">
+            <button
+              @click="closeSuccess"
+              class="absolute top-2 right-2 text-gray-600 dark:text-gray-300"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              Check-Out realizado con éxito
+            </h3>
+            <p>El Check-Out se ha completado correctamente.</p>
+            <button
+              @click="closeSuccess"
+              class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg w-full"
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+
+        <!-- ALERTA DE ERROR -->
+        <div
+          v-if="showError"
+          class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 dark:bg-opacity-70 text-black dark:text-white"
+        >
+          <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-sm w-full relative">
+            <button
+              @click="closeError"
+              class="absolute top-2 right-2 text-gray-600 dark:text-gray-300"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              Error al realizar el Check-Out
+            </h3>
+            <p>Hubo un problema al procesar el Check-Out. Intenta nuevamente.</p>
+            <button
+              @click="closeError"
+              class="mt-4 bg-red-600 text-white px-4 py-2 rounded-lg w-full"
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+
+        <div class="flex justify-between mt-4">
+          <button @click="previousStep" class="bg-gray-400 text-white px-4 py-2 rounded-lg">
+            Anterior
+          </button>
+          <button @click="confirmarChekin" class="bg-blue-600 text-white px-6 py-3 rounded-lg">
+            Confirmar
+          </button>
+        </div>
       </div>
-
-      <button @click="confirmarCheckin" :disabled="!reservaEncontrada" class="bg-blue-600 text-white px-6 py-3 rounded w-full">
-        Confirmar
-      </button>
-    </div>
-  </div>
-
-  <!-- Alerta de éxito -->
-  <div v-if="showSuccess" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 dark:bg-opacity-70 text-black dark:text-white">
-    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-sm w-full relative">
-      <button @click="closeSuccess" class="absolute top-2 right-2 text-gray-600 dark:text-gray-300">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
-      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Check-in realizado con éxito</h3>
-      <p>El check-in se ha completado correctamente.</p>
-      <button @click="closeSuccess" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg w-full">
-        Cerrar
-      </button>
-    </div>
-  </div>
-
-  <!-- Alerta de error -->
-  <div v-if="showError" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 dark:bg-opacity-70 text-black dark:text-white">
-    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-sm w-full relative">
-      <button @click="closeError" class="absolute top-2 right-2 text-gray-600 dark:text-gray-300">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
-      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Error al realizar el check-in</h3>
-      <p>Hubo un problema al procesar el check-in. Intenta nuevamente.</p>
-      <button @click="closeError" class="mt-4 bg-red-600 text-white px-4 py-2 rounded-lg w-full">
-        Cerrar
-      </button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { obtenertodasReservasHabitacion } from '@/services/reservaHabitacionService'
 import { crearCheckin } from '@/services/checkinService'
 
@@ -130,84 +217,70 @@ const props = defineProps({
   }
 })
 
-
 const showSuccess = ref(false)
 const showError = ref(false)
-const documento = ref('')
-const nombre = ref('')
-const numeroHabitacion = ref('')
-const medioLlegada = ref('AEREO') 
-const situacionLlegada = ref('CON RESERVA') 
-const equipaje = ref('SI') 
-const reservaEncontrada = ref(false)
-const idReserva = ref(null) 
-
+const reservas = ref([]) // Array to store reservations
+const seleccionaridReservaSeleccionada = ref([]) // For storing selected reservation IDs
+const currentStep = ref(1) // Step control
+const situacionLlegada = ref('')
+const mediollegada = ref('')
+const equipaje = ref('')
 const emit = defineEmits(['close'])
-
-const closeSuccess = () => {
-  showSuccess.value = false
-  emit('close') 
-}
-
-const closeError = () => {
-  showError.value = false
-  emit('close') 
-}
-
-const buscarReserva = async () => {
-  try {
-    const response = await obtenertodasReservasHabitacion()
-    if (response.data && response.data.length) {
-      const reserva = response.data.find(r => r.huesped.numero_documento === documento.value)
-
-      if (reserva) {
-        reservaEncontrada.value = true
-        nombre.value = reserva.huesped.nombre_completo
-        numeroHabitacion.value = reserva.habitacion.numero_habitacion
-        idReserva.value = reserva.id_reserva // Guarda el ID de la reserva
-      } else {
-        resetFields()
-      }
-    } else {
-      resetFields()
-    }
-  } catch (error) {
-    console.error('Error al buscar la reserva:', error)
-    resetFields()
-  }
-}
-
-const confirmarCheckin = async () => {
-  if (!idReserva.value) {
-    console.error('No se encontró ninguna reserva asociada al documento.')
-    return
-  }
-
-  try {
-    const response = await crearCheckin(
-      idReserva.value,   
-      medioLlegada.value, 
-      situacionLlegada.value, 
-      equipaje.value
-    )
-    showSuccess.value = true 
-  } catch (error) {
-    showError.value = true 
-  }
-}
-
-const resetFields = () => {
-  reservaEncontrada.value = false
-  nombre.value = ''
-  numeroHabitacion.value = ''
-  idReserva.value = null
-  medioLlegada.value = 'AEREO'
-  situacionLlegada.value = 'CON_RESERVA'
-  equipaje.value = 'SI'
-}
-
 
 const close = () => {
   emit('close')
 }
+
+const nextStep = () => {
+  currentStep.value = 2
+}
+
+const previousStep = () => {
+  currentStep.value = 1
+}
+
+const closeSuccess = () => {
+  showSuccess.value = false
+  currentStep.value = 1 // Restablecer el paso al cerrar el modal de éxito
+  emit('close')
+}
+
+const closeError = () => {
+  showError.value = false
+  currentStep.value = 1 // Restablecer el paso al cerrar el modal de error
+  emit('close')
+}
+
+const fetchReservas = async () => {
+  try {
+    const response = await obtenertodasReservasHabitacion()
+    reservas.value = response.data || []
+  } catch (error) {
+    console.error('Error al obtener las reservas:', error)
+  }
+}
+
+// Confirmar la reserva de habitación
+const confirmarChekin = async () => {
+  try {
+    const response = await crearCheckin(
+      seleccionaridReservaSeleccionada.value, // ID de la reserva creada
+      mediollegada.value,
+      situacionLlegada.value,
+      equipaje.value
+    )
+    showSuccess.value = true
+    await fetchReservas()
+  } catch (error) {
+    console.error((showError.value = true))
+  }
+}
+
+const seleccionaridReserva = (id_reserva) => {
+  seleccionaridReservaSeleccionada.value = id_reserva
+}
+
+onMounted(() => {
+  fetchReservas() // Fetch reservations on component mount
+})
 </script>
