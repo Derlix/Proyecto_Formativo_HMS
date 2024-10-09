@@ -1,18 +1,18 @@
 import api from './api'; // Asegúrate de que `api.js` esté configurado adecuadamente
 
 // Función para crear un nuevo usuario
-export const createUser = async (fullName, email, userRole, passhash, idHotel, fileImg) => {
+export const createUser = async (nombre_completo, email, userRole, passhash, idHotel, fileImg) => {
   try {
     const formData = new FormData();
-    formData.append('nombre_completo', fullName);
+    formData.append('nombre_completo', nombre_completo);
     formData.append('email', email);
-    formData.append('usuario_rol', userRole);
     formData.append('passhash', passhash);
-    formData.append('id_hotel', idHotel);
+    formData.append('usuario_rol', userRole);
     if (fileImg) {
       formData.append('file_img', fileImg);
     }
-
+    formData.append('id_hotel', idHotel);
+    console.log([...formData]);
     const response = await api.post('/usuarios/create', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -21,6 +21,8 @@ export const createUser = async (fullName, email, userRole, passhash, idHotel, f
     return response;
   } catch (error) {
     if (error.response) {
+      
+      console.log(error.response.data);
       throw error.response;
     } else {
       throw new Error('Error de red o de servidor');

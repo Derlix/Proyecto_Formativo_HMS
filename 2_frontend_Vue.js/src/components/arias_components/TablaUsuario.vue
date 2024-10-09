@@ -1,5 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
+import { computed } from 'vue'
+import { useMainStore } from '@/stores/main'
 import { mdiEye, mdiTrashCan } from '@mdi/js'
 import CardBoxModal from '@/components/alejo_components/CardBoxModal.vue'
 import NotificationBar from '../alejo_components/NotificationBar.vue' 
@@ -7,20 +9,24 @@ import ModalAlert from '../ModalAlert.vue'
 import BaseLevel from '@/components/BaseLevel.vue'
 import BaseButtons from '@/components/BaseButtons.vue'
 import BaseButton from '@/components/BaseButton.vue'
-import { getUsersByPage, deleteUser, updateUser } from '@/services/userService'
+import { getUsersByPage, deleteUser, updateUser, createUser } from '@/services/userService'
 
 const usuarios = ref([]);
 const currentUsuario = ref({});
 const TotalPages = ref(0);
 const isEditMode = ref(false);
 const activarModalEdit = ref(false);
+const activarModalCreate = ref(false);
 const currentPage = ref(1);
 const isModalVisible = ref(false);
 const modalMessage = ref('');
 const isAlertVisible = ref(false);
 const colorAlert = ref('');
 const roles = ref([]); // Lista de roles
+const mainStore = useMainStore();
 
+// Computed para obtener el ID del hotel desde el store
+const userIdHotel = computed(() => mainStore.userIdHotel);
 // Obtener roles desde la API
 const fetchRoles = async () => {
   try {
@@ -32,6 +38,9 @@ const fetchRoles = async () => {
     console.error('Error al obtener los roles:', error);
   }
 };
+
+
+  
 
 const activarModalDelete = ref({
   visible: false,
@@ -59,6 +68,58 @@ const openEditModal = (usuario = {}) => {
   activarModalEdit.value = true;
   fetchRoles(); // Cargar roles al abrir el modal
 };
+
+// Abrir modal de creación de usuario
+const openCreateModal = () => {
+  isEditMode.value = false; // Indicador para saber que es creación
+  currentUsuario.value = {
+    nombre_completo: '',
+    email: '',
+    usuario_rol: '',
+    passhash: '',
+    id_hotel: userIdHotel,
+    file_img: null
+  };
+  activarModalCreate.value = true;
+  fetchRoles(); // Cargar roles al abrir el modal
+};
+
+// Cancelar creación de usuario
+const cancelCreate = () => {
+  activarModalCreate.value = false;
+};
+
+
+//crear usuario
+const create_Usuario = async () => {
+  try {
+     await createUser(
+      currentUsuario.value.nombre_completo,
+      currentUsuario.value.email,
+      currentUsuario.value.usuario_rol,
+      currentUsuario.value.passhash,
+      currentUsuario.value.id_hotel,
+      currentUsuario.value.file_img
+    );
+    modalMessage.value = "Usuario creado con éxito";
+    isAlertVisible.value = true;
+    colorAlert.value = 'primary';
+    activarModalEdit.value = false;
+    setTimeout(() => {
+      isAlertVisible.value = false;
+    }, 3000);
+    fetchUsuarios();
+  } catch (error) {
+    console.error(error);
+    modalMessage.value = error.response?.data?.detail || "Error al crear usuario";
+    isAlertVisible.value = true;
+    colorAlert.value = 'danger';
+    activarModalEdit.value = false;
+    setTimeout(() => {
+      isAlertVisible.value = false;
+    }, 3000);
+  }
+}
 
 // Actualizar usuario
 const update_Usuario = async () => {
@@ -149,6 +210,42 @@ onMounted(() => {
     :visible="isModalVisible"
   />
 
+  <!-- Modal de creación de usuario -->
+<CardBoxModal v-model="activarModalCreate" title="Crear Usuario" buttonLabel="Crear usuario" has-cancel @cancel="cancelCreate" @confirm="create_Usuario">
+  <form @submit.prevent="create_Usuario()">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="mb-4">
+        <label for="nombre" class="block text-gray-700 font-medium dark:text-white">Nombre Completo:</label>
+        <input type="text" id="nombre" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-700" v-model="currentUsuario.nombre_completo" required/>
+      </div>
+      <div class="mb-4">
+        <label for="email" class="block text-gray-700 font-medium dark:text-white">Correo:</label>
+        <input type="email" id="email" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-700" v-model="currentUsuario.email" required/>
+      </div>
+      <div class="mb-4">
+        <label for="rol" class="block text-gray-700 font-medium dark:text-white">Rol:</label>
+        <select id="rol" v-model="currentUsuario.usuario_rol" required>
+          <option value="" disabled>Selecciona un rol</option>
+          <option v-for="rol in roles" :key="rol.rol_name" :value="rol.rol_name">{{ rol.rol_name }}</option>
+        </select>
+      </div>
+      <div class="mb-4">
+        <label for="password" class="block text-gray-700 font-medium dark:text-white">Contraseña:</label>
+        <input type="password" id="password" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-700" v-model="currentUsuario.passhash" required/>
+      </div>
+      <div class="mb-4">
+        <label for="hotel" class="block text-gray-700 font-medium dark:text-white">ID Hotel:</label>
+        <input type="text" id="hotel" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-700" v-model="currentUsuario.id_hotel" readonly/>
+      </div>
+      <div class="mb-4">
+        <label for="imagen" class="block text-gray-700 font-medium dark:text-white">Imagen:</label>
+        <input type="file" id="imagen" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-700" @change="onFileChange" accept="image/*"/>
+      </div>
+    </div>
+  </form>
+</CardBoxModal>
+
+
   <!-- Modal de edición de usuario -->
   <CardBoxModal v-model="activarModalEdit" title="Editar Usuario" buttonLabel="Guardar cambios" has-cancel @cancel="cancelEdit" @confirm="update_Usuario">
     <form @submit.prevent="update_Usuario()">
@@ -182,6 +279,15 @@ onMounted(() => {
     <li><b>{{ activarModalDelete.usuario.nombre_completo }}</b></li>
     <li><b>{{ activarModalDelete.usuario.email }}</b></li>
   </CardBoxModal>
+
+  <!-- Botón para abrir el modal de crear usuario -->
+<button 
+  @click="openCreateModal" 
+  class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+>
+  Crear Usuario
+</button>
+
 
   <!-- Tabla de usuarios -->
   <table>
