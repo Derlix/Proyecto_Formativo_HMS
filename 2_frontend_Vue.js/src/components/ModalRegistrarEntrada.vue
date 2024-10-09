@@ -116,82 +116,6 @@
           </select>
         </div>
 
-        <!-- ALERTA DE EXITO -->
-        <div
-          v-if="showSuccess"
-          class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 dark:bg-opacity-70 text-black dark:text-white"
-        >
-          <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-sm w-full relative">
-            <button
-              @click="closeSuccess"
-              class="absolute top-2 right-2 text-gray-600 dark:text-gray-300"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-              Check-Out realizado con éxito
-            </h3>
-            <p>El Check-Out se ha completado correctamente.</p>
-            <button
-              @click="closeSuccess"
-              class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg w-full"
-            >
-              Cerrar
-            </button>
-          </div>
-        </div>
-
-        <!-- ALERTA DE ERROR -->
-        <div
-          v-if="showError"
-          class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 dark:bg-opacity-70 text-black dark:text-white"
-        >
-          <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-sm w-full relative">
-            <button
-              @click="closeError"
-              class="absolute top-2 right-2 text-gray-600 dark:text-gray-300"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-              Error al realizar el Check-Out
-            </h3>
-            <p>Hubo un problema al procesar el Check-Out. Intenta nuevamente.</p>
-            <button
-              @click="closeError"
-              class="mt-4 bg-red-600 text-white px-4 py-2 rounded-lg w-full"
-            >
-              Cerrar
-            </button>
-          </div>
-        </div>
-
         <div class="flex justify-between mt-4">
           <button @click="previousStep" class="bg-gray-400 text-white px-4 py-2 rounded-lg">
             Anterior
@@ -203,12 +127,34 @@
       </div>
     </div>
   </div>
+
+<!-- Modal de éxito -->
+<ModalAlert
+  :visible="showSuccess"
+  titulo="Éxito"
+  descripcion="Check-In realizado con éxito."
+  :textBoton="'Cerrar'"
+  color="text-green-400"
+  @close="closeSuccess"
+/>
+
+<!-- Modal de error -->
+<ModalAlert
+  :visible="showError"
+  titulo="Error"
+  descripcion="Hubo un problema al procesar el Check-In. Intenta nuevamente."
+  :textBoton="'Cerrar'"
+  color="text-red-600"
+  @close="closeError"
+/>
+
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
 import { obtenertodasReservasHabitacion } from '@/services/reservaHabitacionService'
 import { crearCheckin } from '@/services/checkinService'
+import ModalAlert from './ModalAlert.vue';
 
 const props = defineProps({
   visible: {
