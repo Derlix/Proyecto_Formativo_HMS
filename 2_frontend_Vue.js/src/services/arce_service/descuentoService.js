@@ -38,3 +38,41 @@ export const crear_descuento = async (descuento) => {
         }
     }
 };
+
+// Función para actualizar un descuento
+export const actualizar_descuento = async (discountId, descuento) => {
+    try {
+        const response = await api.put(`/descuento/descuentos/update-discount/${discountId}`, descuento, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        return response.data; // Retorna la respuesta de la actualización
+    } catch (error) {
+        if (error.response) {
+            throw error.response; // Devuelve el error original de la API
+        } else {
+            throw new Error('Error de red o de servidor');
+        }
+    }
+};
+
+// Función para eliminar un descuento
+export const eliminar_descuento = async (discountId) => {
+    try {
+        const response = await api.delete(`/descuento/descuentos/delete-discount/${discountId}`, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+            }
+        });
+        return response.data; // Retorna la respuesta de la eliminación
+    } catch (error) {
+        if (error.response) {
+            throw error.response; // Devuelve el error original de la API
+        } else {
+            throw new Error('Error de red o de servidor');
+        }
+    }
+};
+

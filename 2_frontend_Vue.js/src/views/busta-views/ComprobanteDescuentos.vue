@@ -8,18 +8,21 @@ import SectionMain from '@/components/SectionMain.vue';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import BaseButton from '@/components/BaseButton.vue';
 import BaseButtons from '@/components/BaseButtons.vue';
-import { info_descuentos, crear_descuento } from '@/services/arce_service/descuentoService';
+import editarDescuentoModal from '@/components/arce_components/editarDescuentoModal.vue';
+import { info_descuentos, crear_descuento, actualizar_descuento, eliminar_descuento } from '@/services/arce_service/descuentoService';
 import { mdiBallotOutline } from '@mdi/js';
 
 const form = ref({
   tipo_descuento: '',
   porcentaje_descuento: 0,
-  fecha_aplicacion: new Date().toISOString(), // Inicializa con la fecha actual
+  fecha_aplicacion: new Date().toISOString(),
   quien_aplico: '',
 });
 
 const descuentos = ref([]);
 const errorMessage = ref('');
+const editingDiscountId = ref(null);
+const modalVisible = ref(false);
 
 const submitForm = async () => {
   if (form.value.porcentaje_descuento < 0 || form.value.porcentaje_descuento > 100) {
@@ -35,15 +38,19 @@ const submitForm = async () => {
       quien_aplico: form.value.quien_aplico,
     };
 
-    const respuesta = await crear_descuento(nuevoDescuento);
-    console.log('Descuento creado:', respuesta);
+    if (editingDiscountId.value) {
+      await actualizar_descuento(editingDiscountId.value, nuevoDescuento);
+      errorMessage.value = 'Descuento actualizado correctamente.';
+    } else {
+      await crear_descuento(nuevoDescuento);
+      errorMessage.value = 'Descuento creado correctamente.';
+    }
 
     await fetchDescuentos();
-    resetForm(); // Resetea el formulario después de la creación
-
+    resetForm();
   } catch (error) {
-    console.error('Error al crear descuento:', error);
-    errorMessage.value = 'Hubo un error al crear el descuento. Intenta nuevamente.';
+    console.error('Error al guardar descuento:', error);
+    errorMessage.value = 'Hubo un error al guardar el descuento. Intenta nuevamente.';
   }
 };
 
@@ -55,7 +62,6 @@ const fetchDescuentos = async () => {
   }
 };
 
-// Resetea el formulario
 const resetForm = () => {
   form.value = {
     tipo_descuento: '',
@@ -63,10 +69,30 @@ const resetForm = () => {
     fecha_aplicacion: new Date().toISOString(),
     quien_aplico: '',
   };
-  errorMessage.value = ''; // Limpia el mensaje de error
+  editingDiscountId.value = null;
+  errorMessage.value = '';
+  modalVisible.value = false;
 };
 
-// Llama a fetchDescuentos cuando el componente se monta
+const editDescuento = (descuento) => {
+  form.value = { ...descuento };
+  editingDiscountId.value = descuento.id_descuento;
+  modalVisible.value = true;
+};
+
+const deleteDescuento = async (discountId) => {
+  if (confirm('¿Estás seguro de que quieres eliminar este descuento?')) {
+    try {
+      await eliminar_descuento(discountId);
+      await fetchDescuentos();
+      errorMessage.value = 'Descuento eliminado correctamente.';
+    } catch (error) {
+      console.error('Error al eliminar descuento:', error);
+      errorMessage.value = 'Hubo un error al eliminar el descuento. Intenta nuevamente.';
+    }
+  }
+};
+
 onMounted(fetchDescuentos);
 </script>
 
@@ -93,7 +119,7 @@ onMounted(fetchDescuentos);
           </BaseButtons>
         </div>
 
-        <p v-if="errorMessage" class="text-red-500">{{ errorMessage }}</p> <!-- Mensaje de error -->
+        <p v-if="errorMessage" class="text-red-500">{{ errorMessage }}</p>
       </form>
 
       <SectionTitle>Lista de Descuentos</SectionTitle>
@@ -104,6 +130,7 @@ onMounted(fetchDescuentos);
             <th class="text-left">Porcentaje</th>
             <th class="text-left">Fecha de Aplicación</th>
             <th class="text-left">Aplicado Por</th>
+            <th class="text-left">Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -112,9 +139,16 @@ onMounted(fetchDescuentos);
             <td>{{ descuento.porcentaje_descuento }}%</td>
             <td>{{ new Date(descuento.fecha_aplicacion).toLocaleDateString() }}</td>
             <td>{{ descuento.quien_aplico }}</td>
+            <td>
+              <BaseButton color="warning" @click="editDescuento(descuento)" label="Editar" />
+              <BaseButton color="danger" @click="deleteDescuento(descuento.id_descuento)" label="Eliminar" />
+            </td>
           </tr>
         </tbody>
       </table>
+
+      <editarDescuentoModal :visible="modalVisible" :form="form" @update:visible="modalVisible = $event"
+        @save="submitForm" />
     </SectionMain>
   </LayoutAuthenticated>
 </template>
