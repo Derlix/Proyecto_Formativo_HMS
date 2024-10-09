@@ -140,7 +140,9 @@ onMounted(fetchDescuentos);
             <td>{{ new Date(descuento.fecha_aplicacion).toLocaleDateString() }}</td>
             <td>{{ descuento.quien_aplico }}</td>
             <td>
-              <BaseButton color="warning" @click="editDescuento(descuento)" label="Editar" />
+              <BaseButton color="success" @click="editDescuento(descuento)" label="Editar" />
+            </td>
+            <td>
               <BaseButton color="danger" @click="deleteDescuento(descuento.id_descuento)" label="Eliminar" />
             </td>
           </tr>
