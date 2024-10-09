@@ -68,10 +68,10 @@ const routes = [
     meta: {
       title: 'InformacionReserva'
     },
-    path: '/informacion-reserva',
+    path: '/informacion-reserva/:id', // Agrega :id para recibir el parámetro
     name: 'informacion_reserva',
     component: InformacionReserva,
-    meta: { requiresAuth: true}
+    meta: { requiresAuth: true }
   },
   {
     meta: {

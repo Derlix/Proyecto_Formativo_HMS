@@ -25,6 +25,7 @@ export default {
         events: [], // Aquí almacenaremos las reservas
         resources: [], // Aquí se almacenarán las habitaciones (recursos)
         locale: esLocale, // Establece el idioma a español
+        eventClick: this.handleEventClick,
       },
     };
   },
@@ -48,6 +49,7 @@ export default {
       try {
         const response = await api.get('/Reserva-habitacion/get_all'); // Cambia esta ruta por la de tus reservas
         this.calendarOptions.events = response.data.map(reserva => ({
+          id: reserva.id_reserva,
           resourceId: reserva.id_habitacion, // Asocia la reserva con la habitación correspondiente
           start: reserva.fecha_entrada, // Fecha de inicio de la reserva
           end: reserva.fecha_salida_propuesta, // Fecha de salida de la reserva
@@ -58,6 +60,10 @@ export default {
         console.error('Error al obtener las reservas:', error);
       }
     },
+    handleEventClick(info) {
+      const reservaId = info.event.id; // Asegúrate de que tu evento tenga un ID
+      this.$router.push({ name: 'informacion_reserva', params: { id: reservaId } });
+    }
   },
 };
 </script>

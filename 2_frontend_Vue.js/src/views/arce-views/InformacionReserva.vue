@@ -7,8 +7,9 @@ import SectionTitle from '@/components/SectionTitle.vue';
 import CardBox from '@/components/CardBox.vue';
 import { reactive, onMounted } from 'vue';
 import { getHuespedByDocument } from '@/services/huespedService';
+import { useRoute } from 'vue-router';
 
-const numeroDocumento = '1012345678'; // Cédula fija
+const route = useRoute(); 
 
 const infoHuesped = reactive({
     nombre: "",
@@ -64,6 +65,13 @@ const infoDinero = reactive({
     adelanto: "$150.00",
     medio: "Tarjeta de Crédito",
 });
+
+onMounted(() => {
+    fetchHuesped();
+    const reservaId = route.params.id; 
+    console.log('Reserva ID:', reservaId);
+});
+
 </script>
 
 <template>
