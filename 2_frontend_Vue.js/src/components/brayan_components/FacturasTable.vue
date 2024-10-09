@@ -100,6 +100,16 @@ const filtrarFacturasPorEstado = () => {
     // Filtrar facturas basadas en el estado seleccionado
     facturas.value = facturasOriginales.value.filter(factura => factura.estado === estadoSeleccionado);
   }
+  if (facturas.value.length === 0) {
+    modalMessage.value = 'No se encontraron facturas con el estado seleccionado';
+    isAlertVisible.value = true;
+    colorAlert.value = 'danger';
+
+    // Cerrar la alerta automáticamente después de 3 segundos
+    setTimeout(() => {
+      isAlertVisible.value = false;
+    }, 5000);
+  }
 };
 
 
