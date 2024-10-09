@@ -1,31 +1,62 @@
 <script setup>
-import { ref } from 'vue'
-import TitleIconOnly from '@/components/TitleIconOnly.vue'
-import FormControl from '@/components/FormControl.vue'
-import FormField from '@/components/FormField.vue'
-import SectionTitle from '@/components/SectionTitle.vue'
-import SectionMain from '@/components/SectionMain.vue'
-import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
-import BaseButton from '@/components/BaseButton.vue'
-import BaseButtons from '@/components/BaseButtons.vue'
-
+import { ref, onMounted } from 'vue';
+import TitleIconOnly from '@/components/TitleIconOnly.vue';
+import FormControl from '@/components/FormControl.vue';
+import FormField from '@/components/FormField.vue';
+import SectionTitle from '@/components/SectionTitle.vue';
+import SectionMain from '@/components/SectionMain.vue';
+import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
+import BaseButton from '@/components/BaseButton.vue';
+import BaseButtons from '@/components/BaseButtons.vue';
+import { info_descuentos, crear_descuento } from '@/services/arce_service/descuentoService';
 import {
   mdiBallotOutline,
-} from '@mdi/js'
+} from '@mdi/js';
 
-// Aquí puedes definir cualquier ref o reactive que necesites para el formulario
 const form = ref({
-  habitacion: '',
-  huesped: '',
-  descripcion: '',
-  descuento: '',
-  elaboradoPor: '',
-  autorizadoPor: '',
+  tipo_descuento: '',
+  porcentaje_descuento: 0,
+  fecha_aplicacion: "",
+  quien_aplico: '',
 });
 
-const submitForm = () => {
-  console.log('Formulario enviado', form.value);
-}
+const descuentos = ref([]);
+
+const submitForm = async () => {
+  try {
+    const nuevoDescuento = {
+      tipo_descuento: form.value.tipo_descuento,
+      porcentaje_descuento: form.value.porcentaje_descuento,
+      fecha_aplicacion: form.value.fecha_aplicacion,
+      quien_aplico: form.value.quien_aplico,
+    };
+
+    const respuesta = await crear_descuento(nuevoDescuento);
+    console.log('Descuento creado:', respuesta);
+
+    await fetchDescuentos();
+
+    form.value = {
+      tipo_descuento: '',
+      porcentaje_descuento: 0,
+      fecha_aplicacion: new Date().toISOString(),
+      quien_aplico: '',
+    };
+  } catch (error) {
+    console.error('Error al crear descuento:', error);
+  }
+};
+
+const fetchDescuentos = async () => {
+  try {
+    descuentos.value = await info_descuentos();
+  } catch (error) {
+    console.error('Error al obtener descuentos:', error);
+  }
+};
+
+// Llama a fetchDescuentos cuando el componente se monta
+onMounted(fetchDescuentos);
 </script>
 
 <template>
@@ -37,41 +68,44 @@ const submitForm = () => {
       <SectionTitle>Registrar descuento</SectionTitle>
 
       <form @submit.prevent="submitForm" class="mt-6">
-
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <FormField label="Habitación">
-            <FormControl v-model="form.habitacion" type="text" required />
+          <FormField label="Tipo de Descuento">
+            <FormControl v-model="form.tipo_descuento" type="text" required />
           </FormField>
-          <FormField label="Huésped">
-            <FormControl v-model="form.huesped" type="text" required />
-          </FormField>
-        </div>
-
-        <FormField label="Descripción">
-          <FormControl v-model="form.descripcion" type="text" required />
-        </FormField>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <FormField label="Descuento">
-            <FormControl v-model="form.descuento" type="text" required />
-          </FormField>
-          <FormField label="Elaborado por">
-            <FormControl v-model="form.elaboradoPor" type="text" required />
-          </FormField>
-          <FormField label="Autorizado por">
-            <FormControl v-model="form.autorizadoPor" type="text" required />
+          <FormField label="Porcentaje de Descuento">
+            <FormControl v-model.number="form.porcentaje_descuento" type="number" required />
           </FormField>
         </div>
 
         <div class="flex justify-between">
           <BaseButtons>
-            <BaseButton type="submit" color="info" label="Submit" />
+            <BaseButton type="submit" color="info" label="Registrar" />
             <BaseButton type="reset" color="info" outline label="Reset" />
           </BaseButtons>
         </div>
-
       </form>
-      
+
+      <!-- Tabla para mostrar descuentos -->
+      <SectionTitle>Lista de Descuentos</SectionTitle>
+      <table class="min-w-full mt-4">
+        <thead>
+          <tr>
+            <th class="text-left">Tipo de Descuento</th>
+            <th class="text-left">Porcentaje</th>
+            <th class="text-left">Fecha de Aplicación</th>
+            <th class="text-left">Aplicado Por</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="descuento in descuentos" :key="descuento.id_descuento">
+            <td>{{ descuento.tipo_descuento }}</td>
+            <td>{{ descuento.porcentaje_descuento }}%</td>
+            <td>{{ new Date(descuento.fecha_aplicacion).toLocaleDateString() }}</td>
+            <td>{{ descuento.quien_aplico }}</td>
+          </tr>
+        </tbody>
+      </table>
+
     </SectionMain>
   </LayoutAuthenticated>
 </template>

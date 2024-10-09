@@ -14,7 +14,8 @@ const infoHuesped = reactive({
     nombre: "",
     email: "",
     telefono: "",
-    ocupacion: ""
+    ocupacion: "",
+    id: 0
 });
 
 const error = reactive({

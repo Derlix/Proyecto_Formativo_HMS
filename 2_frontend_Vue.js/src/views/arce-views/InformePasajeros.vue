@@ -78,7 +78,7 @@ onMounted(() => {
                             <tr 
                                 v-for="habitacion in habitaciones" 
                                 :key="habitacion.id_habitacion" 
-                                class="hover:bg-gray-100"
+                                class=""
                             >
                                 <td class="py-3 px-6 text-left whitespace-nowrap" data-label="Habitación">{{ habitacion.numero_habitacion }}</td>
                                 <td class="py-3 px-6 text-left" data-label="Categoría">{{ habitacion.categoria.tipo_habitacion }}</td>
@@ -107,7 +107,7 @@ onMounted(() => {
                         <tr 
                             v-for="resumen in resumenPorPiso" 
                             :key="resumen.piso" 
-                            class="hover:bg-gray-100"
+                            class=""
                         >
                             <td class="py-3 px-6 text-left" data-label="Piso">{{ resumen.piso }}</td>
                             <td class="py-3 px-6 text-left" data-label="Habitaciones Activas">{{ resumen.totalHabitacionesActivas }}</td>
