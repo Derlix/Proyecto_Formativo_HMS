@@ -333,7 +333,7 @@ onMounted(() => {
   <table>
     <thead>
       <tr>
-        <th v-if="checkable" />
+     
         <th>Nombre completo</th>
         <th>Tipo documento</th>
         <th>Número documento</th>
@@ -349,9 +349,7 @@ onMounted(() => {
     <tbody>
       <tr v-for="huesped in huespedes" :key="huesped.id_huesped">
         
-        <td class="border-b-0 lg:w-6 before:hidden">
-          
-        </td>
+        
         <td data-label="Nombre completo">
           {{ huesped.nombre_completo }}
         </td>
