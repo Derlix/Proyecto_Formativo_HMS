@@ -214,30 +214,30 @@ onMounted(() => {
 <CardBoxModal v-model="activarModalCreate" title="Crear Usuario" buttonLabel="Crear usuario" has-cancel @cancel="cancelCreate" @confirm="create_Usuario">
   <form @submit.prevent="create_Usuario()">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div class="mb-4">
+      <div class="">
         <label for="nombre" class="block text-gray-700 font-medium dark:text-white">Nombre Completo:</label>
         <input type="text" id="nombre" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-700" v-model="currentUsuario.nombre_completo" required/>
       </div>
-      <div class="mb-4">
+      <div class="">
         <label for="email" class="block text-gray-700 font-medium dark:text-white">Correo:</label>
         <input type="email" id="email" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-700" v-model="currentUsuario.email" required/>
       </div>
-      <div class="mb-4">
+      <div class="">
         <label for="rol" class="block text-gray-700 font-medium dark:text-white">Rol:</label>
         <select id="rol" v-model="currentUsuario.usuario_rol" required>
           <option value="" disabled>Selecciona un rol</option>
           <option v-for="rol in roles" :key="rol.rol_name" :value="rol.rol_name">{{ rol.rol_name }}</option>
         </select>
       </div>
-      <div class="mb-4">
+      <div class="">
         <label for="password" class="block text-gray-700 font-medium dark:text-white">Contraseña:</label>
         <input type="password" id="password" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-700" v-model="currentUsuario.passhash" required/>
       </div>
-      <div class="mb-4">
+      <div class="">
         <label for="hotel" class="block text-gray-700 font-medium dark:text-white">ID Hotel:</label>
         <input type="text" id="hotel" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-700" v-model="currentUsuario.id_hotel" readonly/>
       </div>
-      <div class="mb-4">
+      <div class="">
         <label for="imagen" class="block text-gray-700 font-medium dark:text-white">Imagen:</label>
         <input type="file" id="imagen" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-700" @change="onFileChange" accept="image/*"/>
       </div>
