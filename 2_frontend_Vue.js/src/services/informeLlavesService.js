@@ -75,3 +75,16 @@ export const deleteReport = async (id_informe) => {
         }
     }
 }
+
+export const getRoomByNameAndId = async () => {
+    try {
+      const response = await api.get('/habitacion/get_all_rooms_by_name');
+      return response.data;
+    } catch (error) {
+      if (error.response) {
+        throw error.response; // Devuelve el error original de la API
+      } else {
+        throw new Error('Error de red o de servidor'); // Manejar errores de red
+      }
+    }
+  }

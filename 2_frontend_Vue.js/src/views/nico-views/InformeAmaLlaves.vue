@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import { mdiEye, mdiTrashCan } from '@mdi/js';
-import { createReport, getReportByPage, updateReport, deleteReport } from '@/services/informeLlavesService';
+import { createReport, getReportByPage, updateReport, deleteReport, getRoomByNameAndId } from '@/services/informeLlavesService';
 import SectionMain from '@/components/SectionMain.vue';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import BaseButtons from '@/components/BaseButtons.vue';
@@ -15,6 +15,7 @@ const TotalPages = ref(0);
 const currentPage = ref(1);
 const isModalOpen = ref(false);
 const isEdit = ref(false);
+const habitacionesDisponibles = ref([]);
 const currentReport = ref({
     id_informe: '',
     id_habitacion: '',
@@ -25,28 +26,44 @@ const colorAlert = ref('');
 const modalMessage = ref('');
 const isAlertVisible = ref(false);
 
+const isDropdownOpen = ref(false);
+const selectedHabitacionText = ref('');
+
+const selectHabitacion = (habitacion) => {
+    currentReport.value.id_habitacion = habitacion.id_habitacion;
+    selectedHabitacionText.value = `${habitacion.numero_habitacion}`;
+    isDropdownOpen.value = false;
+};
+
 const openCreateModal = () => {
     isModalOpen.value = true;
     isEdit.value = false;
     currentReport.value = { id_informe: '', id_habitacion: '', estado_reportado: '' };
+    selectedHabitacionText.value = '';
 };
 
 const openEditModal = (report) => {
     isModalOpen.value = true;
     isEdit.value = true;
     currentReport.value = { id_informe: report.id_informe, id_habitacion: report.habitacion.id_habitacion, estado_reportado: report.estado_reportado };
+    const selectedRoom = habitacionesDisponibles.value.find(h => h.id_habitacion === currentReport.value.id_habitacion);
+    selectedHabitacionText.value = selectedRoom ? `${selectedRoom.numero_habitacion}` : '';
 };
 
 const closeModal = () => {
     isModalOpen.value = false;
     currentReport.value = { id_informe: '', id_habitacion: '', estado_reportado: '' };
+    selectedHabitacionText.value = '';
+    isDropdownOpen.value = false;
 };
 
 const fetchReports = async () => {
     try {
         const response = await getReportByPage(currentPage.value);
+        const responseRoom = await getRoomByNameAndId();
         reports.value = response.data.informes || [];
         TotalPages.value = response.data.total_pages || 0;
+        habitacionesDisponibles.value = responseRoom;
 
         if (currentPage.value > TotalPages.value) {
             currentPage.value = TotalPages.value;
@@ -83,11 +100,11 @@ const saveReport = async () => {
         }, 3000);
     } catch (error) {
         modalMessage.value = 'Error al guardar informe';
+        colorAlert.value = 'danger';
+        isAlertVisible.value = true;
         setTimeout(() => {
             isAlertVisible.value = false;
         }, 3000);
-        colorAlert.value = 'danger';
-        isAlertVisible.value = true;
     }
 };
 
@@ -116,11 +133,11 @@ const confirmDelete = async () => {
         }, 3000);
     } catch (error) {
         modalMessage.value = 'Error al eliminar informe';
+        colorAlert.value = 'danger';
+        isAlertVisible.value = true;
         setTimeout(() => {
             isAlertVisible.value = false;
         }, 3000);
-        colorAlert.value = 'danger';
-        isAlertVisible.value = true;
     }
 };
 
@@ -129,30 +146,24 @@ const cancelDelete = () => {
 };
 
 const formatDate = (dateString) => {
-  const date = new Date(dateString);
-
-  // Ajustar a la zona horaria local aplicando el offset
-  date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
-
-  const options = {
-    year: 'numeric',
-    month: 'numeric',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: true  // Formato de 24 horas
-  };
-
-  return date.toLocaleString('es-ES', options);
+    const date = new Date(dateString);
+    date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+    const options = {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true,
+    };
+    return date.toLocaleString('es-ES', options);
 };
-
-
-
 
 onMounted(() => {
     fetchReports();
 });
+
 
 </script>
 
@@ -161,9 +172,21 @@ onMounted(() => {
         <form @submit.prevent="saveReport">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="mb-4">
-                    <label for="id_habitacion" class="block text-gray-700 font-medium dark:text-white">Habitación:</label>
-                    <input type="number" id="id_habitacion" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-700 dark:text-white" v-model="currentReport.id_habitacion" required/>
+                    <label for="id_habitacion" class="text-gray-700 font-medium dark:text-white">Habitación:</label>
+                    <div class="card relative">
+                        <div @click="isDropdownOpen = !isDropdownOpen" class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500 dark:bg-gray-800 dark:text-white cursor-pointer">
+                            {{ selectedHabitacionText || "Selecciona Habitacion " }}
+                        </div>
+                        <div v-if="isDropdownOpen" class="absolute z-10 w-full bg-white border border-gray-300 dark:bg-gray-800 dark:border-gray-600 rounded mt-1 max-h-48 overflow-y-auto">
+                            <div v-for="habitacion in habitacionesDisponibles" :key="habitacion.id_habitacion" @click="selectHabitacion(habitacion)" class="px-3 py-2 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer">
+                                {{ habitacion.numero_habitacion }}
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
+
+
                 <div class="mb-4">
                     <label for="estado_reportado" class="block text-gray-700 font-medium dark:text-white">Estado Reportado:</label>
                     <select id="estado_reportado" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-700 dark:text-white" v-model="currentReport.estado_reportado" required>
@@ -234,3 +257,11 @@ onMounted(() => {
         </SectionMain>
     </LayoutAuthenticated>
 </template>
+
+<style>
+.scroll-select {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+</style>
