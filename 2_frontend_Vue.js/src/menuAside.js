@@ -47,19 +47,7 @@ export default [
     icon: mdiMonitor,
     label: 'informe pasajeros',
     modulo: 'huespedes'
-  },
-  {
-    to: '/informacion-reserva',
-    icon: mdiMonitor,
-    label: 'Info reserva',
-    modulo: 'reservas'
-  },
-  {
-    to: '/tarjeta-reserva',
-    icon: mdiMonitor,
-    label: 'tarjeta reserva',
-    modulo: 'reservas'
-  },
+  }, 
   {
     to: '/transpaso-particulares',
     icon: mdiMonitor,
@@ -100,13 +88,6 @@ export default [
     label: 'Inf. Ama llaves',
     icon: mdiFileChart,
     modulo: 'habitacion'
-  },
-
-  {
-    to: '/checkOut',
-    label: 'CheckOut',
-    icon: mdiExitRun ,
-    modulo: 'check_in'
   },
   {
     to: '/productos',

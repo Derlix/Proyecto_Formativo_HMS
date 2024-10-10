@@ -7,10 +7,8 @@ import ModalRegistrarSalida from '@/components/ModalRegistrarSalida.vue'
 import CardBoxWidget from '@/components/CardBoxWidget.vue'
 import SectionMain from '@/components/SectionMain.vue'
 import TitleIconOnly from '@/components/TitleIconOnly.vue'
-import SectionTitle from '@/components/SectionTitle.vue'
 import {
   mdiBed,
-  mdiCheckCircleOutline,
   mdiSprayBottle,
   mdiMinusCircle,
   mdiBallotOutline,
@@ -103,9 +101,8 @@ onMounted(() => {
           />
         </div>
 
-        <SectionTitle first>Entradas y salidas</SectionTitle>
 
-        <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-1">
           <CardBox class="shadow-md">  
             <h1 class="text-center m-4 font-medium text-xl">Registrar entradas y salidas de huéspedes</h1>
             <div class="grid grid-cols-1 gap-3 w-full lg:grid-cols-2">
@@ -116,13 +113,6 @@ onMounted(() => {
               
 
               <ModalRegistrarSalida :visible="showModalSalidas" @close="showModalSalidas = false"/>
-            </div>
-
-          </CardBox>
-          <CardBox class="shadow-md">  
-            <h1 class="text-center m-4 font-medium text-xl">Movimientos de pasajeros correspondientes</h1>
-            <div class="grid grid-cols-1 gap-3 w-full lg:grid-cols-1">
-              <button @click="showModal = true" class="bg-blue-600 h-12 rounded-lg m-6 font-bold hover:bg-blue-900 text-white">Registrar Entrada</button>
             </div>
           </CardBox>
         </div>

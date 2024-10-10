@@ -16,9 +16,7 @@ import Registrar from '@/views/camilo-views/Registrar.vue'
 import Recuperar from '@/views/camilo-views/RecuperarContrasena.vue'
 import MovimientoPasajeros from '@/views/camilo-views/MovimientoPasajerosCorrespondiente.vue'
 import InformePasajeros from '@/views/arce-views/InformePasajeros.vue'
-import TarjetaReserva from '@/views/arce-views/TarjetaReserva.vue'
 import TranspasoParticulares from '@/views/arce-views/TranspasoParticulares.vue'
-import InformacionReserva from '@/views/arce-views/InformacionReserva.vue'
 import InicioCajero from '@/views/arce-views/InicioCajero.vue'
 import VistaHabitaciones from '@/views/camilo-views/VistaHabitaciones.vue'
 import InicioJefeRecepcionista from '@/views/arce-views/DashboardAdmin.vue'
@@ -62,24 +60,6 @@ const routes = [
     path: '/informe-pasajeros',
     name: 'informe_pasajeros',
     component: InformePasajeros,
-    meta: { requiresAuth: true}
-  },
-  {
-    meta: {
-      title: 'InformacionReserva'
-    },
-    path: '/informacion-reserva',
-    name: 'informacion_reserva',
-    component: InformacionReserva,
-    meta: { requiresAuth: true}
-  },
-  {
-    meta: {
-      title: 'TarjetaReserva'
-    },
-    path: '/tarjeta-reserva',
-    name: 'trajeta_reserva',
-    component: TarjetaReserva,
     meta: { requiresAuth: true}
   },
   {
@@ -230,15 +210,6 @@ const routes = [
     path: '/habitaciones',
     name: 'VistaHabitaciones',
     component: VistaHabitaciones,
-    meta: { requiresAuth: true}
-  },
-  {
-    meta: {
-      title: 'checkOut'
-    },
-    path: '/checkOut',
-    name: 'checkOut',
-    component: () => import('@/views/nico-views/CheckOut.vue'),
     meta: { requiresAuth: true}
   },
   {
