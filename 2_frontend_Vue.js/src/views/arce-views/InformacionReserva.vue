@@ -6,73 +6,115 @@ import TitleIconOnly from '@/components/TitleIconOnly.vue';
 import SectionTitle from '@/components/SectionTitle.vue';
 import CardBox from '@/components/CardBox.vue';
 import { reactive, onMounted } from 'vue';
-import { getHuespedByDocument } from '@/services/huespedService';
+import { getReservaById } from '@/services/arce_service/reservasService';
+import { obtenerHabitacionPorId } from '@/services/juanca_service/habitacionService';
 import { useRoute } from 'vue-router';
+import CardLista from '@/components/brayan_components/CardLista.vue';
 
-const route = useRoute(); 
-
-const infoHuesped = reactive({
-    nombre: "",
-    email: "",
-    telefono: "",
-    ocupacion: "",
-    id: 0
-});
+const route = useRoute();
 
 const error = reactive({
     message: null
 });
 
-const fetchHuesped = async () => {
-    try {
-        const response = await getHuespedByDocument(numeroDocumento);
-        error.message = null; // Limpiar el error si la llamada fue exitosa
+const dataReserva = reactive({
+    nombre: "",
+    email: "",
+    telefono: "",
+    ocupacion: "",
+    direccion: "",
+    tipo_documento: "",
+    numero_documento: "",
+    fecha_expedicion: "",
+    fecha_reserva: "",
+    empresa: "",
+    valor_deposito: 0,
+    forma_pago: "",
+    estado_reserva: ""
+});
 
-        // Asignar los datos necesarios a infoHuesped
-        infoHuesped.nombre = response.data.nombre_completo; 
-        infoHuesped.email = response.data.email;
-        infoHuesped.telefono = response.data.telefono;
-        infoHuesped.ocupacion = response.data.ocupacion;
+const dataHabitacion = reactive({
+    numero: "",
+    estado: "",
+    piso: 0,
+    precio_fijo: "",
+    tipo: "",
+    caracteristica: "",
+    adicional: "",
+});
+
+
+const fetchHabitacion = async () => {
+    try {
+        const habitacionId = 4;
+        const response = await obtenerHabitacionPorId(habitacionId);
+        error.message = null;
+
+        const habitacion = response.data;
+        const categoria = response.data.categoria;
+        const caracteristica = response.data.caracteristicas;
+
+        dataHabitacion.numero = habitacion.numero_habitacion
+        dataHabitacion.estado = habitacion.estado
+        dataHabitacion.piso = habitacion.piso
+        dataHabitacion.precio_fijo = categoria.precio_fijo
+        dataHabitacion.tipo = categoria.tipo_habitacion
+        dataHabitacion.caracteristica = caracteristica.nombre_caracteristicas
+        dataHabitacion.adicional = caracteristica.adicional
+
     } catch (err) {
         error.message = err.response ? err.response.data : 'Error de red o de servidor';
-        // Limpiar los datos del huésped si hay un error
-        infoHuesped.nombre = "";
-        infoHuesped.email = "";
-        infoHuesped.telefono = "";
-        infoHuesped.ocupacion = "";
+    }
+}
+
+const fetchDataReserva = async () => {
+    try {
+        const reservaId = route.params.id;
+        const response = await getReservaById(reservaId);
+
+        error.message = null;
+        const huesped = response.huesped;
+
+        dataReserva.nombre = huesped.nombre_completo;
+        dataReserva.email = huesped.email;
+        dataReserva.telefono = huesped.telefono;
+        dataReserva.ocupacion = huesped.ocupacion;
+        dataReserva.direccion = huesped.direccion;
+        dataReserva.tipo_documento = huesped.tipo_documento;
+        dataReserva.numero_documento = huesped.numero_documento;
+        dataReserva.fecha_expedicion = huesped.fecha_expedicion;
+        dataReserva.fecha_reserva = response.fecha_reserva;
+        dataReserva.empresa = response.empresa;
+        dataReserva.valor_deposito = Number(response.valor_deposito);
+        dataReserva.forma_pago = response.forma_pago;
+        dataReserva.estado_reserva = response.estado_reserva;
+
+    } catch (err) {
+        error.message = err.response ? err.response.data : 'Error de red o de servidor';
+        Object.assign(dataReserva, {
+            nombre: "",
+            email: "",
+            telefono: "",
+            ocupacion: "",
+            direccion: "",
+            tipo_documento: "",
+            numero_documento: "",
+            fecha_expedicion: "",
+            fecha_reserva: "",
+            empresa: "",
+            valor_deposito: 0,
+            forma_pago: "",
+            estado_reserva: ""
+        });
     }
 };
 
-// Llamar a la función al montar el componente
 onMounted(() => {
-    fetchHuesped();
+    fetchHabitacion()
+    fetchDataReserva();
 });
-
-const infoReserva = reactive({
-    tipo: "Suite",
-    habitacion: "101",
-    cantidad: 2,
-    cambio: "No",
-    comprovante: "comprovante_12345.pdf",
-});
-
-const infoCheck = reactive({
-    llegada: "2024-10-01",
-    salida: "2024-10-05",
-});
-
-const infoDinero = reactive({
-    adelanto: "$150.00",
-    medio: "Tarjeta de Crédito",
-});
-
-onMounted(() => {
-    fetchHuesped();
-    const reservaId = route.params.id; 
-    console.log('Reserva ID:', reservaId);
-});
-
 </script>
+
 
 <template>
     <LayoutAuthenticated>
@@ -80,97 +122,120 @@ onMounted(() => {
             <TitleIconOnly :icon="mdiBallotOutline" title="Información reserva" />
 
             <div class="flex flex-col sm:flex-row justify-end mb-4">
-                <button class="bg-blue-600 h-12 rounded-lg my-2 font-bold hover:bg-blue-900 text-white py-2 px-4 mx-1">Factura temporal</button>
-                <button class="bg-blue-600 h-12 rounded-lg my-2 font-bold hover:bg-blue-900 text-white py-2 px-4 mx-1">Crear check-out</button>
-                <button class="bg-blue-600 h-12 rounded-lg my-2 font-bold hover:bg-blue-900 text-white py-2 px-4 mx-1">Complementada con éxito</button>
+                <button
+                    class="bg-blue-600 h-12 rounded-lg my-2 font-bold hover:bg-blue-900 text-white py-2 px-4 mx-1">Factura
+                    temporal</button>
+                <button
+                    class="bg-blue-600 h-12 rounded-lg my-2 font-bold hover:bg-blue-900 text-white py-2 px-4 mx-1">Crear
+                    check-out</button>
+                <button
+                    class="bg-blue-600 h-12 rounded-lg my-2 font-bold hover:bg-blue-900 text-white py-2 px-4 mx-1">Complementada
+                    con éxito</button>
             </div>
 
-            <CardBox class="shadow-md mb-4">
-                <SectionTitle>Información de huésped</SectionTitle>
-                <div class="flex flex-col mb-4 px-6 py-4">
-                    <div class="flex flex-col sm:flex-row sm:justify-between">
-                        <div class="flex-1 mb-4 sm:mb-0">
+            <div class="flex flex-col sm:flex-row mt-6 gap-6">
+
+                <CardBox class="shadow-md w-full sm:w-1/2">
+                    <SectionTitle>Información de huésped</SectionTitle>
+                    <div class="flex flex-col mb-4 px-6 py-4">
+                        <div class="flex flex-col">
                             <div class="flex justify-between mb-2">
                                 <p class="text-base">Nombre:</p>
-                                <p class="text-base">{{ infoHuesped.nombre }}</p>
+                                <p class="text-base">{{ dataReserva.nombre }}</p>
+                            </div>
+                            <div class="flex justify-between mb-2">
+                                <p class="text-base">Tipo documento:</p>
+                                <p class="text-base">{{ dataReserva.tipo_documento }}</p>
+                            </div>
+                            <div class="flex justify-between mb-2">
+                                <p class="text-base">Número documento:</p>
+                                <p class="text-base">{{ dataReserva.numero_documento }}</p>
+                            </div>
+                            <div class="flex justify-between mb-2">
+                                <p class="text-base">Fecha expedición:</p>
+                                <p class="text-base">{{ dataReserva.fecha_expedicion }}</p>
                             </div>
                             <div class="flex justify-between mb-2">
                                 <p class="text-base">Email:</p>
-                                <p class="text-base">{{ infoHuesped.email }}</p>
+                                <p class="text-base">{{ dataReserva.email }}</p>
                             </div>
                             <div class="flex justify-between mb-2">
                                 <p class="text-base">Teléfono:</p>
-                                <p class="text-base">{{ infoHuesped.telefono }}</p>
+                                <p class="text-base">{{ dataReserva.telefono }}</p>
                             </div>
                             <div class="flex justify-between mb-2">
                                 <p class="text-base">Ocupación:</p>
-                                <p class="text-base">{{ infoHuesped.ocupacion }}</p>
+                                <p class="text-base">{{ dataReserva.ocupacion }}</p>
                             </div>
-                        </div>
-                        <div class="flex-1 ml-6">
-                            <div class="font-bold text-xl mb-2">Observaciones</div>
-                            <textarea class="w-full h-24 p-2 border rounded text-black"></textarea>
-                        </div>
-                    </div>
-                </div>
-            </CardBox>
-
-            <div class="flex flex-col sm:flex-row mt-6">
-                <CardBox class="shadow-md w-full sm:w-1/2 mb-4 sm:mb-0">
-                    <SectionTitle>Información de reserva</SectionTitle>
-                    <div class="m-6 space-y-6">
-                        <div class="flex justify-between">
-                            <p class="text-lg">Tipo de habitación:</p>
-                            <p class="text-base">{{ infoReserva.tipo }}</p>
-                        </div>
-                        <div class="flex justify-between">
-                            <p class="text-lg">Habitación:</p>
-                            <p class="text-base">{{ infoReserva.habitacion }}</p>
-                        </div>
-                        <div class="flex justify-between">
-                            <p class="text-lg">Cantidad de Personas:</p>
-                            <p class="text-base">{{ infoReserva.cantidad }}</p>
-                        </div>
-                        <div class="flex justify-between">
-                            <p class="text-lg">Cambio de Reserva:</p>
-                            <p class="text-base">{{ infoReserva.cambio }}</p>
-                        </div>
-                        <div class="flex justify-between">
-                            <p class="text-lg">Comprobante de Reserva:</p>
-                            <p class="text-base">{{ infoReserva.comprovante }}</p>
+                            <div class="flex justify-between mb-2">
+                                <p class="text-base">Dirección:</p>
+                                <p class="text-base">{{ dataReserva.direccion }}</p>
+                            </div>
                         </div>
                     </div>
                 </CardBox>
 
-                <div class="w-full sm:w-1/2 sm:ml-6">
-                    <CardBox class="shadow-md mb-4">
-                        <SectionTitle>Check-in y check-out</SectionTitle>
-                        <div class="flex flex-col sm:flex-row mb-4 px-6 py-4">
-                            <div class="flex-1 mb-2 sm:mb-0 flex justify-between">
-                                <p class="text-base">Llegada:</p>
-                                <p class="text-base">{{ infoCheck.llegada }}</p>
-                            </div>
-                            <div class="flex-1 flex justify-between">
-                                <p class="text-base">Salida:</p>
-                                <p class="text-base">{{ infoCheck.salida }}</p>
-                            </div>
+                <CardBox class="shadow-md w-full sm:w-1/2 mb-4 sm:mb-0">
+                    <SectionTitle>Información de reserva</SectionTitle>
+                    <div class="m-6 space-y-6">
+                        <div class="flex justify-between">
+                            <p class="text-lg">Fecha:</p>
+                            <p class="text-base">{{ dataReserva.fecha_reserva }}</p>
                         </div>
-                    </CardBox>
+                        <div class="flex justify-between">
+                            <p class="text-lg">Empresa:</p>
+                            <p class="text-base">{{ dataReserva.empresa }}</p>
+                        </div>
+                        <div class="flex justify-between">
+                            <p class="text-lg">Depósito:</p>
+                            <p class="text-base">{{ dataReserva.valor_deposito }}</p>
+                        </div>
+                        <div class="flex justify-between">
+                            <p class="text-lg">Forma de pago:</p>
+                            <p class="text-base">{{ dataReserva.forma_pago }}</p>
+                        </div>
+                        <div class="flex justify-between">
+                            <p class="text-lg">Estado:</p>
+                            <p class="text-base">{{ dataReserva.estado_reserva }}</p>
+                        </div>
+                    </div>
+                </CardBox>
+            </div>
 
-                    <CardBox class="shadow-md">
-                        <SectionTitle>Información de dinero</SectionTitle>
-                        <div class="flex flex-col mb-4 px-6 py-4">
-                            <div class="flex justify-between mb-2">
-                                <p class="text-base">Adelanto:</p>
-                                <p class="text-base">{{ infoDinero.adelanto }}</p>
-                            </div>
-                            <div class="flex justify-between">
-                                <p class="text-base">Medio de pago:</p>
-                                <p class="text-base">{{ infoDinero.medio }}</p>
-                            </div>
+            <div class="flex flex-col sm:flex-row mt-6 gap-6">
+                <CardBox class="shadow-md w-full sm:w-1/2 mb-4 sm:mb-0">
+                    <SectionTitle>Información de habitación</SectionTitle>
+                    <div class="flex flex-col mb-4 px-6 py-4">
+                        <div class="flex justify-between mb-2">
+                            <p class="text-base">Número:</p>
+                            <p class="text-base">{{ dataHabitacion.numero }}</p>
                         </div>
-                    </CardBox>
-                </div>
+                        <div class="flex justify-between mb-2">
+                            <p class="text-base">Estado:</p>
+                            <p class="text-base">{{ dataHabitacion.estado }}</p>
+                        </div>
+                        <div class="flex justify-between mb-2">
+                            <p class="text-base">Piso:</p>
+                            <p class="text-base">{{ dataHabitacion.piso }}</p>
+                        </div>
+                        <div class="flex justify-between mb-2">
+                            <p class="text-base">Precio fijo:</p>
+                            <p class="text-base">{{ dataHabitacion.precio_fijo }}</p>
+                        </div>
+                        <div class="flex justify-between mb-2">
+                            <p class="text-base">Tipo:</p>
+                            <p class="text-base">{{ dataHabitacion.tipo }}</p>
+                        </div>
+                        <div class="flex justify-between mb-2">
+                            <p class="text-base">Características:</p>
+                            <p class="text-base">{{ dataHabitacion.caracteristica }}</p>
+                        </div>
+                        <div class="flex justify-between mb-2">
+                            <p class="text-base">Adicional:</p>
+                            <p class="text-base">{{ dataHabitacion.adicional }}</p>
+                        </div>
+                    </div>
+                </CardBox>
             </div>
 
             <div class="flex justify-end mt-5">

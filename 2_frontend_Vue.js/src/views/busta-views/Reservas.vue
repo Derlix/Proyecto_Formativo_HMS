@@ -15,7 +15,6 @@ const cargarHabitaciones = async () => {
   try {
     const response = await obtenerTodasHabitaciones()
     habitaciones.value = response.data
-    console.log(habitaciones.value)
   } catch (error) {
     console.error('Error al cargar las habitaciones:', error)
   }
