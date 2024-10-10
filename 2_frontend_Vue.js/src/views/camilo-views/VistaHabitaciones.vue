@@ -48,10 +48,9 @@
             <tr>
               <th />
               <th>ID</th>
-              <th>Número Habitación</th>
+              <th>Núm Habitación</th>
               <th>Estado</th>
               <th>Piso</th>
-              <th>Precio Actual</th>
               <th>Acciones</th>
               <th />
             </tr>
@@ -63,9 +62,8 @@
               <td data-label="NUMERO HABITACION">{{ habitaciones.numero_habitacion }}</td>
               <td data-label="ESTADO">{{ habitaciones.estado }}</td>
               <td data-label="PISO">{{ habitaciones.piso }}</td>
-              <td data-label="PRECIO ACTUAL">{{ habitaciones.precio_actual }}</td>
               <td class="before:hidden lg:w-1 whitespace-nowrap">
-                <BaseButtons type="justify-start lg:justify-end" no-wrap>
+                <BaseButtons  no-wrap>
                   <!-- Botón de Detalles (color amarillo) -->
                   <BaseButton
                     @click="verDetalles(habitaciones)"

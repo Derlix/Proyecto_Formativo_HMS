@@ -8,7 +8,6 @@
       <p><strong>Número de Habitación:</strong> {{ habitacion.numero_habitacion }}</p>
       <p><strong>Estado:</strong> {{ habitacion.estado }}</p>
       <p><strong>Piso:</strong> {{ habitacion.piso }}</p>
-      <p><strong>Precio Actual:</strong> {{ habitacion.precio_actual }}</p>
       <p><strong>ID Usuario:</strong> {{ habitacion.id_usuario }}</p>
 
       <!-- Información de la categoría de la habitación -->
@@ -56,5 +55,11 @@ const close = () => {
 .modal-content {
   max-width: 600px;
   margin: auto;
+  background-color: white; /* Asegura que el fondo sea siempre blanco */
+  color: black; /* Asegura que el texto sea siempre negro */
+}
+
+.modal-overlay {
+  background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro con opacidad */
 }
 </style>

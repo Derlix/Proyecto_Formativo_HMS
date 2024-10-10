@@ -1,6 +1,6 @@
 <template>
   <div v-if="visible" class="fixed inset-0 flex items-center justify-center z-50">
-    <div class="bg-white w-full max-w-lg mx-auto rounded-lg shadow-lg p-6">
+    <div :class="modalBackgroundClass" class="w-full max-w-lg mx-auto rounded-lg shadow-lg p-6">
       <h2 class="text-2xl font-bold mb-4">{{ isEditing ? 'Editar' : 'Crear' }} Habitación</h2>
       <form @submit.prevent="guardarHabitacion">
         <div class="mb-4">
@@ -47,22 +47,11 @@
             required
             class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
           >
-            <option value="">Seleccionar Estado</option>
-            <option value="ACTIVO">Activo</option>
-            <option value="INACTIVO">Inactivo</option>
-            <option value="MANTENIMIENTO">Mantenimiento</option>
+            <option value="">Seleccionar estado</option>
+            <option v-for="estado in estados" :key="estado" :value="estado">
+              {{ estado }}
+            </option>
           </select>
-        </div>
-
-        <div class="mb-4">
-          <label for="precio_actual" class="block text-sm font-medium text-gray-700">Precio Actual</label>
-          <input
-            id="precio_actual"
-            type="number"
-            v-model="form.precio_actual"
-            required
-            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
-          />
         </div>
 
         <div class="flex justify-between">
@@ -86,13 +75,14 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue';
+import { ref, computed, watch, onMounted, nextTick } from 'vue';
 import { crearHabitacion, actualizarHabitacion } from '@/services/juanca_service/habitacionService';
 import { useMainStore } from '@/stores/main';
 import { obtenerCategoriasHabitacion } from '@/services/juanca_service/categoriaService';
 
 const mainStore = useMainStore();
 const userID = computed(() => mainStore.userID);
+const isEditing = ref(false);
 
 const props = defineProps({
   visible: Boolean,
@@ -107,10 +97,10 @@ const form = ref({
   piso: '',
   id_categoria_habitacion: '',
   estado: '',
-  precio_actual: '',
 });
 
 const categorias = ref([]);
+const estados = ref(['ACTIVO', 'INACTIVO', 'MANTENIMIENTO', 'OPERACION', 'OCUPADA']);
 
 // Cargar las categorías al inicializar el componente
 const cargarCategorias = async () => {
@@ -127,26 +117,34 @@ onMounted(async () => {
 });
 
 // Observa los cambios en la habitación y asigna los valores al formulario
-watch(() => props.habitacion, (newHabitacion) => {
-  if (newHabitacion) {
+watch(() => props.habitacion, async (newHabitacion) => {
+  console.log('Habitación a editar:', newHabitacion); // Agrega este log para ver los valores
+  if (newHabitacion && newHabitacion.id_habitacion) {
+    isEditing.value = true;
     form.value = {
       id_habitacion: newHabitacion.id_habitacion,
       numero_habitacion: newHabitacion.numero_habitacion,
       piso: newHabitacion.piso,
-      id_categoria_habitacion: newHabitacion.id_categoria_habitacion, // Asegúrate de que esto coincida
-      estado: newHabitacion.estado,
-      precio_actual: newHabitacion.precio_actual,
+      id_categoria_habitacion: newHabitacion.categoria.id_categoria_habitacion, // Obtiene el id de la categoría
+      estado: newHabitacion.estado
     };
+    await nextTick();
+    console.log('Formulario después de la asignación:', form.value); // Verifica el valor del formulario
   } else {
+    isEditing.value = false;
     form.value = {
       id_habitacion: null,
       numero_habitacion: '',
       piso: '',
-      id_categoria_habitacion: '',
+      id_categoria_habitacion: '', // Reiniciar cuando no hay habitación
       estado: '',
-      precio_actual: '',
     };
   }
+});
+
+// Computed para determinar la clase de fondo según el tema
+const modalBackgroundClass = computed(() => {
+  return mainStore.isDarkTheme ? 'bg-gray-800 text-white' : 'bg-white text-gray-800';
 });
 
 // Funciones para cerrar el formulario y guardar los datos
@@ -156,19 +154,17 @@ const close = () => {
 
 const guardarHabitacion = async () => {
   try {
-    const habitacionData = { ...form.value, id_usuario: userID.value };
+    const habitacionData = { ...form.value, id_usuario: userID };
 
     if (!habitacionData.id_usuario) {
       throw new Error('ID del usuario es requerido');
     }
 
-    if (form.value.id_habitacion) { // Si estamos editando
+    if (isEditing.value) { // Si estamos editando
       await actualizarHabitacion(
         habitacionData.id_habitacion,
         habitacionData.estado,
         habitacionData.piso,
-        habitacionData.precio_actual.toString(),
-        habitacionData.id_usuario,
         habitacionData.numero_habitacion,
         habitacionData.id_categoria_habitacion
       );
@@ -176,8 +172,6 @@ const guardarHabitacion = async () => {
       await crearHabitacion(
         habitacionData.estado,
         habitacionData.piso,
-        habitacionData.precio_actual.toString(),
-        habitacionData.id_usuario,
         habitacionData.numero_habitacion,
         habitacionData.id_categoria_habitacion
       );
@@ -193,15 +187,13 @@ const guardarHabitacion = async () => {
 </script>
 
 <style scoped>
-/* Fijar color de las letras para que no cambien */
 label, input, select, option {
-  color: #333; /* Color de texto fijo */
+  color: #333;
 }
 
-/* Asegurar que no cambien el color en foco o hover */
 input:focus, select:focus {
   outline: none;
-  border-color: #333; /* También asegurar que el borde no cambie de color */
+  border-color: #333;
 }
 
 .modal-content {

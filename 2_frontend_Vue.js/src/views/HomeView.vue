@@ -15,6 +15,8 @@ import {
   mdiMinusCircle,
   mdiBallotOutline,
   mdiTools,
+mdiDoorClosed,
+mdiDoorOpen,
 } from '@mdi/js'
 import { obtenerTodasHabitacion } from '@/services/habitacionService'
 
@@ -25,6 +27,7 @@ const habitacionesActivas = ref(0)
 const habitacionesMantenimiento = ref(0)
 const habitacionesOcupadas = ref(0)
 const habitacionesOperacion = ref(0)
+const habitacionesInactivas = ref(0)
 
 const fetchHabitaciones = async () => {
   try {
@@ -32,7 +35,8 @@ const fetchHabitaciones = async () => {
     totalHabitaciones.value = habitaciones.length
     habitacionesActivas.value = habitaciones.filter(h => h.estado === 'ACTIVO').length
     habitacionesMantenimiento.value = habitaciones.filter(h => h.estado === 'MANTENIMIENTO').length
-    habitacionesOcupadas.value = habitaciones.filter(h => h.estado === 'INACTIVO').length
+    habitacionesOcupadas.value = habitaciones.filter(h => h.estado === 'OCUPADO').length
+    habitacionesInactivas.value = habitaciones.filter(h => h.estado === 'INACTIVO').length
     habitacionesOperacion.value = habitaciones.filter(h => h.estado === 'OPERACION').length
 
 
@@ -64,7 +68,7 @@ onMounted(() => {
           <CardBoxWidget
             :number="habitacionesActivas"
             label="Habitaciones disponibles"
-            :icon="mdiCheckCircleOutline"
+            :icon="mdiDoorOpen"
             :cardColor="'bg-green-400'"
             :color="'text-white'"
           />
@@ -74,12 +78,13 @@ onMounted(() => {
             :icon="mdiSprayBottle"
             :cardColor="'bg-sky-400'"
             :color="'text-white'"
+            
           />
           <CardBoxWidget
             :number="habitacionesOcupadas"
             label="Habitaciones ocupadas"
-            :icon="mdiMinusCircle"
-            :cardColor="'bg-red-700'"
+            :icon="mdiDoorClosed"
+            :cardColor="'bg-yellow-500'"
             :color="'text-white'"
           />
           <CardBoxWidget
@@ -87,6 +92,13 @@ onMounted(() => {
             label="Habitaciones en operación"
             :icon="mdiTools"
             :cardColor="'bg-orange-600'"
+            :color="'text-white'"
+          />
+          <CardBoxWidget
+            :number="habitacionesInactivas"
+            label="Habitaciones inactivas"
+            :icon="mdiMinusCircle"
+            :cardColor="'bg-red-600'"
             :color="'text-white'"
           />
         </div>
@@ -110,7 +122,7 @@ onMounted(() => {
           <CardBox class="shadow-md">  
             <h1 class="text-center m-4 font-medium text-xl">Movimientos de pasajeros correspondientes</h1>
             <div class="grid grid-cols-1 gap-3 w-full lg:grid-cols-1">
-              <button @click="showModal = true" class="bg-blue-500 h-12 rounded-lg m-6 font-bold hover:bg-blue-900 text-white">Registrar Entrada</button>
+              <button @click="showModal = true" class="bg-blue-600 h-12 rounded-lg m-6 font-bold hover:bg-blue-900 text-white">Registrar Entrada</button>
             </div>
           </CardBox>
         </div>

@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue'
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue'
 import AlertaCrearReserva from '@/components/miguel_compnents/AlertaCrearReserva.vue'
 import { obtenerTodasHabitaciones } from '@/services/habitacionService'
-import ModalCambiarHabitacion from '@/components/miguel_compnents/ModalCambiarHabitacion.vue'
+import ModalCambiarHabitacion from '@/components/alejo_components/ModalCambiarHabitacion.vue'
 import Calendario from '@/components/arias_components/Calendario.vue'
 import ModalTarjetaReserva from '@/components/alejo_components/ModalTarjetaReserva.vue'
 const showModalCambiarHabitacion = ref(false)
@@ -47,7 +47,7 @@ onMounted(() => {
           Cambiar habitación
         </button>
         
-        <ModalCambiarHabitacion :mostrarModal="showModalCambiarHabitacion" @cerrar="showModalCambiarHabitacion = false" />
+        <ModalCambiarHabitacion :isVisible="showModalCambiarHabitacion" @close="showModalCambiarHabitacion = false" />
 
         <button
           class="bg-blue-600 dark:bg-blue-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 transition"

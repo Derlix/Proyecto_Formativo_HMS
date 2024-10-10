@@ -11,3 +11,18 @@ export const obtenerCategoriasHabitacion = async () => {
     throw error;
   }
 };
+
+const obtenerCategoriaPorNombre = async (nombreCategoria) => {
+  try {
+    const response = await fetch(`https://api-hotel-suqt.onrender.com/categoria-habitacion/get_room_categorie_name/?p_category_name=${encodeURIComponent(nombreCategoria)}`);
+    const data = await response.json();
+
+    if (data && data.length > 0) {
+      return data[0].id_categoria_habitacion; // Ajusta esto según la estructura de tu respuesta
+    } else {
+      throw new Error('Categoría no encontrada');
+    }
+  } catch (error) {
+    console.error('Error al obtener la categoría:', error);
+  }
+};
