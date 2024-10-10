@@ -49,12 +49,6 @@ export default [
     modulo: 'huespedes'
   },
   {
-    to: '/informacion-reserva',
-    icon: mdiMonitor,
-    label: 'Info reserva',
-    modulo: 'reservas'
-  },
-  {
     to: '/tarjeta-reserva',
     icon: mdiMonitor,
     label: 'tarjeta reserva',

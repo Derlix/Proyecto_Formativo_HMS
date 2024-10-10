@@ -8,10 +8,10 @@ import CardBox from '@/components/CardBox.vue';
 import { reactive, onMounted } from 'vue';
 import { getReservaById } from '@/services/arce_service/reservasService';
 import { obtenerHabitacionPorId } from '@/services/juanca_service/habitacionService';
-import { useRoute } from 'vue-router';
-import CardLista from '@/components/brayan_components/CardLista.vue';
+import { useRoute, useRouter } from 'vue-router';
 
 const route = useRoute();
+const router = useRouter();
 
 const error = reactive({
     message: null
@@ -109,6 +109,10 @@ const fetchDataReserva = async () => {
     }
 };
 
+const goToReservas = () => {
+    router.push({ name: 'reservas' });
+}
+
 onMounted(() => {
     fetchHabitacion()
     fetchDataReserva();
@@ -121,16 +125,13 @@ onMounted(() => {
         <SectionMain>
             <TitleIconOnly :icon="mdiBallotOutline" title="Información reserva" />
 
-            <div class="flex flex-col sm:flex-row justify-end mb-4">
-                <button
-                    class="bg-blue-600 h-12 rounded-lg my-2 font-bold hover:bg-blue-900 text-white py-2 px-4 mx-1">Factura
-                    temporal</button>
-                <button
-                    class="bg-blue-600 h-12 rounded-lg my-2 font-bold hover:bg-blue-900 text-white py-2 px-4 mx-1">Crear
-                    check-out</button>
-                <button
-                    class="bg-blue-600 h-12 rounded-lg my-2 font-bold hover:bg-blue-900 text-white py-2 px-4 mx-1">Complementada
-                    con éxito</button>
+            <div class="flex justify-between items-center mb-4">
+                <button @click="goToReservas" class="bg-blue-600 h-12 rounded-lg font-bold hover:bg-blue-900 text-white transition duration-300 ease-in-out py-2 px-6 shadow-lg transform hover:scale-105">Regresar</button>
+                <div class="flex space-x-4">
+                    <button class="bg-blue-600 h-12 rounded-lg font-bold hover:bg-blue-900 text-white transition duration-300 ease-in-out py-2 px-6 shadow-lg transform hover:scale-105">Factura temporal</button>
+                    <button class="bg-blue-600 h-12 rounded-lg font-bold hover:bg-blue-900 text-white transition duration-300 ease-in-out py-2 px-6 shadow-lg transform hover:scale-105">Crear check-out</button>
+                    <button class="bg-blue-600 h-12 rounded-lg font-bold hover:bg-blue-900 text-white transition duration-300 ease-in-out py-2 px-6 shadow-lg transform hover:scale-105">Complementada con éxito</button>
+                </div>
             </div>
 
             <div class="flex flex-col sm:flex-row mt-6 gap-6">
