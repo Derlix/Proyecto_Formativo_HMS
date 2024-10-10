@@ -100,7 +100,7 @@ const form = ref({
 });
 
 const categorias = ref([]);
-const estados = ref(['ACTIVO', 'INACTIVO', 'MANTENIMIENTO', 'OPERACION', 'OCUPADA']);
+const estados = ref(['ACTIVO', 'INACTIVO', 'MANTENIMIENTO', 'OPERACION', 'OCUPADO']);
 
 // Cargar las categorías al inicializar el componente
 const cargarCategorias = async () => {
