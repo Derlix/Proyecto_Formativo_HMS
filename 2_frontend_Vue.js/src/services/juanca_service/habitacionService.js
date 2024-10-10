@@ -1,15 +1,14 @@
 import api from '../api';
 
 // Función para crear una nueva habitación
-export const crearHabitacion = async (estado, piso, precio_actual, id_usuario, numero_habitacion, id_categoria_habitacion) => {
+export const crearHabitacion = async (estado, piso, numero_habitacion, id_categoria_habitacion) => {
   try {
     const response = await api.post('/habitacion/create_room', {
       estado,
       piso,
-      precio_actual,
-      id_usuario,
       numero_habitacion,
       id_categoria_habitacion,
+      id_usuario: "string",
     }, {
       headers: {
         'Content-Type': 'application/json',
@@ -82,25 +81,23 @@ export const obtenerHabitacionesPaginadas = async (page = 1, pageSize = 10) => {
 };
 
 // Función para actualizar una habitación existente (PUT)
-export const actualizarHabitacion = async (id_habitacion, estado, piso, precio_actual, id_usuario, numero_habitacion, id_categoria_habitacion) => {
+export const actualizarHabitacion = async (id_habitacion, estado, piso, numero_habitacion, id_categoria_habitacion) => {
   try {
     console.log("Datos enviados:", {
       estado,
       piso,
-      precio_actual,
-      id_usuario,
       numero_habitacion,
-      id_categoria_habitacion
+      id_categoria_habitacion,
+      id_usuario: "string"
     });
 
     const response = await api.put(`/habitacion/update_room_by_id/${id_habitacion}`, {
 
       estado,
       piso,
-      precio_actual,
-      id_usuario,
       numero_habitacion,
       id_categoria_habitacion,
+      id_usuario: "string"
     }, {
       headers: {
         'Content-Type': 'application/json',
