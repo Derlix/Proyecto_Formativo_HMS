@@ -40,15 +40,15 @@ export const crearReservaHabitacion = async (id_reserva, id_habitacion, num_adul
 
 
 
-  export const actualizarReservaHabitacion = async (id_reserva, id_habitacion, num_adultos, num_niños, fecha_entrada, fecha_salida_propuesta) => {
+  export const actualizarReservaHabitacion = async (id_reserva, old_id_habitacion, reserva_habitacion) => {
     try {
-      const response = await api.put(`/Reserva-habitacion/update/${id_reserva}`, {
-        id_reserva: id_reserva,
-        id_habitacion: id_habitacion,
-        num_adultos: num_adultos,
-        num_niños: num_niños,
-        fecha_entrada: fecha_entrada,
-        fecha_salida_propuesta: fecha_salida_propuesta,
+      const response = await api.put(`/Reserva-habitacion/update/?id_reserva=${id_reserva}&old_id_habitacion=${old_id_habitacion}`, {
+        id_reserva: reserva_habitacion.id_reserva,
+        id_habitacion: reserva_habitacion.id_habitacion, // Mantenemos el id_habitacion del objeto
+        num_adultos: reserva_habitacion.num_adultos,
+        num_niños: reserva_habitacion.num_niños,
+        fecha_entrada: reserva_habitacion.fecha_entrada,
+        fecha_salida_propuesta: reserva_habitacion.fecha_salida_propuesta,
       });
       return response;
     } catch (error) {

@@ -48,7 +48,7 @@
           <BaseDivider />
 
           <!-- Campos que se activan después de ingresar el documento -->
-          <form @submit.prevent="update_ReservaHabitacion()">
+          <!-- <form @submit.prevent="update_ReservaHabitacion()"> -->
             <div v-if="reservaEncontrada" class="mt-6 space-y-4">
               <div class="grid grid-cols-2 gap-4">
                 <div>
@@ -57,7 +57,7 @@
                   </label>
                   <input
                     id="num_adultos"
-                    type="text"
+                    type="number"
                     v-model="num_adultos"
                     class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white text-lg"
                   />
@@ -68,7 +68,7 @@
                   </label>
                   <input
                     id="num_ninos"
-                    type="text"
+                    type="number"
                     v-model="num_ninos"
                     class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white text-lg"
                   />
@@ -120,7 +120,7 @@
                 <BaseButton type="reset" color="info" outline label="Cancelar"  @click="cancel()" />
               </BaseButtons>
             </div>
-          </form>
+          <!-- </form> -->
 
         </div>
       </div>
@@ -143,8 +143,8 @@ const fecha_reserva = ref('')
 const id_reserva = ref(0)
 const id_habitacion = ref(0)
 const new_id_habitacion = ref(0)
-const num_adultos = ref('')
-const num_ninos = ref('')
+const num_adultos = ref(0)
+const num_ninos = ref(0)
 const new_fecha_entrada = ref('')
 const new_fecha_salida = ref('')
 const reservaEncontrada = ref(false)
@@ -223,41 +223,53 @@ const recibirObjeto = (habitacionCompuesta) => {
 
 
 const update_ReservaHabitacion = async () => {
-  try {
+    console.log("Valores enviados:");
+    console.log("id_reserva", id_reserva.value, typeof id_reserva.value);
     console.log("old_id_habitacion", id_habitacion.value);
     console.log("new_id_habitacion", new_id_habitacion.value);
-    console.log("id_reserva", id_reserva.value);
+    console.log("num_adultos", num_adultos.value);
+    console.log("num_niños", num_ninos.value);
+    console.log("fecha_entrada", new_fecha_entrada.value);
+    console.log("fecha_salida", new_fecha_salida.value);
+  try {
+    const reserva_habitacion = {
+            id_reserva: id_reserva.value,
+            id_habitacion: new_id_habitacion.value, 
+            num_adultos: num_adultos.value,
+            num_niños: num_ninos.value,
+            fecha_entrada: new_fecha_entrada.value,
+            fecha_salida_propuesta: new_fecha_salida.value,
+        };
+        
     await actualizarReservaHabitacion(
-      id_reserva.value, 
-      id_habitacion.value,
-      new_id_habitacion.value, 
-      num_adultos.value, 
-      num_ninos.value, 
-      new_fecha_entrada.value, 
-      new_fecha_salida.value
+      
+        id_reserva.value, 
+        id_habitacion.value, 
+        reserva_habitacion
     );
     // modalMessage.value = 'Huésped actualizado exitosamente';
     // isAlertVisible.value = true;
     // colorAlert.value = 'success';
     // activarModalEdit.value = false;
 
-    // setTimeout(() => {
-    //   isAlertVisible.value = false;
-    // }, 3000);
-    // //cierra el modal en tres segundos
 
-    // await fetchHuespedesByPage();
+  
   } catch (error) {
-    // modalMessage.value = error.data.detail;
-    // isAlertVisible.value = true;
-    // colorAlert.value = 'danger';
-    // activarModalEdit.value = false;
-
-    // setTimeout(() => {
-    //   isAlertVisible.value = false;
-    // }, 3000);
-
+  if (error.response && error.response.data && error.response.data.detail) {
+    // Si `detail` es un arreglo, iteramos sobre él para mostrar cada mensaje
+    const detalles = error.response.data.detail;
+    if (Array.isArray(detalles)) {
+      detalles.forEach((detalle, index) => {
+        console.log(`Error ${index + 1}:`, detalle);
+      });
+    } else {
+      console.log("Error detalle:", detalles);
+    }
+  } else {
+    // Si no contiene el detalle esperado, mostramos el error completo
+    console.log("Error inesperado:", error);
   }
+}
 };
 
 // # Supongamos que tienes un objeto reserva_habitacion_update con los datos que quieres actualizar
