@@ -850,6 +850,7 @@ function fechaActual() {
           <th class="">Subtotal</th>
           <th class="">Impuestos</th>
           <th class="">ID descuento</th>
+          <th class="">% descuento</th>       
           <th class="">Total Precio Productos</th>
           <th class="">Total a pagar</th>
           <th class="">Método de Pago Factura</th>
@@ -876,10 +877,12 @@ function fechaActual() {
           <td data-label="Nombre Completo">{{ factura.huesped.nombre_completo }}</td>
           <td data-label="Número de Documento">{{ factura.huesped.numero_documento }}</td>
           <td data-label="Email">{{ factura.huesped.email }}</td>
-          <td data-label="Telfono">{{ factura.huesped.telefono }}</td>
+          <td data-label="Telefono">{{ factura.huesped.telefono }}</td>
           <td data-label="Subtotal">{{ factura.subtotal }}</td>
           <td data-label="Impuestos">{{ factura.impuestos }}</td>
-          <td data-label="Impuestos">{{ factura.id_descuento }}</td>
+          <td data-label="id descuento">{{ factura.descuento.id_descuento }}</td>
+          <td data-label="id descuento">{{ factura.descuento.porcentaje_descuento }}</td>
+      
           <td data-label="Total Precio Productos">{{ factura.total_precio_productos }}</td>
           <td data-label="Total a pagar">{{ factura.total }}</td>
           <td data-label="Método de Pago Factura">{{ factura.metodo_pago }}</td>
@@ -1053,7 +1056,7 @@ function fechaActual() {
             <div class="font-bold" data-label="Valor"  style="font-size: 16px;">Total precio productos: {{ selectedFactura?.total_precio_productos }}</div>
             <div class="font-bold" data-label="Valor" style="font-size: 16px;">Subtotal: {{ selectedFactura?.subtotal }}</div>
             <div class="font-bold" data-label="Valor" style="font-size: 16px;">Impuestos: {{ selectedFactura?.impuestos }}</div>
-            <div class="font-bold" data-label="Valor" style="font-size: 16px;">ID descuento: {{ selectedFactura?.id_descuento }}</div>
+            <div class="font-bold" data-label="Valor" style="font-size: 16px;">Porcentaje descuento: {{ selectedFactura?.descuento.porcentaje_descuento }}</div>
             <div class="font-bold" data-label="Valor" style="font-size: 17px;">TOTAL A PAGAR: {{ selectedFactura?.total }}</div>
         </div>
 
