@@ -9,6 +9,7 @@ import BaseLevel from '@/components/BaseLevel.vue'
 import BaseButtons from '@/components/BaseButtons.vue'
 import BaseButton from '@/components/BaseButton.vue'
 import UserAvatar from '@/components/UserAvatar.vue'
+import NotificationBar from '@/components/alejo_components/NotificationBar.vue'
 
 defineProps({
   checkable: Boolean
@@ -54,9 +55,13 @@ const buscarFactura = ref('');
 
 const metodosDePago = ['EFECTIVO', 'TARJETA', 'TRANSFERENCIA'];
 
-    // Lista predefinida de estados (puedes ajustar estos valores según tu caso)
-    const estados = ['PAGADA', 'PENDIENTE', 'CANCELADA'];
+ // Lista de estados
+const estados = ['PAGADA', 'PENDIENTE', 'CANCELADA'];
 
+
+const isAlertVisible = ref(false);
+const modalMessage = ref('');
+const colorAlert = ref('');
 
 async function buscar_Factura() {
   // Si el campo de búsqueda está vacío, se obtienen todas las facturas
@@ -94,6 +99,16 @@ const filtrarFacturasPorEstado = () => {
   } else {
     // Filtrar facturas basadas en el estado seleccionado
     facturas.value = facturasOriginales.value.filter(factura => factura.estado === estadoSeleccionado);
+  }
+  if (facturas.value.length === 0) {
+    modalMessage.value = 'No se encontraron facturas con el estado seleccionado';
+    isAlertVisible.value = true;
+    colorAlert.value = 'danger';
+
+    // Cerrar la alerta automáticamente después de 3 segundos
+    setTimeout(() => {
+      isAlertVisible.value = false;
+    }, 5000);
   }
 };
 
@@ -133,13 +148,26 @@ const updateFactura = async () => {
       selectedFactura.value.estado,
       selectedFactura.value.fecha_salida
     );
-    alert('Factura editada exitosamente');
     fetchFacturas();
     closeEditModal();
+    modalMessage.value = 'La factura se actualizo exitosamente';
+    isAlertVisible.value = true;
+    colorAlert.value = 'success';
+    setTimeout(() => {
+      isAlertVisible.value = false;
+    }, 3000);
+    
     emit('update');
     emit('close');
   } catch (error) {
-    alert('Hubo un Error al actualizar la factura ');
+    fetchFacturas();
+    closeEditModal();
+    modalMessage.value = 'Hubo un error al actualizar la factura';
+    isAlertVisible.value = true;
+    colorAlert.value = 'danger';
+    setTimeout(() => {
+      isAlertVisible.value = false;
+    }, 3000);
   }
 };
 
@@ -149,17 +177,28 @@ const updateFactura = async () => {
 const confirmDelete = async () => {
   try {
     await deleteFactura(selectedFactura.value.id_facturacion);
-    alert('Factura eliminada exitosamente');
     fetchFacturas();
     closeDeleteModal();
+    modalMessage.value = 'La factura se elimino exitosamente';
+    isAlertVisible.value = true;
+    colorAlert.value = 'success';
+    setTimeout(() => {
+      isAlertVisible.value = false;
+    }, 3000);
+   
     emit('delete');  // Emite el evento correcto para que lo maneje el componente padre
     emit('close');   // Cierra el modal
   } catch (error) {
     if (error.response?.status === 400) {
-      alert('No se puede eliminar la factura porque tiene productos asociados. Elimine los productos primero.');
-    } else {
-      alert('Error al eliminar la factura, talvez no tenga permisos para eliminarla' );
-    }
+      fetchFacturas();
+      closeDeleteModal();
+      modalMessage.value = 'Hubo un error al eliminar la factura';
+      isAlertVisible.value = true;
+      colorAlert.value = 'danger';
+      setTimeout(() => {
+      isAlertVisible.value = false;
+    }, 3000);
+    } 
   }
 };
 
@@ -178,7 +217,8 @@ function openDeleteModal(factura) {
 function openDetallesmodal(factura) {
   selectedFactura.value = { ...factura };
   showDetalles.value = true;
-  console.log(showDetalles.value);
+  console.log("Factura seleccionada:", selectedFactura.value);
+  
 }
 
 
@@ -266,13 +306,24 @@ const addProducto = async () => {
       selectedProduct.value.fecha,
       selectedProduct.value.precio_unitario
     );
-    alert('El producto se agregó correctamente a la factura');
     fetchProductos();
     closeAgregarProductosModal();
     resetSelectedProduct();
+    modalMessage.value = 'El Producto se agrego exitosamente';
+    isAlertVisible.value = true;
+    colorAlert.value = 'info';
+    setTimeout(() => {
+      isAlertVisible.value = false;
+    }, 3000);
+   
   } catch (error) {
-    console.error('Error al agregar el producto:', error); // Imprime el error para depurar
-    alert('Hubo un Error al agregar el producto, intente de nuevo');
+    closeAgregarProductosModal();
+    modalMessage.value = 'Hubo un error al agregar el producto';
+    isAlertVisible.value = true;
+    colorAlert.value = 'danger';
+    setTimeout(() => {
+      isAlertVisible.value = false;
+    }, 3000);
   }
 };
 
@@ -295,11 +346,25 @@ const confirmDeleteProducto = async () => {
   try {
     console.log('Confirmar eliminación del producto:', selectedProduct.value); // Verifica que se muestra la información del producto
     await deleteProductoFactura(selectedProduct.value.factura_producto.id_factura_producto);
-    alert('Producto de la Factura eliminado exitosamente');
     fetchProductos();
     closeDeleteProductosModal();
+    closeListaProductosModal();
+    modalMessage.value = 'el producto se elimino exitosamente de la factura';
+    isAlertVisible.value = true;
+    colorAlert.value = 'info';
+    setTimeout(() => {
+      isAlertVisible.value = false;
+    }, 3000);
+   
   } catch (error) {
-    alert('Hubo un Error al eliminar el producto, , intente de nuevo');
+    closeDeleteProductosModal();
+    closeListaProductosModal();
+    modalMessage.value = 'Hubo un error al eliminar el producto de la factura';
+    isAlertVisible.value = true;
+    colorAlert.value = 'danger';
+    setTimeout(() => {
+      isAlertVisible.value = false;
+    }, 3000);
   }
 };
 
@@ -314,11 +379,25 @@ const updateProducto = async () => {
       selectedProduct.value.fecha,
       selectedProduct.value.factura_producto.precio_unitario
     );
-    alert('Producto de la factura editado exitosamente');
-    fetchProductos();
     closeEditProductosModal();
+    closeListaProductosModal();
+    modalMessage.value = 'el producto se actualizo exitosamente en la factura';
+    isAlertVisible.value = true;
+    colorAlert.value = 'info';
+    setTimeout(() => {
+      isAlertVisible.value = false;
+    }, 3000);
+   
+    
   } catch (error) {
-    alert('Hubo un Error al actualizar el producto de la factura, intente de nuevo');
+    closeEditProductosModal();
+    closeListaProductosModal();
+    modalMessage.value = 'Hubo un error al eliminar el producto de la factura';
+    isAlertVisible.value = true;
+    colorAlert.value = 'danger';
+    setTimeout(() => {
+      isAlertVisible.value = false;
+    }, 3000);
   }
 };
 
@@ -479,6 +558,12 @@ function fechaActual() {
 
 <template>
 
+<NotificationBar
+  v-if="isAlertVisible"
+  :color="colorAlert" 
+  :description="modalMessage"
+  :visible="isModalVisible"
+/>
 
   <!-- CARDBOX PARA EDITAR FACTURA-->
   <div id="cardEditar">
@@ -569,7 +654,7 @@ function fechaActual() {
           <thead class="text-xs text-gray-700 uppercase bg-blue-100 ">
             <tr>
               <th>ID Facturación</th>
-              <th>ID Factura Producto</th>
+             <!-- <th>ID Factura Producto</th> -->
               <th>ID Producto</th>
               <th>Cantidad</th>
               <th>Fecha</th>
@@ -583,7 +668,7 @@ function fechaActual() {
           <tbody>
             <tr v-for="producto in productos" :key="producto.factura_producto.id_factura_producto">
               <td :data-label="'ID Facturación'">{{ selectedFactura.id_facturacion }}</td>
-              <td :data-label="'ID Factura Producto'">{{ producto.factura_producto.id_factura_producto }}</td>
+                <!--<td :data-label="'ID Factura Producto'">{{ producto.factura_producto.id_factura_producto }}</td> -->
               <td :data-label="'ID Producto'">{{ producto.factura_producto?.id_producto || 'N/A' }}</td>
               <td :data-label="'Cantidad'">{{ producto.factura_producto?.cantidad || 'N/A' }}</td>
               <td :data-label="'Cantidad'">{{ producto.factura_producto?.fecha || 'N/A' }}</td>
@@ -697,7 +782,7 @@ function fechaActual() {
       </div>
       <div class="mb-4">
         <label for="precio_unitario" class="block text-gray-700">Precio Unitario</label>
-        <input id="precio_unitario" v-model="selectedProduct.precio_unitario" type="text"
+        <input id="precio_unitario" v-model="selectedProduct.precio_unitario" type="number"
           class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500"  required/>
       </div>
       <div class="flex justify-end">
@@ -766,6 +851,7 @@ function fechaActual() {
           <th class="">Subtotal</th>
           <th class="">Impuestos</th>
           <th class="">ID descuento</th>
+          <th class="">% descuento</th>       
           <th class="">Total Precio Productos</th>
           <th class="">Total a pagar</th>
           <th class="">Método de Pago Factura</th>
@@ -792,10 +878,12 @@ function fechaActual() {
           <td data-label="Nombre Completo">{{ factura.huesped.nombre_completo }}</td>
           <td data-label="Número de Documento">{{ factura.huesped.numero_documento }}</td>
           <td data-label="Email">{{ factura.huesped.email }}</td>
-          <td data-label="Telfono">{{ factura.huesped.telefono }}</td>
+          <td data-label="Telefono">{{ factura.huesped.telefono }}</td>
           <td data-label="Subtotal">{{ factura.subtotal }}</td>
           <td data-label="Impuestos">{{ factura.impuestos }}</td>
-          <td data-label="Impuestos">{{ factura.id_descuento }}</td>
+          <td data-label="id descuento">{{ factura.descuento.id_descuento }}</td>
+          <td data-label="id descuento">{{ factura.descuento.porcentaje_descuento + '%'}} </td>
+      
           <td data-label="Total Precio Productos">{{ factura.total_precio_productos }}</td>
           <td data-label="Total a pagar">{{ factura.total }}</td>
           <td data-label="Método de Pago Factura">{{ factura.metodo_pago }}</td>
@@ -928,6 +1016,10 @@ function fechaActual() {
               <td data-label="Valor">{{ selectedFactura?.reserva?.valor_deposito }}</td>
             </tr>
             <tr>
+            <td>Porcentaje Descuento</td>
+            <td>{{ selectedFactura?.descuento?.porcentaje_descuento !== undefined ? selectedFactura.descuento.porcentaje_descuento + '%' : 'N/A' }}</td>
+          </tr>
+            <tr>
               <td data-label="Campo">Forma de Pago-Reserva</td>
               <td data-label="Valor">{{ selectedFactura?.reserva?.forma_pago }}</td>
             </tr>
@@ -936,6 +1028,12 @@ function fechaActual() {
               <td data-label="Campo">Método de Pago Factura</td>
               <td data-label="Valor">{{ selectedFactura?.metodo_pago }}</td>
             </tr>
+            <!--  <tr>
+          <td>ID Descuento</td>
+            <td>{{ selectedFactura?.descuento?.id_descuento || 'N/A' }}</td>
+          </tr> -->
+         
+
 
           </tbody>
         </table>
@@ -969,7 +1067,7 @@ function fechaActual() {
             <div class="font-bold" data-label="Valor"  style="font-size: 16px;">Total precio productos: {{ selectedFactura?.total_precio_productos }}</div>
             <div class="font-bold" data-label="Valor" style="font-size: 16px;">Subtotal: {{ selectedFactura?.subtotal }}</div>
             <div class="font-bold" data-label="Valor" style="font-size: 16px;">Impuestos: {{ selectedFactura?.impuestos }}</div>
-            <div class="font-bold" data-label="Valor" style="font-size: 16px;">ID descuento: {{ selectedFactura?.id_descuento }}</div>
+        <!--   <div class="font-bold" data-label="Valor" style="font-size: 16px;">Porcentaje descuento: {{ selectedFactura?.descuento.porcentaje_descuento }}</div>-->
             <div class="font-bold" data-label="Valor" style="font-size: 17px;">TOTAL A PAGAR: {{ selectedFactura?.total }}</div>
         </div>
 

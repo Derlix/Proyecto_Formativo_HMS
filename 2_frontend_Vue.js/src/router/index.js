@@ -21,6 +21,7 @@ import InicioCajero from '@/views/arce-views/InicioCajero.vue'
 import VistaHabitaciones from '@/views/camilo-views/VistaHabitaciones.vue'
 import InicioJefeRecepcionista from '@/views/arce-views/DashboardAdmin.vue'
 import UsuariosView from '@/views/arias_views/UsuariosView.vue'
+import InformacionReserva from '@/views/arce-views/InformacionReserva.vue'
 
 
 const routes = [
@@ -61,6 +62,15 @@ const routes = [
     name: 'informe_pasajeros',
     component: InformePasajeros,
     meta: { requiresAuth: true}
+  },
+  {
+    meta: {
+      title: 'InformacionReserva'
+    },
+    path: '/informacion-reserva/:id', 
+    name: 'informacion_reserva',
+    component: InformacionReserva,
+    meta: { requiresAuth: true }
   },
   {
     meta: {

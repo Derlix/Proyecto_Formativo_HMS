@@ -47,7 +47,7 @@ export default [
     icon: mdiMonitor,
     label: 'informe pasajeros',
     modulo: 'huespedes'
-  }, 
+  },
   {
     to: '/transpaso-particulares',
     icon: mdiMonitor,

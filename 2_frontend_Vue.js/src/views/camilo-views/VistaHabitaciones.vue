@@ -3,13 +3,27 @@
     <div class="container mx-auto p-6">
       <h1 class="text-2xl font-bold mb-6">Lista de Habitaciones</h1>
 
-      <!-- Botón para crear una nueva habitación -->
-      <button
-        @click="mostrarModalCrear"
-        class="bg-green-500 text-white px-4 py-2 rounded-md mb-6 shadow-sm hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-      >
-        Crear Habitación
-      </button>
+      <!-- Contenedor para alinear el input y el botón -->
+      <div class="flex items-center mb-4 space-x-4">
+        <!-- Botón para crear una nueva habitación -->
+        <button
+          @click="mostrarModalCrear"
+          class="bg-green-500 text-white px-4 py-2 rounded-md shadow-sm hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+        >
+          Crear Habitación
+        </button>
+        <!-- Campo de búsqueda con placeholder -->
+        <div class="w-full">
+          <label for="numero_habitacion" class="block text-sm font-medium overflow-auto w-full">Buscar habitación</label>
+          <input
+            id="numero_habitacion"
+            v-model="buscarHabitacion"
+            type="text"
+            placeholder="Ingrese el número de habitación"
+            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+          />
+        </div>
+      </div>
 
       <!-- Modal para crear/editar una habitación -->
       <RoomModal
@@ -48,10 +62,9 @@
             <tr>
               <th />
               <th>ID</th>
-              <th>Número Habitación</th>
+              <th>Núm Habitación</th>
               <th>Estado</th>
               <th>Piso</th>
-              <th>Precio Actual</th>
               <th>Acciones</th>
               <th />
             </tr>
@@ -63,9 +76,8 @@
               <td data-label="NUMERO HABITACION">{{ habitaciones.numero_habitacion }}</td>
               <td data-label="ESTADO">{{ habitaciones.estado }}</td>
               <td data-label="PISO">{{ habitaciones.piso }}</td>
-              <td data-label="PRECIO ACTUAL">{{ habitaciones.precio_actual }}</td>
               <td class="before:hidden lg:w-1 whitespace-nowrap">
-                <BaseButtons type="justify-start lg:justify-end" no-wrap>
+                <BaseButtons  no-wrap>
                   <!-- Botón de Detalles (color amarillo) -->
                   <BaseButton
                     @click="verDetalles(habitaciones)"
@@ -131,6 +143,7 @@ import { obtenerHabitacionesPaginadas, eliminarHabitacion} from '@/services/juan
 
 const habitacion = ref([]);
 const showModal = ref(false);
+const buscarHabitacion = ref('');
 const showDetailsModal = ref(false);
 const showConfirmModal = ref(false);
 const habitacionSeleccionada = ref({});

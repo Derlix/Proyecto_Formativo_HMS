@@ -102,7 +102,7 @@ onMounted(() => {
         </div>
 
 
-        <div class="grid grid-cols-1 gap-6 lg:grid-cols-1">
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-1 mt-6">
           <CardBox class="shadow-md">  
             <h1 class="text-center m-4 font-medium text-xl">Registrar entradas y salidas de huéspedes</h1>
             <div class="grid grid-cols-1 gap-3 w-full lg:grid-cols-2">

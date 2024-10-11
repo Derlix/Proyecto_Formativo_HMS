@@ -27,16 +27,15 @@
       <h2 class="text-2xl mb-6 font-semibold text-gray-900 dark:text-white">
         Movimiento de pasajeros - SALIDA
       </h2>
-
-      <!-- Barra de búsqueda por Documento -->
-      <div class="mb-4">
-        <input
-          v-model="searchDocumento"
-          type="text"
-          class="w-full p-2 border border-gray-300 rounded-lg dark:bg-gray-700 dark:text-white"
-          placeholder="Buscar por número de documento"
-        />
-      </div>
+      
+      <div class="flex items-center border rounded-lg shadow-sm">
+          <input
+            type="text"
+            placeholder="Buscar pasajero por documento"
+            class="search-input flex-grow px-4 py-2 rounded-lg focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:text-white dark:bg-gray-700"
+            v-model="searchDocumento"
+          />
+        </div>
 
       <!-- Step 1: Factura List -->
       <div v-if="currentStep === 1">
