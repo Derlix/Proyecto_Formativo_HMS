@@ -1,20 +1,14 @@
 import {
   mdiMonitor,
   mdiCalendar,
-  mdiHistory,
-  mdiHumanMaleFemale,
   mdiTicket,
   mdiFileChart,
-  mdiViewGridPlus,
   mdiExitRun,
-  mdiReproduction,
   mdiAccountGroup,
-  mdiAccountSupervisorCircle,
   mdiDoorOpen,
   mdiReceiptTextOutline,
   mdiCityVariantOutline,
   mdiFoodForkDrink,
-  mdiCardAccountDetails,
 } from '@mdi/js'
 
 export default [
@@ -28,7 +22,7 @@ export default [
     to: '/inicio-jefe-recepcionista',
     icon: mdiMonitor,
     label: 'Jefe recepcion',
-    modulo: 'home_recepcionista'
+    modulo: 'home_jefe_recepcionista'
   },
   {
     to: '/inicio-cajero',
@@ -38,52 +32,38 @@ export default [
   },
   {
     to: '/comprobante-descuento',
-    label: 'Com. Descuento',
+    label: 'Descuentos',
     icon: mdiTicket,
     modulo: 'facturacion'
   },
   {
-    to: '/informe-pasajeros',
-    icon: mdiMonitor,
-    label: 'informe pasajeros',
-    modulo: 'huespedes'
-  },
-  {
-    to: '/tarjeta-reserva',
-    icon: mdiMonitor,
-    label: 'tarjeta reserva',
-    modulo: 'reservas'
-  },
-  {
-    to: '/transpaso-particulares',
-    icon: mdiMonitor,
-    label: 'Transpaso a particulares',
-    modulo: 'reservas'
-  },
-  {
-    to: '/reservas',
     label: 'Reservas',
     icon: mdiCalendar,
-    modulo: 'reservas'
+    modulo: 'reservas',
+    menu: [
+      {
+        to: '/reservas',
+        label: 'Reservas',
+        modulo: 'reservas'
+      },
+      {
+        to: '/historial-reservas',
+        label: 'His. Reservas',
+        modulo: 'reservas'
+      },
+      {
+        to: '/tarjeta-reserva',
+        label: 'tarjeta reserva',
+        modulo: 'reservas'
+      },
+      {
+        to: '/transpaso-particulares',
+        label: 'Transpaso a particulares',
+        modulo: 'reservas'
+      },
+    ]
   },
   {
-    to: '/historial-reservas',
-    label: 'His. Reservas',
-    icon: mdiHistory,
-    modulo: 'reservas'
-  },
-  {
-    to: '/movimiento-pasajeros-correspondiente',
-    label: 'Mv. Pasajero corres',
-    icon: mdiHumanMaleFemale,
-    modulo: 'huespedes'
-  },
-  {
-    to: '/huespedes',
-    label: 'Huespedes',
-    icon: mdiAccountSupervisorCircle,
-    modulo: 'huespedes'
-  },{
     to: '/habitaciones',
     label: 'Habitaciones',
     icon: mdiDoorOpen ,
@@ -93,7 +73,7 @@ export default [
     to: '/informe-ama-llaves',
     label: 'Inf. Ama llaves',
     icon: mdiFileChart,
-    modulo: 'habitacion'
+    modulo: 'ama_llaves'
   },
 
   {
@@ -138,10 +118,31 @@ export default [
     modulo: 'facturacion'
   },*/
   {
-    to: '/cuenta-huesped',
-    label: 'Cuentas Huesped',
-    icon: mdiCardAccountDetails,
-    modulo: 'usuarios'
-  }
+    label: 'Huespedes',
+    icon: mdiFileChart,
+    modulo: 'huespedes',
+    menu: [
+      {
+        to: '/informe-pasajeros',
+        label: 'Informe pasajeros',
+        modulo: 'huespedes'
+      },
+      {
+        to: '/cuenta-huesped',
+        label: 'Cuentas Huesped',
+        modulo: 'huespedes'
+      },
+      {
+        to: '/movimiento-pasajeros-correspondiente',
+        label: 'Mv. Pasajero corres',
+        modulo: 'huespedes'
+      },
+      {
+        to: '/huespedes',
+        label: 'Huespedes',
+        modulo: 'huespedes'
+      },
+    ]
+  },
 
 ]
