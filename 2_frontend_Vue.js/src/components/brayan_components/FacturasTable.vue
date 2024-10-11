@@ -217,7 +217,8 @@ function openDeleteModal(factura) {
 function openDetallesmodal(factura) {
   selectedFactura.value = { ...factura };
   showDetalles.value = true;
-  console.log(showDetalles.value);
+  console.log("Factura seleccionada:", selectedFactura.value);
+  
 }
 
 
@@ -881,7 +882,7 @@ function fechaActual() {
           <td data-label="Subtotal">{{ factura.subtotal }}</td>
           <td data-label="Impuestos">{{ factura.impuestos }}</td>
           <td data-label="id descuento">{{ factura.descuento.id_descuento }}</td>
-          <td data-label="id descuento">{{ factura.descuento.porcentaje_descuento }}</td>
+          <td data-label="id descuento">{{ factura.descuento.porcentaje_descuento + '%'}} </td>
       
           <td data-label="Total Precio Productos">{{ factura.total_precio_productos }}</td>
           <td data-label="Total a pagar">{{ factura.total }}</td>
@@ -1015,6 +1016,10 @@ function fechaActual() {
               <td data-label="Valor">{{ selectedFactura?.reserva?.valor_deposito }}</td>
             </tr>
             <tr>
+            <td>Porcentaje Descuento</td>
+            <td>{{ selectedFactura?.descuento?.porcentaje_descuento !== undefined ? selectedFactura.descuento.porcentaje_descuento + '%' : 'N/A' }}</td>
+          </tr>
+            <tr>
               <td data-label="Campo">Forma de Pago-Reserva</td>
               <td data-label="Valor">{{ selectedFactura?.reserva?.forma_pago }}</td>
             </tr>
@@ -1023,6 +1028,12 @@ function fechaActual() {
               <td data-label="Campo">Método de Pago Factura</td>
               <td data-label="Valor">{{ selectedFactura?.metodo_pago }}</td>
             </tr>
+            <!--  <tr>
+          <td>ID Descuento</td>
+            <td>{{ selectedFactura?.descuento?.id_descuento || 'N/A' }}</td>
+          </tr> -->
+         
+
 
           </tbody>
         </table>
@@ -1056,7 +1067,7 @@ function fechaActual() {
             <div class="font-bold" data-label="Valor"  style="font-size: 16px;">Total precio productos: {{ selectedFactura?.total_precio_productos }}</div>
             <div class="font-bold" data-label="Valor" style="font-size: 16px;">Subtotal: {{ selectedFactura?.subtotal }}</div>
             <div class="font-bold" data-label="Valor" style="font-size: 16px;">Impuestos: {{ selectedFactura?.impuestos }}</div>
-            <div class="font-bold" data-label="Valor" style="font-size: 16px;">Porcentaje descuento: {{ selectedFactura?.descuento.porcentaje_descuento }}</div>
+        <!--   <div class="font-bold" data-label="Valor" style="font-size: 16px;">Porcentaje descuento: {{ selectedFactura?.descuento.porcentaje_descuento }}</div>-->
             <div class="font-bold" data-label="Valor" style="font-size: 17px;">TOTAL A PAGAR: {{ selectedFactura?.total }}</div>
         </div>
 
