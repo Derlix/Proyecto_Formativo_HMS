@@ -4,7 +4,7 @@
     class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 dark:bg-opacity-70 text-black dark:text-white"
   >
     <div
-      class="bg-white dark:bg-gray-800 p-8 sm:p-12 rounded-lg shadow-lg max-w-2xl w-full relative"
+      class="bg-white dark:bg-gray-800 p-8 sm:p-12 rounded-lg shadow-lg max-w-7xl w-full relative"
     >
       <!-- Botón de cerrar -->
       <button @click="close" class="absolute top-4 right-4 text-gray-600 dark:text-gray-300">
@@ -24,18 +24,18 @@
         </svg>
       </button>
 
-      <h2 class="text-2xl mb-6 font-semibold text-gray-900 dark:text-white">
+      <h2 class="text-2xl mb-6 font-semibold text-gray-900 dark:text-white text-center">
         Movimiento de pasajeros - SALIDA
       </h2>
-      
-      <div class="flex items-center border rounded-lg shadow-sm">
-          <input
-            type="text"
-            placeholder="Buscar pasajero por documento"
-            class="search-input flex-grow px-4 py-2 rounded-lg focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:text-white dark:bg-gray-700"
-            v-model="searchDocumento"
-          />
-        </div>
+
+      <div class="flex items-center border rounded-lg shadow-sm mb-4">
+        <input
+          type="text"
+          placeholder="Buscar pasajero por documento"
+          class="search-input flex-grow px-4 py-2 rounded-lg focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:text-white dark:bg-gray-700"
+          v-model="searchDocumento"
+        />
+      </div>
 
       <!-- Step 1: Factura List -->
       <div v-if="currentStep === 1">
@@ -48,7 +48,6 @@
                 <th class="px-4 py-2">Fecha Reserva</th>
                 <th class="px-4 py-2">Empresa</th>
                 <th class="px-4 py-2">Total</th>
-                <th class="px-4 py-2">Acción</th>
               </tr>
             </thead>
             <tbody>
@@ -57,18 +56,25 @@
                 :key="factura.id_facturacion"
                 class="hover:bg-gray-100 dark:hover:bg-gray-600"
               >
-                <td class="border px-4 py-2 dark:text-white">{{ factura.huesped.nombre_completo }}</td>
-                <td class="border px-4 py-2 dark:text-white">{{ factura.huesped.numero_documento }}</td>
-                <td class="border px-4 py-2 dark:text-white">{{ factura.reserva.fecha_reserva }}</td>
+                <td class="border px-4 py-2 dark:text-white">
+                  {{ factura.huesped.nombre_completo }}
+                </td>
+                <td class="border px-4 py-2 dark:text-white">
+                  {{ factura.huesped.numero_documento }}
+                </td>
+                <td class="border px-4 py-2 dark:text-white">
+                  {{ factura.reserva.fecha_reserva }}
+                </td>
                 <td class="border px-4 py-2 dark:text-white">{{ factura.reserva.empresa }}</td>
-                <td class="border px-4 py-2 dark:text-white">{{ factura.total }}</td>
-                <td class="border px-4 py-2 text-center">
-                  <div class="flex justify-center items-center">
+                <td class="border px-4 py-2 dark:text-white">
+                  <div class="flex items-center justify-between">
+                    <span>{{ factura.total }}</span>
                     <input
                       type="radio"
                       :value="factura.id_facturacion"
                       v-model="seleccionarFacturaSeleccionada"
                       @change="seleccionaridFactura(factura.id_facturacion)"
+                      class="ml-2"
                     />
                   </div>
                 </td>
@@ -112,7 +118,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { getAllFacturas, updateFacturaService } from '@/services/brayan_service/FacturacionService'
-import ModalAlert from './ModalAlert.vue';
+import ModalAlert from './ModalAlert.vue'
 
 const props = defineProps({
   visible: {
@@ -131,8 +137,8 @@ const searchDocumento = ref('') // Barra de búsqueda por documento
 // Filtrar facturas pendientes por número de documento
 const facturasFiltradas = computed(() => {
   return facturas.value
-    .filter(factura => factura.estado === 'PENDIENTE')
-    .filter(factura => factura.huesped.numero_documento.includes(searchDocumento.value))
+    .filter((factura) => factura.estado === 'PENDIENTE')
+    .filter((factura) => factura.huesped.numero_documento.includes(searchDocumento.value))
 })
 
 const emit = defineEmits(['close'])
@@ -170,7 +176,9 @@ const seleccionaridFactura = (id_facturacion) => {
 
 const confirmarSalida = async () => {
   try {
-    const facturaSeleccionada = facturas.value.find(f => f.id_facturacion === seleccionarFacturaSeleccionada.value)
+    const facturaSeleccionada = facturas.value.find(
+      (f) => f.id_facturacion === seleccionarFacturaSeleccionada.value
+    )
     if (facturaSeleccionada) {
       await updateFacturaService(
         facturaSeleccionada.id_facturacion,
