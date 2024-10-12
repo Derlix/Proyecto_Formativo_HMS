@@ -145,7 +145,7 @@
       <div class="flex justify-between items-center mb-1">
         <h1 class="font-bold text-lg" style="font-size: 26px; color: darkgreen;">DETALLES CUENTA HUESPED</h1>
         <div class="flex items-center">
-          <img src="src/assets/img/sena-agro.png" alt="" style="width: 70px; margin-right: 5px;">
+          <img src="@/assets/img/sena-agro.png" alt="" style="width: 70px; margin-right: 5px;">
         </div>
       </div>
       

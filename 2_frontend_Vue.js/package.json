@@ -16,6 +16,7 @@
     "@fullcalendar/vue3": "^6.1.15",
     "@mdi/js": "^7.4.47",
     "axios": "^1.7.7",
+    "caniuse-lite": "^1.0.30001668",
     "chart.js": "^4.4.0",
     "html2canvas": "^1.4.1",
     "jspdf": "^2.5.2",

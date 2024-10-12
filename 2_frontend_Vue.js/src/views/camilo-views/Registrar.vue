@@ -50,7 +50,7 @@ const register = async () => {
   <div class="min-h-screen flex items-center justify-center bg-gray-100">
     <div class="max-w-lg w-full bg-white p-8 shadow-md rounded-lg">
       <div class="flex justify-center mb-4">
-        <img src="src/assets/img/sena-agro.png" alt="Logo Sena" class="w-12 sm:w-16">
+        <img src="@/assets/img/sena-agro.png" alt="Logo Sena" class="w-12 sm:w-16">
       </div>
       <h2 class="text-center mb-4 font-bold text-lg sm:text-xl">Registrarse</h2>
       <p class="mt-2 text-center text-gray-600">Por favor, complete el formulario para crear una cuenta</p>
