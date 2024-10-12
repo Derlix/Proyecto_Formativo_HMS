@@ -55,9 +55,10 @@ const register = async () => {
       <h2 class="text-center mb-4 font-bold text-lg sm:text-xl">Registrarse</h2>
       <p class="mt-2 text-center text-gray-600">Por favor, complete el formulario para crear una cuenta</p>
 
-      <CardBox v-if="registroExitoso" color="bg-green-500" class="mb-4">
+      <CardBox v-if="registroExitoso" color="bg-green-500" class="mb-4 text-center">
         <template #default>
           <p class="text-white">¡Registro exitoso!</p>
+          <router-link to="/inicio" class="underline font-bold text-base">Regresar Inicio Sesion</router-link> 
         </template>
       </CardBox>
 
