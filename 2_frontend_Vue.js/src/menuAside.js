@@ -100,6 +100,11 @@ export default [
     modulo: 'huespedes',
     menu: [
       {
+        to: '/comprobante-deposito',
+        label: 'Comprob. depositos',
+        modulo: 'huespedes'
+      },
+      {
         to: '/informe-pasajeros',
         label: 'Informe pasajeros',
         modulo: 'huespedes'
