@@ -106,8 +106,8 @@ onMounted(() => {
           <CardBox class="shadow-md">  
             <h1 class="text-center m-4 font-medium text-xl">Registrar entradas y salidas de huéspedes</h1>
             <div class="grid grid-cols-1 gap-3 w-full lg:grid-cols-2">
-              <button @click="showModal = true" class="bg-blue-600 h-12 rounded-lg my-6 font-bold hover:bg-blue-900 text-white">Registrar Entrada</button>
-              <button @click="showModalSalidas = true" class="bg-blue-600 h-12 text-white rounded-lg my-6 font-bold hover:bg-blue-900">Registrar Salida</button>
+              <button @click="showModal = true" class="bg-blue-600 h-12 rounded-lg my-6 font-bold hover:bg-blue-900 text-white transition duration-300 ease-in-out py-2 px-6 shadow-lg transform hover:scale-105">Registrar Entrada</button>
+              <button @click="showModalSalidas = true" class="bg-blue-600 h-12 text-white rounded-lg my-6 font-bold hover:bg-blue-900 transition duration-300 ease-in-out py-2 px-6 shadow-lg transform hover:scale-105">Registrar Salida</button>
 
               <ModalRegistrarEntrada :visible="showModal" @close="showModal = false" />
               

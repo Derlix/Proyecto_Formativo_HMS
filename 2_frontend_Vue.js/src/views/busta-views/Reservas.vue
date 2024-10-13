@@ -33,7 +33,7 @@ onMounted(() => {
       <div class="flex justify-center space-x-4 py-4">
         <button
           @click="showModalCrearReserva = true"
-          class="bg-blue-600 dark:bg-blue-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 transition"
+          class="bg-blue-600 dark:bg-blue-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 transition duration-300 ease-in-out py-2 px-6 shadow-lg transform hover:scale-105"
         >
           Crear reserva
         </button>
@@ -42,7 +42,7 @@ onMounted(() => {
     
         <button
           @click="showModalCambiarHabitacion = true"
-          class="bg-blue-600 dark:bg-blue-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 transition"
+          class="bg-blue-600 dark:bg-blue-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 transition duration-300 ease-in-out py-2 px-6 shadow-lg transform hover:scale-105"
         >
           Cambiar habitación
         </button>
@@ -50,20 +50,20 @@ onMounted(() => {
         <ModalCambiarHabitacion :isVisible="showModalCambiarHabitacion" @close="showModalCambiarHabitacion = false" />
 
         <button
-          class="bg-blue-600 dark:bg-blue-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 transition"
+          class="bg-blue-600 dark:bg-blue-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 transition duration-300 ease-in-out py-2 px-6 shadow-lg transform hover:scale-105"
         >
           Cambiar reserva
         </button>
 
         <button
-          class="bg-blue-600 dark:bg-blue-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 transition"
+          class="bg-blue-600 dark:bg-blue-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 transition duration-300 ease-in-out py-2 px-6 shadow-lg transform hover:scale-105"
         >
           Registrar comprobante de descuento
         </button>
 
         <button
           @click="showModalTarjetaReserva = true"
-          class="bg-blue-600 dark:bg-blue-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 transition"
+          class="bg-blue-600 dark:bg-blue-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 transition duration-300 ease-in-out py-2 px-6 shadow-lg transform hover:scale-105"
         >
           Tarjeta Reserva
         </button>
