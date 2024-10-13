@@ -25,11 +25,17 @@ const router = useRouter()
 const isAsideMobileExpanded = ref(false)
 const isAsideLgActive = ref(false)
 
-// onMounted(() => {
-//   mainStore.fetchADatosUsuario();
-// });
+// Computed para obtener el hotel activo desde el store
+const hotelActivo = computed(() => mainStore.nombreHotelOperando) // Ahora es computed y reactivo en tiempo real
 
-// const userRole = computed(() => mainStore.userRole)
+const valorHotel = (localStorage.getItem('hotelActual'));
+
+onMounted(() => {
+  const hotelActual = localStorage.getItem('hotelActual');  
+  if (hotelActual) {
+    mainStore.nombreHotelOperando = hotelActual;
+  }
+});
 
 // Filtrado de menú basado en permisos
 const filteredMenuAside = computed(() => {
@@ -82,6 +88,9 @@ const menuClick = (event, item) => {
         </NavBarItemPlain>
         <NavBarItemPlain display="hidden lg:flex xl:hidden" @click.prevent="isAsideLgActive = true">
           <BaseIcon :path="mdiMenu" size="24" />
+        </NavBarItemPlain>
+        <NavBarItemPlain use-margin>
+            <p v-if="hotelActivo !== 'undefined' && valorHotel !== null">Hotel activo: {{ hotelActivo }}</p>
         </NavBarItemPlain>
       </NavBar>
       <!-- Usamos el menú filtrado -->

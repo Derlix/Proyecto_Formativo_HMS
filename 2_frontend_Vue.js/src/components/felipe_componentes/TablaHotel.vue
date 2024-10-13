@@ -1,6 +1,6 @@
 <template>
   <div class="text-right">
-    <p class="py-5 text-xl">ID del hotel que opera actualmente: <span class="font-bold">{{ userIdHotel }}</span></p>
+    <p class="py-5 text-xl">Hotel que opera actualmente: <span class="font-bold">{{ userNombreHotel }}</span></p>
   </div>
        
            <!-- Botón para agregar hotel -->
@@ -183,11 +183,15 @@
         currentPage : 1,
         buscarHotel : '',
         hotel : {},
+        hotelActivo: ''
       };
     },
     computed: {
       userIdHotel() {
         return mainStore.userIdHotel;
+      },
+      userNombreHotel() {
+        return mainStore.nombreHotelOperando;
       }
     },
     mounted() {
@@ -302,9 +306,10 @@
             await updateIdHotel(this.hotelToCambiar.id_hotel);
   
             mainStore.setUser({
-              id_hotel: this.hotelToCambiar.id_hotel
+              id_hotel: this.hotelToCambiar.id_hotel,
+              nombre_hotel: this.hotelToCambiar.nombre,
             });
-  
+
             this.fetchHotels();
             this.closeConfirmCambiarHotelModal();
           }

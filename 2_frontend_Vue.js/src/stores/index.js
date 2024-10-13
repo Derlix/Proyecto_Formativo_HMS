@@ -42,6 +42,7 @@ export const useAuthStore = defineStore('auth', {
       localStorage.removeItem('permissions');
       localStorage.removeItem('access_token');
       localStorage.removeItem('darkMode');
+      localStorage.removeItem('hotelActual');
     }
   }
 });

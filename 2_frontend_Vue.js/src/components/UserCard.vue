@@ -59,7 +59,9 @@ const userSwitchVal = ref(false)
           >!
         </h1>
         <p class="text-base">Rol: <b>{{ userRole }}</b>.</p>
-        <p>Conexion actual en: <b>{{ dataIP?.city || 'unknown' }},{{ dataIP?.country || 'unknown' }}</b>.</p>
+        <p v-if="dataIP?.city !== 'unknown' && dataIP?.country !== 'unknown'">
+          Conexion actual en: <b>{{ dataIP?.city }}, {{ dataIP?.country }}</b>.
+        </p>
         <!-- <div class="flex justify-center md:block">
           <PillTag label="Verificado" color="info" :icon="mdiCheckDecagram" />
         </div> -->
