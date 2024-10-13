@@ -12,7 +12,7 @@ import BaseButton from '@/components/BaseButton.vue'
 import LayoutGuest from '@/layouts/LayoutGuest.vue'
 import { useDarkModeStore } from '@/stores/darkMode.js'
 const darkModeStore = useDarkModeStore()
-
+import { getHotelById } from '@/services/felipe_services/hotelService'
 
 const form = reactive({
     login: '',
@@ -35,16 +35,26 @@ onMounted(() => {
     darkModeStore.set(false)
 })
 
+const fetchADatosHotel = async () => {
+    try {
+        const response = await getHotelById(authStore.user.id_hotel);
+        localStorage.setItem('hotelActual', response.data.nombre ? response.data.nombre : (authStore.user.id_hotel ? authStore.user.id_hotel : ''))
+    } catch (error) {
+        errorMessage.value = 'Error al obtener el hotel: ' + error.message
+    }
+}
+
 const handleLogin = async () => {
     try {
         await authStore.login(email.value, password.value)
-
         if (authStore.authError) {
             errorMessage.value = authStore.authError
             setTimeout(() => {
                 errorMessage.value = null;
             }, 3000);
+
         } else {
+            fetchADatosHotel(authStore.user.id_hotel);
             if (form.remember) {
                 localStorage.setItem('email', email.value)
             } else {
@@ -76,7 +86,7 @@ const handleLogin = async () => {
         <SectionFullScreen>
             <CardBox is-form @submit.prevent="handleLogin" class="sm:w-3/6 md:w-3/5 lg:w-3/6 xl:w-2/6 mx-auto">
                 <div class="flex justify-center mb-4">
-                    <img src="src/assets/img/sena-agro.png" alt="Logo Sena" class="w-12 sm:w-16">
+                    <img src="@/assets/img/sena-agro.png" alt="Logo Sena" class="w-12 sm:w-16">
                 </div>
                 <h1 class="text-center mb-4 font-bold text-lg sm:text-xl">Iniciar Sesión</h1>
     

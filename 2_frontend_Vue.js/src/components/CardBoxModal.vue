@@ -18,7 +18,7 @@ const props = defineProps({
   },
   buttonLabel: {
     type: String,
-    default: 'Done'
+    default: 'Cerrar'
   },
   hasCancel: Boolean,
   modelValue: {
