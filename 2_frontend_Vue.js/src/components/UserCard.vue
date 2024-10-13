@@ -7,7 +7,6 @@ import UserAvatarCurrentUser from '@/components/UserAvatarCurrentUser.vue'
 import CardBox from '@/components/CardBox.vue'
 // import FormCheckRadio from '@/components/FormCheckRadio.vue'
 import PillTag from '@/components/PillTag.vue'
-import { getIpLocation } from '@/services/busta_service/IPService'
 
 const mainStore = useMainStore()
 
@@ -17,6 +16,7 @@ const userName = computed(() => {
   return firstName.length > 16 ? firstName.substring(0, 16) : firstName
 })
 const userRole = computed(() => mainStore.userRole)
+const nombreHotel = computed(() => mainStore.nombreHotelOperando)
 const dataIP = ref(null)
 
 const obtenerDataIP = async () => {
@@ -27,14 +27,6 @@ const obtenerDataIP = async () => {
     console.error('Error al cargar datos de IP:', error)
   }
 }
-
-onMounted(() => {
-  obtenerDataIP()
-})
-
-onMounted(() => {
-  mainStore.fetchADatosUsuario();
-});
 
 const userSwitchVal = ref(false)
 </script>
@@ -59,9 +51,7 @@ const userSwitchVal = ref(false)
           >!
         </h1>
         <p class="text-base">Rol: <b>{{ userRole }}</b>.</p>
-        <p v-if="dataIP?.city !== 'unknown' && dataIP?.country !== 'unknown'">
-          Conexion actual en: <b>{{ dataIP?.city }}, {{ dataIP?.country }}</b>.
-        </p>
+        <p v-if="nombreHotel !== 'undefined' && nombreHotel !== null" class="text-base">Hotel: <b>{{ nombreHotel }}</b>.</p>
         <!-- <div class="flex justify-center md:block">
           <PillTag label="Verificado" color="info" :icon="mdiCheckDecagram" />
         </div> -->
