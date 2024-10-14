@@ -22,7 +22,9 @@ import VistaHabitaciones from '@/views/camilo-views/VistaHabitaciones.vue'
 import InicioJefeRecepcionista from '@/views/arce-views/DashboardAdmin.vue'
 import UsuariosView from '@/views/arias_views/UsuariosView.vue'
 import InformacionReserva from '@/views/arce-views/InformacionReserva.vue'
-
+import ComprobanteDeposito from '@/views/miguel-views/ComprobanteDeposito.vue'
+import AvancesEfectivo from '@/views/arce-views/AvancesEfectivo.vue'
+ 
 
 const routes = [
   {
@@ -56,6 +58,16 @@ const routes = [
   },
   {
     meta: {
+      title: 'avances-efectivo'
+    },
+    path: '/avances-efectivo',
+    name: 'avances_efectivo',
+    component: AvancesEfectivo,
+    meta: { requiresAuth: true}
+
+  },
+  {
+    meta: {
       title: 'InformePasajeros'
     },
     path: '/informe-pasajeros',
@@ -79,6 +91,15 @@ const routes = [
     path: '/transpaso-particulares',
     name: 'transpaso_particulares',
     component: TranspasoParticulares,
+    meta: { requiresAuth: true}
+  },
+  {
+    meta: {
+      title: 'ComprobanteDeposito'
+    },
+    path: '/comprobante-deposito',
+    name: 'Comprob_depositos',
+    component: ComprobanteDeposito,
     meta: { requiresAuth: true}
   },
   {
