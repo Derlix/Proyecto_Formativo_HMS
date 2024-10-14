@@ -23,6 +23,7 @@ import InicioJefeRecepcionista from '@/views/arce-views/DashboardAdmin.vue'
 import UsuariosView from '@/views/arias_views/UsuariosView.vue'
 import InformacionReserva from '@/views/arce-views/InformacionReserva.vue'
 import ComprobanteDeposito from '@/views/miguel-views/ComprobanteDeposito.vue'
+import AvancesEfectivo from '@/views/arce-views/AvancesEfectivo.vue'
  
 
 const routes = [
@@ -52,6 +53,16 @@ const routes = [
     path: '/comprobante-descuento',
     name: 'comprobante_descuento',
     component: ComprobanteDescuentos,
+    meta: { requiresAuth: true}
+
+  },
+  {
+    meta: {
+      title: 'avances-efectivo'
+    },
+    path: '/avances-efectivo',
+    name: 'avances_efectivo',
+    component: AvancesEfectivo,
     meta: { requiresAuth: true}
 
   },

@@ -37,6 +37,12 @@ export default [
     modulo: 'facturacion'
   },
   {
+    to: '/avances-efectivo',
+    label: 'Anticipo',
+    icon: mdiTicket,
+    modulo: 'avances_efectivo'
+  },
+  {
     label: 'Reservas',
     icon: mdiCalendar,
     modulo: 'reservas',
