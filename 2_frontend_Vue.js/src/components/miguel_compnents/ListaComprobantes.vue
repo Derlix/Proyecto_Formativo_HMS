@@ -213,18 +213,20 @@ onMounted(() => {
     </div>
   </div>
 
+
+  <div class="relative overflow-x-auto">
   <table>
     <thead>
       <tr>
         <th>Nombre completo</th>
         <th>N. documento</th>     
-        <th>Huesped N.</th>
-        <th>Reserva N.</th>
+        <th>N. Huesped </th>
+        <th>N. Reserva </th>
         <th>Fecha de salida</th>
         <th>Valor de deposito</th>
         <th>Forma de pago</th>
-        <th>Usuario</th>
-        <th>Usuario N.</th>
+        <th>Elaborado por</th>
+        <!-- <th>Usuario N.</th>-->
         <th />
       </tr>
     </thead>
@@ -233,15 +235,15 @@ onMounted(() => {
         v-for="comprobante in filteredHuespedes"
         :key="`${comprobante.huesped.id_huesped}-${comprobante.reserva_habitacion.id_reserva}`"
       >
-        <td>{{ comprobante.huesped.nombre_completo }}</td>
-        <td>{{ comprobante.huesped.numero_documento }}</td>
-        <td>{{ comprobante.huesped.id_huesped }}</td>
-        <td>{{ comprobante.reserva.id_reserva }}</td>
-        <td>{{ comprobante.reserva_habitacion.fecha_salida_propuesta }}</td>
-        <td>{{ comprobante.reserva.valor_deposito }}</td>
-        <td>{{ comprobante.reserva.forma_pago }}</td>
-        <td>{{ comprobante.usuario.nombre_completo }}</td>
-        <td>{{ comprobante.usuario.id_usuario }}</td>
+        <td data-label="Nombre Huesped">{{ comprobante.huesped.nombre_completo }}</td>
+        <td data-label="N. Documento">{{ comprobante.huesped.numero_documento }}</td>
+        <td data-label="N. Huesped ">{{ comprobante.huesped.id_huesped }}</td>
+        <td data-label="N. Reserva ">{{ comprobante.reserva.id_reserva }}</td>
+        <td data-label="Fecha de salida">{{ comprobante.reserva_habitacion.fecha_salida_propuesta }}</td>
+        <td data-label="Valor de deposito">{{ comprobante.reserva.valor_deposito }}</td>
+        <td data-label="Forma de pago">{{ comprobante.reserva.forma_pago }}</td>
+        <td data-label="Elaborado por">{{ comprobante.usuario.nombre_completo }}</td>
+        <!--  <td data-label="ID Facturación">{{ comprobante.usuario.id_usuario }}</td>-->
         <td>
           <BaseButton
             color="info"
@@ -253,6 +255,7 @@ onMounted(() => {
       </tr>
     </tbody>
   </table>
+  </div>
 
   <BaseLevel>
     <BaseButtons>
