@@ -101,23 +101,13 @@ const create_Usuario = async () => {
       currentUsuario.value.id_hotel,
       currentUsuario.value.file_img
     );
-    modalMessage.value = "Usuario creado con éxito";
-    isAlertVisible.value = true;
-    colorAlert.value = 'primary';
-    activarModalEdit.value = false;
-    setTimeout(() => {
-      isAlertVisible.value = false;
-    }, 3000);
+    showAlert('Usuario creado con éxito', 'success');
+    activarModalCreate.value = false;
     fetchUsuarios();
   } catch (error) {
     console.error(error);
-    modalMessage.value = error.response?.data?.detail || "Error al crear usuario";
-    isAlertVisible.value = true;
-    colorAlert.value = 'danger';
-    activarModalEdit.value = false;
-    setTimeout(() => {
-      isAlertVisible.value = false;
-    }, 3000);
+    showAlert(error.response?.data?.detail || 'Error al crear usuario', 'danger');
+    activarModalCreate.value = false;
   }
 }
 
@@ -130,22 +120,12 @@ const update_Usuario = async () => {
       currentUsuario.value.email,
       currentUsuario.value.usuario_rol
     );
-    modalMessage.value = "Usuario actualizado con éxito";
-    isAlertVisible.value = true;
-    colorAlert.value = 'success';
+    showAlert('Usuario actualizado con éxito', 'success');
     activarModalEdit.value = false;
-    setTimeout(() => {
-      isAlertVisible.value = false;
-    }, 3000);
     fetchUsuarios();
   } catch (error) {
-    modalMessage.value = error.response?.data?.detail || "Error al actualizar usuario";
-    isAlertVisible.value = true;
-    colorAlert.value = 'danger';
+    showAlert(error.response?.data?.detail || 'Error al actualizar usuario', 'danger');
     activarModalEdit.value = false;
-    setTimeout(() => {
-      isAlertVisible.value = false;
-    }, 3000);
   }
 };
 
@@ -190,6 +170,15 @@ const confirmDelete = async () => {
       isAlertVisible.value = false;
     }, 3000);
   }
+};
+
+const showAlert = (message, color) => {
+  modalMessage.value = message;
+  colorAlert.value = color;
+  isAlertVisible.value = true;
+  setTimeout(() => {
+    isAlertVisible.value = false;
+  }, 3000);
 };
 
 // Cancelar eliminación
