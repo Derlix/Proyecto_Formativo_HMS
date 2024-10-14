@@ -37,6 +37,12 @@ export default [
     modulo: 'facturacion'
   },
   {
+    to: '/avances-efectivo',
+    label: 'Anticipo',
+    icon: mdiTicket,
+    modulo: 'avances_efectivo'
+  },
+  {
     label: 'Reservas',
     icon: mdiCalendar,
     modulo: 'reservas',
@@ -99,6 +105,11 @@ export default [
     icon: mdiFileChart,
     modulo: 'huespedes',
     menu: [
+      {
+        to: '/comprobante-deposito',
+        label: 'Comprob. depositos',
+        modulo: 'huespedes'
+      },
       {
         to: '/informe-pasajeros',
         label: 'Informe pasajeros',

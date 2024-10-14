@@ -4,13 +4,13 @@ import { mdiEye } from '@mdi/js'
 import BaseLevel from '@/components/BaseLevel.vue'
 import BaseButtons from '@/components/BaseButtons.vue'
 import BaseButton from '@/components/BaseButton.vue'
-import { getListaPasajerosBypage } from '@/services/listapasajerosService'
+import { getListacomprobanteByPage } from '@/services/comprobanteService'
 import CardBoxModal from '../CardBoxModal.vue'
 import NotificationBar from '../alejo_components/NotificationBar.vue'
 
 const currentPage = ref(1)
 const TotalPages = ref(0)
-const allHuespedes = ref([])
+const allcomprobantes = ref([])
 const filteredHuespedes = ref([])
 const buscarHuesped = ref('')
 const activarvisibleModal = ref(false)
@@ -19,20 +19,20 @@ const isAlertVisible = ref(false)
 const modalMessage = ref('')
 const colorAlert = ref('')
 
-const fetchHuespedesByPage = async () => {
+const fetchComprobantes = async () => {
   try {
-    const response = await getListaPasajerosBypage(currentPage.value)
-    if (response.data && response.data.movimientos) {
+    const response = await getListacomprobanteByPage(currentPage.value)
+    if (response.data && response.data.comprobantes) {
       TotalPages.value = response.data.total_pages
-      allHuespedes.value = response.data.movimientos
-      filteredHuespedes.value = allHuespedes.value
+      allcomprobantes.value = response.data.comprobantes
+      filteredHuespedes.value = allcomprobantes.value
     } else {
       TotalPages.value = 0
-      allHuespedes.value = []
+      allcomprobantes.value = []
       filteredHuespedes.value = []
     }
   } catch (error) {
-    modalMessage.value = 'Error al encontrar pasajeros'
+    modalMessage.value = 'Error al encontrar comprobantes'
     isAlertVisible.value = true
     colorAlert.value = 'danger'
   }
@@ -40,17 +40,20 @@ const fetchHuespedesByPage = async () => {
 
 const filterHuespedes = () => {
   if (buscarHuesped.value === '') {
-    filteredHuespedes.value = [...allHuespedes.value]; // Restablece la lista si no hay búsqueda
+    filteredHuespedes.value = [...allcomprobantes.value]; // Restablece la lista si no hay búsqueda
   } else {
     const query = buscarHuesped.value.toLowerCase();
 
-    const filterResult = allHuespedes.value.filter(movimiento => {
-      const numeroDocumento = movimiento.huesped.numero_documento || ''; 
-      return numeroDocumento.toLowerCase().includes(query);
+    const filterResult = allcomprobantes.value.filter(comprobante => {
+      const documento = comprobante.huesped?.numero_documento 
+        ? String(comprobante.huesped.numero_documento) // Convertir a string
+        : ''; // Manejar el caso en que no exista numero_documento
+
+      return documento.toLowerCase().includes(query);
     });
 
     if (filterResult.length === 0) {
-      modalMessage.value = 'Pasajero no encontrado';
+      modalMessage.value = 'Comprobante no encontrado';
       isAlertVisible.value = true;
       colorAlert.value = 'danger';
       filteredHuespedes.value = []; // Limpia la lista si no se encuentra
@@ -61,12 +64,12 @@ const filterHuespedes = () => {
       filteredHuespedes.value = filterResult;
     }
   }
-}
+};
 
 
 const handlePageClick = (page) => {
   currentPage.value = page
-  fetchHuespedesByPage()
+  fetchComprobantes()
 }
 
 const openVisibleModal = (huesped) => {
@@ -75,7 +78,7 @@ const openVisibleModal = (huesped) => {
 }
 
 onMounted(() => {
-  fetchHuespedesByPage()
+  fetchComprobantes()
 })
 </script>
 
@@ -107,7 +110,7 @@ onMounted(() => {
         </div>
         <div class="mb-4">
           <label for="huespedTipo_documento" class="block text-gray-700 font-medium dark:text-white"
-            >Tipo documento</label
+            >Fecha salida</label
           >
           <input
             disabled
@@ -210,42 +213,49 @@ onMounted(() => {
     </div>
   </div>
 
+
+  <div class="relative overflow-x-auto">
   <table>
     <thead>
       <tr>
         <th>Nombre completo</th>
-        <th>Fecha de entrada</th>
+        <th>N. documento</th>     
+        <th>N. Huesped </th>
+        <th>N. Reserva </th>
         <th>Fecha de salida</th>
-        <th>Documento</th>
-        <th>Expedido N.</th>
-        <th>Registro N.</th>
-        <th>Profesion</th>
+        <th>Valor de deposito</th>
+        <th>Forma de pago</th>
+        <th>Elaborado por</th>
+        <!-- <th>Usuario N.</th>-->
         <th />
       </tr>
     </thead>
     <tbody>
       <tr
-        v-for="movimiento in filteredHuespedes"
-        :key="`${movimiento.huesped.id_huesped}-${movimiento.reserva_habitacion.id_reserva}`"
+        v-for="comprobante in filteredHuespedes"
+        :key="`${comprobante.huesped.id_huesped}-${comprobante.reserva_habitacion.id_reserva}`"
       >
-        <td>{{ movimiento.huesped.nombre_completo }}</td>
-        <td>{{ movimiento.reserva_habitacion.fecha_entrada }}</td>
-        <td>{{ movimiento.reserva_habitacion.fecha_salida_propuesta }}</td>
-        <td>{{ movimiento.huesped.numero_documento }}</td>
-        <td>{{ movimiento.huesped.fecha_expedicion }}</td>
-        <td>{{ movimiento.reserva_habitacion.id_reserva }}</td>
-        <td>{{ movimiento.huesped.ocupacion }}</td>
+        <td data-label="Nombre Huesped">{{ comprobante.huesped.nombre_completo }}</td>
+        <td data-label="N. Documento">{{ comprobante.huesped.numero_documento }}</td>
+        <td data-label="N. Huesped ">{{ comprobante.huesped.id_huesped }}</td>
+        <td data-label="N. Reserva ">{{ comprobante.reserva.id_reserva }}</td>
+        <td data-label="Fecha de salida">{{ comprobante.reserva_habitacion.fecha_salida_propuesta }}</td>
+        <td data-label="Valor de deposito">{{ comprobante.reserva.valor_deposito }}</td>
+        <td data-label="Forma de pago">{{ comprobante.reserva.forma_pago }}</td>
+        <td data-label="Elaborado por">{{ comprobante.usuario.nombre_completo }}</td>
+        <!--  <td data-label="ID Facturación">{{ comprobante.usuario.id_usuario }}</td>-->
         <td>
           <BaseButton
             color="info"
             :icon="mdiEye"
             small
-            @click="openVisibleModal(movimiento.huesped)"
+            @click="openVisibleModal(comprobante.huesped)"
           />
         </td>
       </tr>
     </tbody>
   </table>
+  </div>
 
   <BaseLevel>
     <BaseButtons>
