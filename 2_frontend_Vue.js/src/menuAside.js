@@ -36,12 +36,12 @@ export default [
     icon: mdiTicket,
     modulo: 'facturacion'
   },
-  {
-    to: '/avances-efectivo',
-    label: 'Anticipo',
-    icon: mdiTicket,
-    modulo: 'avances_efectivo'
-  },
+  // {
+  //   to: '/avances-efectivo',
+  //   label: 'Anticipo',
+  //   icon: mdiTicket,
+  //   modulo: 'avances_efectivo'
+  // },
   {
     label: 'Reservas',
     icon: mdiCalendar,
@@ -57,11 +57,11 @@ export default [
         label: 'His. Reservas',
         modulo: 'reservas'
       },
-      {
-        to: '/transpaso-particulares',
-        label: 'Transpaso a particulares',
-        modulo: 'reservas'
-      },
+      // {
+      //   to: '/transpaso-particulares',
+      //   label: 'Transpaso a particulares',
+      //   modulo: 'reservas'
+      // },
     ]
   },
   {
@@ -115,11 +115,11 @@ export default [
         label: 'Informe pasajeros',
         modulo: 'huespedes'
       },
-      {
-        to: '/cuenta-huesped',
-        label: 'Cuentas Huesped',
-        modulo: 'huespedes'
-      },
+      // {
+      //   to: '/cuenta-huesped',
+      //   label: 'Cuentas Huesped',
+      //   modulo: 'huespedes'
+      // },
       {
         to: '/movimiento-pasajeros-correspondiente',
         label: 'Mv. Pasajero corres',
