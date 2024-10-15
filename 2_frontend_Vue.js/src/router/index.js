@@ -16,14 +16,15 @@ import Registrar from '@/views/camilo-views/Registrar.vue'
 import Recuperar from '@/views/camilo-views/RecuperarContrasena.vue'
 import MovimientoPasajeros from '@/views/camilo-views/MovimientoPasajerosCorrespondiente.vue'
 import InformePasajeros from '@/views/arce-views/InformePasajeros.vue'
-import TarjetaReserva from '@/views/arce-views/TarjetaReserva.vue'
 import TranspasoParticulares from '@/views/arce-views/TranspasoParticulares.vue'
-import InformacionReserva from '@/views/arce-views/InformacionReserva.vue'
 import InicioCajero from '@/views/arce-views/InicioCajero.vue'
 import VistaHabitaciones from '@/views/camilo-views/VistaHabitaciones.vue'
 import InicioJefeRecepcionista from '@/views/arce-views/DashboardAdmin.vue'
 import UsuariosView from '@/views/arias_views/UsuariosView.vue'
-
+import InformacionReserva from '@/views/arce-views/InformacionReserva.vue'
+import ComprobanteDeposito from '@/views/miguel-views/ComprobanteDeposito.vue'
+import AvancesEfectivo from '@/views/arce-views/AvancesEfectivo.vue'
+ 
 
 const routes = [
   {
@@ -57,6 +58,16 @@ const routes = [
   },
   {
     meta: {
+      title: 'avances-efectivo'
+    },
+    path: '/avances-efectivo',
+    name: 'avances_efectivo',
+    component: AvancesEfectivo,
+    meta: { requiresAuth: true}
+
+  },
+  {
+    meta: {
       title: 'InformePasajeros'
     },
     path: '/informe-pasajeros',
@@ -68,19 +79,10 @@ const routes = [
     meta: {
       title: 'InformacionReserva'
     },
-    path: '/informacion-reserva/:id', // Agrega :id para recibir el parámetro
+    path: '/informacion-reserva/:id', 
     name: 'informacion_reserva',
     component: InformacionReserva,
     meta: { requiresAuth: true }
-  },
-  {
-    meta: {
-      title: 'TarjetaReserva'
-    },
-    path: '/tarjeta-reserva',
-    name: 'trajeta_reserva',
-    component: TarjetaReserva,
-    meta: { requiresAuth: true}
   },
   {
     meta: {
@@ -89,6 +91,15 @@ const routes = [
     path: '/transpaso-particulares',
     name: 'transpaso_particulares',
     component: TranspasoParticulares,
+    meta: { requiresAuth: true}
+  },
+  {
+    meta: {
+      title: 'ComprobanteDeposito'
+    },
+    path: '/comprobante-deposito',
+    name: 'Comprob_depositos',
+    component: ComprobanteDeposito,
     meta: { requiresAuth: true}
   },
   {
@@ -234,15 +245,6 @@ const routes = [
   },
   {
     meta: {
-      title: 'checkOut'
-    },
-    path: '/checkOut',
-    name: 'checkOut',
-    component: () => import('@/views/nico-views/CheckOut.vue'),
-    meta: { requiresAuth: true}
-  },
-  {
-    meta: {
       title: 'Productos'
     },
     path: '/productos',
@@ -308,6 +310,15 @@ const routes = [
     path: '/cuenta-huesped',
     name: 'cuenta Huesped',
     component: () => import('@/views/felipe-views/CuentaHuespedView.vue'),
+    meta: { requiresAuth: true}
+  },
+  {
+    meta: {
+      title: 'Bibliografia Hotel'
+    },
+    path: '/bibliografia-hotel',
+    name: 'bibliografia Hotel',
+    component: () => import('@/views/felipe-views/BibliografiaHotel.vue'),
     meta: { requiresAuth: true}
   },
 

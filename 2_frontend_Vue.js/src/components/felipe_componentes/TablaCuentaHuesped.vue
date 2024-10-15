@@ -1,4 +1,10 @@
 <template>
+  <NotificationBar
+    v-if="isAlertVisible"
+    :color="colorAlert"
+    :description="modalMessage"
+    :visible="isModalVisible"
+  />
   <BaseButton @click="openCreateModal" color="info" label="Insertar Cuenta-Huesped" class="mb-4" />
   
   <div class="mb-6 max-w-3xl mx-auto">
@@ -73,6 +79,9 @@
         </tr>
       </tbody>
     </table>
+    <div class="total-container">
+      <strong>Total PENDIENTE: {{ totalPendiente.toFixed(2) }}</strong> 
+    </div>
 
     <div v-if="cuentasHuesped.length === 0 && !selectedReserva && !selectedHuesped" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4" role="alert">
   <strong class="font-bold">Atención: </strong>
@@ -83,6 +92,7 @@
     <BaseButton v-if="selectedHuesped && selectedReserva" 
     @click="openDetallesmodal" color="warning" label="Imprimir" />
   </div>
+
   <CardBoxModal 
   v-model="showModal"
   :title="isEditing ? 'Editar cuenta' : 'Agregar cuenta'"
@@ -93,13 +103,13 @@
 >
   <form @submit.prevent="saveCuenta" class="space-y-4">
     <!-- Campo número de reserva -->
-    <FormField label="Numero de reserva" help="Ingrese el numero de la reserva">
-      <FormControl v-model="cuentaForm.id_reserva" name="id_reserva" />
+    <FormField label="Número de reserva" help="Ingrese el número de la reserva">
+      <FormControl v-model="cuentaForm.id_reserva" name="id_reserva" :disabled="isEditing" />
     </FormField>
 
     <!-- Campo cédula del huésped -->
     <FormField label="Cédula del huésped" help="Ingrese cédula del huésped">
-      <FormControl v-model="cuentaForm.id_huesped" name="id_huesped" />
+      <FormControl v-model="cuentaForm.id_huesped" name="id_huesped" :disabled="isEditing" />
     </FormField>
 
     <!-- Campo tipo de movimiento con select -->
@@ -112,7 +122,7 @@
 
     <!-- Campo monto -->
     <FormField label="Monto" help="Ingrese el monto">
-      <FormControl v-model="cuentaForm.monto" name="monto" type="text" />
+      <FormControl v-model="cuentaForm.monto" name="monto" type="text"/>
     </FormField>
 
     <!-- Campo estado con select -->
@@ -124,6 +134,7 @@
     </FormField>
   </form>
 </CardBoxModal>
+
 
                <CardBoxModal
                  v-model="showConfirmDeleteModal"
@@ -145,7 +156,7 @@
       <div class="flex justify-between items-center mb-1">
         <h1 class="font-bold text-lg" style="font-size: 26px; color: darkgreen;">DETALLES CUENTA HUESPED</h1>
         <div class="flex items-center">
-          <img src="src/assets/img/sena-agro.png" alt="" style="width: 70px; margin-right: 5px;">
+          <img src="@/assets/img/sena-agro.png" alt="" style="width: 70px; margin-right: 5px;">
         </div>
       </div>
       
@@ -189,14 +200,18 @@
             </tr>
           </tbody>
         </table>
-        <p v-else>No hay transacciones para mostrar.</p>
+        <div class="total-container">
+          <strong>Total PENDIENTE: {{ totalPendiente.toFixed(2) }}</strong> 
+       </div>
+
       </div>
       
-      <!-- Botón para descargar PDF -->
+     
      
     </div>
     
   </div>
+   <!-- Botón para descargar PDF -->
   <button @click="downloadPDF()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition mt-4">
         Descargar PDF
       </button>
@@ -222,6 +237,7 @@
  import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
      import FormField from '@/components/FormField.vue';
      import FormControl from '@/components/FormControl.vue';
+     import NotificationBar from '../alejo_components/NotificationBar.vue';
      import BaseButton from '@/components/BaseButton.vue';
      import BaseButtons from '@/components/BaseButtons.vue';
      import SectionTitleLineWithButton from '@/components/SectionTitleLineWithButton.vue';
@@ -249,6 +265,8 @@ export default {
              CardLista,
              jsPDF,
              html2canvas,
+             NotificationBar,
+             
 
            },
   data() {
@@ -275,14 +293,49 @@ export default {
       buscarCedula: '',
       mdiEye,  // Assign the icons to data directly
       mdiTrashCan,
+      modalMessage: '',
+        isAlertVisible : false,
+        colorAlert: '',
+        valor: null,
+        totalPendiente: 0,
     
     };
   },
   methods: {
-  async openDetallesmodal() {
+   async realizarBusqueda() {
+      if (this.buscarReserva && this.buscarCedula) {
+        this.mostrarError('Solo puedes buscar por uno de los campos a la vez.', 'danger');
+        return;
+      }
 
+      if (!this.buscarReserva && !this.buscarCedula) {
+        this.mostrarError('Debes ingresar un número de reserva o cédula.', 'danger');
+        return;
+      }
+
+      // Lógica para la búsqueda según el campo que esté lleno
+      if (this.buscarReserva) {
+        this.busqueda = 0;
+        this.valor = this.buscarReserva;
+        await this.fetchCuentasReserva();
+      } else if (this.buscarCedula) {
+        this.busqueda = 1;
+        this.valor = this.buscarCedula;
+        await this.fetchCuentasHuesped();
+      }
+    },
+
+    mostrarError(mensaje, color) {
+      this.modalMessage = mensaje;
+      this.colorAlert = color;
+      this.isAlertVisible = true;
+  setTimeout(() => {
+    this.isAlertVisible = false;
+  }, 3000);
+    },
+
+  async openDetallesmodal() {
   this.showDetalles = true;
-  console.log(showDetalles.value);
 },
 formatDate(fecha) {
       if (!fecha) return ''; // Manejo de casos donde la fecha sea nula o vacía
@@ -293,21 +346,17 @@ formatDate(fecha) {
         year: 'numeric'
       });
     },
-
-    async realizarBusqueda() {
-      if (this.buscarReserva.trim()) {
-        await this.fetchCuentasReserva();
-        this.busqueda = 0;
-      } else if (this.buscarCedula.trim()) {
-        await this.fetchCuentasHuesped();
-        this.busqueda = 1;
-      } else {
-        alert('Por favor ingrese un número de reserva o una cédula');
-      }
+    calculateTotalPendiente() {
+      this.totalPendiente = this.cuentasHuesped
+        .filter(cuenta => cuenta.estado === 'PENDIENTE') // Filtrar cuentas PENDIENTE
+        .reduce((total, cuenta) => total + parseFloat(cuenta.monto), 0); // Sumar montos
     },
+
+   
+  
     async fetchCuentasHuesped() {
       try {
-        const response = await getCuentaHuespedByIdHuesped(this.buscarCedula);
+        const response = await getCuentaHuespedByIdHuesped(this.valor);
         if (response.data && response.data.length > 0) {
           const firstCuenta = response.data[0];
           this.cuentasHuesped = response.data;
@@ -323,20 +372,22 @@ formatDate(fecha) {
             fecha_salida: firstCuenta.id_reserva.empresa,
             estado: firstCuenta.id_reserva.valor_deposito,
           };
+          this.calculateTotalPendiente(); // Calcular el total de cuentas PENDIENTE
         } else {
         this.limpiarResultados();
-        this.mostrarAdvertencia('No se encontraron cuentas para este huésped');
+        
+        this.mostrarError('No se encontraron cuentas para este huésped, crea una', 'danger');
       }
     } catch (error) {
       this.limpiarResultados();
-      this.mostrarAdvertencia('Hubo un error al buscar el huésped');
+      this.mostrarError('No se encontraron cuentas para este huésped o el huesped no existe, crea una', 'danger');
       console.error(error);
     }
   },
     async fetchCuentasReserva() {
       try {
-        const response = await getCuentaHuespedByIdReserva(this.buscarReserva);
-        if (response.data && response.data.length > 0) {
+        const response = await getCuentaHuespedByIdReserva(this.valor);
+        if (response.data) {
           const firstCuenta = response.data[0];
           this.cuentasHuesped = response.data;
           this.selectedHuesped = {
@@ -351,13 +402,14 @@ formatDate(fecha) {
             fecha_salida: firstCuenta.id_reserva.empresa,
             estado: firstCuenta.id_reserva.valor_deposito,
           };
+          this.calculateTotalPendiente(); // Calcular el total de cuentas PENDIENTE
         }else {
         this.limpiarResultados();
-        this.mostrarAdvertencia('No se encontraron cuentas para esta reserva');
+        this.mostrarError('No se encontraron cuentas para esta reserva, crea una', 'danger');
       }
     } catch (error) {
       this.limpiarResultados();
-      this.mostrarAdvertencia('Hubo un error al buscar la reserva');
+      this.mostrarError('No se encontró reserva existente', 'danger');
       console.error(error);
     }
   },
@@ -370,7 +422,7 @@ formatDate(fecha) {
       this.selectedHuesped = null;
       this.selectedReserva = null;
     },
-    openConfirmDeleteModal(cuenta) {
+           openConfirmDeleteModal(cuenta) {
              this.cuentaToDelete = cuenta;
              this.showConfirmDeleteModal = true;
            },
@@ -378,25 +430,22 @@ formatDate(fecha) {
              this.showConfirmDeleteModal = false;
              this.cuentaToDelete = null;
            },
-           async confirmDeletecuenta() {
-             try {
-               if (this.cuentaToDelete) {
-                 await deleteCuentaHuesped(this.cuentaToDelete.id_cuenta);
-                 this.fetchCuentasReserva();
-                 this.closeConfirmDeleteModal();
 
-                 if (this.busqueda == 0) {
-                 await this.fetchCuentasReserva();
-                
-               }else{
-                 await this.fetchCuentasHuesped();
-                
-               }
-               }
-             } catch (error) {
-               console.error('Error al eliminar el hotel:', error);
-             }
-           },
+           async confirmDeletecuenta() {
+            try {
+              if (this.cuentaToDelete) {
+                await deleteCuentaHuesped(this.cuentaToDelete.id_cuenta);
+                this.closeConfirmDeleteModal();
+                this.mostrarError('Eliminacion del hotel exitosa', 'success');
+                // Refrescar las cuentas según el tipo de búsqueda que se realizó
+                this.busqueda === 0 ? await this.fetchCuentasReserva() : await this.fetchCuentasHuesped();
+              }
+            } catch (error) {
+              this.mostrarError('Error de integridad al eliminar cuenta', 'danger');
+              console.error('Error al eliminar la cuenta:', error.response ? error.response.data : error);
+            }
+          },
+
            openCreateModal() {
              this.isEditing = false;
              this.cuentaForm = { id_reserva: '', id_huesped: '', tipo_movimiento: '', monto: '', estado: '', fecha_movimiento: '' }; 
@@ -418,7 +467,7 @@ formatDate(fecha) {
            },
            validateForm() {
             if (!this.cuentaForm.id_reserva || !this.cuentaForm.id_huesped || !this.cuentaForm.tipo_movimiento || !this.cuentaForm.monto || !this.cuentaForm.estado) {
-              alert('Todos los campos son obligatorios.');
+              this.mostrarAdvertencia('Complete todos los campos');
               return false;
             }
             return true;
@@ -432,10 +481,13 @@ formatDate(fecha) {
                if (this.isEditing) {
                 this.cuentaForm.fecha_movimiento = new Date().toISOString();
                  await updateCuentaHuesped(this.currentCuentaId, this.cuentaForm);
+                 this.mostrarError('Cuenta editada exitosamente', 'success');
+                 
                } else {
                 this.cuentaForm.fecha_movimiento = new Date().toISOString();
                  await createCuentaHuesped(this.cuentaForm.id_reserva, this.cuentaForm.id_huesped,this.cuentaForm.tipo_movimiento, this.cuentaForm.monto, this.cuentaForm.estado, this.cuentaForm.fecha_movimiento);
-               }
+                 this.mostrarError('Cuenta creada exitosamente', 'success');
+                }
                if (this.busqueda == 0) {
                  await this.fetchCuentasReserva();
                 
@@ -445,59 +497,68 @@ formatDate(fecha) {
                } 
                this.closeModal();
              } catch (error) {
-              this.mostrarAdvertencia('Hubo un error al guardar la cuenta');
+              if (this.isEditing) {
+                this.mostrarError('Error de integridad al editar cuenta', 'danger');
+               } else {
+                this.cuentaForm.fecha_movimiento = new Date().toISOString();
+                this.mostrarError('Error de integridad al crear la cuenta', 'danger');
+               }
                console.error('Error al guardar la cuenta:', error.response ? error.response.data : error);
              }
            },
-  async downloadPDF() {
+           
+           async downloadPDF() {
   const facturaDetalles = document.getElementById('facturaDetalles');
-
-  // Guarda el estado actual del estilo
   const originalMaxHeight = facturaDetalles.style.maxHeight;
-  facturaDetalles.style.maxHeight = 'none'; // Elimina el límite de altura
+  facturaDetalles.style.maxHeight = 'none';
 
-  // Captura el contenido del modal
-  html2canvas(facturaDetalles, { scale: 1, width: facturaDetalles.offsetWidth, height: facturaDetalles.scrollHeight }).then((canvas) => {
-    const imgData = canvas.toDataURL('image/png', 1);
+  try {
+    const canvas = await html2canvas(facturaDetalles, { scale: 0.8 }); // Reducir la escala para mejorar rendimiento
+    const imgData = canvas.toDataURL('image/png');
     const pdf = new jsPDF();
 
-    const imgWidth = 190; // Ancho del PDF
-    const pageHeight = pdf.internal.pageSize.height;
+    const imgWidth = 190;
     const imgHeight = (canvas.height * imgWidth) / canvas.width;
     let heightLeft = imgHeight;
-
     let position = 0;
 
-    // Agregar la primera imagen
     pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-    heightLeft -= pageHeight;
+    heightLeft -= pdf.internal.pageSize.height;
 
-    // Manejar el contenido que excede la altura de la página
     while (heightLeft >= 0) {
       position = heightLeft - imgHeight;
       pdf.addPage();
       pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
+      heightLeft -= pdf.internal.pageSize.height;
     }
 
-    // Almacenar el PDF
     pdf.save('factura.pdf');
-
-    // Restaura el estilo original
-    facturaDetalles.style.maxHeight = originalMaxHeight;
-  }).catch((error) => {
+  } catch (error) {
     console.error('Error al generar el PDF:', error);
-    // Restaura el estilo original en caso de error
+  } finally {
     facturaDetalles.style.maxHeight = originalMaxHeight;
-  });
+  }
 },
-fechaActual() {
-  const hoy = new Date();
 
-  return hoy.toLocaleDateString('es-ES'); // Cambia el idioma según sea necesario
-},
 
   },
 };
 </script>
+<style scoped>
+.total-container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 20px;
+  padding: 5px;
+  margin-right: 3.5rem;
+  border-radius: 8px;
 
+}
+
+.total-container strong {
+  font-size: 1.2rem;
+  color: #2c3e50;
+  font-weight: bold;
+}
+</style>

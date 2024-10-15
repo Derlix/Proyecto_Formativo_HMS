@@ -1,11 +1,18 @@
 <template>
   <div class="text-right">
-    <p class="py-5 text-xl">ID del hotel que opera actualmente: <span class="font-bold">{{ userIdHotel }}</span></p>
+    <p class="py-5 text-xl">Hotel que opera actualmente: <span class="font-bold">{{ userNombreHotel }}</span></p>
   </div>
        
            <!-- Botón para agregar hotel -->
         <BaseButton @click="openCreateModal" color="info" label="Agregar Hotel" class="mb-4" />
-        
+
+            <NotificationBar
+        v-if="isAlertVisible"
+        :color="colorAlert"
+        :description="modalMessage"
+        :visible="isModalVisible"
+          />
+
         <div class="mb-6 max-w-md mx-left">
           <div class=" flex items-center border rounded-lg shadow-sm ">
             <input
@@ -136,6 +143,7 @@
   import { computed, ref, onMounted } from 'vue'
   import { useMainStore } from '@/stores/main'
   import FormField from '@/components/FormField.vue';
+  import NotificationBar from '../alejo_components/NotificationBar.vue';
   import FormControl from '@/components/FormControl.vue';
   import BaseButton from '@/components/BaseButton.vue';
   import BaseButtons from '@/components/BaseButtons.vue';
@@ -159,6 +167,7 @@
       SectionMain,
       CardBoxModal,
       BaseLevel,
+      NotificationBar,
     },
     data() {
       return {
@@ -183,11 +192,19 @@
         currentPage : 1,
         buscarHotel : '',
         hotel : {},
+        hotelActivo: '',
+        isModalVisible: false,
+        modalMessage: '',
+        isAlertVisible : false,
+        colorAlert: '',
       };
     },
     computed: {
       userIdHotel() {
         return mainStore.userIdHotel;
+      },
+      userNombreHotel() {
+        return mainStore.nombreHotelOperando;
       }
     },
     mounted() {
@@ -259,13 +276,33 @@
       try {
         if (this.isEditing) {
           await updateHotel(this.currentHotelId, this.hotelForm.nombre, this.hotelForm.ubicacion, this.hotelForm.direccion, this.hotelForm.telefono);
+          this.modalMessage = "Hotel actualizado con éxito";
+          this.isAlertVisible = true;
+          this.colorAlert = 'warning';
+          setTimeout(() => {
+            this.isAlertVisible  = false;
+          }, 3000);
+        
         } else {
           await createHotel(this.hotelForm.nombre, this.hotelForm.ubicacion, this.hotelForm.direccion, this.hotelForm.telefono);
+          this.modalMessage = "Hotel creado con éxito";
+          this.isAlertVisible = true;
+          this.colorAlert = 'success';
+          setTimeout(() => {
+            this.isAlertVisible  = false;
+          }, 3000);
+        
         }
         this.fetchHotels();
         this.closeModal();
       } catch (error) {
-        console.error('Error al guardar el hotel:', error.response ? error.response.data : error);
+          this.modalMessage = "Error al actualizar el hotel";
+          this.isAlertVisible = true;
+          this.colorAlert = 'danger';
+          setTimeout(() => {
+            this.isAlertVisible  = false;
+          }, 3000);
+        // console.error('Error al guardar el hotel:', error.response ? error.response.data : error);
       }
     },
     openConfirmDeleteModal(hotel) {
@@ -288,11 +325,23 @@
       try {
         if (this.hotelToDelete) {
           await deleteHotel(this.hotelToDelete.id_hotel);
+          this.modalMessage = "Hotel eliminado con éxito";
+          this.isAlertVisible = true;
+          this.colorAlert = 'success';
+          setTimeout(() => {
+            this.isAlertVisible  = false;
+          }, 3000);
           this.fetchHotels();
           this.closeConfirmDeleteModal();
         }
       } catch (error) {
-        console.error('Error al eliminar el hotel:', error);
+          this.modalMessage = "Error de integridad al eliminar hotel";
+          this.isAlertVisible = true;
+          this.colorAlert = 'danger';
+          setTimeout(() => {
+            this.isAlertVisible  = false;
+          }, 3000);
+        // console.error('Error al eliminar el hotel:', error);
       }
     },
     // cambiar hotel por id del hotel seleccionado
@@ -302,9 +351,10 @@
             await updateIdHotel(this.hotelToCambiar.id_hotel);
   
             mainStore.setUser({
-              id_hotel: this.hotelToCambiar.id_hotel
+              id_hotel: this.hotelToCambiar.id_hotel,
+              nombre_hotel: this.hotelToCambiar.nombre,
             });
-  
+
             this.fetchHotels();
             this.closeConfirmCambiarHotelModal();
           }

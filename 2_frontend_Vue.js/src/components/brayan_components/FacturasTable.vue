@@ -20,24 +20,45 @@ import html2canvas from "html2canvas";
 
 import { getProductosFacturaById, deleteProductoFactura, updateProductoFactura, addProductoToFactura,getAllProductosPrueba } from "@/services/brayan_service/FacturaProductoService";
 import { getAllFacturas, updateFacturaService, deleteFactura, getFacturaByPage, getFacturaByid } from "@/services/brayan_service/FacturacionService";
+import { info_descuentos } from "@/services/arce_service/descuentoService";
 
+const DescuentoDisponibles = ref([]);
 
-//ESTO ES PARA OBTENER LOS PRODUCTOS Y PONERLOS EN EL INPUT DE AGREGAR PRODUCTO, te odio  NICOLAS
-const productosDisponibles = ref([]);
-
-const fetchAllProductos = async () => {
+const fetchAllDescuentos = async () => {
   try {
-    const response = await getAllProductosPrueba();
-    console.log('Respuesta de la API:', response);  // Asume que la lista de productos está correctamente en response
-    productosDisponibles.value = response; // Asume que la lista de productos está correctamente en response
+    const response = await info_descuentos();
+    console.log('Respuesta de la API:', response);  
+    DescuentoDisponibles.value = response; 
   } catch (error) {
     console.error("Error al obtener productos:", error);
   }
 };
 
 onMounted(() => {
-  fetchAllProductos(); // Cargar la lista de productos cuando el componente se monte
+  fetchAllDescuentos(); 
 });
+
+
+//ESTO ES PARA OBTENER LOS PRODUCTOS Y PONERLOS EN EL INPUT DE AGREGAR PRODUCTO, te odio  NICOLAS
+const productosDisponibles = ref([]);
+
+
+
+const fetchAllProductos = async () => {
+  try {
+    const response = await getAllProductosPrueba();
+    console.log('Respuesta de la API:', response);  
+    productosDisponibles.value = response; 
+  } catch (error) {
+    console.error("Error al obtener productos:", error);
+  }
+};
+
+onMounted(() => {
+  fetchAllProductos(); 
+});
+
+
 
 //variables de facturas
 const facturas = ref([]);
@@ -64,7 +85,7 @@ const modalMessage = ref('');
 const colorAlert = ref('');
 
 async function buscar_Factura() {
-  // Si el campo de búsqueda está vacío, se obtienen todas las facturas
+  // Si el campo de busqueda esta vacío, se obtienen  las facturs
   if (buscarFactura.value.trim() === '') {
     fetchFacturas();
   } else {
@@ -73,9 +94,9 @@ async function buscar_Factura() {
       const response = await getFacturaByid(buscarFactura.value);
       console.log('Respuesta de la API:', response);
       if (response && response.data) {
-        // Actualiza selectedFactura y facturas
+        // se Actualiza selectedFactura y facturas
         selectedFactura.value = response.data;
-        facturas.value = [selectedFactura.value]; // Mostrar  factura encontrada
+        facturas.value = [selectedFactura.value]; // Mostrar    factura encontrada
       } else {
         // Si no se encuentra la factura, limpiar selectedFactura pero no facturas
         selectedFactura.value = null;
@@ -146,7 +167,8 @@ const updateFactura = async () => {
       selectedFactura.value.total_precio_productos,
       selectedFactura.value.metodo_pago,
       selectedFactura.value.estado,
-      selectedFactura.value.fecha_salida
+      selectedFactura.value.fecha_salida,
+      selectedFactura.value.id_descuento
     );
     fetchFacturas();
     closeEditModal();
@@ -205,9 +227,15 @@ const confirmDelete = async () => {
 
 //ABRIR MODAL DE EDITAR Y ELIMINAR FACTURA
 function openEditModal(factura) {
-  selectedFactura.value = { ...factura, fecha_salida: factura.fecha_salida ? factura.fecha_salida.replace(' ', 'T').split('.')[0] : '' }; // Clona la factura seleccionada
+  
+  selectedFactura.value = { 
+    ...factura,
+    id_descuento: factura.descuento ? factura.descuento.id_descuento : null 
+  };
+  console.log('Factura seleccionada para editar:', selectedFactura.value);
   showEditModal.value = true;
 }
+
 
 function openDeleteModal(factura) {
   selectedFactura.value = { ...factura };
@@ -217,7 +245,7 @@ function openDeleteModal(factura) {
 function openDetallesmodal(factura) {
   selectedFactura.value = { ...factura };
   showDetalles.value = true;
-  console.log("Factura seleccionada:", selectedFactura.value);
+ 
   
 }
 
@@ -270,6 +298,21 @@ const selectedProduct = ref({
   },
 
 });
+
+//  un watch para ver los cambios en selectedProduct.id_productom, como el precio_unitario
+watch(() => selectedProduct.value.id_producto, (newProductoId) => {
+  // Encuentra el producto seleccionado en la lista de productos disponibles
+  const productoSeleccionado = productosDisponibles.value.find(
+    (producto) => producto.id_producto === newProductoId
+  );
+
+  // Si se encuentra el producto, actualiza el precio unitari
+  if (productoSeleccionado) {
+    selectedProduct.value.precio_unitario = productoSeleccionado.precio_actual;
+  }
+});
+
+
 const showListaProductosModal = ref(false);
 const showAgregarProductosModal = ref(false);
 const showDeleteProductosModal = ref(false);
@@ -281,7 +324,7 @@ const fetchProductos = async () => {
   try {
     if (selectedFactura.value && selectedFactura.value.id_facturacion) {
       const response = await getProductosFacturaById(selectedFactura.value.id_facturacion);
-      console.log(response); // Verifica la estructura de la respuesta
+      //console.log(response); // Verifica la estructura de la respuesta
       if (response && response.productos) {
         productos.value = response.productos; // Asegúrate de asignar la lista de productos
       } else {
@@ -298,7 +341,7 @@ watch(() => selectedFactura.value, fetchProductos, { immediate: true });
 
 const addProducto = async () => {
   try {
-    console.log('Datos del producto a agregar:', selectedProduct.value);
+    //console.log('Datos del producto a agregar:', selectedProduct.value);
     await addProductoToFactura(
       selectedFactura.value.id_facturacion,
       selectedProduct.value.id_producto,
@@ -417,8 +460,10 @@ function openListaProductosModal(factura) {
 //ABRIR MODAL DE AGREGAR PRODUCTOS A LA FACTURA
 function openAgregarProductosModal(factura) {
   selectedFactura.value = factura;
+  selectedProduct.value.fecha = fechaActual();  // Aquí asignamos la fecha actual
   showAgregarProductosModal.value = true;
 }
+
 
 
 
@@ -550,7 +595,7 @@ const downloadPDF = () => {
 function fechaActual() {
   const hoy = new Date();
 
-  return hoy.toLocaleDateString('es-ES'); // Cambia el idioma según sea necesario
+  return hoy.toISOString().split('T')[0];  // Cambia el idioma según sea necesario
 }
 
 </script>
@@ -603,6 +648,18 @@ function fechaActual() {
               v-model="selectedFactura.fecha_salida" required />
           </div>
         </div>
+
+        <div class="mb-4">
+        <label for="id_descuento" class="block text-gray-700"> Descuento</label>
+        <select id="id_descuento" v-model="selectedFactura.id_descuento" required
+        class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500">
+        <option v-for="descuento in DescuentoDisponibles" :key="descuento.id_descuento" :value="descuento.id_descuento">
+          Tipo: {{ descuento.tipo_descuento }} / Porcentaje %: {{ descuento.porcentaje_descuento }}
+        </option>
+      </select>
+
+
+      </div>
 
         <!-- Botón de enviar (guardar cambios) -->
         <div class="mt-3flex justify-start">
@@ -730,7 +787,7 @@ function fechaActual() {
       </div>
       <div class="mb-4">
         <label for="fecha" class="block text-gray-700">Fecha</label>
-        <input type="date" id="fecha" v-model="selectedProduct.fecha"
+        <input type="date" id="fecha" :value="fechaActual()" 
           class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500" required/>
       </div>
       <div class="mb-4">
@@ -777,8 +834,9 @@ function fechaActual() {
       </div>
       <div class="mb-4">
         <label for="fecha" class="block text-gray-700">Fecha</label>
-        <input id="fecha" v-model="selectedProduct.fecha" type="date"
+        <input id="fecha" v-model="selectedProduct.fecha"   type="date" 
           class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500" required />
+         
       </div>
       <div class="mb-4">
         <label for="precio_unitario" class="block text-gray-700">Precio Unitario</label>
@@ -945,7 +1003,7 @@ function fechaActual() {
 
         <div class="flex items-center">
 
-          <img src="src/assets/img/sena-agro.png" alt="" style="width: 70px; margin-right: 5px;">
+          <img src="@/assets/img/sena-agro.png" alt="" style="width: 70px; margin-right: 5px;">
         </div>
 
       </div>

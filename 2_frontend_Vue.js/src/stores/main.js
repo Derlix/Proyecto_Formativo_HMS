@@ -12,6 +12,12 @@ export const useMainStore = defineStore('main', () => {
   const userRole = computed(() => authStore.user?.usuario_rol || 'undefined');
   const userID = computed(() => authStore.user?.user_id || 'undefined');
   const userIdHotel = computed(() => authStore.user?.id_hotel || 'undefined');
+  const nombreHotelOperando = ref(localStorage.getItem("hotelActual") || 'undefined');
+
+  // Sin userName, userID y persmissions , debe ceerrar sesión
+  if (userName.value === 'undefined' || userID.value === 'undefined' || userIdHotel.value === 'undefined'|| authStore.permissions.length === 0) {
+    authStore.logout();
+  }
 
   // Usado para mostrar la imagen de perfil del usuario
   const userProfile = computed(() => {
@@ -46,6 +52,10 @@ export const useMainStore = defineStore('main', () => {
     }
     if (payload.img_profile) {
       user.img_profile = payload.img_profile;
+    }
+    if (payload.nombre_hotel) {
+      localStorage.setItem("hotelActual", payload.nombre_hotel);
+      nombreHotelOperando.value = payload.nombre_hotel; // Actualiza el ref directamente
     }
 
     // Actualizar el store de autenticación
@@ -85,6 +95,7 @@ export const useMainStore = defineStore('main', () => {
     userEmail,
     userAvatar,
     userIdHotel,
+    nombreHotelOperando,
     isFieldFocusRegistered,
     userRole,
     userID,

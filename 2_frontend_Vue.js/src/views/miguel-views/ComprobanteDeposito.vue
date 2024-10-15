@@ -1,7 +1,7 @@
 <script setup>
 import SectionMain from '@/components/SectionMain.vue';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
-import ListaPasajerosTable from '@/components/miguel_compnents/ListaPasajerosTable.vue';
+import ListaComprobantes from '@/components/miguel_compnents/ListaComprobantes.vue';
 
 </script>
 
@@ -9,9 +9,9 @@ import ListaPasajerosTable from '@/components/miguel_compnents/ListaPasajerosTab
 <template>
   <LayoutAuthenticated>
     <SectionMain class=" rounded-lg">
-      <h1 class="text-black dark:text-white text-2xl font-bold mb-8">Movimiento de pasajeros correspondiente</h1>
+      <h1 class="text-black dark:text-white text-2xl font-bold mb-8">Lista de comprobantes</h1>
 
-    <ListaPasajerosTable />
+    <ListaComprobantes />
 
     </SectionMain>
   </LayoutAuthenticated>

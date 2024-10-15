@@ -17,11 +17,15 @@ export const getReportByPage = async (page = 1, pageSize = 10) => {
     }
 }
 
-export const createReport = async (id_habitacion, estado_reportado) => {
+export const createReport = async (ama_de_llaves_clave, ama_de_llaves_numero_de_personas, estado_reportado, causa, id_habitacion, id_reserva) => {
     try{
         const response = await api.post(`/informesAmaLlaves/create/report`, {
+            ama_de_llaves_clave: ama_de_llaves_clave,
+            ama_de_llaves_numero_de_personas: ama_de_llaves_numero_de_personas,
+            estado_reportado: estado_reportado,
+            causa: causa,
             id_habitacion: id_habitacion,
-            estado_reportado: estado_reportado
+            id_reserva: id_reserva
         },{
             headers: {
                 'Content-Type': 'application/json',
@@ -30,27 +34,6 @@ export const createReport = async (id_habitacion, estado_reportado) => {
         });
         return response;
     } catch (error) {
-        if (error.response) {
-            throw error.response; // Devuelve el error original de la API
-        } else {
-            throw new Error('Error de red o de servidor');
-        } 
-    }
-}
-
-export const updateReport = async (id_informe, id_habitacion, estado_reportado) => {
-    try{
-        const response = await api.put(`/informesAmaLlaves/update/report/?id_informe=${id_informe}`, {
-            id_habitacion: id_habitacion,
-            estado_reportado: estado_reportado
-        },{
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-            }
-        });
-        return response;
-    } catch(error) {
         if (error.response) {
             throw error.response;
         } else {

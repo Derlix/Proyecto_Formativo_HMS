@@ -126,10 +126,10 @@ onMounted(() => {
                 </thead>
                 <tbody>
                     <tr v-for="producto in productos" :key="producto.id_producto">
-                        <td>{{ producto.nombre_producto }}</td>
-                        <td>{{ producto.descripcion }}</td>
-                        <td>{{ producto.precio_actual }}</td>
-                        <td>
+                        <td data-label="Producto: ">{{ producto.nombre_producto }}</td>
+                        <td data-label="Descripcion: ">{{ producto.descripcion }}</td>
+                        <td data-label="Precio Actual: ">{{ producto.precio_actual }}</td>
+                        <td class="before:hidden lg:w-1 whitespace-nowrap">
                             <BaseButtons type="justify-start lg:justify-end" no-wrap>
                                 <BaseButton color="info" :icon="mdiEye" small @click="openEditModal(producto)" />
                                 <BaseButton color="danger" :icon="mdiTrashCan" small @click="openDeleteModal(producto)" />
