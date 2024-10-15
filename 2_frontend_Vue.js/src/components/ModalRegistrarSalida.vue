@@ -4,7 +4,7 @@
     class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 dark:bg-opacity-70 text-black dark:text-white"
   >
     <div
-      class="bg-white dark:bg-gray-800 p-8 sm:p-12 rounded-lg shadow-lg max-w-7xl w-full relative"
+      class="bg-white dark:bg-gray-800 p-4 sm:p-6 md:p-8 rounded-lg shadow-lg max-w-lg md:max-w-2xl w-full relative"
     >
       <!-- Botón de cerrar -->
       <button @click="close" class="absolute top-4 right-4 text-gray-600 dark:text-gray-300">
@@ -24,15 +24,17 @@
         </svg>
       </button>
 
-      <h2 class="text-2xl mb-6 font-semibold text-gray-900 dark:text-white text-center">
-        Movimiento de pasajeros - SALIDA
+      <h2
+        class="text-xl md:text-2xl mb-4 md:mb-6 font-semibold text-gray-900 dark:text-white text-center"
+      >
+        Movimiento de pasajeros - Check-Out
       </h2>
 
       <div class="flex items-center border rounded-lg shadow-sm mb-4">
         <input
           type="text"
           placeholder="Buscar pasajero por documento"
-          class="search-input flex-grow px-4 py-2 rounded-lg focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:text-white dark:bg-gray-700"
+          class="search-input flex-grow px-3 py-2 rounded-lg focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:text-white dark:bg-gray-700"
           v-model="searchDocumento"
         />
       </div>
@@ -40,14 +42,14 @@
       <!-- Step 1: Factura List -->
       <div v-if="currentStep === 1">
         <div class="overflow-x-auto bg-gray-50 dark:bg-gray-800 rounded-lg shadow-md p-4 max-h-64">
-          <table class="min-w-full bg-white dark:bg-gray-700 border-gray-300">
+          <table class="min-w-full bg-white dark:bg-gray-700 border-gray-300 text-xs md:text-sm">
             <thead>
               <tr class="bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200">
-                <th class="px-4 py-2">Nombre Completo</th>
-                <th class="px-4 py-2">Documento</th>
-                <th class="px-4 py-2">Fecha Reserva</th>
-                <th class="px-4 py-2">Empresa</th>
-                <th class="px-4 py-2">Total</th>
+                <th class="px-2 py-2">Nombre Completo</th>
+                <th class="px-2 py-2">Documento</th>
+                <th class="px-2 py-2">Fecha Reserva</th>
+                <th class="px-2 py-2">Empresa</th>
+                <th class="px-2 py-2">Total</th>
               </tr>
             </thead>
             <tbody>
@@ -56,17 +58,17 @@
                 :key="factura.id_facturacion"
                 class="hover:bg-gray-100 dark:hover:bg-gray-600"
               >
-                <td class="border px-4 py-2 dark:text-white">
+                <td class="border px-2 py-2 dark:text-white">
                   {{ factura.huesped.nombre_completo }}
                 </td>
-                <td class="border px-4 py-2 dark:text-white">
+                <td class="border px-2 py-2 dark:text-white">
                   {{ factura.huesped.numero_documento }}
                 </td>
-                <td class="border px-4 py-2 dark:text-white">
+                <td class="border px-2 py-2 dark:text-white">
                   {{ factura.reserva.fecha_reserva }}
                 </td>
-                <td class="border px-4 py-2 dark:text-white">{{ factura.reserva.empresa }}</td>
-                <td class="border px-4 py-2 dark:text-white">
+                <td class="border px-2 py-2 dark:text-white">{{ factura.reserva.empresa }}</td>
+                <td class="border px-2 py-2 dark:text-white">
                   <div class="flex items-center justify-between">
                     <span>{{ factura.total }}</span>
                     <input
@@ -85,10 +87,10 @@
 
         <button
           @click="confirmarSalida"
-          class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg"
+          class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg w-full sm:w-auto"
           :disabled="!seleccionarFacturaSeleccionada"
         >
-          Confirmar Salida
+          Confirmar Check-Out
         </button>
       </div>
     </div>
