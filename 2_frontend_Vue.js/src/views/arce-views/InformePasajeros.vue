@@ -36,16 +36,22 @@ const agruparPorPiso = () => {
     }, {});
 };
 
-// Genera el resumen de habitaciones activas y total por piso
+// Genera el resumen de habitaciones activas, inactivas, ocupadas y en mantenimiento por piso
 const generarResumen = () => {
     resumenPorPiso.value = Object.entries(habitacionesPorPiso.value).map(([piso, habitaciones]) => {
-        const habitacionesActivas = habitaciones.filter(h => h.estado === 'ACTIVO');
-        const totalMonto = habitacionesActivas.reduce((sum, habitacion) => sum + habitacion.precio_actual, 0);
-        
+        const totalActivas = habitaciones.filter(h => h.estado === 'ACTIVO').length;
+        const totalInactivas = habitaciones.filter(h => h.estado === 'INACTIVO').length;
+        const totalOcupadas = habitaciones.filter(h => h.estado === 'OCUPADO').length;
+        const totalMantenimiento = habitaciones.filter(h => h.estado === 'MANTENIMIENTO').length;
+        const totalHabitaciones = habitaciones.length; // Total de habitaciones en el piso
+
         return {
             piso,
-            totalHabitacionesActivas: habitacionesActivas.length,
-            montoTotal: totalMonto
+            totalHabitaciones,
+            totalActivas,
+            totalInactivas,
+            totalOcupadas,
+            totalMantenimiento
         };
     });
 };
@@ -59,7 +65,7 @@ onMounted(() => {
 <template>
     <LayoutAuthenticated>
         <SectionMain>
-            <TitleIconOnly :icon="mdiBallotOutline" title="Informe Pasajeros" />
+            <TitleIconOnly :icon="mdiBallotOutline" title="Informe habitaciones" />
 
             <div v-for="(habitaciones, piso) in habitacionesPorPiso" :key="piso">
                 <SectionTitle>Piso {{ piso }}</SectionTitle>
@@ -77,13 +83,12 @@ onMounted(() => {
                         <tbody>
                             <tr 
                                 v-for="habitacion in habitaciones" 
-                                :key="habitacion.id_habitacion" 
-                                class=""
+                                :key="habitacion.id_habitacion"
                             >
                                 <td class="py-3 px-6 text-left whitespace-nowrap" data-label="Habitación">{{ habitacion.numero_habitacion }}</td>
                                 <td class="py-3 px-6 text-left" data-label="Categoría">{{ habitacion.categoria.tipo_habitacion }}</td>
                                 <td class="py-3 px-6 text-left" data-label="Estado">{{ habitacion.estado }}</td>
-                                <td class="py-3 px-6 text-left" data-label="Precio">$ {{ habitacion.precio_actual }}</td>
+                                <td class="py-3 px-6 text-left" data-label="Precio">$ {{ habitacion.categoria.precio_fijo }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -92,26 +97,31 @@ onMounted(() => {
 
             <BaseDivider/>
 
-            <SectionTitle>Recopilación de habitaciones activas</SectionTitle>
+            <SectionTitle>Recopilación de habitaciones</SectionTitle>
 
             <div class="overflow-x-auto">
                 <table class="min-w-full rounded-lg shadow-md lg:table mt-4">
                     <thead>
                         <tr class="text-sm leading-normal">
                             <th class="py-3 px-6 text-left">Piso</th>
+                            <th class="py-3 px-6 text-left">Total Habitaciones</th>
                             <th class="py-3 px-6 text-left">Habitaciones Activas</th>
-                            <th class="py-3 px-6 text-left">Monto Total</th>
+                            <th class="py-3 px-6 text-left">Habitaciones Inactivas</th>
+                            <th class="py-3 px-6 text-left">Habitaciones Ocupadas</th>
+                            <th class="py-3 px-6 text-left">Habitaciones en Mantenimiento</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr 
                             v-for="resumen in resumenPorPiso" 
-                            :key="resumen.piso" 
-                            class=""
+                            :key="resumen.piso"
                         >
                             <td class="py-3 px-6 text-left" data-label="Piso">{{ resumen.piso }}</td>
-                            <td class="py-3 px-6 text-left" data-label="Habitaciones Activas">{{ resumen.totalHabitacionesActivas }}</td>
-                            <td class="py-3 px-6 text-left" data-label="Monto Total">$ {{ resumen.montoTotal.toFixed(2) }}</td>
+                            <td class="py-3 px-6 text-left" data-label="Total Habitaciones">{{ resumen.totalHabitaciones }}</td>
+                            <td class="py-3 px-6 text-left" data-label="Habitaciones Activas">{{ resumen.totalActivas }}</td>
+                            <td class="py-3 px-6 text-left" data-label="Habitaciones Inactivas">{{ resumen.totalInactivas }}</td>
+                            <td class="py-3 px-6 text-left" data-label="Habitaciones Ocupadas">{{ resumen.totalOcupadas }}</td>
+                            <td class="py-3 px-6 text-left" data-label="Habitaciones en Mantenimiento">{{ resumen.totalMantenimiento }}</td>
                         </tr>
                     </tbody>
                 </table>

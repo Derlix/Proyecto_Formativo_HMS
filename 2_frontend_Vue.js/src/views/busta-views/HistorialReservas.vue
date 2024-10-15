@@ -1,26 +1,54 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue';
-import { getAllHistorialReservas } from '@/services/busta_service/HistorialReservasService';
+import { ref, onMounted} from 'vue';
+import { getAllHistorialReservas, getHistorialReservasByPage} from '@/services/busta_service/HistorialReservasService';
 import { getHuespedByDocument } from '@/services/huespedService';
+import NotificationBar from '@/components/alejo_components/NotificationBar.vue'; 
 import SectionMain from '@/components/SectionMain.vue';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import TitleIconOnly from '@/components/TitleIconOnly.vue';
 import { mdiChartTimelineVariant } from '@mdi/js';
-
+import BaseLevel from '@/components/BaseLevel.vue';
+import BaseButtons from '@/components/BaseButtons.vue';
+import BaseButton from '@/components/BaseButton.vue';
 const reservas = ref([]);
 const isHuespedModalVisible = ref(false);
 const selectedHuesped = ref(null);
+const TotalPages = ref(0);
 const currentPage = ref(1);
-const itemsPerPage = ref(5); // Número de reservas por página
+const modalMessage = ref('');
+const isAlertVisible = ref(false);
+const colorAlert = ref('');
 
-const fetchReservas = async () => {
+// const fetchReservas = async () => {
+//   try {
+//     const data = await getAllHistorialReservas();
+//     reservas.value = data.reverse(); // Invertir el orden para mostrar del último al primero
+//   } catch (error) {
+//     console.error('Error al obtener el historial de reservas:', error);
+//     alert('Ocurrió un error al obtener el historial de reservas.');
+//   }
+// };
+
+const fetchPageReservas = async () => {
   try {
-    const data = await getAllHistorialReservas();
-    reservas.value = data.reverse(); // Invertir el orden para mostrar del último al primero
+    const response = await getHistorialReservasByPage(currentPage.value);
+    TotalPages.value = response.data.total_paginas;
+    reservas.value = response.data.reservas; // Invertir el orden para mostrar del último al primero
+    
   } catch (error) {
     console.error('Error al obtener el historial de reservas:', error);
-    alert('Ocurrió un error al obtener el historial de reservas.');
+    showAlert('Ocurrió un error al obtener el historial de reservas.', 'danger');
+
   }
+};
+
+const showAlert = (message, color) => {
+  modalMessage.value = message;
+  colorAlert.value = color;
+  isAlertVisible.value = true;
+  setTimeout(() => {
+    isAlertVisible.value = false;
+  }, 3000);
 };
 
 const openHuespedModal = async (numero_documento) => {
@@ -30,34 +58,15 @@ const openHuespedModal = async (numero_documento) => {
     isHuespedModalVisible.value = true;
   } catch (error) {
     console.error('Error al obtener el huésped:', error);
-    alert('Ocurrió un error al obtener los datos del huésped.');
+    
+    showAlert('Ocurrió un error al obtener los datos del huésped', 'danger');
   }
 };
 
-const totalPages = computed(() => {
-  return Math.ceil(reservas.value.length / itemsPerPage.value);
-});
 
-const paginatedReservas = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage.value;
-  const end = start + itemsPerPage.value;
-  return reservas.value.slice(start, end);
-});
-
-const nextPage = () => {
-  if (currentPage.value < totalPages.value) {
-    currentPage.value++;
-  }
-};
-
-const prevPage = () => {
-  if (currentPage.value > 1) {
-    currentPage.value--;
-  }
-};
 
 onMounted(() => {
-  fetchReservas();
+  fetchPageReservas();
 });
 </script>
 
@@ -68,28 +77,34 @@ onMounted(() => {
     </SectionMain>
 
     <SectionMain>
-      <table class="table-auto w-full border-collapse border border-gray-300 dark:border-gray-600">
+      <NotificationBar
+    v-if="isAlertVisible"
+    :color="colorAlert"
+    :description="modalMessage"
+    :visible="isModalVisible"
+  />
+      <table class="">
         <thead>
-          <tr class="bg-gray-200 dark:bg-gray-800">
-            <th class="border border-gray-300 dark:border-gray-600 px-4 py-2">ID Reserva</th>
-            <th class="border border-gray-300 dark:border-gray-600 px-4 py-2">Check In</th>
-            <th class="border border-gray-300 dark:border-gray-600 px-4 py-2">Check Out</th>
-            <th class="border border-gray-300 dark:border-gray-600 px-4 py-2">Huésped</th>
-            <th class="border border-gray-300 dark:border-gray-600 px-4 py-2">Cédula</th>
-            <th class="border border-gray-300 dark:border-gray-600 px-4 py-2">Total</th>
-            <th class="border border-gray-300 dark:border-gray-600 px-4 py-2">Estado</th>
-            <th class="border border-gray-300 dark:border-gray-600 px-4 py-2">Acciones</th>
+          <tr class="">
+            <th class="">ID Reserva</th>
+            <th class="">Check In</th>
+            <th class="">Check Out</th>
+            <th class="">Huésped</th>
+            <th class="">Cédula</th>
+            <th class="">Total</th>
+            <th class="">Estado</th>
+            <th class="">Acciones</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="reserva in paginatedReservas" :key="reserva.id_reserva" class="bg-white dark:bg-gray-900">
-            <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">{{ reserva.id_reserva }}</td>
-            <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">{{ reserva.fecha_reserva }}</td>
-            <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">{{ reserva.fecha_reserva }}</td>
-            <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">{{ reserva.huesped.nombre_completo }}</td>
-            <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">{{ reserva.huesped.numero_documento }}</td>
-            <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">{{ reserva.valor_deposito }}</td>
-            <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">
+          <tr v-for="reserva in reservas" :key="reserva.id_reserva" class="">
+            <td>{{ reserva.id_reserva }}</td>
+            <td>{{ reserva.fecha_reserva }}</td>
+            <td>{{ reserva.fecha_reserva }}</td>
+            <td>{{ reserva.huesped.nombre_completo }}</td>
+            <td>{{ reserva.huesped.numero_documento }}</td>
+            <td>{{ reserva.valor_deposito }}</td>
+            <td>
               <span :class="{
                 'inline-block px-3 py-1 text-xs font-semibold text-green-700 bg-green-200 rounded-full dark:text-green-100 dark:bg-green-600': reserva.estado_reserva === 'ACTIVO',
                 'inline-block px-3 py-1 text-xs font-semibold text-red-700 bg-red-200 rounded-full dark:text-red-100 dark:bg-red-600': reserva.estado_reserva !== 'ACTIVO'
@@ -97,18 +112,29 @@ onMounted(() => {
                 {{ reserva.estado_reserva }}
               </span>
             </td>
-            <td class="border border-gray-300 dark:border-gray-600 px-4 py-2">
+            <td class="">
               <button @click="openHuespedModal(reserva.huesped.numero_documento)" class="bg-blue-500 text-white px-2 py-1 rounded">Ver Huésped</button>
             </td>
           </tr>
         </tbody>
       </table>
       
-      <div class="flex justify-between mt-4">
-        <button @click="prevPage" :disabled="currentPage === 1" class="bg-gray-300 text-gray-700 px-4 py-2 rounded">Anterior</button>
-        <span>Página {{ currentPage }} de {{ totalPages }}</span>
-        <button @click="nextPage" :disabled="currentPage === totalPages" class="bg-gray-300 text-gray-700 px-4 py-2 rounded">Siguiente</button>
-      </div>
+      <div class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800">
+    <BaseLevel>
+      <BaseButtons>
+        <BaseButton
+          v-for="page in TotalPages"
+          :key="page"
+          :active="page === currentPage"
+          :label="page"
+          :color="page === currentPage ? 'lightDark' : 'whiteDark'"
+          small
+          @click="currentPage = page; fetchPageReservas()"
+        />
+      </BaseButtons>
+      <small>Página {{ currentPage }} de {{ TotalPages }}</small>
+    </BaseLevel>
+  </div>
     </SectionMain>
 
     <!-- Modal para mostrar información del huésped -->

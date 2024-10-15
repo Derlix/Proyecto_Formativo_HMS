@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import { mdiTrashCan } from '@mdi/js';
-import { createReport, getReportByPage, deleteReport, getRoomByNameAndId } from '@/services/informeLlavesService';
+import { createReport, getReportByPage, deleteReport, getReservaAndHabitacion } from '@/services/informeLlavesService';
 import SectionMain from '@/components/SectionMain.vue';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import BaseButtons from '@/components/BaseButtons.vue';
@@ -14,11 +14,11 @@ const reports = ref([]);
 const TotalPages = ref(0);
 const currentPage = ref(1);
 const isModalOpen = ref(false);
-const habitacionesDisponibles = ref([]);
+const habitacionesReservadas = ref([]);
 const currentReport = ref({
     id_habitacion: '',
     clave: '',
-    numeroPersonas: '',
+    ama_de_llaves_numero_de_personas: '',
     estado_reportado: '',
     causa: '',
     id_reserva: ''
@@ -27,55 +27,86 @@ const currentReport = ref({
 const colorAlert = ref('');
 const modalMessage = ref('');
 const isAlertVisible = ref(false);
-const isDropdownOpen = ref(false);
-const selectedHabitacionText = ref('');
+const isDropdownReservationOpen = ref(false);
+const selectedReservaText = ref('');
 
-const selectHabitacion = (habitacion) => {
-    currentReport.value.id_habitacion = habitacion.id_habitacion;
-    selectedHabitacionText.value = habitacion.numero_habitacion;
-    isDropdownOpen.value = false;
+const selectReserva = (reserva) => {
+    currentReport.value.id_habitacion = reserva.id_habitacion;
+    currentReport.value.id_reserva = reserva.id_reserva;
+    selectedReservaText.value = `Habitacion: ${reserva.numero_habitacion} - Reserva: ${reserva.id_reserva}`;
+    isDropdownReservationOpen.value = false;
 };
 
 const openCreateModal = () => {
     isModalOpen.value = true;
-    currentReport.value = { id_habitacion: '', clave: '', numeroPersonas: '', estado_reportado: '', causa: '', id_reserva: '' };
-    selectedHabitacionText.value = '';
+    currentReport.value = { id_habitacion: '', clave: '', ama_de_llaves_numero_de_personas: '', estado_reportado: '', causa: '', id_reserva: '' };
+    selectedReservaText.value = '';
 };
 
 const closeModal = () => {
     isModalOpen.value = false;
-    currentReport.value = { id_habitacion: '', clave: '', numeroPersonas: '', estado_reportado: '', causa: '', id_reserva: '' };
-    selectedHabitacionText.value = '';
-    isDropdownOpen.value = false;
+    currentReport.value = { id_habitacion: '', clave: '', ama_de_llaves_numero_de_personas: '', estado_reportado: '', causa: '', id_reserva: '' };
+    selectedReservaText.value = '';
+    isDropdownReservationOpen.value = false;
 };
 
 const fetchReports = async () => {
     try {
         const response = await getReportByPage(currentPage.value);
-        const responseRoom = await getRoomByNameAndId();
+        const responseReservation = await getReservaAndHabitacion();
+
+        const habitacionesEnUso = response.data.informes.map(informe => informe.id_habitacion);
+
+        habitacionesReservadas.value = responseReservation.filter(reserva => !habitacionesEnUso.includes(reserva.id_habitacion));
+
+
         reports.value = response.data.informes || [];
         TotalPages.value = response.data.total_pages || 0;
-        habitacionesDisponibles.value = responseRoom;
+        habitacionesReservadas.value = responseReservation;
 
         if (currentPage.value > TotalPages.value) {
             currentPage.value = TotalPages.value;
         }
         closeModal();
     } catch (error) {
-        alert('Error al obtener informes: ' + error);
+        modalMessage.value = 'Error al obtener informes';
+        isModalOpen.value = false;
+        colorAlert.value = 'danger';
+        isAlertVisible.value = true;
+        setTimeout(() => {
+            isAlertVisible.value = false;
+        }, 10000);
     }
 };
 
 const saveReport = async () => {
     try {
-        if (!currentReport.value.id_habitacion || !currentReport.value.clave || currentReport.value.numeroPersonas || !currentReport.value.estado_reportado || currentReport.value.id_reserva) {
+        if (!currentReport.value.id_habitacion || !currentReport.value.id_reserva || !currentReport.value.estado_reportado) {
             alert('Por favor, completa todos los campos antes de guardar.');
             return;
         }
 
-        await createReport(currentReport.value.clave, currentReport.value.numeroPersonas, currentReport.value.estado_reportado,  currentReport.value.causa, currentReport.value.id_habitacion, currentReport.value.id_reserva,);
-        modalMessage.value = "Informe creado con éxito";
+        const numeroPersonas = parseInt(currentReport.value.ama_de_llaves_numero_de_personas, 10);
+        if (isNaN(numeroPersonas) || numeroPersonas <= 0) {
+            alert('Número de personas es obligatorio y debe ser un número válido mayor que 0.');
+            return;
+        }
 
+        if (!currentReport.value.causa) {
+            alert('Por favor, proporciona una causa.');
+            return;
+        }
+
+        await createReport(
+            currentReport.value.clave,
+            numeroPersonas,
+            currentReport.value.estado_reportado,
+            currentReport.value.causa,
+            currentReport.value.id_habitacion,
+            currentReport.value.id_reserva
+        );
+
+        modalMessage.value = "Informe creado con éxito";
         colorAlert.value = 'success';
         isAlertVisible.value = true;
 
@@ -86,6 +117,8 @@ const saveReport = async () => {
             isAlertVisible.value = false;
         }, 3000);
     } catch (error) {
+        console.log('Error capturado:', error);
+        console.log('Respuesta del servidor:', error.response?.data);
         modalMessage.value = 'Error al guardar informe';
         isModalOpen.value = false;
         colorAlert.value = 'danger';
@@ -154,58 +187,6 @@ onMounted(() => {
 </script>
 
 <template>
-    <CardBoxModal class="dark:text-white" v-model="isModalOpen" title="Crear Informe" buttonLabel="Crear Informe" has-cancel @cancel="closeModal" @confirm="saveReport">
-        <form @submit.prevent="saveReport">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="mb-4">
-                    <label for="id_habitacion" class="text-gray-700 font-medium dark:text-white">Habitación:</label>
-                    <div class="relative">
-                        <div @click="isDropdownOpen = !isDropdownOpen" class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500 dark:bg-gray-800 dark:text-white cursor-pointer">
-                            {{ selectedHabitacionText || "Selecciona Habitación" }}
-                        </div>
-                        <div v-if="isDropdownOpen" class="absolute z-10 w-full bg-white border border-gray-300 dark:bg-gray-800 dark:border-gray-600 rounded mt-1 max-h-48 overflow-y-auto">
-                            <div v-for="habitacion in habitacionesDisponibles" :key="habitacion.id_habitacion" @click="selectHabitacion(habitacion)" class="px-3 py-2 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer">
-                                {{ habitacion.numero_habitacion }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="mb-4">
-                    <label for="clave" class="text-gray-700 font-medium dark:text-white">Clave:</label>
-                    <select id="clave" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-700 dark:text-white" v-model="currentReport.clave" required>
-                        <option value="O">O</option>
-                        <option value="V">V</option>
-                        <option value="OOO">OOO</option>
-                        <option value="X">X</option>
-                        <option value="B">B</option>
-                        <option value="CO">CO</option>
-                        <option value="ND">ND</option>
-                    </select>
-                </div>
-                <div class="mb-4">
-                    <label for="numeropersonas" class="block text-gray-700 font-medium dark:text-white">N° Personas:</label>
-                    <input type="number" id="numeropersonas" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-700 dark:text-white" required />
-                </div>
-                <div class="mb-4">
-                    <label for="estado_reportado" class="block text-gray-700 font-medium dark:text-white">Situacion:</label>
-                    <select id="estado_reportado" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-700 dark:text-white" v-model="currentReport.estado_reportado" required>
-                        <option value="LIMPIA">LIMPIA</option>
-                        <option value="SUCIA">SUCIA</option>
-                        <option value="EN REPARACIÓN">EN REPARACIÓN</option>
-                    </select>
-                </div>
-                <div class="mb-4 col-span-2">
-                    <label for="causa" class="block text-gray-700 font-medium dark:text-white">Causa:</label>
-                    <input type="text" id="causa" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-700 dark:text-white" required />
-                </div>
-            </div>
-        </form>
-    </CardBoxModal>
-
-    <CardBoxModal class="dark:text-white" v-model="activarModalDelete.visible" title="Eliminar Informe" button="danger" buttonLabel="Eliminar" has-cancel @confirm="confirmDelete" @cancel="cancelDelete">
-        <p class="text-xl dark:text-white">¿Está seguro de eliminar el informe?</p>
-    </CardBoxModal>
-
     <LayoutAuthenticated>
         <SectionMain>
             <h1 class="text-black dark:text-white text-2xl font-bold mb-3">Informes De Ama De Llaves</h1>
@@ -304,11 +285,64 @@ onMounted(() => {
             </div>
         </SectionMain>
     </LayoutAuthenticated>
-</template>
 
-<style>
-.scroll-select {
-    max-height: 200px;
-    overflow-y: auto;
-}
-</style>
+    <CardBoxModal class="dark:text-white" v-model="isModalOpen" title="Crear Informe" buttonLabel="Crear Informe" has-cancel @cancel="closeModal" @confirm="saveReport">
+    <form @submit.prevent="saveReport">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="md:col-span-2">
+                <label for="id_reserva" class="text-gray-700 font-medium dark:text-white">Reserva Habitación:</label>
+                <div class="relative">
+                    <div @click="isDropdownReservationOpen = !isDropdownReservationOpen" class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500 dark:bg-gray-800 dark:text-white cursor-pointer">
+                        {{ selectedReservaText || "Selecciona Reserva" }}
+                    </div>
+                    <div v-if="isDropdownReservationOpen" class="absolute z-10 w-full bg-white border border-gray-300 dark:bg-gray-800 dark:border-gray-600 rounded mt-1 max-h-48 overflow-y-auto">
+                        <div v-for="reserva in habitacionesReservadas" :key="reserva.id_reserva" @click="selectReserva(reserva)" class="px-3 py-2 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer">
+                            Habitación: {{ reserva.numero_habitacion }} <br>
+                            Reserva: {{ reserva.id_reserva }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <label for="clave" class="text-gray-700 font-medium dark:text-white">Clave:</label>
+                <select id="clave" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-700 dark:text-white" v-model="currentReport.clave" required>
+                    <option value="O">O</option>
+                    <option value="V">V</option>
+                    <option value="OOO">OOO</option>
+                    <option value="X">X</option>
+                    <option value="B">B</option>
+                    <option value="CO">CO</option>
+                    <option value="ND">ND</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="numeropersonas" class="block text-gray-700 font-medium dark:text-white">N° Personas:</label>
+                <input type="number" id="numeropersonas" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-700 dark:text-white" v-model="currentReport.ama_de_llaves_numero_de_personas" required />
+            </div>
+
+            <div>
+                <label for="estado_reportado" class="block text-gray-700 font-medium dark:text-white">Situación:</label>
+                <select id="estado_reportado" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-700 dark:text-white" v-model="currentReport.estado_reportado" required>
+                    <option value="LIMPIA">LIMPIA</option>
+                    <option value="SUCIA">SUCIA</option>
+                    <option value="EN REPARACIÓN">EN REPARACIÓN</option>
+                </select>
+            </div>
+
+            <div class="md:col-span-2">
+                <label for="causa" class="block text-gray-700 font-medium dark:text-white">Causa:</label>
+                <input type="text" id="causa" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-700 dark:text-white" v-model="currentReport.causa" required />
+            </div>
+        </div>
+    </form>
+</CardBoxModal>
+
+
+
+    <CardBoxModal class="dark:text-white" v-model="activarModalDelete.visible" title="Eliminar Informe" button="danger" buttonLabel="Eliminar" has-cancel @confirm="confirmDelete" @cancel="cancelDelete">
+        <p class="text-xl dark:text-white">¿Está seguro de eliminar el informe?</p>
+    </CardBoxModal>
+
+</template>
