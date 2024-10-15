@@ -10,15 +10,25 @@ import BaseButton from '@/components/BaseButton.vue';
 import BaseButtons from '@/components/BaseButtons.vue';
 import editarDescuentoModal from '@/components/arce_components/editarDescuentoModal.vue';
 import { info_descuentos, crear_descuento, actualizar_descuento, eliminar_descuento, autorizar_descuento } from '@/services/arce_service/descuentoService';
-import { mdiBallotOutline, mdiInformation } from '@mdi/js';
-
+import { mdiBallotOutline, mdiInformation, mdiCheckBold } from '@mdi/js';
+import { useMainStore } from '@/stores/main';
+import { computed } from 'vue';
 import NotificationBar from '@/components/NotificationBar.vue';
+import { mdiPencil, mdiTrashCan } from '@mdi/js';
+
+
+const mainStore = useMainStore();
+
+const userRole = computed(() => mainStore.userRole).value;
+
+console.log(userRole)
+
 
 const form = ref({
   tipo_descuento: '',
   porcentaje_descuento: 0,
   fecha_aplicacion: new Date().toISOString(),
-  quien_aplico: '', 
+  quien_aplico: '',
 });
 
 const descuentos = ref([]);
@@ -125,65 +135,121 @@ onMounted(fetchDescuentos);
   <LayoutAuthenticated>
     <SectionMain>
       <TitleIconOnly :icon="mdiBallotOutline" title="Descuentos" />
-      <SectionTitle>Registrar descuento</SectionTitle>
 
-      <form @submit.prevent="submitForm" class="mt-6">
+      <div v-if="userRole === 'SuperAdmin' || userRole === 'JefeRecepcion'">
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <FormField label="Tipo de Descuento">
-            <FormControl v-model="form.tipo_descuento" type="text" required />
-          </FormField>
-          <FormField label="Porcentaje de Descuento">
-            <FormControl v-model.number="form.porcentaje_descuento" type="number" required />
-          </FormField>
-        </div>
 
-        <div class="flex justify-between">
-          <BaseButtons>
-            <BaseButton type="submit" color="info" label="Registrar" />
-            <BaseButton type="button" color="info" outline label="Reset" @click="resetForm" />
-          </BaseButtons>
-        </div>
+        <SectionTitle>Registrar descuento</SectionTitle>
 
-        <p v-if="errorMessage" class="text-red-500">{{ errorMessage }}</p>
+        <form @submit.prevent="submitForm" class="mt-6">
 
-        <NotificationBar class="mt-6" v-if="showNotification" :color="notificationColor" :icon="mdiInformation">
-          {{ notificationMessage }}
-        </NotificationBar>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <FormField label="Tipo de Descuento">
+              <FormControl v-model="form.tipo_descuento" type="text" required />
+            </FormField>
+            <FormField label="Porcentaje de Descuento">
+              <FormControl v-model.number="form.porcentaje_descuento" type="number" required />
+            </FormField>
+          </div>
 
-      </form>
+          <div class="flex justify-between">
+            <BaseButtons>
+              <BaseButton type="submit" color="info" label="Registrar" />
+              <BaseButton type="button" color="info" outline label="Reset" @click="resetForm" />
+            </BaseButtons>
+          </div>
+
+          <p v-if="errorMessage" class="text-red-500">{{ errorMessage }}</p>
+
+          <NotificationBar class="mt-6" v-if="showNotification" :color="notificationColor" :icon="mdiInformation">
+            {{ notificationMessage }}
+          </NotificationBar>
+
+        </form>
+
+      </div>
+
 
       <SectionTitle>Lista de Descuentos</SectionTitle>
-      <table class="min-w-full mt-4">
-        <thead>
-          <tr>
-            <th class="text-left">Tipo de Descuento</th>
-            <th class="text-left">Porcentaje</th>
-            <th class="text-left">Fecha de Aplicación</th>
-            <th class="text-left">Aplicó</th>
-            <th class="text-left">Autorizó</th>
-            <th class="text-left">Estado</th>
-            <th class="text-left">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="descuento in descuentos" :key="descuento.id_descuento">
-            <td>{{ descuento.tipo_descuento }}</td>
-            <td>{{ descuento.porcentaje_descuento }}%</td>
-            <td>{{ new Date(descuento.fecha_aplicacion).toLocaleDateString() }}</td>
-            <td>{{ descuento.quien_aplico }}</td>
-            <td>{{ descuento.quien_autorizo ? descuento.quien_autorizo : 'Sin autorizar' }}</td>
-            <td>{{ descuento.autorizado === 1 ? 'Autorizado' : 'Pendiente' }}</td>
-            <td>
-              <BaseButton color="success" @click="editDescuento(descuento)" label="Editar" />
-              <BaseButton color="danger" @click="deleteDescuento(descuento.id_descuento)" label="Eliminar" />
-              <BaseButton color="warning" @click="autorizarDescuento(descuento.id_descuento)" label="Autorizar" />
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="mt-4">
+        <table class="min-w-full hidden md:table">
+          <thead class="bg-gray-200">
+            <tr>
+              <th class="text-left px-4 py-2">Tipo de Descuento</th>
+              <th class="text-left px-4 py-2">Porcentaje</th>
+              <th class="text-left px-4 py-2">Fecha de Aplicación</th>
+              <th class="text-left px-4 py-2">Aplicó</th>
+              <th class="text-left px-4 py-2">Autorizó</th>
+              <th class="text-left px-4 py-2">Estado</th>
+              <th class="text-left px-4 py-2">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="descuento in descuentos" :key="descuento.id_descuento">
+              <td class="border px-4 py-2">{{ descuento.tipo_descuento }}</td>
+              <td class="border px-4 py-2">{{ descuento.porcentaje_descuento }}%</td>
+              <td class="border px-4 py-2">{{ new Date(descuento.fecha_aplicacion).toLocaleDateString() }}</td>
+              <td class="border px-4 py-2">{{ descuento.quien_aplico }}</td>
+              <td class="border px-4 py-2">{{ descuento.quien_autorizo ? descuento.quien_autorizo : 'Sin autorizar' }}
+              </td>
+              <td class="border px-4 py-2">{{ descuento.autorizado === 1 ? 'Autorizado' : 'Pendiente' }}</td>
+              <td class="border px-4 py-2">
+                <BaseButtons v-if="userRole === 'SuperAdmin' || userRole === 'JefeRecepcion'">
+                  <BaseButton color="success" :icon="mdiPencil" @click="editDescuento(descuento)" />
+                  <BaseButton color="danger" :icon="mdiTrashCan" @click="deleteDescuento(descuento.id_descuento)" />
+                  <BaseButton color="warning" :icon="mdiCheckBold"
+                    @click="autorizarDescuento(descuento.id_descuento)" />
+                </BaseButtons>
+              </td>
+            </tr>
+          </tbody>
+        </table>
 
-      <editarDescuentoModal :visible="modalVisible" :form="form" @update:visible="modalVisible = $event" @save="submitForm" />
+        <div class="md:hidden">
+          <div v-for="descuento in descuentos" :key="descuento.id_descuento" class="border-b border-gray-200 py-4">
+            <div class="flex justify-between">
+              <span class="font-bold">Tipo de Descuento:</span>
+              <span>{{ descuento.tipo_descuento }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="font-bold">Porcentaje:</span>
+              <span>{{ descuento.porcentaje_descuento }}%</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="font-bold">Fecha de Aplicación:</span>
+              <span>{{ new Date(descuento.fecha_aplicacion).toLocaleDateString() }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="font-bold">Aplicó:</span>
+              <span>{{ descuento.quien_aplico }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="font-bold">Autorizó:</span>
+              <span>{{ descuento.quien_autorizo ? descuento.quien_autorizo : 'Sin autorizar' }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="font-bold">Estado:</span>
+              <span>{{ descuento.autorizado === 1 ? 'Autorizado' : 'Pendiente' }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="font-bold">Acciones:</span>
+              <span>
+                <BaseButtons v-if="userRole === 'SuperAdmin' || userRole === 'JefeRecepcion'">
+                  <BaseButton color="success" :icon="mdiPencil" @click="editDescuento(descuento)" />
+                  <BaseButton color="danger" :icon="mdiTrashCan" @click="deleteDescuento(descuento.id_descuento)" />
+                  <BaseButton color="warning" :icon="mdiCheckBold"
+                    @click="autorizarDescuento(descuento.id_descuento)" />
+                </BaseButtons>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+      <editarDescuentoModal :visible="modalVisible" :form="form" @update:visible="modalVisible = $event"
+        @save="submitForm" />
     </SectionMain>
   </LayoutAuthenticated>
 </template>
