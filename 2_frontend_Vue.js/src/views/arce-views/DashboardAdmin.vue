@@ -123,11 +123,11 @@ onMounted(() => {
                 <CardBoxWidget :number="facturasProceso" label="Facturas en proceso" :icon="mdiFileDocument" :cardColor="'bg-neutral-500'" />
             </div>
 
-            <SectionTitle first>Caja</SectionTitle>
+            <!-- <SectionTitle first>Caja</SectionTitle>
             <div class="grid grid-cols-1 gap-4 lg:grid-cols-2 mt-4 text-white">
                 <CardBoxWidget :number="50" label="Dinero inicial" :icon="mdiCashCheck" :cardColor="'bg-sky-500'" />
                 <CardBoxWidget :number="50" label="Dinero final" :icon="mdiCashLock" :cardColor="'bg-sky-500'" />
-            </div>
+            </div> -->
         </SectionMain>
     </LayoutAuthenticated>
 </template>

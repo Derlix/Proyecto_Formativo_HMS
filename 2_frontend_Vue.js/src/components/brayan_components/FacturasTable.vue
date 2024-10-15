@@ -964,7 +964,7 @@ function fechaActual() {
               </BaseButton>
               <BaseButton color="success" :icon="mdiFoodForkDrink" small @click="openListaProductosModal(factura)">
               </BaseButton>
-              <BaseButton color="info" :icon="mdiPencilBoxMultiple" small @click="openEditModal(factura)" />
+              <!-- <BaseButton color="info" :icon="mdiPencilBoxMultiple" small @click="openEditModal(factura)" /> -->
               <BaseButton color="danger" :icon="mdiTrashCan" small @click="openDeleteModal(factura)" />
 
             </BaseButtons>

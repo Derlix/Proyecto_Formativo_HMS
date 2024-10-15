@@ -82,12 +82,12 @@ onMounted(() => {
     <SectionMain>
       <TitleIconOnly :icon="mdiBallotOutline" title="Manejo de caja" />
 
-      <CardBox class="mt-6">
+      <!-- <CardBox class="mt-6">
         <div class="flex justify-between text-lg font-bold">
           <h1>Dinero inicial: $120000</h1>
           <h1>Dinero final en caja: $180000</h1>
         </div>
-      </CardBox>
+      </CardBox> -->
 
       <div class="grid grid-cols-1 gap-4 lg:grid-cols-3 mb-6 mt-4 text-white">
         <CardBoxWidget
@@ -127,7 +127,7 @@ onMounted(() => {
         />
       </div>
 
-      <div class="text-center w-1/2 mt-8">
+      <!-- <div class="text-center w-1/2 mt-8">
         <CardBox class="shadow-md">
           <SectionTitle>Registro Fondos Caja de Recepción</SectionTitle>
           <div class="grid grid-cols-2 gap-4">
@@ -148,11 +148,9 @@ onMounted(() => {
             </button>
           </div>
         </CardBox>
-      </div>
+      </div> -->
 
-      <div class="flex justify-end mt-5">
-        <button class="bg-green-500 text-white py-2 px-4 rounded m-1">¿Necesitas ayuda?</button>
-      </div>
+      
     </SectionMain>
   </LayoutAuthenticated>
 </template>

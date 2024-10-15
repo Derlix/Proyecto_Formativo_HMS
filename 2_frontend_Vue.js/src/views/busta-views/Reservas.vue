@@ -67,6 +67,7 @@ onMounted(() => {
       <Calendario />
 
       <div class="overflow-x-auto">
+        <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100 px-2 py-4">Informacion de habitaciones</h2>
         <table class="table-auto w-full border-collapse text-left">
           <thead class="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100">
             <tr>
