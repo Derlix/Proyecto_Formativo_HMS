@@ -9,6 +9,7 @@ import {
   mdiReceiptTextOutline,
   mdiCityVariantOutline,
   mdiFoodForkDrink,
+  mdiBookEducation,
 } from '@mdi/js'
 
 export default [
@@ -70,6 +71,8 @@ export default [
     icon: mdiDoorOpen ,
     modulo: 'habitacion'
   },
+
+
   {
     to: '/informe-ama-llaves',
     label: 'Inf. Ama llaves',
@@ -100,6 +103,7 @@ export default [
     icon: mdiAccountGroup,
     modulo: 'usuarios'
   },
+
   {
     label: 'Huespedes',
     icon: mdiFileChart,
@@ -132,5 +136,12 @@ export default [
       },
     ]
   },
+  {
+    to: '/bibliografia-hotel',
+    label: 'Blibliografia',
+    icon: mdiBookEducation ,
+    modulo: 'habitacion'
+  },
+ 
 
 ]
