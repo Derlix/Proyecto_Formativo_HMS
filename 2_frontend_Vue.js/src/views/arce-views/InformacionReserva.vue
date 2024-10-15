@@ -127,11 +127,11 @@ onMounted(() => {
 
             <div class="flex justify-between items-center mb-4">
                 <button @click="goToReservas" class="bg-blue-600 h-12 rounded-lg font-bold hover:bg-blue-900 text-white transition duration-300 ease-in-out py-2 px-6 shadow-lg transform hover:scale-105">Regresar</button>
-                <div class="flex space-x-4">
+                <!-- <div class="flex space-x-4">
                     <button class="bg-blue-600 h-12 rounded-lg font-bold hover:bg-blue-900 text-white transition duration-300 ease-in-out py-2 px-6 shadow-lg transform hover:scale-105">Factura temporal</button>
                     <button class="bg-blue-600 h-12 rounded-lg font-bold hover:bg-blue-900 text-white transition duration-300 ease-in-out py-2 px-6 shadow-lg transform hover:scale-105">Crear check-out</button>
                     <button class="bg-blue-600 h-12 rounded-lg font-bold hover:bg-blue-900 text-white transition duration-300 ease-in-out py-2 px-6 shadow-lg transform hover:scale-105">Complementada con éxito</button>
-                </div>
+                </div> -->
             </div>
 
             <div class="flex flex-col sm:flex-row mt-6 gap-6">
@@ -202,7 +202,7 @@ onMounted(() => {
                     </div>
                 </CardBox>
             </div>
-
+<!-- 
             <div class="flex flex-col sm:flex-row mt-6 gap-6">
                 <CardBox class="shadow-md w-full sm:w-1/2 mb-4 sm:mb-0">
                     <SectionTitle>Información de habitación</SectionTitle>
@@ -237,11 +237,7 @@ onMounted(() => {
                         </div>
                     </div>
                 </CardBox>
-            </div>
-
-            <div class="flex justify-end mt-5">
-                <button class="bg-green-500 text-white py-2 px-4 rounded m-1">¿Necesitas ayuda?</button>
-            </div>
+            </div> -->
         </SectionMain>
     </LayoutAuthenticated>
 </template>
