@@ -47,7 +47,11 @@ export default {
     selectedIdHabitacion: {
       type: Number,
       default: null
-    }
+    },
+    selectedNumeroHabitacion: {
+    type: String,
+    default: ''
+  }
   },
   setup(props, { emit }){
     const habitaciones = ref([]); // Almacena las categorías
@@ -78,12 +82,20 @@ export default {
       );
     };
 
-    // Función para seleccionar una categoría
+    
     const selectHabitacion = (habitacion) => {
       selectedHabitacion.value = habitacion.id_habitacion;
-      dropdownOpen.value = false; // Cierra el dropdown
-      // Emitimos el evento `category-selected` al padre, pasando la categoría seleccionada
-      emit('habitacion-selected', habitacion.id_habitacion);
+      if (habitacion) {
+          const habitacionCompuesta = {
+            id_habitacion: habitacion.id_habitacion,
+            numero_habitacion: habitacion.numero_habitacion
+          };
+          console.log("Habitacion-compuesta", habitacionCompuesta);
+     
+        emit('habitacionCompuesta ', habitacionCompuesta);
+      }
+      dropdownOpen.value = false; 
+
     };
 
     // Función para alternar el dropdown
@@ -91,20 +103,20 @@ export default {
       dropdownOpen.value = !dropdownOpen.value;
     };
 
-    // Cerrar el dropdown al hacer clic fuera del componente
+    
     const closeDropdownOnClickOutside = (event) => {
       if (!event.target.closest('.form-container')) {
         dropdownOpen.value = false; 
       }
     };
 
-    // Añadir el event listener al montar el componente
+    
     onMounted(() => {
       fetchHabitacionesActivas();
       document.addEventListener('click', closeDropdownOnClickOutside);
     });
 
-    // Quitar el event listener al desmontar el componente
+    
     onBeforeUnmount(() => {
       document.removeEventListener('click', closeDropdownOnClickOutside);
     });
@@ -116,21 +128,8 @@ export default {
 
 
     const selectedHabitacionNum = computed(() => {
-        const habitacion = habitaciones.value.find(hab => hab.id_habitacion === selectedHabitacion.value);
-
-        if (habitacion) {
-          const habitacionCompuesta = {
-            id_habitacion: habitacion.id_habitacion,
-            numero_habitacion: habitacion.numero_habitacion
-          };
-          console.log("Habitacion-compuesta", habitacionCompuesta);
-          emit('habitacionCompuesta', habitacionCompuesta); // Emitir el objeto al componente padre
-          return habitacionCompuesta
-         
-          
-        }   
-    // Si no se encuentra, devuelve null
-      return null;
+      const habitacion = habitaciones.value.find(hab => hab.id_habitacion === selectedHabitacion.value);
+      return habitacion ? habitacion.numero_habitacion : null;
     });
 
 

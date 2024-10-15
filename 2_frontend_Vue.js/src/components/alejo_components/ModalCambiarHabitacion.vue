@@ -1,4 +1,14 @@
 <template>
+
+    <ModalAlert
+      v-if="isAlertVisible"
+      :descripcion="modalMessage"
+      :visible="isAlertVisible"
+      textBoton="Cerrar"
+      @close="isAlertVisible = false"
+    />
+  
+
   <transition name="modal">
     <div v-if="isVisible" class="fixed inset-0 z-50 flex items-center justify-center">
       <div class="absolute inset-0 bg-black opacity-50"></div>
@@ -47,8 +57,7 @@
 
           <BaseDivider />
 
-          <!-- Campos que se activan después de ingresar el documento -->
-          <!-- <form @submit.prevent="update_ReservaHabitacion()"> -->
+
             <div v-if="reservaEncontrada" class="mt-6 space-y-4">
               <div class="grid grid-cols-2 gap-4">
                 <div>
@@ -80,7 +89,10 @@
                   <label for="habitacion" class="block text-lg font-medium text-gray-700 dark:text-gray-300">
                    Nueva Habitación
                   </label>
-                  <HabitacionSelect @habitacionCompuesta="recibirObjeto" />
+                  <HabitacionSelect 
+                      @habitacionCompuesta="recibirObjeto" 
+                      :selectedNumeroHabitacion="num_habitacion" 
+                  />
                 </div>
                 <div>
                   <label for="new_fecha_entrada" class="block text-lg font-medium text-gray-700 dark:text-gray-300">
@@ -120,12 +132,16 @@
                 <BaseButton type="reset" color="info" outline label="Cancelar"  @click="cancel()" />
               </BaseButtons>
             </div>
-          <!-- </form> -->
+         
 
         </div>
       </div>
     </div>
   </transition>
+
+
+
+
 </template>
 
   
@@ -136,7 +152,8 @@ import BaseButton from '@/components/BaseButton.vue'
 import BaseButtons from '@/components/BaseButtons.vue'
 import BaseDivider from '@/components/BaseDivider.vue'
 import HabitacionSelect from './HabitacionSelect.vue'
-// import { obtenerTodasHabitacion } from '@/services/habitacionService'
+import ModalAlert from '../ModalAlert.vue'
+
 
 const documento_huesped = ref('')
 const fecha_reserva = ref('')
@@ -150,6 +167,10 @@ const new_fecha_salida = ref('')
 const reservaEncontrada = ref(false)
 const sinDatos = ref(false)
 const emit = defineEmits(['close'])
+const isAlertVisible = ref(false);
+// const isModalVisible = ref(true);
+const modalMessage = ref('');
+const num_habitacion = ref('');
 
 
 defineProps({
@@ -218,94 +239,77 @@ const buscarReserva_Habitacion = async () => {
 
 const recibirObjeto = (habitacionCompuesta) => {
   new_id_habitacion.value = habitacionCompuesta.id_habitacion;
-      console.log('Objeto recibido como constante en setup:', habitacionCompuesta);
-    };
+  num_habitacion.value = String(habitacionCompuesta.numero_habitacion);
+    console.log('Objeto recibido como constante en setup:', habitacionCompuesta);
+     
+};
 
 
 const update_ReservaHabitacion = async () => {
-    console.log("Valores enviados:");
-    console.log("id_reserva", id_reserva.value, typeof id_reserva.value);
-    console.log("old_id_habitacion", id_habitacion.value);
-    console.log("new_id_habitacion", new_id_habitacion.value);
-    console.log("num_adultos", num_adultos.value);
-    console.log("num_niños", num_ninos.value);
-    console.log("fecha_entrada", new_fecha_entrada.value);
-    console.log("fecha_salida", new_fecha_salida.value);
+  console.log("Valores enviados:");
+  console.log("id_reserva", id_reserva.value, typeof id_reserva.value);
+  console.log("old_id_habitacion", id_habitacion.value);
+  console.log("new_id_habitacion", new_id_habitacion.value);
+  console.log("num_adultos", num_adultos.value);
+  console.log("num_niños", num_ninos.value);
+  console.log("fecha_entrada", new_fecha_entrada.value);
+  console.log("fecha_salida", new_fecha_salida.value);
+
   try {
     const reserva_habitacion = {
-            id_reserva: id_reserva.value,
-            id_habitacion: new_id_habitacion.value, 
-            num_adultos: num_adultos.value,
-            num_niños: num_ninos.value,
-            fecha_entrada: new_fecha_entrada.value,
-            fecha_salida_propuesta: new_fecha_salida.value,
-        };
-        
+      id_reserva: id_reserva.value,
+      id_habitacion: new_id_habitacion.value,
+      num_adultos: num_adultos.value,
+      num_niños: num_ninos.value,
+      fecha_entrada: new_fecha_entrada.value,
+      fecha_salida_propuesta: new_fecha_salida.value,
+    };
+
     await actualizarReservaHabitacion(
-      
-        id_reserva.value, 
-        id_habitacion.value, 
-        reserva_habitacion
+      id_reserva.value,
+      id_habitacion.value,
+      reserva_habitacion
     );
-    // modalMessage.value = 'Huésped actualizado exitosamente';
-    // isAlertVisible.value = true;
-    // colorAlert.value = 'success';
-    // activarModalEdit.value = false;
 
-
-  
-  } catch (error) {
-  if (error.response && error.response.data && error.response.data.detail) {
-    // Si `detail` es un arreglo, iteramos sobre él para mostrar cada mensaje
-    const detalles = error.response.data.detail;
-    if (Array.isArray(detalles)) {
-      detalles.forEach((detalle, index) => {
-        console.log(`Error ${index + 1}:`, detalle);
-      });
-    } else {
-      console.log("Error detalle:", detalles);
-    }
-  } else {
-    // Si no contiene el detalle esperado, mostramos el error completo
-    console.log("Error inesperado:", error);
-  }
-}
-};
-
-// # Supongamos que tienes un objeto reserva_habitacion_update con los datos que quieres actualizar
-// reserva_habitacion_update = ReservaHabitacionUpdate(
-//     id_habitacion=new_id_habitacion,  # nuevo ID que quieres establecer
-//     num_adultos=2,
-//     num_niños=1,
-//     fecha_entrada='2024-10-08',
-//     fecha_salida_propuesta='2024-10-10'
-// )
-
-// update_reserva_habitacion(db, id_reserva, id_habitacion, reserva_habitacion_update, id_hotel)
-
-
-
-
-
-
-// const fetchHabitacionesActivas = async () => {
-//   try {
-//     const response = await obtenerTodasHabitacion();
+    emit('close');
+    modalMessage.value = 'Cambio de habitación exitoso';
+    isAlertVisible.value = true;
     
-//     const activos = response.data.habitaciones.filter(habitacion => habitacion.estado === "ACTIVO");
-//     habitaciones.value = activos;
-//     // originalHuespedes.value = activos;
-//     console.log(habitaciones.value);
-//     console.log('Total de habitaciones activas:', activos.length);
-//   } catch (error) {
-//     alert(error.response?.data?.detail || 'Error al obtener las habitaciones');
-//   }
-// }; 
+     
 
+  } catch (error) {
+    
+    modalMessage.value = 'Error: Solicitud incorrecta. Verifique los datos ingresados.';
+    isAlertVisible.value = true;
 
-
-
-
+    // Manejo de errores
+    if (error.response) {
+      const statusCode = error.response.status;
+     
+      if (statusCode === 400) {
+        modalMessage.value = 'Error: Solicitud incorrecta. No se puede modificar esta reserva.';
+        isAlertVisible.value = true;
+       
+      } else if (error.response.data && error.response.data.detail) {
+       
+        const detalles = error.response.data.detail;
+        if (Array.isArray(detalles)) {
+          detalles.forEach((detalle, index) => {
+            console.log(`Error ${index + 1}:`, detalle);
+          });
+        } else {
+          console.log("Error detalle:", detalles);
+        }
+      } else {
+        
+        console.log("Error inesperado:", error);
+      }
+    } else {
+      
+      console.log("Error inesperado:", error);
+    }
+  }
+};
 
 
 </script>

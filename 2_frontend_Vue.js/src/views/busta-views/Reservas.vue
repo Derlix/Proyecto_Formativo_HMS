@@ -40,12 +40,12 @@ onMounted(() => {
         
         <AlertaCrearReserva :mostrarModal="showModalCrearReserva" @cerrar="showModalCrearReserva = false" />
     
-          <!-- <button
+          <button
             @click="showModalCambiarHabitacion = true"
             class="bg-blue-600 dark:bg-blue-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 transition duration-300 ease-in-out py-2 px-6 shadow-lg transform hover:scale-105"
           >
             Cambiar habitación
-          </button> -->
+          </button>
         
         <ModalCambiarHabitacion :isVisible="showModalCambiarHabitacion" @close="showModalCambiarHabitacion = false" />
 
