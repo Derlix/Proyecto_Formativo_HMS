@@ -65,9 +65,22 @@ export const getRoomByNameAndId = async () => {
       return response.data;
     } catch (error) {
       if (error.response) {
-        throw error.response; // Devuelve el error original de la API
+        throw error.response;
       } else {
-        throw new Error('Error de red o de servidor'); // Manejar errores de red
+        throw new Error('Error de red o de servidor');
+      }
+    }
+  }
+
+export const getReservaAndHabitacion = async () => {
+    try {
+      const response = await api.get('/informesAmaLlaves/get_reserva_by_id');
+      return response.data;
+    } catch (error) {
+      if (error.response) {
+        throw error.response;
+      } else {
+        throw new Error('Error de red o de servidor');
       }
     }
   }
