@@ -23,7 +23,7 @@ export const getAllFacturas = async () => {
 
 
   
-  export const updateFacturaService = async (id_facturacion, subtotal, impuestos, total, total_precio_productos, metodo_pago, estado, fecha_salida) => {
+  export const updateFacturaService = async (id_facturacion, subtotal, impuestos, total, total_precio_productos, metodo_pago, estado, fecha_salida, id_descuento) => {
     try {
       const response = await api.put(`/facturacion/update_factura/${id_facturacion}`, {
         subtotal,
@@ -32,7 +32,8 @@ export const getAllFacturas = async () => {
         total_precio_productos,
         metodo_pago,
         estado,
-        fecha_salida
+        fecha_salida,
+        id_descuento
       }, {
         headers: {
           'Content-Type': 'application/json',

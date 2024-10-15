@@ -9,6 +9,7 @@ import {
   mdiReceiptTextOutline,
   mdiCityVariantOutline,
   mdiFoodForkDrink,
+  mdiBookEducation,
 } from '@mdi/js'
 
 export default [
@@ -36,12 +37,12 @@ export default [
     icon: mdiTicket,
     modulo: 'facturacion'
   },
-  {
-    to: '/avances-efectivo',
-    label: 'Anticipo',
-    icon: mdiTicket,
-    modulo: 'avances_efectivo'
-  },
+  // {
+  //   to: '/avances-efectivo',
+  //   label: 'Anticipo',
+  //   icon: mdiTicket,
+  //   modulo: 'avances_efectivo'
+  // },
   {
     label: 'Reservas',
     icon: mdiCalendar,
@@ -57,11 +58,11 @@ export default [
         label: 'His. Reservas',
         modulo: 'reservas'
       },
-      {
-        to: '/transpaso-particulares',
-        label: 'Transpaso a particulares',
-        modulo: 'reservas'
-      },
+      // {
+      //   to: '/transpaso-particulares',
+      //   label: 'Transpaso a particulares',
+      //   modulo: 'reservas'
+      // },
     ]
   },
   {
@@ -70,6 +71,8 @@ export default [
     icon: mdiDoorOpen ,
     modulo: 'habitacion'
   },
+
+
   {
     to: '/informe-ama-llaves',
     label: 'Inf. Ama llaves',
@@ -100,6 +103,7 @@ export default [
     icon: mdiAccountGroup,
     modulo: 'usuarios'
   },
+
   {
     label: 'Huespedes',
     icon: mdiFileChart,
@@ -115,11 +119,11 @@ export default [
         label: 'Informe pasajeros',
         modulo: 'huespedes'
       },
-      {
-        to: '/cuenta-huesped',
-        label: 'Cuentas Huesped',
-        modulo: 'huespedes'
-      },
+      // {
+      //   to: '/cuenta-huesped',
+      //   label: 'Cuentas Huesped',
+      //   modulo: 'huespedes'
+      // },
       {
         to: '/movimiento-pasajeros-correspondiente',
         label: 'Mv. Pasajero corres',
@@ -132,5 +136,12 @@ export default [
       },
     ]
   },
+  {
+    to: '/bibliografia-hotel',
+    label: 'Blibliografia',
+    icon: mdiBookEducation ,
+    modulo: 'habitacion'
+  },
+ 
 
 ]

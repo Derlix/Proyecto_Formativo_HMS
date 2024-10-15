@@ -9,9 +9,49 @@ import ModalRegistrarEntrada from '@/components/ModalRegistrarEntrada.vue'
 import ModalRegistrarSalida from '@/components/ModalRegistrarSalida.vue'
 import { mdiBallotOutline, mdiBroom, mdiBed, mdiFileDocument, mdiBedEmpty, mdiWrenchClock, mdiBedClock, mdiCashLock, mdiCashCheck } from '@mdi/js';
 import { obtenerTodasHabitaciones } from '@/services/habitacionService';
+import { getAllFacturas } from '@/services/brayan_service/FacturacionService'
+import { obtenerTodasCuentasHuesped } from '@/services/cuentahuespedService'
 
 const showModal = ref(false)
 const showModalSalidas = ref(false)
+
+const depositosEmitidos = ref(0)
+const facturasEmitidas = ref(0)
+const facturasProceso = ref(0)
+// const DineroInicial = ref(0)
+// const DineroFinal = ref(0)
+
+const fetchCuentas = async () => {
+  try {
+    const response = await obtenerTodasCuentasHuesped()
+    const cuentas = response.data 
+    
+    if (Array.isArray(cuentas)) {
+      depositosEmitidos.value = cuentas.filter(
+        (c) => c.id_reserva.valor_deposito > 0
+      ).length
+    } else {
+      console.error('La respuesta no es un array:', cuentas)
+    }
+  } catch (error) {
+    console.error('Error al obtener cuentas:', error)
+  }
+}
+
+
+const fetchFacturas = async () => {
+  try {
+    const facturas = await getAllFacturas()
+    facturasEmitidas.value = facturas.filter(
+      (f) => f.estado === 'PAGADA'
+    ).length
+    facturasProceso.value = facturas.filter(
+      (f) => f.estado === 'PENDIENTE'
+    ).length
+  } catch (error) {
+    console.error('Error al obtener facturas:', error)
+  }
+}
 
 const habitaciones = reactive({
     totales: 0,
@@ -37,6 +77,8 @@ const fetchHabitaciones = async () => {
 };
 
 onMounted(() => {
+    fetchCuentas()
+    fetchFacturas()
     fetchHabitaciones();
 });
 
@@ -71,14 +113,14 @@ onMounted(() => {
 
             <SectionTitle first>Transacciones</SectionTitle>
             <div class="grid grid-cols-1 gap-4 lg:grid-cols-2 mt-4 text-white">
-                <CardBoxWidget :number="50" label="Pagos recibidos" :icon="mdiBed" :cardColor="'bg-emerald-500'" />
-                <CardBoxWidget :number="50" label="Depositos recibidos" :icon="mdiBedEmpty" :cardColor="'bg-emerald-500'" />
+                <CardBoxWidget :number="facturasEmitidas" label="Pagos recibidos" :icon="mdiBed" :cardColor="'bg-emerald-500'" />
+                <CardBoxWidget :number="depositosEmitidos" label="Depositos recibidos" :icon="mdiBedEmpty" :cardColor="'bg-emerald-500'" />
             </div>
 
             <SectionTitle first>Facturación</SectionTitle>
             <div class="grid grid-cols-1 gap-4 lg:grid-cols-2 mt-4 text-white">
-                <CardBoxWidget :number="50" label="Facturas emitidas" :icon="mdiFileDocument" :cardColor="'bg-neutral-500'" />
-                <CardBoxWidget :number="50" label="Facturas en proceso" :icon="mdiFileDocument" :cardColor="'bg-neutral-500'" />
+                <CardBoxWidget :number="facturasEmitidas" label="Facturas emitidas" :icon="mdiFileDocument" :cardColor="'bg-neutral-500'" />
+                <CardBoxWidget :number="facturasProceso" label="Facturas en proceso" :icon="mdiFileDocument" :cardColor="'bg-neutral-500'" />
             </div>
 
             <SectionTitle first>Caja</SectionTitle>
