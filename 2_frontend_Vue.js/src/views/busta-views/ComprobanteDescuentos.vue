@@ -9,20 +9,37 @@ import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import BaseButton from '@/components/BaseButton.vue';
 import BaseButtons from '@/components/BaseButtons.vue';
 import editarDescuentoModal from '@/components/arce_components/editarDescuentoModal.vue';
-import { info_descuentos, crear_descuento, actualizar_descuento, eliminar_descuento } from '@/services/arce_service/descuentoService';
-import { mdiBallotOutline } from '@mdi/js';
+import { info_descuentos, crear_descuento, actualizar_descuento, eliminar_descuento, autorizar_descuento } from '@/services/arce_service/descuentoService';
+import { mdiBallotOutline, mdiInformation } from '@mdi/js';
+
+import NotificationBar from '@/components/NotificationBar.vue';
 
 const form = ref({
   tipo_descuento: '',
   porcentaje_descuento: 0,
   fecha_aplicacion: new Date().toISOString(),
-  quien_aplico: '',
+  quien_aplico: '', 
 });
 
 const descuentos = ref([]);
 const errorMessage = ref('');
 const editingDiscountId = ref(null);
 const modalVisible = ref(false);
+const notificationMessage = ref('');
+const showNotification = ref(false);
+const notificationColor = ref('info');
+
+// Función para mostrar notificación
+const showNotificationMessage = (message, color) => {
+  notificationMessage.value = message;
+  notificationColor.value = color;
+  showNotification.value = true;
+
+  // Ocultar la notificación después de 3 segundos
+  setTimeout(() => {
+    showNotification.value = false;
+  }, 3000);
+};
 
 const submitForm = async () => {
   if (form.value.porcentaje_descuento < 0 || form.value.porcentaje_descuento > 100) {
@@ -31,26 +48,21 @@ const submitForm = async () => {
   }
 
   try {
-    const nuevoDescuento = {
-      tipo_descuento: form.value.tipo_descuento,
-      porcentaje_descuento: form.value.porcentaje_descuento,
-      fecha_aplicacion: form.value.fecha_aplicacion,
-      quien_aplico: form.value.quien_aplico,
-    };
+    const nuevoDescuento = { ...form.value };
 
     if (editingDiscountId.value) {
       await actualizar_descuento(editingDiscountId.value, nuevoDescuento);
-      errorMessage.value = 'Descuento actualizado correctamente.';
+      showNotificationMessage('Descuento actualizado correctamente.', 'success');
     } else {
       await crear_descuento(nuevoDescuento);
-      errorMessage.value = 'Descuento creado correctamente.';
+      showNotificationMessage('Descuento creado correctamente.', 'success');
     }
 
     await fetchDescuentos();
     resetForm();
   } catch (error) {
     console.error('Error al guardar descuento:', error);
-    errorMessage.value = 'Hubo un error al guardar el descuento. Intenta nuevamente.';
+    showNotificationMessage('Hubo un error al guardar el descuento. Intenta nuevamente.', 'danger');
   }
 };
 
@@ -85,10 +97,23 @@ const deleteDescuento = async (discountId) => {
     try {
       await eliminar_descuento(discountId);
       await fetchDescuentos();
-      errorMessage.value = 'Descuento eliminado correctamente.';
+      showNotificationMessage('Descuento eliminado correctamente.', 'success');
     } catch (error) {
       console.error('Error al eliminar descuento:', error);
-      errorMessage.value = 'Hubo un error al eliminar el descuento. Intenta nuevamente.';
+      showNotificationMessage('Hubo un error al eliminar el descuento. Intenta nuevamente.', 'danger');
+    }
+  }
+};
+
+const autorizarDescuento = async (discountId) => {
+  if (confirm('¿Quieres confirmar este descuento?')) {
+    try {
+      await autorizar_descuento(discountId, ""); // Enviamos un string vacío
+      await fetchDescuentos();
+      showNotificationMessage('Descuento autorizado correctamente.', 'success');
+    } catch (error) {
+      console.error('Error al autorizar descuento:', error);
+      showNotificationMessage('Hubo un error al autorizar el descuento. Intenta nuevamente.', 'danger');
     }
   }
 };
@@ -103,6 +128,7 @@ onMounted(fetchDescuentos);
       <SectionTitle>Registrar descuento</SectionTitle>
 
       <form @submit.prevent="submitForm" class="mt-6">
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <FormField label="Tipo de Descuento">
             <FormControl v-model="form.tipo_descuento" type="text" required />
@@ -120,6 +146,11 @@ onMounted(fetchDescuentos);
         </div>
 
         <p v-if="errorMessage" class="text-red-500">{{ errorMessage }}</p>
+
+        <NotificationBar class="mt-6" v-if="showNotification" :color="notificationColor" :icon="mdiInformation">
+          {{ notificationMessage }}
+        </NotificationBar>
+
       </form>
 
       <SectionTitle>Lista de Descuentos</SectionTitle>
@@ -129,7 +160,9 @@ onMounted(fetchDescuentos);
             <th class="text-left">Tipo de Descuento</th>
             <th class="text-left">Porcentaje</th>
             <th class="text-left">Fecha de Aplicación</th>
-            <th class="text-left">Aplicado Por</th>
+            <th class="text-left">Aplicó</th>
+            <th class="text-left">Autorizó</th>
+            <th class="text-left">Estado</th>
             <th class="text-left">Acciones</th>
           </tr>
         </thead>
@@ -139,18 +172,18 @@ onMounted(fetchDescuentos);
             <td>{{ descuento.porcentaje_descuento }}%</td>
             <td>{{ new Date(descuento.fecha_aplicacion).toLocaleDateString() }}</td>
             <td>{{ descuento.quien_aplico }}</td>
+            <td>{{ descuento.quien_autorizo ? descuento.quien_autorizo : 'Sin autorizar' }}</td>
+            <td>{{ descuento.autorizado === 1 ? 'Autorizado' : 'Pendiente' }}</td>
             <td>
               <BaseButton color="success" @click="editDescuento(descuento)" label="Editar" />
-            </td>
-            <td>
               <BaseButton color="danger" @click="deleteDescuento(descuento.id_descuento)" label="Eliminar" />
+              <BaseButton color="warning" @click="autorizarDescuento(descuento.id_descuento)" label="Autorizar" />
             </td>
           </tr>
         </tbody>
       </table>
 
-      <editarDescuentoModal :visible="modalVisible" :form="form" @update:visible="modalVisible = $event"
-        @save="submitForm" />
+      <editarDescuentoModal :visible="modalVisible" :form="form" @update:visible="modalVisible = $event" @save="submitForm" />
     </SectionMain>
   </LayoutAuthenticated>
 </template>

@@ -5,17 +5,13 @@ export const info_descuentos = async () => {
     try {
         const response = await api.get('/descuento/descuentos/get-all-discounts', {
             headers: {
-                'Authorization': `Bearer ${localStorage.getItem('access_token')}` // Incluye el token de autenticación
+                'Authorization': `Bearer ${localStorage.getItem('access_token')}`
             }
         });
-        console.log(response.data)
-        return response.data; // Asegúrate de devolver solo los datos
+        return response.data;
     } catch (error) {
-        if (error.response) {
-            throw error.response; // Devuelve el error original de la API
-        } else {
-            throw new Error('Error de red o de servidor');
-        }
+        console.error('Error al obtener descuentos:', error.response?.data || error);
+        throw error.response || new Error('Error de red o de servidor');
     }
 };
 
@@ -28,14 +24,10 @@ export const crear_descuento = async (descuento) => {
                 'Content-Type': 'application/json'
             }
         });
-        return response.data; // Retorna el descuento creado
+        return response.data;
     } catch (error) {
-        console.error('Error al crear descuento:', error); // Agrega un registro de error
-        if (error.response) {
-            throw error.response; // Devuelve el error original de la API
-        } else {
-            throw new Error('Error de red o de servidor');
-        }
+        console.error('Error al crear descuento:', error.response?.data || error);
+        throw error.response || new Error('Error de red o de servidor');
     }
 };
 
@@ -48,13 +40,10 @@ export const actualizar_descuento = async (discountId, descuento) => {
                 'Content-Type': 'application/json'
             }
         });
-        return response.data; // Retorna la respuesta de la actualización
+        return response.data;
     } catch (error) {
-        if (error.response) {
-            throw error.response; // Devuelve el error original de la API
-        } else {
-            throw new Error('Error de red o de servidor');
-        }
+        console.error('Error al actualizar descuento:', error.response?.data || error);
+        throw error.response || new Error('Error de red o de servidor');
     }
 };
 
@@ -66,13 +55,28 @@ export const eliminar_descuento = async (discountId) => {
                 'Authorization': `Bearer ${localStorage.getItem('access_token')}`
             }
         });
-        return response.data; // Retorna la respuesta de la eliminación
+        return response.data;
     } catch (error) {
-        if (error.response) {
-            throw error.response; // Devuelve el error original de la API
-        } else {
-            throw new Error('Error de red o de servidor');
-        }
+        console.error('Error al eliminar descuento:', error.response?.data || error);
+        throw error.response || new Error('Error de red o de servidor');
     }
 };
 
+// Función para autorizar un descuento
+export const autorizar_descuento = async (discountId, quien_autorizo) => {
+    try {
+        const response = await api.post(`/descuento/descuentos/authorize-discount/${discountId}`, {
+            quien_autorizo,
+            autorizado: 1
+        }, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error al autorizar descuento:', error.response?.data || error);
+        throw error.response || new Error('Error de red o de servidor');
+    }
+};
