@@ -30,13 +30,13 @@ export const obtenerTodasHabitaciones = async () => {
   try {
     const response = await api.get('/habitacion/get_all_rooms', {
       headers: {
-        'Authorization': `Bearer ${localStorage.getItem('access_token')}` // Incluye el token de autenticación
+        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
       }
     });
-    return response;
+    return response; // Asegúrate de retornar `response`
   } catch (error) {
     if (error.response) {
-      throw error.response; // Devuelve el error original de la API
+      throw error.response;
     } else {
       throw new Error('Error de red o de servidor');
     }
@@ -136,5 +136,36 @@ export const eliminarHabitacion = async (id_habitacion) => {
       console.error('Error de red o de servidor:', error.message);
       throw new Error('Error de red o de servidor');
     }
+  }
+};
+
+export const verificarNumeroHabitacion = async (numero_habitacion, id_habitacion = null) => {
+  try {
+    const response = await obtenerTodasHabitaciones();
+    const habitacionExiste = response.data.some(h =>
+      h.numero_habitacion === numero_habitacion && h.id_habitacion !== id_habitacion
+    );
+    return habitacionExiste;
+  } catch (error) {
+    if (error.response) {
+      throw error.response;
+    } else {
+      throw new Error('Error de red o de servidor');
+    }
+  }
+};
+
+export const obtenerHabitacionPorNumero = async (numeroHabitacion) => {
+  console.log("Buscando habitación con número:", numeroHabitacion);
+  try {
+    const response = await api.get(`/habitacion/get_room_by_numero/${encodeURIComponent(numeroHabitacion)}`, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('access_token')}` // Incluye el token de autenticación
+      }
+    });
+    return response.data; // Retorna los datos de la respuesta
+  } catch (error) {
+    console.error('Error al obtener la habitación por número:', error);
+    throw error; // Propaga el error para que se maneje en el componente
   }
 };

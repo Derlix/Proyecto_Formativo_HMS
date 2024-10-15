@@ -8,7 +8,6 @@
       <p><strong>Número de Habitación:</strong> {{ habitacion.numero_habitacion }}</p>
       <p><strong>Estado:</strong> {{ habitacion.estado }}</p>
       <p><strong>Piso:</strong> {{ habitacion.piso }}</p>
-      <p><strong>ID Usuario:</strong> {{ habitacion.id_usuario }}</p>
 
       <!-- Información de la categoría de la habitación -->
       <h3 class="text-lg font-semibold mt-4">Categoría</h3>
@@ -19,9 +18,14 @@
       <!-- Información de las características de la habitación -->
       <h3 class="text-lg font-semibold mt-4">Características</h3>
       <ul>
-        <li v-if="habitacion.caracteristicas">
-          <strong>{{ habitacion.caracteristicas.nombre_caracteristicas }}</strong>
-          (Adicional: {{ habitacion.caracteristicas.adicional }})
+        <!-- Si tiene características, mostrar la lista -->
+        <li v-if="habitacion.caracteristicas && habitacion.caracteristicas.length > 0" v-for="(caracteristica, index) in habitacion.caracteristicas" :key="index">
+          <strong>{{ caracteristica.nombre_caracteristicas }}</strong>
+          (adicional: {{ caracteristica.adicional }} )
+        </li>
+        <!-- Si no tiene características, mostrar un mensaje -->
+        <li v-else>
+          Sin características asignadas
         </li>
       </ul>
 
@@ -55,11 +59,11 @@ const close = () => {
 .modal-content {
   max-width: 600px;
   margin: auto;
-  background-color: white; /* Asegura que el fondo sea siempre blanco */
-  color: black; /* Asegura que el texto sea siempre negro */
+  background-color: white;
+  color: black;
 }
 
 .modal-overlay {
-  background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro con opacidad */
+  background-color: rgba(0, 0, 0, 0.5);
 }
 </style>
