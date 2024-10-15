@@ -136,12 +136,12 @@ export default [
       },
     ]
   },
-  {
-    to: '/bibliografia-hotel',
-    label: 'Blibliografia',
-    icon: mdiBookEducation ,
-    modulo: 'habitacion'
-  },
+  // {
+  //   to: '/bibliografia-hotel',
+  //   label: 'Blibliografia',
+  //   icon: mdiBookEducation ,
+  //   modulo: 'habitacion'
+  // },
  
 
 ]

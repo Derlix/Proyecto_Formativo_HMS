@@ -9,7 +9,8 @@ import {
   mdiThemeLightDark,
   mdiGithub,
   mdiReact,
-  mdiBell
+  mdiBell,
+  mdiHelp
 } from '@mdi/js'
 
 export default [
@@ -19,6 +20,11 @@ export default [
   //   label: 'Notificaciones',
   //   isDesktopNoLabel: true,
   // },
+  {
+    icon: mdiHelp,
+    label: 'Ayuda',
+    to: '/bibliografia-hotel'
+  },
   {
     isCurrentUser: true,
     label: 'Mi perfil',
