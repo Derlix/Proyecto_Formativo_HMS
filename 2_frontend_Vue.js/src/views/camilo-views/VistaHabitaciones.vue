@@ -8,7 +8,7 @@
         <!-- Botón para crear una nueva habitación -->
         <button
           @click="mostrarModalCrear"
-          class="bg-green-500 text-white px-4 py-2 rounded-md shadow-sm hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+          class="bg-green-700 text-white px-4 py-2 rounded-md shadow-sm hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
         >
           Crear Habitación
         </button>
@@ -52,6 +52,15 @@
       >
         <p>¿Estás seguro de que deseas eliminar esta habitación?</p>
       </CardBoxModal>
+
+      <!-- Modal para asignar características -->
+      <AsignarCaracteristicasModal
+        :visible="showCaracteristicasModal"
+        :habitacion="habitacionSeleccionada"
+        @close="showCaracteristicasModal = false"
+        @asignacionExitosa="handleAsignacionExitosa"
+      />
+
 
       <!-- Tabla de habitaciones -->
       <div class="w-full overflow-auto mb-4">
@@ -97,6 +106,13 @@
                     small
                     color="danger"
                   />
+                  <!-- Botón de Asignar Características -->
+                  <BaseButton
+                    @click="AsignarCaracteristicas(habitacion)"
+                    :icon="mdiPlus"
+                    small
+                    color="primary"
+                  />
                 </BaseButtons>
               </td>
             </tr>
@@ -130,9 +146,10 @@ import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import RoomModal from '@/components/juanca_components/RoomModal.vue';
 import RoomDetailsModal from '@/components/juanca_components/RoomDetailsModal.vue';
 import CardBoxModal from '@/components/CardBoxModal.vue';
+import AsignarCaracteristicasModal from '@/components/juanca_components/AsignarCaracteristicasModal.vue';
 import BaseButton from '@/components/BaseButton.vue';
 import BaseButtons from '@/components/BaseButtons.vue';
-import { mdiEye, mdiTrashCan, mdiNoteEdit } from '@mdi/js';
+import { mdiEye, mdiTrashCan, mdiNoteEdit, mdiPlus } from '@mdi/js';
 import { obtenerHabitacionesPaginadas, eliminarHabitacion, obtenerHabitacionPorNumero } from '@/services/juanca_service/habitacionService';
 
 const habitacion = ref([]);
@@ -140,13 +157,13 @@ const showModal = ref(false);
 const buscarHabitacion = ref('');
 const showDetailsModal = ref(false);
 const showConfirmModal = ref(false);
+const showCaracteristicasModal = ref(false);
 const habitacionSeleccionada = ref({});
 const habitacionDetalles = ref({});
 const habitacionAEliminar = ref(null);
 const totalPaginas = ref(0);
 const currentPage = ref(1);
 
-// Computed property to filter habitaciones based on the search input
 const habitacionesFiltradas = computed(() => {
   return habitacion.value.filter(h =>
     h.numero_habitacion.toString().includes(buscarHabitacion.value)
@@ -156,7 +173,6 @@ const habitacionesFiltradas = computed(() => {
 const obtenerHabitaciones = async (page = 1) => {
   try {
     const response = await obtenerHabitacionesPaginadas(page, 10);
-    console.log("Respuesta de la API:", response); // Para ver la respuesta completa
     habitacion.value = response.habitacion;
     totalPaginas.value = response.total_paginas;
   } catch (error) {
@@ -164,38 +180,27 @@ const obtenerHabitaciones = async (page = 1) => {
   }
 };
 
-
 const buscarHabitacionPorNumero = async () => {
-  const numeroHabitacion = buscarHabitacion.value.trim(); // Limpiar espacios
+  const numeroHabitacion = buscarHabitacion.value.trim();
 
   if (numeroHabitacion) {
     try {
       const response = await obtenerHabitacionPorNumero(numeroHabitacion);
-      console.log('Respuesta de la API al buscar habitación:', response); // Para depuración
-
       if (response && response.habitacion && response.habitacion.length > 0) {
-        // Si se encuentra la habitación, la asignamos
         habitacion.value = [response.habitacion[0]];
-
-        // Establece la página actual en 1
-        currentPage.value === 1;
-
-        // Llama a la función para cargar todas las habitaciones de la primera página
+        currentPage.value = 1;
         obtenerHabitaciones(1);
       } else {
-        // Si no se encuentra la habitación, reinicia la lista
         habitacion.value = [];
       }
     } catch (error) {
       console.error('Error al obtener la habitación:', error.message);
-      habitacion.value = []; // Reinicia la lista si hay error
+      habitacion.value = [];
     }
   } else {
-    // Si el campo de búsqueda está vacío, carga todas las habitaciones normalmente
     obtenerHabitaciones();
   }
 };
-
 
 const verDetalles = (habitacion) => {
   habitacionDetalles.value = habitacion;
@@ -237,7 +242,6 @@ const mostrarModalCrear = () => {
 };
 
 const guardarHabitacion = () => {
-  // Llamar la función de API para guardar o actualizar habitación
   obtenerHabitaciones();
   cerrarModal();
 };
@@ -247,8 +251,18 @@ const cerrarModal = () => {
   habitacionSeleccionada.value = {};
 };
 
+const AsignarCaracteristicas = (habitacion) => {
+  habitacionSeleccionada.value = habitacion;
+  showCaracteristicasModal.value = true;
+};
+
+const handleAsignacionExitosa = async () => {
+  alert('Características asignadas exitosamente.');
+  showCaracteristicasModal.value = false;
+  await obtenerHabitaciones();
+};
+
 onMounted(() => {
-  obtenerHabitaciones();
+  obtenerHabitaciones(currentPage.value);
 });
 </script>
-

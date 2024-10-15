@@ -3,7 +3,7 @@ import api from '../api'; // Asegúrate de que este path sea correcto
 // Función para obtener todas las características
 export const obtenerTodasCaracteristicas = async () => {
   try {
-    const response = await api.post('caracteristicas/get-all-features/', {}, {
+    const response = await api.get('caracteristicas/get-all-features/', {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('access_token')}` // Incluye el token de autenticación
       }
@@ -14,6 +14,7 @@ export const obtenerTodasCaracteristicas = async () => {
     throw error;
   }
 };
+
 
 // Función para obtener todas las habitaciones por nombre
 export const obtenerHabitacionesPorNombre = async (nombreHabitacion) => {
@@ -51,17 +52,21 @@ export const crearCaracteristica = async (nombreCaracteristica, adicional) => {
 // Función para crear una relación entre habitación y característica
 export const crearRelacionHabitacionCaracteristica = async (idHabitacion, idCaracteristica) => {
   try {
-    const response = await api.post('habitacion-carac/create', {
-      id_habitacion: idHabitacion,
-      id_caracteristica: idCaracteristica,
-    }, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('access_token')}` // Incluye el token de autenticación
+    const response = await api.post(
+      'habitacion-carac/create', // Asegúrate de que la ruta sea la correcta
+      {
+        id_habitacion: idHabitacion,
+        id_caracteristica: idCaracteristica,
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}` // Incluye el token de autenticación
+        }
       }
-    });
-    return response.data; // Retorna los datos de la respuesta
+    );
+    return response.data; // Retorna los datos de la respuesta si es necesario
   } catch (error) {
-    console.error('Error al crear la relación entre habitación y característica:', error);
+    console.error('Error al crear la relación habitación-característica:', error);
     throw error;
   }
 };
