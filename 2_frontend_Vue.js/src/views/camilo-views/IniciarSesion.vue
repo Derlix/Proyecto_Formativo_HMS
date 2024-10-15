@@ -61,7 +61,7 @@ const handleLogin = async () => {
                 localStorage.removeItem('email')
             }
             if (authStore.user.usuario_rol === 'SuperAdmin' || authStore.user.usuario_rol === 'JefeRecepcion') {
-                router.push('/dashboard')
+                router.push('/inicio-jefe-recepcionista')
             } else if (authStore.user.usuario_rol === 'Recepcionista') {
                 router.push('/dashboard')
             }else if (authStore.user.usuario_rol === 'Cajero') {
