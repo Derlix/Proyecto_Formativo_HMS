@@ -312,6 +312,15 @@ const routes = [
     component: () => import('@/views/felipe-views/CuentaHuespedView.vue'),
     meta: { requiresAuth: true}
   },
+  {
+    meta: {
+      title: 'Bibliografia Hotel'
+    },
+    path: '/bibliografia-hotel',
+    name: 'bibliografia Hotel',
+    component: () => import('@/views/felipe-views/BibliografiaHotel.vue'),
+    meta: { requiresAuth: true}
+  },
 
   
 ]
