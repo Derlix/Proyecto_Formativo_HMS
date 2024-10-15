@@ -17,3 +17,13 @@ export const getAllHistorialReservas = async () => {
         }
     }
 };
+
+export const getHistorialReservasByPage = async (page, pageSize = 10) => {
+    try {
+      const response = await api.get(`/reservas/paginadas/huesped?page=${page}&page_size=${pageSize}`);
+      return response;
+    } catch (error) {
+      console.error('Error al obtener el historial de reservas paginadas:', error);
+      throw error.response.data.detail;
+    }
+  };
