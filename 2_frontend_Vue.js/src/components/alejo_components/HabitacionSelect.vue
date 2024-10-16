@@ -92,7 +92,7 @@ export default {
           };
           console.log("Habitacion-compuesta", habitacionCompuesta);
      
-        emit('habitacionCompuesta ', habitacionCompuesta);
+        emit('habitacionCompuesta', habitacionCompuesta);
       }
       dropdownOpen.value = false; 
 
