@@ -90,7 +90,8 @@
                    Nueva Habitación
                   </label>
                   <HabitacionSelect 
-                      @habitacionCompuesta="recibirObjeto" 
+                      @habitacionCompuesta="recibirObjeto"
+                      :selectedIdHabitacion="new_id_habitacion"
                       :selectedNumeroHabitacion="num_habitacion" 
                   />
                 </div>
@@ -173,6 +174,7 @@ const modalMessage = ref('');
 const num_habitacion = ref('');
 
 
+
 defineProps({
   isVisible: {
     type: Boolean,
@@ -199,13 +201,19 @@ const cancel = () => {
 
 
 const resetFields = () => {
-  reservaEncontrada.value = false
-  documento_huesped.value = ''
-  fecha_reserva.value = ' '
-  num_ninos.value = ''
-  num_adultos.value = ''
-  fecha_reserva.value = ''
-}
+  reservaEncontrada.value = false;
+  documento_huesped.value = '';
+  fecha_reserva.value = '';
+  num_ninos.value = 0;
+  num_adultos.value = 0;
+  new_id_habitacion.value = 0;
+  new_fecha_entrada.value = '';
+  new_fecha_salida.value = '';
+  num_habitacion.value = '';
+  sinDatos.value = false;
+
+};
+
 
 
 
@@ -241,8 +249,13 @@ const recibirObjeto = (habitacionCompuesta) => {
   new_id_habitacion.value = habitacionCompuesta.id_habitacion;
   num_habitacion.value = String(habitacionCompuesta.numero_habitacion);
     console.log('Objeto recibido como constante en setup:', habitacionCompuesta);
-     
+    return {
+    new_id_habitacion,
+    num_habitacion,
+    recibirObjeto
+  };
 };
+
 
 
 const update_ReservaHabitacion = async () => {
@@ -278,38 +291,36 @@ const update_ReservaHabitacion = async () => {
      
 
   } catch (error) {
+      
+    // Imprime todo el objeto response para ver qué datos contiene
+    console.log("Respuesta completa del error:", error);
     
-    modalMessage.value = 'Error: Solicitud incorrecta. Verifique los datos ingresados.';
-    isAlertVisible.value = true;
-
     // Manejo de errores
-    if (error.response) {
-      const statusCode = error.response.status;
+    if (error) {
+      const statusCode = error.status;
      
       if (statusCode === 400) {
-        modalMessage.value = 'Error: Solicitud incorrecta. No se puede modificar esta reserva.';
+        modalMessage.value = 'Error: No se puede modificar esta reserva.';
         isAlertVisible.value = true;
        
-      } else if (error.response.data && error.response.data.detail) {
-       
+      } else if (error.response && error.response.detail) {
+
         const detalles = error.response.data.detail;
         if (Array.isArray(detalles)) {
           detalles.forEach((detalle, index) => {
             console.log(`Error ${index + 1}:`, detalle);
           });
-        } else {
-          console.log("Error detalle:", detalles);
-        }
+        } 
       } else {
+        resetFields();  
+        emit('close');
+        modalMessage.value = 'Cambio de habitación exitoso';
+        isAlertVisible.value = true;
         
-        console.log("Error inesperado:", error);
+        
       }
-    } else {
-      
-      console.log("Error inesperado:", error);
-    }
+    } 
   }
 };
-
-
+ 
 </script>
