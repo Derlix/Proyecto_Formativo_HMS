@@ -97,3 +97,26 @@ export const changePassword = async (email, newPassword, code) => {
     }
   }
 };
+
+// Funcion para cambiar codigo de hotel /login/change-hotel
+export const changeHotel = async (email, passhash, id_hotel) => {
+  try {
+    const response = await api.post('/login/change-hotel', {
+      email,
+      passhash,
+      id_hotel
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        'accept': 'application/json'
+      }
+    });
+    return response;
+  } catch (error) {
+    if (error.response) {
+      throw error;
+    } else {
+      throw new Error('Error de red o de servidor');
+    }
+  }
+};
