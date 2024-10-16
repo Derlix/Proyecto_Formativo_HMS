@@ -82,77 +82,75 @@ onMounted(() => {
     <SectionMain>
       <TitleIconOnly :icon="mdiBallotOutline" title="Manejo de caja" />
 
-      <CardBox class="mt-6">
+      <CardBox class="mt-6 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-200 shadow-lg rounded-lg p-4">
         <div class="flex justify-between text-lg font-bold">
-          <h1>Dinero inicial: $120000</h1>
-          <h1>Dinero final en caja: $180000</h1>
+          <h1>Dinero inicial: <span class="text-green-600 dark:text-green-400">$120000</span></h1>
+          <h1>Dinero final en caja: <span class="text-green-600 dark:text-green-400">$180000</span></h1>
         </div>
       </CardBox>
 
-      <div class="grid grid-cols-1 gap-4 lg:grid-cols-3 mb-6 mt-4 text-white">
+      <div class="grid grid-cols-1 gap-4 lg:grid-cols-3 mb-6 mt-4 text-gray-100 dark:text-gray-800">
         <CardBoxWidget
           :number="facturasEmitidas"
           label="Pagos recibidos"
           :icon="mdiCurrencyUsd"
-          :cardColor="'bg-green-500'"
+          :cardColor="'bg-green-400 dark:bg-green-600'"
         />
         <CardBoxWidget
           :number="depositosEmitidos"
           label="Depósitos recibidos"
           :icon="mdiCash"
-          :cardColor="'bg-sky-500'"
+          :cardColor="'bg-sky-400 dark:bg-sky-600'"
         />
         <CardBoxWidget
           :number="facturasEmitidas"
           label="Facturas emitidas"
           :icon="mdiFileDocument"
-          :cardColor="'bg-blue-950'"
+          :cardColor="'bg-blue-700 dark:bg-blue-700'"
         />
       </div>
 
-      <div class="flex gap-4 text-white">
+      <div class="flex gap-4 text-gray-100 dark:text-gray-800">
         <CardBoxWidget
           class="flex-1"
           :number="facturasProceso"
-          label="Facturas en proceso recibidos"
+          label="Facturas en proceso"
           :icon="mdiInboxArrowDown"
-          :cardColor="'bg-amber-500'"
+          :cardColor="'bg-amber-400 dark:bg-amber-600'"
         />
         <CardBoxWidget
           class="flex-1"
           :number="habitacionesMantenimiento"
           label="Habitaciones en mantenimiento"
           :icon="mdiTools"
-          :cardColor="'bg-red-500'"
+          :cardColor="'bg-red-400 dark:bg-red-600'"
         />
       </div>
 
-      <div class="text-center w-1/2 mt-8">
-        <CardBox class="shadow-md">
-          <SectionTitle>Registro Fondos Caja de Recepción</SectionTitle>
-          <div class="grid grid-cols-2 gap-4">
+      <div class="text-center w-3/4 mt-8 mx-auto">
+        <CardBox class="shadow-lg bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-200 rounded-lg p-6 ">
+          <h2 class="text-center text-2xl mb-5">Registro Fondos Caja de Recepción</h2>
+          <div class="grid grid-cols-2 gap-4 mt-3">
             <button 
-            @click="showModalRegistrarFondos = true"
-            class="bg-blue-600 h-12 rounded-lg font-bold hover:bg-blue-900 text-white">
+              class="bg-blue-600 hover:bg-blue-800 dark:bg-blue-700 dark:hover:bg-blue-900 text-white h-12 rounded-lg font-bold transition duration-300 ease-in-out shadow-md transform hover:scale-105">
               Registrar Fondos
             </button>
-            <ModalRegistrarFondos :visible="showModalRegistrarFondos" @cerrar="showModalRegistrarFondos = false" />
-            <button class="bg-blue-600 h-12 rounded-lg font-bold hover:bg-blue-900 text-white">
+            <button class="bg-blue-600 hover:bg-blue-800 dark:bg-blue-700 dark:hover:bg-blue-900 text-white h-12 rounded-lg font-bold transition duration-300 ease-in-out shadow-md transform hover:scale-105">
               Ver todos los registros
             </button>
-            <button class="bg-blue-600 h-12 rounded-lg font-bold hover:bg-blue-900 text-white">
+            <button class="bg-blue-600 hover:bg-blue-800 dark:bg-blue-700 dark:hover:bg-blue-900 text-white h-12 rounded-lg font-bold transition duration-300 ease-in-out shadow-md transform hover:scale-105">
               Modificar Registro
             </button>
-            <button class="bg-blue-600 h-12 rounded-lg font-bold hover:bg-blue-900 text-white">
+            <button class="bg-red-600 hover:bg-red-900 dark:bg-red-700 dark:hover:bg-red-900 text-white h-12 rounded-lg font-bold transition duration-300 ease-in-out shadow-md transform hover:scale-105">
               Eliminar Registro
             </button>
           </div>
         </CardBox>
       </div>
-
-      <div class="flex justify-end mt-5">
-        <button class="bg-green-500 text-white py-2 px-4 rounded m-1">¿Necesitas ayuda?</button>
-      </div>
+      
+      
+      
     </SectionMain>
   </LayoutAuthenticated>
 </template>
+

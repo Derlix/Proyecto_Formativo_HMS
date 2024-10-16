@@ -314,6 +314,14 @@ const routes = [
   },
   {
     meta: {
+      title: 'Cuenta Huesped'
+    },
+    path: '/cambiarhotel',
+    name: 'cambiar hotel',
+    component: () => import('@/views/busta-views/CambiarHotel.vue'),
+  },
+  {
+    meta: {
       title: 'Bibliografia Hotel'
     },
     path: '/bibliografia-hotel',

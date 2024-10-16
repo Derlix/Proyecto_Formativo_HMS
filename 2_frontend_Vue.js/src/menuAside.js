@@ -101,7 +101,7 @@ export default [
     to: '/control-usuarios',
     label: 'Control Usuarios',
     icon: mdiAccountGroup,
-    modulo: 'usuarios'
+    modulo: 'control_usuarios'
   },
 
   {

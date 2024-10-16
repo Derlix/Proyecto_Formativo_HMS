@@ -51,72 +51,77 @@ onMounted(() => {
 
 
 <template>
-  <LayoutAuthenticated>
-    <sectionMain>
-      <TitleIconOnly :icon="mdiBallotOutline" title="Estado de habitaciones" />
-
+    <LayoutAuthenticated>
+      <SectionMain>
+        <TitleIconOnly :icon="mdiBallotOutline" title="Estado de habitaciones" />
+  
+        <!-- Estadísticas de habitaciones -->
         <div class="grid grid-cols-1 gap-6 lg:grid-cols-3 mt-6">
           <CardBoxWidget
             :number="totalHabitaciones"
             label="Habitaciones totales"
             :icon="mdiBed"
-            :cardColor="'bg-blue-950'"
-            :color="'text-white'"
+            :cardColor="'bg-gray-800 dark:bg-gray-400'"
+            :color="'text-gray-100 dark:text-gray-900'"
           />
           <CardBoxWidget
             :number="habitacionesActivas"
             label="Habitaciones disponibles"
             :icon="mdiDoorOpen"
-            :cardColor="'bg-green-400'"
-            :color="'text-white'"
+            :cardColor="'bg-green-400 dark:bg-green-500'"
+            :color="'text-gray-100 dark:text-gray-900'"
           />
           <CardBoxWidget
             :number="habitacionesMantenimiento"
             label="Habitaciones en limpieza"
             :icon="mdiSprayBottle"
-            :cardColor="'bg-sky-400'"
-            :color="'text-white'"
-            
+            :cardColor="'bg-blue-400 dark:bg-blue-600'"
+            :color="'text-gray-100 dark:text-gray-900'"
           />
           <CardBoxWidget
             :number="habitacionesOcupadas"
             label="Habitaciones ocupadas"
             :icon="mdiDoorClosed"
-            :cardColor="'bg-yellow-500'"
-            :color="'text-white'"
+            :cardColor="'bg-yellow-400 dark:bg-yellow-600'"
+            :color="'text-gray-100 dark:text-gray-900'"
           />
           <CardBoxWidget
             :number="habitacionesOperacion"
             label="Habitaciones en operación"
             :icon="mdiTools"
-            :cardColor="'bg-orange-600'"
-            :color="'text-white'"
+            :cardColor="'bg-orange-400 dark:bg-orange-600'"
+            :color="'text-gray-100 dark:text-gray-900'"
           />
           <CardBoxWidget
             :number="habitacionesInactivas"
             label="Habitaciones inactivas"
             :icon="mdiMinusCircle"
-            :cardColor="'bg-red-600'"
-            :color="'text-white'"
+            :cardColor="'bg-red-400 dark:bg-red-600'"
+            :color="'text-gray-100 dark:text-gray-900'"
           />
         </div>
-
-
-        <div class="grid grid-cols-1 gap-6 lg:grid-cols-1 mt-6">
-          <CardBox class="shadow-md">  
-            <h1 class="text-center m-4 font-medium text-xl">Check-In - Check-Out</h1>
-            <div class="grid grid-cols-1 gap-3 w-full lg:grid-cols-2">
-              <button @click="showModal = true" class="bg-blue-600 h-12 rounded-lg my-6 font-bold hover:bg-blue-900 text-white transition duration-300 ease-in-out py-2 px-6 shadow-lg transform hover:scale-105">Registrar Check-In</button>
-              <button @click="showModalSalidas = true" class="bg-blue-600 h-12 text-white rounded-lg my-6 font-bold hover:bg-blue-900 transition duration-300 ease-in-out py-2 px-6 shadow-lg transform hover:scale-105">Registrar Check-Out</button>
-
-              <ModalRegistrarEntrada :visible="showModal" @close="showModal = false" />
-              
-
-              <ModalRegistrarSalida :visible="showModalSalidas" @close="showModalSalidas = false"/>
-            </div>
-          </CardBox>
-        </div>
-    </sectionMain>
+  
+  
+      <!-- Check-In / Check-Out -->
+      <div class="grid grid-cols-1 gap-6 lg:grid-cols-1 mt-6">
+        <CardBox class="shadow-lg bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-200 rounded-lg p-6 transition-all duration-300 ease-in-out">
+          <h1 class="text-center font-medium text-xl mb-6">Check-In - Check-Out</h1>
+          <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+            <button
+              @click="showModal = true"
+              class="bg-blue-600 hover:bg-blue-700 text-white h-12 rounded-lg font-bold transition duration-300 ease-in-out shadow-md transform hover:scale-105">
+              Registrar Check-In
+            </button>
+            <button
+              @click="showModalSalidas = true"
+              class="bg-blue-600 hover:bg-blue-700  text-white h-12 rounded-lg font-bold transition duration-300 ease-in-out shadow-md transform hover:scale-105">
+              Registrar Check-Out
+            </button>
+            <ModalRegistrarEntrada :visible="showModal" @close="showModal = false" />
+            <ModalRegistrarSalida :visible="showModalSalidas" @close="showModalSalidas = false" />
+          </div>
+        </CardBox>
+      </div>
+    </SectionMain>
   </LayoutAuthenticated>
 </template>
-

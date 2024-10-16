@@ -126,8 +126,6 @@
     </div>
   </div>
 
-
-
   <!-- Modal de éxito -->
   <ModalAlert
     :visible="showSuccess"
@@ -152,7 +150,7 @@
 <script setup>
 import { ref } from 'vue'
 import { createHuesped } from '@/services/huespedService'
-import ModalAlert from '../ModalAlert.vue';
+import ModalAlert from '../ModalAlert.vue'
 
 const props = defineProps({
   visible: Boolean
@@ -184,11 +182,23 @@ const closeError = () => {
   emit('close')
 }
 
-
 const cerrarModal = () => {
   emit('close')
 }
 
+// Función para resetear los campos
+const resetFields = () => {
+  huesped.value = {
+    nombre_completo: '',
+    tipo_documento: 'CC',  // Valor por defecto si es necesario
+    numero_documento: '',
+    fecha_expedicion: '',
+    email: '',
+    telefono: '',
+    ocupacion: '',
+    direccion: ''
+  }
+}
 
 
 const crearhuesped = async () => {
@@ -203,7 +213,6 @@ const crearhuesped = async () => {
     !huesped.value.ocupacion ||
     !huesped.value.direccion
   ) {
-    console.error('Todos los campos son obligatorios')
     return
   }
 
@@ -213,7 +222,6 @@ const crearhuesped = async () => {
     .split('T')[0]
 
   try {
-    console.log('Datos del nuevo huésped:', huesped.value)
     const response = await createHuesped(
       huesped.value.nombre_completo,
       huesped.value.tipo_documento,
@@ -226,6 +234,7 @@ const crearhuesped = async () => {
     )
 
     cerrarModal()
+    resetFields()
     showSuccess.value = true
   } catch (error) {
     if (error.response) {

@@ -133,6 +133,10 @@ const handleLogin = async () => {
                 <div class="text-center m-2">
                     <router-link to="/registrar" class="text-xs sm:text-sm">¿Aún no tienes cuenta? Regístrate</router-link>
                 </div>
+
+                <div class="text-center m-2">
+                    <router-link to="/cambiarhotel" class="text-xs sm:text-sm">¿Elegiste el hotel equivocado? Cambia tu selección aquí</router-link>
+                </div>
             </CardBox>
         </SectionFullScreen>
     </LayoutGuest>
