@@ -59,9 +59,9 @@ onMounted(() => {
         <div class="grid grid-cols-1 gap-6 lg:grid-cols-3 mt-6">
           <CardBoxWidget
             :number="totalHabitaciones"
-            label="Habitaciones totales"
+            label="Habitcaionraes totales"
             :icon="mdiBed"
-            :cardColor="'bg-gray-800 dark:bg-gray-400'"
+            :cardColor="'bg-gy-800 dark:bg-gray-400'"
             :color="'text-gray-100 dark:text-gray-900'"
           />
           <CardBoxWidget
