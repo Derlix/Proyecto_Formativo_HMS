@@ -23,6 +23,8 @@ const form = ref({
   porcentaje_descuento: 0,
   fecha_aplicacion: new Date().toISOString(),
   quien_aplico: '',
+  quien_autorizo: '',
+  autorizado: 0,
 });
 
 const descuentos = ref([]);
