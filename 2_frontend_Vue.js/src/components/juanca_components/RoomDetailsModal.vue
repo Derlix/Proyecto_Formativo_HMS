@@ -74,12 +74,11 @@ const close = () => {
 const confirmarEliminacion = async (id_habitacion, id_caracteristica) => {
   try {
     await eliminarRelacionHabitacionCaracteristica(id_habitacion, id_caracteristica);
-    alert('Relación eliminada correctamente');
+    emit('alert', { message: 'Relación eliminada correctamente', type: 'success' });
     emit('habitacionActualizada');
     emit('close');
   } catch (error) {
-    console.error('Error eliminando la relación:', error);
-    alert('Ocurrió un error al eliminar la relación');
+    emit('alert', { message: 'Error al eliminar la relación', type: 'error' });
   }
 };
 

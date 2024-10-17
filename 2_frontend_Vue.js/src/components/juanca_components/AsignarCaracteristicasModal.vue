@@ -1,10 +1,10 @@
 <template>
   <div v-if="visible" class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto">
     <div class="bg-white rounded-lg shadow-lg p-6 w-96">
-      <h2 class="text-xl font-bold mb-4">Asignar Características</h2>
+      <h2 class="text-xl font-bold mb-4 text-black">Asignar Características</h2>
       <div class="mb-4">
-        <label class="block text-sm font-medium">Características</label>
-        <select v-model="caracteristicasSeleccionadas" multiple class="mt-1 block w-full border border-gray-300 rounded-md">
+        <label class="block text-sm font-medium text-black">Características</label>
+        <select v-model="caracteristicasSeleccionadas" multiple class="mt-1 block w-full border border-gray-300 rounded-md text-black">
           <option
             v-for="caracteristica in caracteristicasDisponibles"
             :key="caracteristica.id_caracteristica"
@@ -41,7 +41,6 @@ const props = defineProps({
 const emit = defineEmits(['close', 'asignar', 'asignacionExitosa']);
 const caracteristicasDisponibles = ref([]);
 const caracteristicasSeleccionadas = ref([]);
-const modalConfirmacionVisible = ref(false);
 
 // Cargar características disponibles
 const cargarCaracteristicas = async () => {
@@ -74,3 +73,9 @@ onMounted(() => {
   cargarCaracteristicas();
 });
 </script>
+
+<style scoped>
+.text-black {
+  color: black;
+}
+</style>
