@@ -16,21 +16,6 @@ export const obtenerTodasCaracteristicas = async () => {
 };
 
 
-// Función para obtener todas las habitaciones por nombre
-export const obtenerHabitacionesPorNombre = async (nombreHabitacion) => {
-  try {
-    const response = await api.get(`/habitacion/get_all_rooms_by_name/?room_name=${encodeURIComponent(nombreHabitacion)}`, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('access_token')}` // Incluye el token de autenticación
-      }
-    });
-    return response.data; // Retorna los datos de la respuesta
-  } catch (error) {
-    console.error('Error al obtener las habitaciones por nombre:', error);
-    throw error; // Propaga el error para que se maneje en el componente
-  }
-};
-
 // Función para crear una nueva característica
 export const crearCaracteristica = async (nombreCaracteristica, adicional) => {
   try {
