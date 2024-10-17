@@ -262,9 +262,7 @@ onMounted(() => {
       </div>
 
       <div class="text-center w-3/4 mt-8 mx-auto">
-        <CardBox
-          class="shadow-lg bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-200 rounded-lg p-6"
-        >
+        <CardBox class="shadow-lg bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-200 rounded-lg p-6">
           <h2 class="text-center text-2xl mb-5">Registro Fondos Caja de Recepción</h2>
           <div class="grid grid-cols-2 gap-4 mt-3">
             <button
@@ -279,14 +277,19 @@ onMounted(() => {
             >
               Cerrar Fondos
             </button>
+          </div>
+          <!-- Contenedor adicional para el botón de administrar fondos -->
+          <div class="mt-3 flex justify-center ">
             <router-link
               to="/gestion-cajero"
               class="btn bg-blue-600 hover:bg-blue-800 dark:bg-blue-700 dark:hover:bg-blue-900 text-white h-12 rounded-lg font-bold transition duration-300 ease-in-out shadow-md transform hover:scale-105"
-              >Administrar fondos</router-link
             >
+              Administrar fondos
+            </router-link>
           </div>
         </CardBox>
       </div>
+      
     </SectionMain>
   </LayoutAuthenticated>
 </template>
