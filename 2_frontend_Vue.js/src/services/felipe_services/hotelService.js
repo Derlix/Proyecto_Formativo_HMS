@@ -70,7 +70,7 @@ export const createHotel = async (nombre, ubicacion, direccion, telefono) => {
 
     export const updateHotel = async (hotel_id,nombre,ubicacion,direccion,telefono) => {
       try {
-        const response = await api.put(`/hoteles/hoteles/update/?hotel_id=${hotel_id}`, {
+        const response = await api.put(`/hoteles/hoteles/update/${hotel_id}`, {
           nombre: nombre,
           ubicacion: ubicacion,
           direccion: direccion,
