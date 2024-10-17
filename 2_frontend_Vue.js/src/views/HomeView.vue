@@ -59,44 +59,44 @@ onMounted(() => {
         <div class="grid grid-cols-1 gap-6 lg:grid-cols-3 mt-6">
           <CardBoxWidget
             :number="totalHabitaciones"
-            label="Habitcaionraes totales"
+            label="Habitaciones totales"
             :icon="mdiBed"
-            :cardColor="'bg-gy-800 dark:bg-gray-400'"
+            :cardColor="'bg-blue-800 dark:bg-blue-400'"
             :color="'text-gray-100 dark:text-gray-900'"
           />
           <CardBoxWidget
             :number="habitacionesActivas"
             label="Habitaciones disponibles"
             :icon="mdiDoorOpen"
-            :cardColor="'bg-green-400 dark:bg-green-500'"
+            :cardColor="'bg-green-600 dark:bg-green-500'"
             :color="'text-gray-100 dark:text-gray-900'"
           />
           <CardBoxWidget
             :number="habitacionesMantenimiento"
             label="Habitaciones en limpieza"
             :icon="mdiSprayBottle"
-            :cardColor="'bg-blue-400 dark:bg-blue-600'"
+            :cardColor="'bg-blue-500 dark:bg-blue-600'"
             :color="'text-gray-100 dark:text-gray-900'"
           />
           <CardBoxWidget
             :number="habitacionesOcupadas"
             label="Habitaciones ocupadas"
             :icon="mdiDoorClosed"
-            :cardColor="'bg-yellow-400 dark:bg-yellow-600'"
+            :cardColor="'bg-yellow-700 dark:bg-yellow-600'"
             :color="'text-gray-100 dark:text-gray-900'"
           />
           <CardBoxWidget
             :number="habitacionesOperacion"
             label="Habitaciones en operación"
             :icon="mdiTools"
-            :cardColor="'bg-orange-400 dark:bg-orange-600'"
+            :cardColor="'bg-orange-700 dark:bg-orange-600'"
             :color="'text-gray-100 dark:text-gray-900'"
           />
           <CardBoxWidget
             :number="habitacionesInactivas"
             label="Habitaciones inactivas"
             :icon="mdiMinusCircle"
-            :cardColor="'bg-red-400 dark:bg-red-600'"
+            :cardColor="'bg-red-700 dark:bg-red-600'"
             :color="'text-gray-100 dark:text-gray-900'"
           />
         </div>

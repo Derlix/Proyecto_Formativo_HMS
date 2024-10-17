@@ -24,6 +24,7 @@ import UsuariosView from '@/views/arias_views/UsuariosView.vue'
 import InformacionReserva from '@/views/arce-views/InformacionReserva.vue'
 import ComprobanteDeposito from '@/views/miguel-views/ComprobanteDeposito.vue'
 import AvancesEfectivo from '@/views/arce-views/AvancesEfectivo.vue'
+import GestionCajero from '@/views/miguel-views/GestionCajero.vue'
  
 
 const routes = [
@@ -43,6 +44,15 @@ const routes = [
     path: '/inicio-cajero',
     name: 'inicio_cajero',
     component: InicioCajero,
+    meta: { requiresAuth: true}
+  },
+  {
+    meta: {
+      title: 'GestonCajero'
+    },
+    path: '/gestion-cajero',
+    name: 'GestonCajero',
+    component: GestionCajero,
     meta: { requiresAuth: true}
   },
   {
