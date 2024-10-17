@@ -273,7 +273,7 @@ const generarPDF = () => {
   doc.text('TARJETA DE RESERVA', 14, 20); // Título
   doc.text('(HMS)', 45, 30); 
 
-  doc.setFont('helvetica', 'normal')
+  doc.setFont('helvetica', 'normal');
   doc.setFontSize(16);
 
   // Configuración de la tabla
@@ -321,7 +321,7 @@ const generarPDF = () => {
     }
   });
 
-  const imagePath = '@/assets/img/sena-agro.png'; // Ruta relativa de tu imagen en la carpeta 'public'
+  const imagePath = '/img/sena-agro.png'; // Ruta relativa de tu imagen en la carpeta 'public'
   
   // Cargar la imagen y luego agregarla al PDF
   const img = new Image();
