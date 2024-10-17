@@ -116,7 +116,7 @@ export default [
       },
       {
         to: '/informe-pasajeros',
-        label: 'Informe Habitaciones',
+        label: 'Informe Habita.',
         modulo: 'huespedes'
       },
       // {
