@@ -69,7 +69,7 @@ export const obtenerHabitacionesPaginadas = async (page = 1, pageSize = 10) => {
         'Authorization': `Bearer ${localStorage.getItem('access_token')}` // Incluye el token de autenticación
       }
     });
-    return response.data;
+    return response;
   } catch (error) {
     if (error.response) {
       console.error('Error de la API:', error.response.data);

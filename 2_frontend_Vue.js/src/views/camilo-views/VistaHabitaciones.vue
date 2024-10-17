@@ -3,6 +3,13 @@
     <div class="container mx-auto p-6">
       <h1 class="text-2xl font-bold mb-6">Lista de Habitaciones</h1>
 
+      <NotificationBar
+        v-if="isAlertVisible"
+        :color="colorAlert"
+        :description="modalMessage"
+        :visible="isAlertVisible"
+      />
+
       <!-- Contenedor para alinear el input y el botón -->
       <div class="flex items-center mb-4 space-x-4">
         <!-- Botón para crear una nueva habitación -->
@@ -14,14 +21,14 @@
         </button>
         <!-- Campo de búsqueda con placeholder -->
         <div class="w-full">
-          <label for="numero_habitacion" class="block text-sm font-medium overflow-auto w-full">Buscar habitación</label>
+          <label for="numero_habitacion" class="block text-sm font-medium overflow-auto w-full ">Buscar habitación</label>
           <input
             id="numero_habitacion"
             v-model="buscarHabitacion"
             @input="buscarHabitacionPorNumero"
             type="text"
             placeholder="Ingrese el número de habitación"
-            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 text-black"
           />
         </div>
       </div>
@@ -32,7 +39,9 @@
         :habitacion="habitacionSeleccionada"
         @close="cerrarModal"
         @save="guardarHabitacion"
+        @roomSaved="habitacionSeleccionada ? mostrarNotificacion('Habitación editada exitosamente', 'success') : mostrarNotificacion('Habitación creada exitosamente', 'success')"
       />
+
 
       <!-- Modal para mostrar detalles de la habitación -->
       <RoomDetailsModal
@@ -147,6 +156,7 @@ import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import RoomModal from '@/components/juanca_components/RoomModal.vue';
 import RoomDetailsModal from '@/components/juanca_components/RoomDetailsModal.vue';
 import CardBoxModal from '@/components/CardBoxModal.vue';
+import NotificationBar from '@/components/alejo_components/NotificationBar.vue';
 import AsignarCaracteristicasModal from '@/components/juanca_components/AsignarCaracteristicasModal.vue';
 import BaseButton from '@/components/BaseButton.vue';
 import BaseButtons from '@/components/BaseButtons.vue';
@@ -164,6 +174,10 @@ const habitacionDetalles = ref({});
 const habitacionAEliminar = ref(null);
 const totalPaginas = ref(0);
 const currentPage = ref(1);
+const isAlertVisible = ref(false);
+const modalMessage = ref('');
+const colorAlert = ref('');
+
 
 const habitacionesFiltradas = computed(() => {
   return habitacion.value.filter(h =>
@@ -178,6 +192,12 @@ const obtenerHabitaciones = async (page = 1) => {
     totalPaginas.value = response.total_paginas;
   } catch (error) {
     console.error("Error al obtener las habitaciones:", error.message);
+    isAlertVisible.value = true;
+    colorAlert.value = 'danger';
+    modalMessage.value = 'Error al obtener las habitaciones';
+    setTimeout(() => {
+    isAlertVisible.value = false;
+  }, 3000);
   }
 };
 
@@ -196,6 +216,12 @@ const buscarHabitacionPorNumero = async () => {
       }
     } catch (error) {
       console.error('Error al obtener la habitación:', error.message);
+      isAlertVisible.value = true;
+      colorAlert.value = 'danger';
+      modalMessage.value = 'Error al obtener la habitación';
+      setTimeout(() => {
+        isAlertVisible.value = false;
+      }, 3000);
       habitacion.value = [];
     }
   } else {
@@ -213,8 +239,20 @@ const eliminarHabitacionConfirmada = async () => {
     await eliminarHabitacion(habitacionAEliminar.value);
     showConfirmModal.value = false;
     habitacionAEliminar.value = null;
+    isAlertVisible.value = true;
+    colorAlert.value = 'success';
+    modalMessage.value = 'Habitación eliminada exitosamente';
+    setTimeout(() => {
+      isAlertVisible.value = false;
+    }, 3000);
     obtenerHabitaciones();
   } catch (error) {
+    isAlertVisible.value = true;
+    colorAlert.value = 'danger';
+    modalMessage.value = 'Error al eliminar, debe quitar caracteristicas antes de eliminar';
+    setTimeout(() => {
+      isAlertVisible.value = false;
+    }, 3000);
     console.error("Error al eliminar la habitación:", error.message);
   }
 };
@@ -222,6 +260,27 @@ const eliminarHabitacionConfirmada = async () => {
 const confirmarEliminacion = (id_habitacion) => {
   habitacionAEliminar.value = id_habitacion;
   showConfirmModal.value = true;
+  if (showConfirmModal == true) {
+    isAlertVisible.value = true;
+    colorAlert.value = 'success';
+    modalMessage.value = 'Habitación eliminada exitosamente';
+    setTimeout(() => {
+      isAlertVisible.value = false;
+    }, 3000);
+  }
+};
+
+const mostrarNotificacion = (message, color) => {
+  isAlertVisible.value = true;
+  colorAlert.value = color;
+  modalMessage.value = message;
+  setTimeout(() => {
+    isAlertVisible.value = false;
+  }, 3000);
+
+  setTimeout(() => {
+    isAlertVisible.value = false;
+  }, 3000);
 };
 
 const editarHabitacion = (habitacion) => {
@@ -243,6 +302,12 @@ const mostrarModalCrear = () => {
 };
 
 const guardarHabitacion = () => {
+  isAlertVisible.value = true;
+  colorAlert.value = 'success';
+  modalMessage.value = 'Habitación creada exitosamente';
+  setTimeout(() => {
+    isAlertVisible.value = false;
+  }, 3000);
   obtenerHabitaciones();
   cerrarModal();
 };
@@ -258,7 +323,12 @@ const AsignarCaracteristicas = (habitacion) => {
 };
 
 const handleAsignacionExitosa = async () => {
-  alert('Características asignadas exitosamente.');
+  isAlertVisible.value = true;
+  colorAlert.value = 'success';
+  modalMessage.value = 'Asignacion de caracteristicas exitosa';
+  setTimeout(() => {
+    isAlertVisible.value = false;
+  }, 3000);
   showCaracteristicasModal.value = false;
   await obtenerHabitaciones();
 };
@@ -267,8 +337,13 @@ const actualizarHabitaciones = () => {
     obtenerHabitaciones();
 };
 
-
 onMounted(() => {
   obtenerHabitaciones(currentPage.value);
 });
 </script>
+
+<style scoped>
+.text-black {
+  color: black;
+}
+</style>

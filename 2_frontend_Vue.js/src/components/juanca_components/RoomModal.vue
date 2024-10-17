@@ -3,11 +3,12 @@
     <div :class="modalBackgroundClass" class="w-full max-w-lg mx-auto rounded-lg shadow-lg p-6">
       <h2 class="text-2xl font-bold mb-4">{{ isEditing ? 'Editar' : 'Crear' }} Habitación</h2>
 
-      <CardBox v-if="errorMessage" class="bg-red-500 md:decoration-red-500 mb-4 text-center">
-        <template #default>
-          <p class="text-red-600 font-bold text-xl">{{ errorMessage }}</p>
-        </template>
-      </CardBox>
+      <NotificationBar
+        v-if="isAlertVisible"
+        :color="colorAlert"
+        :description="modalMessage"
+        :visible="isAlertVisible"
+      />
 
       <form @submit.prevent="guardarHabitacion">
         <div class="mb-4">
@@ -85,11 +86,14 @@ import { ref, computed, watch, onMounted, nextTick } from 'vue';
 import { crearHabitacion, actualizarHabitacion, verificarNumeroHabitacion } from '@/services/juanca_service/habitacionService';
 import { useMainStore } from '@/stores/main';
 import { obtenerCategoriasHabitacion } from '@/services/juanca_service/categoriaService';
+import NotificationBar from '@/components/alejo_components/NotificationBar.vue';
 
 const mainStore = useMainStore();
 const userID = computed(() => mainStore.userID);
 const isEditing = ref(false);
-const errorMessage = ref(''); // Para manejar los mensajes de error
+const isAlertVisible = ref(false);
+const modalMessage = ref('');
+const colorAlert = ref('');
 
 const props = defineProps({
   visible: Boolean,
@@ -151,7 +155,9 @@ const modalBackgroundClass = computed(() => {
 
 const close = () => {
   emit('close');
-  errorMessage.value = ''; // Reiniciar mensaje de error al cerrar
+  isAlertVisible.value = false;
+  colorAlert.value = '';
+  modalMessage.value = ''
 };
 
 const guardarHabitacion = async () => {
@@ -163,13 +169,17 @@ const guardarHabitacion = async () => {
 
     // Si el número de la habitación ya existe y estamos creando una nueva
     if (!isEditing.value && habitacionExiste) {
-      errorMessage.value = 'El número de habitación ya existe.'; // Mensaje para creación
+      isAlertVisible.value = true;
+      colorAlert.value = 'danger';
+      modalMessage.value = 'El número de habitación ya existe.';
       return;
     }
 
     // Si el número de la habitación ya existe en otra habitación durante la edición
     if (isEditing.value && habitacionExiste) {
-      errorMessage.value = 'El número de habitación ya existe en otra habitación.'; // Mensaje para edición
+      isAlertVisible.value = true;
+      colorAlert.value = 'danger';
+      modalMessage.value = 'El número de habitación ya existe en otra habitación.';
       return;
     }
 
@@ -182,6 +192,10 @@ const guardarHabitacion = async () => {
         habitacionData.numero_habitacion,
         habitacionData.id_categoria_habitacion
       );
+      isAlertVisible.value = true;
+      colorAlert.value = 'success';
+      modalMessage.value = 'Habitación editada exitosamente';
+
     } else {
       await crearHabitacion(
         habitacionData.estado,
@@ -189,6 +203,10 @@ const guardarHabitacion = async () => {
         habitacionData.numero_habitacion,
         habitacionData.id_categoria_habitacion
       );
+
+      isAlertVisible.value = true;
+      colorAlert.value = 'success';
+      modalMessage.value = 'Habitación creada exitosamente';
     }
 
     emit('save');
@@ -196,9 +214,13 @@ const guardarHabitacion = async () => {
   } catch (error) {
     // Verificar si el error es de tipo IntegrityError y mostrar el mensaje correspondiente
     if (error.response?.data?.detail?.includes('Duplicate entry')) {
-      errorMessage.value = 'El número de habitación ya existe. Por favor, elige otro.'; // Mensaje específico para el error de duplicado
+      isAlertVisible.value = true;
+      colorAlert.value = 'danger';
+      modalMessage.value = 'El número de habitación ya existe. Por favor, elige otro.';
     } else {
-      errorMessage.value = `Error al guardar la habitación: ${error.message}`; // Mensaje genérico para otros errores
+      isAlertVisible.value = true;
+      colorAlert.value = 'danger';
+      modalMessage.value = `Error al guardar la habitación: ${error.message}`; // Corregido para usar template literals
     }
   }
 };
