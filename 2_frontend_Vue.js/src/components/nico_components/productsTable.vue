@@ -103,6 +103,14 @@ const cancelDelete = () => {
     activarModalDelete.value.visible = false;
 };
 
+const formatCurrency = (value) => {
+    return new Intl.NumberFormat('es-CO', {
+        style: 'currency',
+        currency: 'COP',
+        minimumFractionDigits: 0,
+    }).format(value);
+};
+
 onMounted(() => {
     fetchProducts();
 });
@@ -128,7 +136,7 @@ onMounted(() => {
                     <tr v-for="producto in productos" :key="producto.id_producto">
                         <td data-label="Producto: ">{{ producto.nombre_producto }}</td>
                         <td data-label="Descripcion: ">{{ producto.descripcion }}</td>
-                        <td data-label="Precio Actual: ">{{ producto.precio_actual }}</td>
+                        <td data-label="Precio Actual: ">{{ formatCurrency(producto.precio_actual) }}</td>
                         <td class="before:hidden lg:w-1 whitespace-nowrap">
                             <BaseButtons type="justify-start lg:justify-end" no-wrap>
                                 <BaseButton color="info" :icon="mdiEye" small @click="openEditModal(producto)" />
@@ -148,33 +156,33 @@ onMounted(() => {
                 </BaseLevel>
             </div>
         </SectionMain>
+
+        <CardBoxModal class="dark:text-white" v-model="isModalVisible" :title="isEditMode ? 'Editar Producto' : 'Crear Producto'" :buttonLabel="isEditMode ? 'Guardar Cambios' : 'Crear Producto'" has-cancel @confirm="saveProduct" @cancel="closeModal">
+            <form @submit.prevent="saveProduct">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="mb-4">
+                        <label for="nombre" class="block text-gray-700 font-medium dark:text-white">Nombre:</label>
+                        <input type="text" id="nombre" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-700 dark:text-white" v-model="currentProduct.nombre_producto" required />
+                    </div>
+                    <div class="mb-4">
+                        <label for="precio" class="block text-gray-700 font-medium dark:text-white">Precio:</label>
+                        <input type="number" id="precio" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-700 dark:text-white" v-model="currentProduct.precio_actual" min="1" required />
+                    </div>
+                    <div class="mb-4">
+                        <label for="descripcion" class="block text-gray-700 font-medium dark:text-white">Descripción:</label>
+                        <input type="text" id="descripcion" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-700 dark:text-white" v-model="currentProduct.descripcion" required />
+                    </div>
+                </div>
+            </form>
+        </CardBoxModal>
+
+        <CardBoxModal class="dark:text-white" v-model="activarModalDelete.visible" title="Eliminar Producto" buttonLabel="Eliminar" button="danger" has-cancel @confirm="confirmDelete" @cancel="cancelDelete">
+            <p class="text-xl">¿Está seguro de eliminar el producto?</p>
+            <ul>
+                <li><b>Nombre:</b> {{ activarModalDelete.producto?.nombre_producto }}</li>
+                <li><b>Descripción:</b> {{ activarModalDelete.producto?.descripcion }}</li>
+                <li><b>Precio:</b> {{ formatCurrency(activarModalDelete.producto?.precio_actual) }}</li>
+            </ul>
+        </CardBoxModal>
     </LayoutAuthenticated>
-
-    <CardBoxModal class="dark:text-white" v-model="isModalVisible" :title="isEditMode ? 'Editar Producto' : 'Crear Producto'" :buttonLabel="isEditMode ? 'Guardar Cambios' : 'Crear Producto'" has-cancel @confirm="saveProduct" @cancel="closeModal">
-        <form @submit.prevent="saveProduct">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="mb-4">
-                    <label for="nombre" class="block text-gray-700 font-medium dark:text-white">Nombre:</label>
-                    <input type="text" id="nombre" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-700 dark:text-white" v-model="currentProduct.nombre_producto" required />
-                </div>
-                <div class="mb-4">
-                    <label for="precio" class="block text-gray-700 font-medium dark:text-white">Precio:</label>
-                    <input type="number" id="precio" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-700 dark:text-white" v-model="currentProduct.precio_actual" min="1" required />
-                </div>
-                <div class="mb-4">
-                    <label for="descripcion" class="block text-gray-700 font-medium dark:text-white">Descripción:</label>
-                    <input type="text" id="descripcion" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700 dark:border-gray-700 dark:text-white" v-model="currentProduct.descripcion" required />
-                </div>
-            </div>
-        </form>
-    </CardBoxModal>
-
-    <CardBoxModal class="dark:text-white" v-model="activarModalDelete.visible" title="Eliminar Producto" buttonLabel="Eliminar" button="danger" has-cancel @confirm="confirmDelete" @cancel="cancelDelete">
-        <p class="text-xl">¿Está seguro de eliminar el producto?</p>
-        <ul>
-            <li><b>Nombre:</b> {{ activarModalDelete.producto?.nombre_producto }}</li>
-            <li><b>Descripción:</b> {{ activarModalDelete.producto?.descripcion }}</li>
-            <li><b>Precio:</b> {{ activarModalDelete.producto?.precio_actual }}</li>
-        </ul>
-    </CardBoxModal>
 </template>
