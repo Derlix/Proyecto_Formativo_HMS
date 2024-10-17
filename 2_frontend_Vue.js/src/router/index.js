@@ -4,7 +4,7 @@ import { useAuthStore } from '@/stores' // Importa el store de autenticación
 // import Style from '@/views/StyleView.vue'
 import Home from '@/views/HomeView.vue'
 import Profile from '@/views/ProfileView.vue'
-import Reservas from '@/views/busta-views/Reservas.vue'
+import Reservas from '@/views/busta-views/ReservasVue.vue'
 import HistorialReservas from '@/views/busta-views/HistorialReservas.vue'
 import InformeAmaLlaves from '@/views/nico-views/InformeAmaLlaves.vue'
 import ListaPasajeros from '@/views/busta-views/ListaPasajeros.vue'
@@ -27,6 +27,15 @@ import AvancesEfectivo from '@/views/arce-views/AvancesEfectivo.vue'
  
 
 const routes = [
+  {
+    meta: {
+      title: 'Home Page'
+    },
+    path: '/',
+    name: 'Home Page',
+    component: () => import('@/views/nico-views/HomePage.vue'),
+  },
+
   {
     meta: {
       title: 'InicioCajero'
@@ -107,7 +116,7 @@ const routes = [
     meta: {
       title: 'Iniciar sesión'
     },
-    path: '/',
+    path: '/iniciar',
     name: 'iniciar sesión',
     component: IniciarSesion,
   },

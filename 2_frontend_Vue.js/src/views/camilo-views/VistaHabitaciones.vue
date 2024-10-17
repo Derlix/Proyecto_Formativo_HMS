@@ -39,6 +39,7 @@
         :visible="showDetailsModal"
         :habitacion="habitacionDetalles"
         @close="showDetailsModal = false"
+        @habitacionActualizada="actualizarHabitaciones"
       />
 
       <!-- Modal para confirmar eliminación -->
@@ -261,6 +262,11 @@ const handleAsignacionExitosa = async () => {
   showCaracteristicasModal.value = false;
   await obtenerHabitaciones();
 };
+
+const actualizarHabitaciones = () => {
+    obtenerHabitaciones();
+};
+
 
 onMounted(() => {
   obtenerHabitaciones(currentPage.value);
