@@ -10,7 +10,7 @@ import BaseButtons from '@/components/BaseButtons.vue'
 import BaseButton from '@/components/BaseButton.vue'
 import UserAvatar from '@/components/UserAvatar.vue'
 import NotificationBar from '@/components/alejo_components/NotificationBar.vue'
-
+import FormField from '@/components/FormField.vue'
 defineProps({
   checkable: Boolean
 })
@@ -129,7 +129,7 @@ const filtrarFacturasPorEstado = () => {
     // Cerrar la alerta automáticamente después de 3 segundos
     setTimeout(() => {
       isAlertVisible.value = false;
-    }, 5000);
+    }, 2000);
   }
 };
 
@@ -1180,6 +1180,24 @@ td {
 
 }
 */
+
+
+.dark select {
+  background-color: #1f2937; /* Dark background for dark mode */
+  color: white; /* Light text for dark mode */
+   /* Dark border for dark mode */
+}
+
+.dark select {
+  background-color: #1f2937; /* Background color for select dropdown in dark mode */
+  color: white; /* Text color for select dropdown in dark mode */
+ 
+}
+
+.dark option {
+  background-color: #1f2937; /* Background for options in dark mode */
+  color: white; /* Text color for options in dark mode */
+}
 </style>
 
 
