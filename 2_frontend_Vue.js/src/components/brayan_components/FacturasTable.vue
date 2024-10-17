@@ -14,7 +14,8 @@ import FormField from '@/components/FormField.vue'
 defineProps({
   checkable: Boolean
 })
-
+const mainStore = useMainStore();
+const userRole = computed(() => mainStore.userRole);
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 
@@ -965,7 +966,7 @@ function fechaActual() {
               <BaseButton color="success" :icon="mdiFoodForkDrink" small @click="openListaProductosModal(factura)">
               </BaseButton>
               <BaseButton color="info" :icon="mdiPencilBoxMultiple" small @click="openEditModal(factura)" /> 
-              <BaseButton color="danger" :icon="mdiTrashCan" small @click="openDeleteModal(factura)" />
+              <BaseButton v-if="userRole === 'SuperAdmin' || userRole === 'JefeRecepcion'" color="danger" :icon="mdiTrashCan" small @click="openDeleteModal(factura)" />
 
             </BaseButtons>
           </td>

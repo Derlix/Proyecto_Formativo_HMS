@@ -62,7 +62,7 @@
           </select>
         </div>
 
-        <div class="flex justify-between">
+        <div class="flex justify-between" v-if="userRole === 'SuperAdmin' || userRole === 'JefeRecepcion'">
           <button
             type="button"
             @click="close"
@@ -87,7 +87,7 @@ import { crearHabitacion, actualizarHabitacion, verificarNumeroHabitacion } from
 import { useMainStore } from '@/stores/main';
 import { obtenerCategoriasHabitacion } from '@/services/juanca_service/categoriaService';
 import NotificationBar from '@/components/alejo_components/NotificationBar.vue';
-
+const userRole = computed(() => mainStore.userRole);
 const mainStore = useMainStore();
 const userID = computed(() => mainStore.userID);
 const isEditing = ref(false);

@@ -9,7 +9,7 @@ import BaseButton from '@/components/BaseButton.vue';
 import BaseLevel from '@/components/BaseLevel.vue';
 import BaseButtons from '@/components/BaseButtons.vue';
 import { createProduct, getProductsByPage, updateProduct, deleteProduct } from '@/services/productService';
-
+import { computed } from 'vue';
 const productos = ref([]);
 const currentProduct = ref({});
 const TotalPages = ref(0);
@@ -25,6 +25,8 @@ const activarModalDelete = ref({
     visible: false,
     producto: null
 });
+
+
 
 const fetchProducts = async () => {
     try {
@@ -114,6 +116,11 @@ const formatCurrency = (value) => {
 onMounted(() => {
     fetchProducts();
 });
+
+import { useMainStore } from '@/stores/main';
+const mainStore = useMainStore();
+const userRole = computed(() => mainStore.userRole);
+
 </script>
 
 <template>
@@ -121,7 +128,7 @@ onMounted(() => {
         <SectionMain>
             <h1 class="text-black dark:text-white text-2xl font-bold mb-8">Gestión de Productos</h1>
             <NotificationBar v-if="isAlertVisible" :color="colorAlert" :description="modalMessage" />
-            <BaseButton @click="openCreateModal" color="info" label="Agregar Producto" class="mb-4" />
+            <BaseButton v-if="userRole === 'SuperAdmin' || userRole === 'JefeRecepcion'" @click="openCreateModal" color="info" label="Agregar Producto" class="mb-4" />
 
             <table>
                 <thead>
@@ -129,7 +136,7 @@ onMounted(() => {
                         <th>Nombre</th>
                         <th>Descripción</th>
                         <th>Precio</th>
-                        <th>Acciones</th>
+                        <th v-if="userRole === 'SuperAdmin' || userRole === 'JefeRecepcion'">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -138,7 +145,7 @@ onMounted(() => {
                         <td data-label="Descripcion: ">{{ producto.descripcion }}</td>
                         <td data-label="Precio Actual: ">{{ formatCurrency(producto.precio_actual) }}</td>
                         <td class="before:hidden lg:w-1 whitespace-nowrap">
-                            <BaseButtons type="justify-start lg:justify-end" no-wrap>
+                            <BaseButtons v-if="userRole === 'SuperAdmin' || userRole === 'JefeRecepcion'" type="justify-start lg:justify-end" no-wrap >
                                 <BaseButton color="info" :icon="mdiEye" small @click="openEditModal(producto)" />
                                 <BaseButton color="danger" :icon="mdiTrashCan" small @click="openDeleteModal(producto)" />
                             </BaseButtons>

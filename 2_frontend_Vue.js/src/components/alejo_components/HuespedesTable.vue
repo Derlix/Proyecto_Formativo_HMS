@@ -7,7 +7,10 @@ import BaseButtons from '@/components/BaseButtons.vue'
 import BaseButton from '@/components/BaseButton.vue'
 import { getHuespedByPage, deleteHuesped, updateHuesped, getAllHuespedes } from '@/services/huespedService';
 import NotificationBar from '@/components/alejo_components/NotificationBar.vue'
-
+import { useMainStore } from '@/stores/main';
+const mainStore = useMainStore();
+const userRole = computed(() => mainStore.userRole);
+import { computed } from 'vue'
 defineProps({
   checkable: Boolean
 })
@@ -381,7 +384,7 @@ onMounted(() => {
         <td class="before:hidden lg:w-1 whitespace-nowrap">
           <BaseButtons type="justify-start lg:justify-end" no-wrap>
             <BaseButton color="info" :icon="mdiEye" small @click="openEditModal(huesped)" />
-            <BaseButton color="danger" :icon="mdiTrashCan" small @click="openDeleteModal(huesped)"/>
+            <BaseButton v-if="userRole === 'SuperAdmin' || userRole === 'JefeRecepcion'" color="danger" :icon="mdiTrashCan" small @click="openDeleteModal(huesped)"/>
           </BaseButtons>
         </td>
       </tr>

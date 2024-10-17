@@ -16,7 +16,8 @@
         <button
           @click="mostrarModalCrear"
           class="bg-green-700 text-white px-4 py-2 rounded-md shadow-sm hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-        >
+          v-if="userRole === 'SuperAdmin' || userRole === 'JefeRecepcion'"
+          >
           Crear Habitación
         </button>
         <!-- Campo de búsqueda con placeholder -->
@@ -82,7 +83,7 @@
               <th>Núm Habitación</th>
               <th>Estado</th>
               <th>Piso</th>
-              <th>Acciones</th>
+              <th v-if="userRole === 'SuperAdmin' || userRole === 'JefeRecepcion'">Acciones</th >
               <th />
             </tr>
           </thead>
@@ -93,7 +94,7 @@
               <td data-label="NUMERO HABITACION">{{ habitacion.numero_habitacion }}</td>
               <td data-label="ESTADO">{{ habitacion.estado }}</td>
               <td data-label="PISO">{{ habitacion.piso }}</td>
-              <td class="before:hidden lg:w-1 whitespace-nowrap">
+              <td class="before:hidden lg:w-1 whitespace-nowrap" v-if="userRole === 'SuperAdmin' || userRole === 'JefeRecepcion'"  >
                 <BaseButtons no-wrap>
                   <!-- Botón de Detalles -->
                   <BaseButton
@@ -177,8 +178,10 @@ const currentPage = ref(1);
 const isAlertVisible = ref(false);
 const modalMessage = ref('');
 const colorAlert = ref('');
+import { useMainStore } from '@/stores/main';
+const mainStore = useMainStore();
 
-
+const userRole = computed(() => mainStore.userRole);
 const habitacionesFiltradas = computed(() => {
   if (!habitacion.value) return [];
   return habitacion.value.filter(h =>
