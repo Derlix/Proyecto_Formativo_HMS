@@ -55,6 +55,19 @@ export const createHotel = async (nombre, ubicacion, direccion, telefono) => {
       }
     };
 
+    export const getHotelsByPageUser = async (page = 1, pageSize = 5) => {
+      try {
+        const response = await api.get(`/hoteles/hoteles-by-page-user/?page=${page}&page_size=${pageSize}`);
+        return response;
+      } catch (error) {
+        if (error.response) {
+          throw error.response; // Devuelve el error original de la API
+        } else {
+          throw new Error('Error de red o de servidor');
+        }
+      }
+    };
+
     export const updateHotel = async (hotel_id,nombre,ubicacion,direccion,telefono) => {
       try {
         const response = await api.put(`/hoteles/hoteles/update/?hotel_id=${hotel_id}`, {
@@ -92,6 +105,19 @@ export const createHotel = async (nombre, ubicacion, direccion, telefono) => {
     export const getHotelById = async (id_hotel) => {
       try {
         const response = await api.get(`/hoteles/hoteles/get_hotel_by_id/?id_hotel=${id_hotel}`);
+        return response;
+      } catch (error) {
+        if (error.response) {
+          throw error.response; // Devuelve el error original de la API
+        } else {
+          throw new Error('Error de red o de servidor'); // Manejar errores de red
+        }
+      }
+    };
+
+    export const getHotelByIdAll = async (id_hotel) => {
+      try {
+        const response = await api.get(`/hoteles/hoteles/get_hotel_by_id_all/?id_hotel=${id_hotel}`);
         return response;
       } catch (error) {
         if (error.response) {
