@@ -89,7 +89,7 @@ export default [
     to: '/hoteles',
     label: 'Hoteles',
     icon: mdiCityVariantOutline ,
-    modulo: 'hoteles'
+    modulo: 'gestor_hoteles_vista'
   },
   {
     to: '/facturas',

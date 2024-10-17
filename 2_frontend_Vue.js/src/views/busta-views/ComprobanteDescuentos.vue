@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import TitleIconOnly from '@/components/TitleIconOnly.vue';
 import FormControl from '@/components/FormControl.vue';
 import FormField from '@/components/FormField.vue';
@@ -12,23 +12,19 @@ import editarDescuentoModal from '@/components/arce_components/editarDescuentoMo
 import { info_descuentos, crear_descuento, actualizar_descuento, eliminar_descuento, autorizar_descuento } from '@/services/arce_service/descuentoService';
 import { mdiBallotOutline, mdiInformation, mdiCheckBold } from '@mdi/js';
 import { useMainStore } from '@/stores/main';
-import { computed } from 'vue';
 import NotificationBar from '@/components/NotificationBar.vue';
 import { mdiPencil, mdiTrashCan } from '@mdi/js';
 
-
 const mainStore = useMainStore();
-
-const userRole = computed(() => mainStore.userRole).value;
-
-console.log(userRole)
-
+const userRole = computed(() => mainStore.userRole);
 
 const form = ref({
   tipo_descuento: '',
   porcentaje_descuento: 0,
   fecha_aplicacion: new Date().toISOString(),
   quien_aplico: '',
+  quien_autorizo: '',
+  autorizado: 0,
 });
 
 const descuentos = ref([]);
@@ -39,13 +35,11 @@ const notificationMessage = ref('');
 const showNotification = ref(false);
 const notificationColor = ref('info');
 
-// Función para mostrar notificación
 const showNotificationMessage = (message, color) => {
   notificationMessage.value = message;
   notificationColor.value = color;
   showNotification.value = true;
 
-  // Ocultar la notificación después de 3 segundos
   setTimeout(() => {
     showNotification.value = false;
   }, 3000);
@@ -118,7 +112,7 @@ const deleteDescuento = async (discountId) => {
 const autorizarDescuento = async (discountId) => {
   if (confirm('¿Quieres confirmar este descuento?')) {
     try {
-      await autorizar_descuento(discountId, ""); // Enviamos un string vacío
+      await autorizar_descuento(discountId, "");
       await fetchDescuentos();
       showNotificationMessage('Descuento autorizado correctamente.', 'success');
     } catch (error) {
@@ -137,12 +131,9 @@ onMounted(fetchDescuentos);
       <TitleIconOnly :icon="mdiBallotOutline" title="Descuentos" />
 
       <div v-if="userRole === 'SuperAdmin' || userRole === 'JefeRecepcion'">
-
-
         <SectionTitle>Registrar descuento</SectionTitle>
 
         <form @submit.prevent="submitForm" class="mt-6">
-
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormField label="Tipo de Descuento">
               <FormControl v-model="form.tipo_descuento" type="text" required />
@@ -160,15 +151,11 @@ onMounted(fetchDescuentos);
           </div>
 
           <p v-if="errorMessage" class="text-red-500">{{ errorMessage }}</p>
-
           <NotificationBar class="mt-6" v-if="showNotification" :color="notificationColor" :icon="mdiInformation">
             {{ notificationMessage }}
           </NotificationBar>
-
         </form>
-
       </div>
-
 
       <SectionTitle>Lista de Descuentos</SectionTitle>
       <div class="mt-4">
@@ -190,15 +177,13 @@ onMounted(fetchDescuentos);
               <td class="border px-4 py-2">{{ descuento.porcentaje_descuento }}%</td>
               <td class="border px-4 py-2">{{ new Date(descuento.fecha_aplicacion).toLocaleDateString() }}</td>
               <td class="border px-4 py-2">{{ descuento.quien_aplico }}</td>
-              <td class="border px-4 py-2">{{ descuento.quien_autorizo ? descuento.quien_autorizo : 'Sin autorizar' }}
-              </td>
+              <td class="border px-4 py-2">{{ descuento.quien_autorizo ? descuento.quien_autorizo : 'Sin autorizar' }}</td>
               <td class="border px-4 py-2">{{ descuento.autorizado === 1 ? 'Autorizado' : 'Pendiente' }}</td>
               <td class="border px-4 py-2">
                 <BaseButtons v-if="userRole === 'SuperAdmin' || userRole === 'JefeRecepcion'">
                   <BaseButton color="success" :icon="mdiPencil" @click="editDescuento(descuento)" />
                   <BaseButton color="danger" :icon="mdiTrashCan" @click="deleteDescuento(descuento.id_descuento)" />
-                  <BaseButton color="warning" :icon="mdiCheckBold"
-                    @click="autorizarDescuento(descuento.id_descuento)" />
+                  <BaseButton color="warning" :icon="mdiCheckBold" @click="autorizarDescuento(descuento.id_descuento)" />
                 </BaseButtons>
               </td>
             </tr>
@@ -237,8 +222,7 @@ onMounted(fetchDescuentos);
                 <BaseButtons v-if="userRole === 'SuperAdmin' || userRole === 'JefeRecepcion'">
                   <BaseButton color="success" :icon="mdiPencil" @click="editDescuento(descuento)" />
                   <BaseButton color="danger" :icon="mdiTrashCan" @click="deleteDescuento(descuento.id_descuento)" />
-                  <BaseButton color="warning" :icon="mdiCheckBold"
-                    @click="autorizarDescuento(descuento.id_descuento)" />
+                  <BaseButton color="warning" :icon="mdiCheckBold" @click="autorizarDescuento(descuento.id_descuento)" />
                 </BaseButtons>
               </span>
             </div>
@@ -246,10 +230,7 @@ onMounted(fetchDescuentos);
         </div>
       </div>
 
-
-
-      <editarDescuentoModal :visible="modalVisible" :form="form" @update:visible="modalVisible = $event"
-        @save="submitForm" />
+      <editarDescuentoModal :visible="modalVisible" :form="form" @update:visible="modalVisible = $event" @save="submitForm" />
     </SectionMain>
   </LayoutAuthenticated>
 </template>

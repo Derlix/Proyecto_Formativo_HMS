@@ -12,7 +12,7 @@ import BaseButton from '@/components/BaseButton.vue'
 import LayoutGuest from '@/layouts/LayoutGuest.vue'
 import { useDarkModeStore } from '@/stores/darkMode.js'
 const darkModeStore = useDarkModeStore()
-import { getHotelById } from '@/services/felipe_services/hotelService'
+import { getHotelByIdAll } from '@/services/felipe_services/hotelService'
 
 const form = reactive({
     login: '',
@@ -37,7 +37,7 @@ onMounted(() => {
 
 const fetchADatosHotel = async () => {
     try {
-        const response = await getHotelById(authStore.user.id_hotel);
+        const response = await getHotelByIdAll(authStore.user.id_hotel);
         localStorage.setItem('hotelActual', response.data.nombre ? response.data.nombre : (authStore.user.id_hotel ? authStore.user.id_hotel : ''))
     } catch (error) {
         errorMessage.value = 'Error al obtener el hotel: ' + error.message
@@ -54,7 +54,6 @@ const handleLogin = async () => {
             }, 3000);
 
         } else {
-            fetchADatosHotel(authStore.user.id_hotel);
             if (form.remember) {
                 localStorage.setItem('email', email.value)
             } else {
@@ -67,6 +66,7 @@ const handleLogin = async () => {
             }else if (authStore.user.usuario_rol === 'Cajero') {
                 router.push('/inicio-cajero')
             }
+            fetchADatosHotel(authStore.user.id_hotel);
         }
     } catch (error) {
         errorMessage.value = 'Error durante el login: ' + error.message
