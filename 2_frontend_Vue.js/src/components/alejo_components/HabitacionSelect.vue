@@ -1,7 +1,6 @@
 <template>
   <div class="form-container" @click="toggleDropdown">
-    <label for="HabitacionSelect">Seleccione una categoría</label>
-
+   
     <!-- Contenedor que actúa como select -->
     <div class="custom-select">
       <div class="selected-option text-dark ">{{ selectedHabitacionNum || 'Seleccione una Habitacion' }}</div>

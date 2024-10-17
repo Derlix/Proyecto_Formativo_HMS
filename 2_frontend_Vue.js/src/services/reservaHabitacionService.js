@@ -1,12 +1,13 @@
 import api from './api'; 
 
-export const crearReservaHabitacion = async (id_reserva, id_habitacion, num_adultos, num_niños, fecha_entrada, fecha_salida_propuesta) => {
+export const crearReservaHabitacion = async (id_reserva, id_habitacion, num_adultos, num_niños, motivo_cambio, fecha_entrada, fecha_salida_propuesta) => {
   try {
     const response = await api.post('/Reserva-habitacion/crear-reserva', {
       id_reserva: id_reserva,
       id_habitacion: id_habitacion,
       num_adultos: num_adultos,
       num_niños: num_niños,
+      motivo_cambio: motivo_cambio,
       fecha_entrada: fecha_entrada,
       fecha_salida_propuesta: fecha_salida_propuesta,
     });
@@ -47,6 +48,7 @@ export const crearReservaHabitacion = async (id_reserva, id_habitacion, num_adul
         id_habitacion: reserva_habitacion.id_habitacion, // Mantenemos el id_habitacion del objeto
         num_adultos: reserva_habitacion.num_adultos,
         num_niños: reserva_habitacion.num_niños,
+        motivo_cambio: reserva_habitacion.motivo_cambio,
         fecha_entrada: reserva_habitacion.fecha_entrada,
         fecha_salida_propuesta: reserva_habitacion.fecha_salida_propuesta,
       });

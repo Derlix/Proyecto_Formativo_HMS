@@ -96,16 +96,17 @@
                   />
                 </div>
                 <div>
-                  <label for="new_fecha_entrada" class="block text-lg font-medium text-gray-700 dark:text-gray-300">
-                    Fecha de Entrada
+                  <label for="motivo_cambio" class="block text-lg font-medium text-gray-700 dark:text-gray-300">
+                    Motivo de cambio
                   </label>
                   <input
-                    id="new_fecha_entrada"
-                    type="date"
-                    v-model="new_fecha_entrada"
+                    id="motivo_cambio"
+                    type="text"
+                    v-model="motivo_cambio"
                     class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white text-lg"
                   />
                 </div>
+                
               </div>
   
               <div class="grid grid-cols-2 gap-4 mt-4">
@@ -117,6 +118,17 @@
                     id="new_fecha_salida"
                     type="date"
                     v-model="new_fecha_salida"
+                    class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white text-lg"
+                  />
+                </div>
+                <div>
+                  <label for="new_fecha_entrada" class="block text-lg font-medium text-gray-700 dark:text-gray-300">
+                    Fecha de Entrada
+                  </label>
+                  <input
+                    id="new_fecha_entrada"
+                    type="date"
+                    v-model="new_fecha_entrada"
                     class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white text-lg"
                   />
                 </div>
@@ -163,6 +175,7 @@ const id_habitacion = ref(0)
 const new_id_habitacion = ref(0)
 const num_adultos = ref(0)
 const num_ninos = ref(0)
+const motivo_cambio = ref('')
 const new_fecha_entrada = ref('')
 const new_fecha_salida = ref('')
 const reservaEncontrada = ref(false)
@@ -207,6 +220,7 @@ const resetFields = () => {
   num_ninos.value = 0;
   num_adultos.value = 0;
   new_id_habitacion.value = 0;
+  motivo_cambio.value = '';
   new_fecha_entrada.value = '';
   new_fecha_salida.value = '';
   num_habitacion.value = '';
@@ -265,6 +279,7 @@ const update_ReservaHabitacion = async () => {
   console.log("new_id_habitacion", new_id_habitacion.value);
   console.log("num_adultos", num_adultos.value);
   console.log("num_niños", num_ninos.value);
+  console.log("motivo_cambio", motivo_cambio.value);
   console.log("fecha_entrada", new_fecha_entrada.value);
   console.log("fecha_salida", new_fecha_salida.value);
 
@@ -274,6 +289,7 @@ const update_ReservaHabitacion = async () => {
       id_habitacion: new_id_habitacion.value,
       num_adultos: num_adultos.value,
       num_niños: num_ninos.value,
+      motivo_cambio: motivo_cambio.value,
       fecha_entrada: new_fecha_entrada.value,
       fecha_salida_propuesta: new_fecha_salida.value,
     };

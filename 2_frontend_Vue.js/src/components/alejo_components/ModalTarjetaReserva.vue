@@ -321,7 +321,7 @@ const generarPDF = () => {
     }
   });
 
-  const imagePath = '@/assets/img/sena-agro.png'; // Ruta relativa de tu imagen en la carpeta 'public'
+  const imagePath = '/src/assets/img/sena-agro.png'; // Ruta relativa de tu imagen en la carpeta 'public'
   
   // Cargar la imagen y luego agregarla al PDF
   const img = new Image();
