@@ -180,16 +180,20 @@ const colorAlert = ref('');
 
 
 const habitacionesFiltradas = computed(() => {
+  if (!habitacion.value) return [];
   return habitacion.value.filter(h =>
     h.numero_habitacion.toString().includes(buscarHabitacion.value)
   );
 });
 
+
 const obtenerHabitaciones = async (page = 1) => {
   try {
     const response = await obtenerHabitacionesPaginadas(page, 10);
-    habitacion.value = response.habitacion;
-    totalPaginas.value = response.total_paginas;
+    console.log('Respuesta del API:', response.data.habitacion);
+    console.log('Respuesta del API:', response);
+    habitacion.value = response.data.habitacion; // Verifica que esto sea un arreglo
+    totalPaginas.value = response.data.total_paginas;
   } catch (error) {
     console.error("Error al obtener las habitaciones:", error.message);
     isAlertVisible.value = true;
