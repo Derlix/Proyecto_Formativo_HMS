@@ -74,15 +74,16 @@
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-            >Fecha de salida</label
-          >
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Fecha de salida
+          </label>
           <input
             type="date"
             v-model="fecha_salida"
             class="block w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
           />
         </div>
+        
 
         <div>
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Depósito</label>
@@ -432,8 +433,12 @@ const confirmarReserva = async () => {
   }
 }
 
-// Confirmar la reserva de habitación
 const confirmarReservaHabitacion = async () => {
+  if (!fecha_salida.value) {
+    console.error("La fecha de salida es requerida.");
+    return;
+  }
+
   try {
     const response = await crearReservaHabitacion(
       seleccionaridReservaSeleccionada.value, // ID de la reserva creada
@@ -441,16 +446,20 @@ const confirmarReservaHabitacion = async () => {
       num_adultos.value,
       num_niños.value,
       fecha_llegada.value,
-      fecha_salida.value
-    )
-    console.log('Habitación reservada exitosamente:', response.data)
+      fecha_salida.value // Este es el campo que debe pasar el valor para fecha_salida_propuesta
+    );
+    console.log('Habitación reservada exitosamente:', response.data);
   } catch (error) {
-    console.error(
-      'Error al crear la reserva de la habitación:',
-      error.response ? error.response.data : error
-    )
+    if (error.response) {
+      console.error("Error en la API:", error.response.data); // Imprimir el mensaje de error completo
+      throw error.response;
+    } else {
+      throw new Error('Error de red o de servidor');
+    }
   }
-}
+};
+
+
 
 // Cargar las habitaciones
 const cargarHabitaciones = async () => {
