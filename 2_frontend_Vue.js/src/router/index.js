@@ -29,6 +29,15 @@ import AvancesEfectivo from '@/views/arce-views/AvancesEfectivo.vue'
 const routes = [
   {
     meta: {
+      title: 'Home Page'
+    },
+    path: '/',
+    name: 'Home Page',
+    component: () => import('@/views/nico-views/HomePage.vue'),
+  },
+
+  {
+    meta: {
       title: 'InicioCajero'
     },
     path: '/inicio-cajero',
@@ -107,7 +116,7 @@ const routes = [
     meta: {
       title: 'Iniciar sesión'
     },
-    path: '/',
+    path: '/iniciar',
     name: 'iniciar sesión',
     component: IniciarSesion,
   },

@@ -20,8 +20,20 @@
       <ul>
         <!-- Si tiene características, mostrar la lista -->
         <li v-if="habitacion.caracteristicas && habitacion.caracteristicas.length > 0" v-for="(caracteristica, index) in habitacion.caracteristicas" :key="index">
-          <strong>{{ caracteristica.nombre_caracteristicas }}</strong>
-          (adicional: {{ caracteristica.adicional }} )
+          <div class="caracteristica-item">
+            <span>
+              <strong>{{ caracteristica.nombre_caracteristicas }}</strong>
+              (adicional: {{ caracteristica.adicional }} )
+            </span>
+            <!-- Botón de Eliminar alineado a la derecha con margen -->
+            <BaseButton
+              @click="confirmarEliminacion(habitacion.id_habitacion, caracteristica.id_caracteristica)"
+              :icon="mdiTrashCan"
+              small
+              color="danger"
+              class="eliminar-boton"
+            />
+          </div>
         </li>
         <!-- Si no tiene características, mostrar un mensaje -->
         <li v-else>
@@ -35,6 +47,10 @@
 </template>
 
 <script setup>
+import BaseButton from '@/components/BaseButton.vue';
+import { mdiTrashCan } from '@mdi/js';
+import { eliminarRelacionHabitacionCaracteristica } from '@/services/juanca_service/caracteristicasService';
+
 const props = defineProps({
   visible: {
     type: Boolean,
@@ -51,9 +67,25 @@ const emit = defineEmits();
 
 // Función para cerrar el modal
 const close = () => {
-  emit("close");
+  emit('close');
 };
+
+// Función para confirmar la eliminación de una característica
+const confirmarEliminacion = async (id_habitacion, id_caracteristica) => {
+  try {
+    await eliminarRelacionHabitacionCaracteristica(id_habitacion, id_caracteristica);
+    alert('Relación eliminada correctamente');
+    emit('habitacionActualizada');
+    emit('close');
+  } catch (error) {
+    console.error('Error eliminando la relación:', error);
+    alert('Ocurrió un error al eliminar la relación');
+  }
+};
+
+
 </script>
+
 
 <style scoped>
 .modal-content {
@@ -65,5 +97,16 @@ const close = () => {
 
 .modal-overlay {
   background-color: rgba(0, 0, 0, 0.5);
+}
+
+.caracteristica-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.eliminar-boton {
+  margin-left: auto; /* Asegura que el botón quede a la derecha */
+  margin: 2px; /* Añade un margen alrededor del botón */
 }
 </style>

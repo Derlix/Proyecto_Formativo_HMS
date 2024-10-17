@@ -10,7 +10,7 @@ import BaseButtons from '@/components/BaseButtons.vue'
 import BaseButton from '@/components/BaseButton.vue'
 import UserAvatar from '@/components/UserAvatar.vue'
 import NotificationBar from '@/components/alejo_components/NotificationBar.vue'
-
+import FormField from '@/components/FormField.vue'
 defineProps({
   checkable: Boolean
 })
@@ -129,7 +129,7 @@ const filtrarFacturasPorEstado = () => {
     // Cerrar la alerta automáticamente después de 3 segundos
     setTimeout(() => {
       isAlertVisible.value = false;
-    }, 5000);
+    }, 2000);
   }
 };
 
@@ -640,13 +640,13 @@ function fechaActual() {
             </select>
           </div>
           <!-- Último par de campos -->
-          <div class="mb-4">
+          <!-- <div class="mb-4">
             <label for="facturaFechaSalida" class="block text-gray-700 dark:text-gray-300 font-medium">Fecha
               Salida</label>
             <input type="datetime-local" id="facturaFechaSalida"
               class="mt-1 block w-full border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-300 sm:text-sm"
               v-model="selectedFactura.fecha_salida" required />
-          </div>
+          </div> -->
         </div>
 
         <div class="mb-4">
@@ -678,7 +678,7 @@ function fechaActual() {
   <CardModalBrayan v-model="showDeleteModal" title="Eliminar Factura">
     <div class="mb-4">
       <p id="texto_">
-        ¿Está seguro que desea eliminar la factura con el ID {{ selectedFactura.id_facturacion }}?
+        ¿Está seguro que desea eliminar la factura con el N° {{ selectedFactura.id_facturacion }}?
       </p>
     </div>
 
@@ -710,7 +710,7 @@ function fechaActual() {
         <table id="tabla_productos">
           <thead class="text-xs text-gray-700 uppercase bg-blue-100 ">
             <tr>
-              <th>ID Facturación</th>
+              <th>N° Factura</th>
              <!-- <th>ID Factura Producto</th> -->
               <th>ID Producto</th>
               <th>Cantidad</th>
@@ -724,7 +724,7 @@ function fechaActual() {
           </thead>
           <tbody>
             <tr v-for="producto in productos" :key="producto.factura_producto.id_factura_producto">
-              <td :data-label="'ID Facturación'">{{ selectedFactura.id_facturacion }}</td>
+              <td :data-label="'N° Factura'">{{ selectedFactura.id_facturacion }}</td>
                 <!--<td :data-label="'ID Factura Producto'">{{ producto.factura_producto.id_factura_producto }}</td> -->
               <td :data-label="'ID Producto'">{{ producto.factura_producto?.id_producto || 'N/A' }}</td>
               <td :data-label="'Cantidad'">{{ producto.factura_producto?.cantidad || 'N/A' }}</td>
@@ -856,6 +856,7 @@ function fechaActual() {
   </CardModalBrayan>
 
 
+  
 
   <div class="mb-6 max-w-md mx-left">
     <h1 class="text-black dark:text-white text-3xl font-bold mb-3">Seccion de Facturas</h1>
@@ -865,7 +866,7 @@ function fechaActual() {
       <input
         type="search"
         id="buscarFactura"
-        placeholder="Buscar factura por ID"
+        placeholder="Buscar factura por N°"
         class="w-full px-4 py-2 border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
         v-model="buscarFactura"
         @input="buscar_Factura"
@@ -900,15 +901,14 @@ function fechaActual() {
         <tr>
           <th v-if="checkable" />
 
-          <th class="">ID Facturación</th>
+          <th class="">N° Factura</th>
            <!--<th class="">ID Check-in</th>-->
           <th class="">Nombre</th>
           <th class="">N° Documento</th>
           <th class="">Email</th>
           <th class="">Telefono</th>
           <th class="">Subtotal</th>
-          <th class="">Impuestos</th>
-          <th class="">ID descuento</th>
+          <th class="">Impuestos</th>          
           <th class="">% descuento</th>       
           <th class="">Total Precio Productos</th>
           <th class="">Total a pagar</th>
@@ -931,7 +931,7 @@ function fechaActual() {
       <tbody>
         <tr v-for="factura in facturas" :key="factura.id_facturacion">
 
-          <td data-label="ID Facturación">{{ factura.id_facturacion }}</td>
+          <td data-label="N° Factura">{{ factura.id_facturacion }}</td>
             <!--<td data-label="ID Check-In">{{ factura.check_in.id_check_in }}</td>-->
           <td data-label="Nombre Completo">{{ factura.huesped.nombre_completo }}</td>
           <td data-label="Número de Documento">{{ factura.huesped.numero_documento }}</td>
@@ -939,7 +939,7 @@ function fechaActual() {
           <td data-label="Telefono">{{ factura.huesped.telefono }}</td>
           <td data-label="Subtotal">{{ factura.subtotal }}</td>
           <td data-label="Impuestos">{{ factura.impuestos }}</td>
-          <td data-label="id descuento">{{ factura.descuento.id_descuento }}</td>
+        
           <td data-label="id descuento">{{ factura.descuento.porcentaje_descuento + '%'}} </td>
       
           <td data-label="Total Precio Productos">{{ factura.total_precio_productos }}</td>
@@ -964,7 +964,7 @@ function fechaActual() {
               </BaseButton>
               <BaseButton color="success" :icon="mdiFoodForkDrink" small @click="openListaProductosModal(factura)">
               </BaseButton>
-              <!-- <BaseButton color="info" :icon="mdiPencilBoxMultiple" small @click="openEditModal(factura)" /> -->
+              <BaseButton color="info" :icon="mdiPencilBoxMultiple" small @click="openEditModal(factura)" /> 
               <BaseButton color="danger" :icon="mdiTrashCan" small @click="openDeleteModal(factura)" />
 
             </BaseButtons>
@@ -1030,7 +1030,7 @@ function fechaActual() {
           </thead>
           <tbody class="text-sm">
             <tr>
-              <td data-label="Campo">ID Facturación</td>
+              <td data-label="Campo">N° Factura</td>
               <td data-label="Valor">{{ selectedFactura?.id_facturacion }}</td>
             </tr>
              <!-- <tr>
@@ -1180,6 +1180,24 @@ td {
 
 }
 */
+
+
+.dark select {
+  background-color: #1f2937; /* Dark background for dark mode */
+  color: white; /* Light text for dark mode */
+   /* Dark border for dark mode */
+}
+
+.dark select {
+  background-color: #1f2937; /* Background color for select dropdown in dark mode */
+  color: white; /* Text color for select dropdown in dark mode */
+ 
+}
+
+.dark option {
+  background-color: #1f2937; /* Background for options in dark mode */
+  color: white; /* Text color for options in dark mode */
+}
 </style>
 
 
