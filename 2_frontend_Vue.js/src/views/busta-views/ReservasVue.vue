@@ -6,19 +6,31 @@ import ModalCambiarHabitacion from '@/components/alejo_components/ModalCambiarHa
 import ModalTarjetaReserva from '@/components/alejo_components/ModalTarjetaReserva.vue';
 import CardBoxModal from '@/components/alejo_components/CardBoxModal.vue';
 import Calendario from '@/components/arias_components/Calendario.vue';
-import { obtenerTodasHabitaciones } from '@/services/habitacionService';
+import { obtenerHabitacionesPaginadas } from '@/services/juanca_service/habitacionService.js';
+import BaseButtons from '@/components/BaseButtons.vue';
+import BaseButton from '@/components/BaseButton.vue';
+import BaseLevel from '@/components/BaseLevel.vue';
+
 const showModalCambiarHabitacion = ref(false);
 const showModalCrearReserva = ref(false);
 const showModalTarjetaReserva = ref(false);
 const habitaciones = ref([]);
 const activarModalCaracteristicas = ref(false);
 const habitacionSeleccionada = ref(null);
+const TotalPages = ref(0);
+const currentPage = ref(1);
 
-const cargarHabitaciones = async () => {
+const fetchReservas = async () => {
   try {
-    const response = await obtenerTodasHabitaciones();
-    habitaciones.value = response.data;
+    const response = await obtenerHabitacionesPaginadas(currentPage.value);
+    habitaciones.value = response.data.habitacion;
+    TotalPages.value = response.data.total_paginas;
+
+    if (currentPage.value > TotalPages.value) {
+        currentPage.value = TotalPages.value;
+    }
   } catch (error) {
+    alert("Error al cargar las habitaciones")
     console.error('Error al cargar las habitaciones:', error);
   }
 };
@@ -45,7 +57,7 @@ const verCaracteristicas = (habitacion) => {
 };
 
 onMounted(() => {
-  cargarHabitaciones();
+  fetchReservas();
 });
 </script>
 
@@ -103,6 +115,8 @@ onMounted(() => {
                   :class="{
                     'bg-green-100 text-green-700 dark:bg-green-800 dark:text-green-100': habitacion.estado === 'ACTIVO',
                     'bg-yellow-100 text-yellow-700 dark:bg-yellow-800 dark:text-yellow-100': habitacion.estado === 'MANTENIMIENTO',
+                    'bg-blue-100 text-blue-700 dark:bg-blue-800 dark:text-yellow-100': habitacion.estado === 'OCUPADO',
+                    'bg-yellow-200 text-yellow-700 dark:bg-yellow-300 dark:text-black': habitacion.estado === 'OPERACION',
                     'bg-red-100 text-red-700 dark:bg-red-800 dark:text-red-100': habitacion.estado === 'INACTIVO'}">
                   {{ habitacion.estado }}
                 </span>
@@ -113,6 +127,20 @@ onMounted(() => {
           </tbody>
         </table>
       </div>
+      <div class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800">
+        <BaseLevel>
+            <BaseButtons>
+                <BaseButton
+                v-for="page in TotalPages"
+                :key="page"
+                :active="page === currentPage"
+                :label="page"
+                :color="page === currentPage ? 'lightDark' : 'whiteDark'"
+                small @click="() => { currentPage = page; fetchReservas(); }"/>
+            </BaseButtons>
+            <small>Página {{ currentPage }} de {{ TotalPages }}</small>
+        </BaseLevel>
+    </div>
 
       <CardBoxModal v-model="activarModalCaracteristicas" title="Características de la habitación" has-cancel :showPrimaryButton="false" @cancel="activarModalCaracteristicas = false">
         <ul v-if="habitacionSeleccionada?.caracteristicas">
