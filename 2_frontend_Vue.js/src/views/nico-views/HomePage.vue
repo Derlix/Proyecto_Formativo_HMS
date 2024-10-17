@@ -1,7 +1,7 @@
 <template>
     <LayoutGuest>
         <SectionFullScreen>
-            <div class="w-full h-screen flex flex-col items-center justify-center bg-gradient-to-b from-blue-500 to-blue-800 text-white">
+            <div class="w-full h-screen flex flex-col items-center justify-center  from-blue-500 to-blue-800 text-white">
                 <!-- Logo del sistema -->
                 <div class="mb-8">
                     <img src="@/assets/img/sena-agro.png" alt="Logo HMS" class="w-20 sm:w-28">

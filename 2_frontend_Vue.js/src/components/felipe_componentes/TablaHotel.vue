@@ -68,15 +68,15 @@
             <div class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800 relative" style="overflow-x: auto; white-space: nowrap;">
           <BaseLevel>
               <BaseButtons style="display: inline-flex; overflow-x: auto; flex-wrap: nowrap;">
-                  <BaseButton
-                      v-for="page in TotalPages"
-                      :key="page"
-                      :active="page === currentPage"
-                      :label="page"
-                      :color="page === currentPage ? 'lightDark' : 'whiteDark'"
-                      small
-                      @click="currentPage = page; fetchHotels()"
-                  />
+                <BaseButton
+                  v-for="page in TotalPages"
+                  :key="page"
+                  :active="page === currentPage"
+                  :label="page"
+                  :color="page === currentPage ? 'lightDark' : 'whiteDark'"
+                  small
+                  @click="handlePageClick(page)"
+                />
               </BaseButtons>
               <small>Página {{ currentPage }} de {{ TotalPages }}</small>
           </BaseLevel>
@@ -152,7 +152,7 @@
   import SectionMain from '@/components/SectionMain.vue';
   import CardBoxModal  from '@/components/felipe_componentes/CardBoxModal.vue';
   import { mdiEye, mdiTrashCan,mdiRotateRight } from '@mdi/js';
-  import { createHotel, getHotels, updateHotel, deleteHotel, getHotelsByPage, getHotelById } from '@/services/felipe_services/hotelService';
+  import { createHotel, getHotels, updateHotel, deleteHotel, getHotelsByPage, getHotelsByPageUser, getHotelById, getHotelByIdAll } from '@/services/felipe_services/hotelService';
   import BaseLevel from '@/components/BaseLevel.vue';
   import {updateIdHotel} from '@/services/busta_service/CambiarHotelService'
   const mainStore = useMainStore()
@@ -189,6 +189,7 @@
         mdiTrashCan,
         mdiRotateRight,
         TotalPages : 0,
+        isSuperAdmin: false,
         currentPage : 1,
         buscarHotel : '',
         hotel : {},
@@ -208,9 +209,30 @@
       }
     },
     mounted() {
-      this.fetchHotels();
+      if (mainStore.userRole === 'SuperAdmin') {
+        this.fetchHotels();
+      } else {
+        this.fetchHotelsUser();
+      }
     },
     methods: {
+    handlePageClick(page) {
+        this.currentPage = page;
+        if (mainStore.userRole === 'SuperAdmin') {
+          this.fetchHotels();
+        } else {
+          this.fetchHotelsUser();
+        }
+      },
+    async fetchHotelsUser() {
+      try {
+        const response = await getHotelsByPageUser(this.currentPage, 5);
+        this.TotalPages = response.data.total_pages;
+        this.hoteles = response.data.hoteles;
+      } catch (error) {
+        console.error('Error al obtener los hoteles:', error);
+      }
+    },
     async fetchHotels() {
       try {
         const response = await getHotelsByPage(this.currentPage, 5);
@@ -222,11 +244,21 @@
     },
     async buscar_Hotel() {
     if (this.buscarHotel.trim() === '') {
-      this.fetchHotels();
+      if (mainStore.userRole === 'SuperAdmin') {
+        this.fetchHotels();
+      } else {
+        this.fetchHotelsUser();
+      }
     } else {
       // Search for a specific hotel by ID
       try {
-        const response = await getHotelById(this.buscarHotel);
+        // Si rol es SuperAdmin debe ser getHotelByIdAll y si es JefeRecepcion getHotelById
+        let response;
+        if (mainStore.userRole === 'SuperAdmin') {
+          response = await getHotelByIdAll(this.buscarHotel);
+        } else {
+          response = await getHotelById(this.buscarHotel);
+        }
         if (response && response.data) {
           this.hotel = response.data;
           this.hoteles = [this.hotel]; // Set the search result in the list
@@ -293,7 +325,11 @@
           }, 3000);
         
         }
-        this.fetchHotels();
+          if (mainStore.userRole === 'SuperAdmin') {
+          this.fetchHotels();
+        } else {
+          this.fetchHotelsUser();
+        }
         this.closeModal();
       } catch (error) {
           this.modalMessage = "Error al actualizar el hotel";
@@ -331,7 +367,11 @@
           setTimeout(() => {
             this.isAlertVisible  = false;
           }, 3000);
-          this.fetchHotels();
+              if (mainStore.userRole === 'SuperAdmin') {
+            this.fetchHotels();
+          } else {
+            this.fetchHotelsUser();
+          }
           this.closeConfirmDeleteModal();
         }
       } catch (error) {
@@ -354,8 +394,11 @@
               id_hotel: this.hotelToCambiar.id_hotel,
               nombre_hotel: this.hotelToCambiar.nombre,
             });
-
-            this.fetchHotels();
+            if (mainStore.userRole === 'SuperAdmin') {
+              this.fetchHotels();
+            } else {
+              this.fetchHotelsUser();
+            }
             this.closeConfirmCambiarHotelModal();
           }
         } catch (error) {

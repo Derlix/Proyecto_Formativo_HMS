@@ -249,7 +249,7 @@ onMounted(() => {
             type="text"
             id="huespedNumero_documento"
             class="mt-1 block w-full border-gray-300 rounded-md shadow dark:text-white dark:border-gray-600 rounded-md-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:bg-gray-700"
-            
+             v-model="currentHuesped.numero_documento"
             required
           />
         </div>

@@ -170,10 +170,12 @@
             >
               <td class="border px-4 py-2 dark:text-white">{{ habitacion.numero_habitacion }}</td>
               <td class="border px-4 py-2 dark:text-white">
-                {{ habitacion.caracteristicas.nombre_caracteristicas }}
+                <button @click="verCaracteristicas(habitacion)" class="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 transition">
+                  Ver características
+                </button>
               </td>
               <td class="border px-4 py-2 dark:text-white">{{ habitacion.piso }}</td>
-              <td class="border px-4 py-2 dark:text-white">{{ habitacion.precio_actual }}</td>
+              <td class="border px-4 py-2 dark:text-white">{{ calcularPrecioTotal(habitacion) }}</td>
               <td class="border px-4 py-2 flex justify-center items-center">
                 <input
                   type="checkbox"
@@ -279,6 +281,13 @@
       </div>
     </div>
   </div>
+  <CardBoxModal v-model="activarModalCaracteristicas" title="Características de la habitación" has-cancel :showPrimaryButton="false" @cancel="activarModalCaracteristicas = false">
+        <ul v-if="habitacionSeleccionada?.caracteristicas">
+          <li v-for="caracteristica in habitacionSeleccionada.caracteristicas" :key="caracteristica.id_caracteristica">
+            {{ caracteristica.nombre_caracteristicas }} (Adicional: {{ caracteristica.adicional }})
+          </li>
+        </ul>
+      </CardBoxModal>
 </template>
 
 <script setup>
@@ -287,6 +296,7 @@ import { obtenerTodasHabitaciones } from '@/services/habitacionService'
 import { crearReserva } from '@/services/reservaService'
 import { crearReservaHabitacion } from '@/services/reservaHabitacionService'
 import { obtenerReservasPorHuesped } from '@/services/reservaService'
+import CardBoxModal from '@/components/alejo_components/CardBoxModal.vue';
 
 const props = defineProps({
   visible: Boolean, // Prop que controla la visibilidad del modal
@@ -307,7 +317,24 @@ const deposito = ref('')
 const forma_pago = ref('')
 const habitacionSeleccionada = ref(null)
 const seleccionaridReservaSeleccionada = ref(null)
+const activarModalCaracteristicas = ref(false);
 const showSuccessAlert = ref(false) // Estado para mostrar la alerta
+
+const calcularPrecioTotal = (habitacion) => {
+  let precioTotal = habitacion.categoria?.precio_fijo || 0;
+
+  if (habitacion.caracteristicas?.length > 0) {
+    habitacion.caracteristicas.forEach((caracteristica) => {
+      precioTotal += caracteristica.adicional || 0;
+    });
+  }
+
+  return new Intl.NumberFormat('es-CO', {
+    style: 'currency',
+    currency: 'COP',
+    minimumFractionDigits: 0,
+  }).format(precioTotal);
+};
 
 const seleccionarHabitacion = (id_habitacion) => {
   habitacionSeleccionada.value = id_habitacion
@@ -349,6 +376,11 @@ const closeAlert = () => {
   showSuccessAlert.value = false // Cerrar la alerta
   closeModal()
 }
+
+const verCaracteristicas = (habitacion) => {
+  habitacionSeleccionada.value = habitacion;
+  activarModalCaracteristicas.value = true;
+};
 
 // Método para finalizar el paso 3
 const finalizarPaso3 = async () => {

@@ -16,13 +16,15 @@
         />
       </CardBoxComponentTitle>
 
-      <div class="space-y-3 ">
+      <div class="space-y-3">
         <slot />
       </div>
 
       <template #footer>
         <BaseButtons>
+          <!-- Condición para mostrar el botón "Done" -->
           <BaseButton
+            v-if="showPrimaryButton"
             type="submit" 
             :label="buttonLabel"
             :color="button"
@@ -35,6 +37,7 @@
     </CardBox>
   </OverlayLayer>
 </template>
+
 
 <script setup>
 import { defineProps, defineEmits } from 'vue'
@@ -55,8 +58,13 @@ const props = defineProps({
     default: 'Done'
   },
   hasCancel: Boolean,
-  modelValue: Boolean
+  modelValue: Boolean,
+  showPrimaryButton: {  // Nueva prop para mostrar/ocultar el botón "Done"
+    type: Boolean,
+    default: true
+  }
 })
+
 
 const emit = defineEmits(['update:modelValue', 'cancel', 'confirm'])
 

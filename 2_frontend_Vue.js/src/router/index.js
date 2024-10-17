@@ -4,7 +4,7 @@ import { useAuthStore } from '@/stores' // Importa el store de autenticación
 // import Style from '@/views/StyleView.vue'
 import Home from '@/views/HomeView.vue'
 import Profile from '@/views/ProfileView.vue'
-import Reservas from '@/views/busta-views/Reservas.vue'
+import Reservas from '@/views/busta-views/ReservasVue.vue'
 import HistorialReservas from '@/views/busta-views/HistorialReservas.vue'
 import InformeAmaLlaves from '@/views/nico-views/InformeAmaLlaves.vue'
 import ListaPasajeros from '@/views/busta-views/ListaPasajeros.vue'

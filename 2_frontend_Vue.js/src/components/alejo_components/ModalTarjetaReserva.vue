@@ -13,149 +13,147 @@
         <SectionTitleLineWithButton :icon="mdiBallotOutline" title="Tarjeta Reserva" >
         </SectionTitleLineWithButton>
         
-
        <div class="max-h-[50vh] overflow-y-auto p-4 overflow-x-hidden">
         <div class="grid grid-cols-2 gap-4 mb-5">
           <div class="col-span-2 md:col-span-1">
-            <label for="documento" class="block mb-1 text-sm font-medium">Documento</label>
+            <label for="documento" class="block mb-1 text-lg font-medium">Documento</label>
             <input
               type="text"
               id="documento"
               v-model="documento"
               @blur="buscarReserva"
-              class="w-full rounded-lg p-2 bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600"
+              class="w-full rounded-lg p-2 bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600 text-lg"
             >
           </div>
           <BaseDivider />
 
           <div class="col-span-2 md:col-span-1">
-            <label for="nombre_completo" class="block mb-1 text-sm font-medium">Nombre Completo</label>
+            <label for="nombre_completo" class="block mb-1 text-lg font-medium">Nombre Completo</label>
             <input
               type="text"
               id="nombre_completo"
               v-model="nombre_completo"
               :disabled="!reservaEncontrada"
-              class="w-full rounded-lg p-2 bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600"
+              class="w-full rounded-lg p-2 bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600 text-lg"
             >
           </div>
 
           <!-- Segunda columna (Más información del huésped) -->
           <div class="col-span-2 md:col-span-1">
-            <label for="email" class="block mb-1 text-sm font-medium">Email</label>
+            <label for="email" class="block mb-1 text-lg font-medium">Email</label>
             <input
               type="text"
               id="email"
               v-model="email"
               :disabled="!reservaEncontrada"
-              class="w-full rounded-lg p-2 bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600"
+              class="w-full rounded-lg p-2 bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600 text-lg"
             >
           </div>
 
           <div class="col-span-2 md:col-span-1">
-            <label for="num_personas" class="block mb-1 text-sm font-medium">Número de personas</label>
+            <label for="num_personas" class="block mb-1 text-lg font-medium">Número de personas</label>
             <input
               type="text"
               id="num_personas"
               v-model="num_personas"
               :disabled="!reservaEncontrada"
-              class="w-full rounded-lg p-2 bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600"
+              class="w-full rounded-lg p-2 bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600 text-lg"
             >
           </div>
 
           <div class="col-span-2 md:col-span-1">
-            <label for="empresa" class="block mb-1 text-sm font-medium">Empresa</label>
+            <label for="empresa" class="block mb-1 text-lg font-medium">Empresa</label>
             <input
               type="text"
               id="empresa"
               v-model="empresa"
               :disabled="!reservaEncontrada"
-              class="w-full rounded-lg p-2 bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600"
+              class="w-full rounded-lg p-2 bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600 text-lg"
             >
           </div>
 
-   
           <BaseDivider />
 
           <!-- Fechas -->
           <div class="col-span-2">
-            <h4 class="mb-2 font-semibold">Fechas</h4>
+            <h4 class="mb-2 font-semibold text-lg">Fechas</h4>
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <label for="fecha_entrada" class="block mb-1 text-sm font-medium">Fecha Entrada</label>
+                <label for="fecha_entrada" class="block mb-1 text-lg font-medium">Fecha Entrada</label>
                 <input
                   type="text"
                   id="fecha_entrada"
                   v-model="fecha_entrada"
                   :disabled="!reservaEncontrada"
-                  class="w-full rounded-lg p-2 bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600"
+                  class="w-full rounded-lg p-2 bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600 text-lg"
                 >
               </div>
               <div>
-                <label for="fecha_salida_propuesta" class="block mb-1 text-sm font-medium">Fecha Salida Propuesta</label>
+                <label for="fecha_salida_propuesta" class="block mb-1 text-lg font-medium">Fecha Salida Propuesta</label>
                 <input
                   type="text"
                   id="fecha_salida_propuesta"
                   v-model="fecha_salida_propuesta"
                   :disabled="!reservaEncontrada"
-                  class="w-full rounded-lg p-2 bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600"
+                  class="w-full rounded-lg p-2 bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600 text-lg"
                 >
               </div>
             </div>
           </div>
-
 
           <BaseDivider />
 
           <!-- Reservada por -->
           <div class="col-span-2">
-            <h4 class="mb-2 font-semibold">Reservada por</h4>
+            <h4 class="mb-2 font-semibold text-lg">Reservada por</h4>
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <label for="nombreFuncionario" class="block mb-1 text-sm font-medium">Funcionario</label>
+                <label for="nombreFuncionario" class="block mb-1 text-lg font-medium">Funcionario</label>
                 <input
                   type="text"
                   id="nombreFuncionario"
                   v-model="nombreFuncionario"
                   :disabled="!reservaEncontrada"
-                  class="w-full rounded-lg p-2 bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600"
+                  class="w-full rounded-lg p-2 bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600 text-lg"
                 >
               </div>
               <div>
-                <label for="medioPago" class="block mb-1 text-sm font-medium">Medio de Pago</label>
+                <label for="medioPago" class="block mb-1 text-lg font-medium">Medio de Pago</label>
                 <input
                   type="text"
                   id="medioPago"
                   v-model="medioPago"
                   :disabled="!reservaEncontrada"
-                  class="w-full rounded-lg p-2 bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600"
+                  class="w-full rounded-lg p-2 bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600 text-lg"
                 >
               </div>
               <div>
-                <label for="fecha_reserva" class="block mb-1 text-sm font-medium">Fecha Reserva</label>
+                <label for="fecha_reserva" class="block mb-1 text-lg font-medium">Fecha Reserva</label>
                 <input
                   type="text"
                   id="fecha_reserva"
                   v-model="fecha_reserva"
                   :disabled="!reservaEncontrada"
-                  class="w-full rounded-lg p-2 bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600"
+                  class="w-full rounded-lg p-2 bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600 text-lg"
                 >
               </div>
             </div>
           </div>
         </div>
       </div>
-        <div class="sticky ">
-          <BaseButtons>
-            <BaseButton type="submit" color="info" label="PDF" @click="generarPDF()"/>
-            <BaseButton type="reset" color="info" outline label="Cancelar"  @click="closeModal()" />
-          </BaseButtons>
- 
-        </div>
+
+      <div class="sticky">
+        <BaseButtons>
+          <BaseButton type="submit" color="info" label="PDF" @click="generarPDF()"/>
+          <BaseButton type="reset" color="info" outline label="Cancelar"  @click="closeModal()" />
+        </BaseButtons>
+      </div>
           
       </div>
     </div>
   </div>
 </template> 
+
 
 <script setup>
 import { ref, defineProps, defineEmits } from 'vue'
@@ -275,7 +273,7 @@ const generarPDF = () => {
   doc.text('TARJETA DE RESERVA', 14, 20); // Título
   doc.text('(HMS)', 45, 30); 
 
-  doc.setFont('helvetica', 'normal')
+  doc.setFont('helvetica', 'normal');
   doc.setFontSize(16);
 
   // Configuración de la tabla
@@ -323,7 +321,7 @@ const generarPDF = () => {
     }
   });
 
-  const imagePath = '/src/assets/img/sena-agro.png'; // Ruta relativa de tu imagen en la carpeta 'public'
+  const imagePath = '/img/sena-agro.png'; // Ruta relativa de tu imagen en la carpeta 'public'
   
   // Cargar la imagen y luego agregarla al PDF
   const img = new Image();
