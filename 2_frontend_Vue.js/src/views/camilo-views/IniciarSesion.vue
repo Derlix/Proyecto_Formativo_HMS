@@ -83,61 +83,57 @@ const handleLogin = async () => {
 
 <template>
     <LayoutGuest>
-        <SectionFullScreen>
-            <CardBox  style="border: 1px solid rgba(0, 0, 0, 0.2)" is-form @submit.prevent="handleLogin" class="sm:w-3/6 md:w-3/5 lg:w-3/6 xl:w-2/6 mx-auto">
-                <div class="flex justify-center mb-4">
-                    <img src="@/assets/img/sena-agro.png" alt="Logo Sena" class="w-12 sm:w-16">
-                </div>
-                <h1 class="text-center mb-4 font-bold text-lg sm:text-xl">Iniciar Sesión</h1>
-    
-                <!-- Mostrar error si existe -->
-                <div v-if="errorMessage" class="bg-red-600 text-white p-2 sm:p-4 rounded-md mb-4" role="alert">
-                    {{ errorMessage }}
-                </div>
+        <SectionFullScreen class="flex justify-center items-center min-h-screen bg-gray-100">
+            <!-- Sección izquierda: Logo y descripción -->
+            <div class="hidden lg:flex flex-col justify-center items-start w-1/2 pl-16">
+                <!-- Imagen y descripción del SENA -->
+                <h1 class="text-center mb-4 font-bold text-5xl text-green-600">SENA </h1>
+                <p class="text-2xl text-gray-700 font-light mb-4">El SENA te ayuda a mejorar tus habilidades y conectar con el sector agropecuario.</p>
+            </div>
 
-                <FormField label="Email" help="Por Favor Ingrese Su Correo">
-                    <FormControl v-model="email" :icon="mdiAccount" name="login" autocomplete="usermail" required/>
-                </FormField>
+            <!-- Sección derecha: Formulario de inicio de sesión -->
+            <div class="w-full lg:w-1/3 p-6 bg-white rounded-lg shadow-lg">
+                <CardBox is-form @submit.prevent="handleLogin">
 
-                <FormField label="Contraseña" help="Por favor ingrese su contraseña">
-                    <FormControl
-                        v-model="password"
-                        :icon="mdiAsterisk"
-                        type="password"
-                        name="password"
-                        autocomplete="current-password"
-                        required
-                    />
-                </FormField>
+                    <!-- Título en verde similar a "Facebook" en azul -->
 
-                <div class="mb-7">
-                    <BaseButton
-                        type="submit"
-                        color="info"
-                        label="Ingresar"
-                        class="w-full"
-                    />
-                </div>
 
-                <FormCheckRadio
-                    v-model="form.remember"
-                    name="remember"
-                    label="Recordarme"
-                    :inputValue="form.remember"
-                />
+                    <!-- Mostrar error si existe -->
+                    <div v-if="errorMessage" class="bg-red-600 text-white p-2 sm:p-4 rounded-md mb-4" role="alert">
+                        {{ errorMessage }}
+                    </div>
 
-                <div class="text-center m-1">
-                    <router-link to="/recuperar" class="text-xs sm:text-sm">¿Olvidaste tu contraseña? Restablecer contraseña</router-link>
-                </div>
-    
-                <div class="text-center m-2">
-                    <router-link to="/registrar" class="text-xs sm:text-sm">¿Aún no tienes cuenta? Regístrate</router-link>
-                </div>
+                    <!-- Campos de formulario -->
+                    <FormField label="Email" help="Por Favor Ingrese Su Correo">
+                        <FormControl v-model="email" :icon="mdiAccount" name="login" autocomplete="usermail" required/>
+                    </FormField>
 
-                <div class="text-center m-2">
-                    <router-link to="/cambiarhotel" class="text-xs sm:text-sm">¿Elegiste el hotel equivocado? Cambia tu selección aquí</router-link>
-                </div>
-            </CardBox>
+                    <FormField label="Contraseña" help="Por favor ingrese su contraseña">
+                        <FormControl v-model="password" :icon="mdiAsterisk" type="password" name="password" autocomplete="current-password" required/>
+                    </FormField>
+
+                    <!-- Botón de iniciar sesión -->
+                    <div class="mb-4">
+                        <BaseButton type="submit" color="info" label="Iniciar sesión" class="w-full bg-blue-600 text-white font-bold text-xl py-3 rounded-md hover:bg-blue-700"/>
+                    </div>
+
+                    <!-- Recordarme -->
+                    <FormCheckRadio v-model="form.remember" name="remember" label="Recordarme" :inputValue="form.remember"/>
+
+                    <!-- Links -->
+                    <div class="text-center mt-3">
+                        <router-link to="/recuperar" class="text-sm text-blue-700 hover:underline">¿Olvidaste tu contraseña? Restablecer contraseña</router-link>
+                    </div>
+
+                    <div class="text-center mt-3">
+                        <router-link to="/registrar" class="text-sm text-green-600 hover:underline font-bold">Crear cuenta nueva</router-link>
+                    </div>
+
+                    <div class="text-center mt-3">
+                        <router-link to="/cambiarhotel" class="text-sm text-blue-700 hover:underline">¿Elegiste el hotel equivocado? Cambia tu selección aquí</router-link>
+                    </div>
+                </CardBox>
+            </div>
         </SectionFullScreen>
     </LayoutGuest>
 </template>
