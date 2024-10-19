@@ -30,13 +30,12 @@ import GestionCajero from '@/views/miguel-views/GestionCajero.vue'
 const routes = [
   {
     meta: {
-      title: 'Home Page'
+      title: 'Iniciar Sesion'
     },
     path: '/',
-    name: 'Home Page',
-    component: () => import('@/views/nico-views/HomePage.vue'),
+    name: 'Iniciar Sesión',
+    component: IniciarSesion,
   },
-
   {
     meta: {
       title: 'InicioCajero'
@@ -120,15 +119,6 @@ const routes = [
     name: 'Comprob_depositos',
     component: ComprobanteDeposito,
     meta: { requiresAuth: true}
-  },
-  {
-    // No va haber index por el momento, iniciar desde Dashboard.
-    meta: {
-      title: 'Iniciar sesión'
-    },
-    path: '/iniciar',
-    name: 'iniciar sesión',
-    component: IniciarSesion,
   },
   {
     // No va haber index por el momento, iniciar desde Dashboard.
