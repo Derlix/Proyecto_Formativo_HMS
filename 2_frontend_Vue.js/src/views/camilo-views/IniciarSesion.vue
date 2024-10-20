@@ -28,6 +28,16 @@ const password = ref('');
 const errorMessage = ref(null);
 const profiles = ref([]);
 
+
+const fetchADatosHotel = async () => {
+    try {
+        const response = await getHotelByIdAll(authStore.user.id_hotel);
+        localStorage.setItem('hotelActual', response.data.nombre ? response.data.nombre : (authStore.user.id_hotel ? authStore.user.id_hotel : ''))
+    } catch (error) {
+        errorMessage.value = 'Error al obtener el hotel: ' + error.message
+    }
+}
+
 onMounted(() => {
   const storedEmail = localStorage.getItem('email');
   if (storedEmail) {
@@ -80,6 +90,8 @@ const handleLogin = async () => {
   } catch (error) {
     errorMessage.value = 'Error durante el login: ' + error.message;
   }
+
+
 };</script>
 
 
