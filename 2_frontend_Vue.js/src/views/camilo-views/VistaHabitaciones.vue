@@ -32,6 +32,15 @@
             class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 text-black"
           />
         </div>
+
+        <router-link
+          v-if="userRole === 'SuperAdmin' || userRole === 'JefeRecepcion'"
+          to="/mas_ajustes"
+          class="bg-blue-700 text-white px-4 py-2 rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        >
+          Ajustes caracteristicas
+        </router-link>
+
       </div>
 
       <!-- Modal para crear/editar una habitación -->
@@ -153,6 +162,7 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
+import { useMainStore } from '@/stores/main';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
 import RoomModal from '@/components/juanca_components/RoomModal.vue';
 import RoomDetailsModal from '@/components/juanca_components/RoomDetailsModal.vue';
@@ -178,7 +188,6 @@ const currentPage = ref(1);
 const isAlertVisible = ref(false);
 const modalMessage = ref('');
 const colorAlert = ref('');
-import { useMainStore } from '@/stores/main';
 const mainStore = useMainStore();
 
 const userRole = computed(() => mainStore.userRole);
@@ -259,7 +268,7 @@ const eliminarHabitacionConfirmada = async () => {
     modalMessage.value = 'Error al eliminar, debe quitar caracteristicas antes de eliminar';
     setTimeout(() => {
       isAlertVisible.value = false;
-    }, 3000);
+    }, 6000);
     console.error("Error al eliminar la habitación:", error.message);
   }
 };
