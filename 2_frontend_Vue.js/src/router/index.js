@@ -25,7 +25,8 @@ import InformacionReserva from '@/views/arce-views/InformacionReserva.vue'
 import ComprobanteDeposito from '@/views/miguel-views/ComprobanteDeposito.vue'
 import AvancesEfectivo from '@/views/arce-views/AvancesEfectivo.vue'
 import GestionCajero from '@/views/miguel-views/GestionCajero.vue'
- 
+import vistaMasAjustes from '@/views/camilo-views/vistaMasAjustes.vue'
+
 
 const routes = [
   {
@@ -97,7 +98,7 @@ const routes = [
     meta: {
       title: 'InformacionReserva'
     },
-    path: '/informacion-reserva/:id', 
+    path: '/informacion-reserva/:id',
     name: 'informacion_reserva',
     component: InformacionReserva,
     meta: { requiresAuth: true }
@@ -254,6 +255,15 @@ const routes = [
   },
   {
     meta: {
+      title: 'mas_ajustes'
+    },
+    path: '/mas_ajustes',
+    name: 'mas_ajustes',
+    component: vistaMasAjustes,
+    meta: { requiresAuth: true}
+  },
+  {
+    meta: {
       title: 'Productos'
     },
     path: '/productos',
@@ -339,7 +349,7 @@ const routes = [
     meta: { requiresAuth: true}
   },
 
-  
+
 ]
 
 const router = createRouter({
