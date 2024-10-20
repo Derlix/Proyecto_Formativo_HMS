@@ -172,6 +172,9 @@ const guardarHabitacion = async () => {
       isAlertVisible.value = true;
       colorAlert.value = 'danger';
       modalMessage.value = 'El número de habitación ya existe.';
+      setTimeout(() => {
+        isAlertVisible.value = false;
+      }, 3000);
       return;
     }
 
@@ -180,6 +183,9 @@ const guardarHabitacion = async () => {
       isAlertVisible.value = true;
       colorAlert.value = 'danger';
       modalMessage.value = 'El número de habitación ya existe en otra habitación.';
+      setTimeout(() => {
+        isAlertVisible.value = false;
+      }, 3000);
       return;
     }
 
@@ -195,6 +201,9 @@ const guardarHabitacion = async () => {
       isAlertVisible.value = true;
       colorAlert.value = 'success';
       modalMessage.value = 'Habitación editada exitosamente';
+      setTimeout(() => {
+        isAlertVisible.value = false;
+      }, 3000);
 
     } else {
       await crearHabitacion(
@@ -207,6 +216,9 @@ const guardarHabitacion = async () => {
       isAlertVisible.value = true;
       colorAlert.value = 'success';
       modalMessage.value = 'Habitación creada exitosamente';
+      setTimeout(() => {
+        isAlertVisible.value = false;
+      }, 3000);
     }
 
     emit('save');
@@ -217,10 +229,16 @@ const guardarHabitacion = async () => {
       isAlertVisible.value = true;
       colorAlert.value = 'danger';
       modalMessage.value = 'El número de habitación ya existe. Por favor, elige otro.';
+      setTimeout(() => {
+        isAlertVisible.value = false;
+      }, 3000);
     } else {
       isAlertVisible.value = true;
       colorAlert.value = 'danger';
-      modalMessage.value = `Error al guardar la habitación: ${error.message}`; // Corregido para usar template literals
+      modalMessage.value = `Error al guardar la habitación: ${error.message}`;
+      setTimeout(() => {
+        isAlertVisible.value = false;
+      }, 3000);
     }
   }
 };
