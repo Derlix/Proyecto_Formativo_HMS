@@ -10,11 +10,11 @@ import BaseButton from '@/components/BaseButton.vue';
 import BaseButtons from '@/components/BaseButtons.vue';
 import editarDescuentoModal from '@/components/arce_components/editarDescuentoModal.vue';
 import { info_descuentos, crear_descuento, actualizar_descuento, eliminar_descuento, autorizar_descuento } from '@/services/arce_service/descuentoService';
-import { mdiBallotOutline, mdiInformation, mdiCheckBold } from '@mdi/js';
-import { useMainStore } from '@/stores/main';
+import { mdiBallotOutline, mdiInformation, mdiCheckBold, mdiPencil, mdiTrashCan } from '@mdi/js';
 import NotificationBar from '@/components/NotificationBar.vue';
-import { mdiPencil, mdiTrashCan } from '@mdi/js';
+import CardBoxModal from '@/components/CardBoxModal.vue'; // Asegúrate de importar tu componente modal
 
+import { useMainStore } from '@/stores/main';
 const mainStore = useMainStore();
 const userRole = computed(() => mainStore.userRole);
 
@@ -34,6 +34,11 @@ const modalVisible = ref(false);
 const notificationMessage = ref('');
 const showNotification = ref(false);
 const notificationColor = ref('info');
+
+const deleteModalActive = ref(false);
+const confirmDeleteId = ref(null);
+const authorizeModalActive = ref(false);
+const confirmAuthorizeId = ref(null);
 
 const showNotificationMessage = (message, color) => {
   notificationMessage.value = message;
@@ -96,29 +101,41 @@ const editDescuento = (descuento) => {
   modalVisible.value = true;
 };
 
-const deleteDescuento = async (discountId) => {
-  if (confirm('¿Estás seguro de que quieres eliminar este descuento?')) {
-    try {
-      await eliminar_descuento(discountId);
-      await fetchDescuentos();
-      showNotificationMessage('Descuento eliminado correctamente.', 'success');
-    } catch (error) {
-      console.error('Error al eliminar descuento:', error);
-      showNotificationMessage('Hubo un error al eliminar el descuento. Intenta nuevamente.', 'danger');
-    }
+const deleteDescuento = (discountId) => {
+  confirmDeleteId.value = discountId;
+  deleteModalActive.value = true;
+};
+
+const autorizarDescuento = (discountId) => {
+  confirmAuthorizeId.value = discountId;
+  authorizeModalActive.value = true;
+};
+
+// Lógica de confirmación para eliminación
+const confirmDeleteDescuento = async () => {
+  try {
+    await eliminar_descuento(confirmDeleteId.value);
+    await fetchDescuentos();
+    showNotificationMessage('Descuento eliminado correctamente.', 'success');
+  } catch (error) {
+    console.error('Error al eliminar descuento:', error);
+    showNotificationMessage('Hubo un error al eliminar el descuento. Intenta nuevamente.', 'danger');
+  } finally {
+    deleteModalActive.value = false; // Cierra el modal
   }
 };
 
-const autorizarDescuento = async (discountId) => {
-  if (confirm('¿Quieres confirmar este descuento?')) {
-    try {
-      await autorizar_descuento(discountId, "");
-      await fetchDescuentos();
-      showNotificationMessage('Descuento autorizado correctamente.', 'success');
-    } catch (error) {
-      console.error('Error al autorizar descuento:', error);
-      showNotificationMessage('Hubo un error al autorizar el descuento. Intenta nuevamente.', 'danger');
-    }
+// Lógica de confirmación para autorización
+const confirmAutorizarDescuento = async () => {
+  try {
+    await autorizar_descuento(confirmAuthorizeId.value, '');
+    await fetchDescuentos();
+    showNotificationMessage('Descuento autorizado correctamente.', 'success');
+  } catch (error) {
+    console.error('Error al autorizar descuento:', error);
+    showNotificationMessage('Hubo un error al autorizar el descuento. Intenta nuevamente.', 'danger');
+  } finally {
+    authorizeModalActive.value = false; // Cierra el modal
   }
 };
 
@@ -231,6 +248,26 @@ onMounted(fetchDescuentos);
       </div>
 
       <editarDescuentoModal :visible="modalVisible" :form="form" @update:visible="modalVisible = $event" @save="submitForm" />
+
+      <CardBoxModal
+        v-model="deleteModalActive"
+        title="Confirmar Eliminación"
+        button-label="Eliminar"
+        has-cancel
+        @confirm="confirmDeleteDescuento"
+      >
+        <p>¿Estás seguro de que quieres eliminar este descuento?</p>
+      </CardBoxModal>
+
+      <CardBoxModal
+        v-model="authorizeModalActive"
+        title="Confirmar Autorización"
+        button-label="Autorizar"
+        has-cancel
+        @confirm="confirmAutorizarDescuento"
+      >
+        <p>¿Quieres confirmar este descuento?</p>
+      </CardBoxModal>
     </SectionMain>
   </LayoutAuthenticated>
 </template>

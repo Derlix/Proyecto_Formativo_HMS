@@ -1,7 +1,7 @@
 <template>
   <LayoutAuthenticated>
     <div class="caracteristicas-habitacion container mx-auto p-4">
-      <h1 class="text-2xl font-semibold text-center mb-6">Gestión de Características</h1>
+      <h1 class="text-2xl font-semibold text-center mb-6 text-black">Gestión de Características</h1>
 
       <!-- Alerta de éxito -->
       <NotificationBar
@@ -13,7 +13,6 @@
 
       <!-- Botón para abrir el modal de creación -->
       <div class="flex items-center mb-4 space-x-4 px-5">
-
         <button
           @click="mostrarModalCrear"
           class="bg-green-700 text-white px-4 py-2 rounded-md shadow-sm hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
@@ -27,16 +26,16 @@
         >
           Volver
         </router-link>
-
       </div>
 
-
-
-      <!-- Modal para crear una característica -->
+      <!-- Modal para crear/editar una característica -->
       <CrearCaracteristica
         :visible="showModal"
+        :categoria="caracteristicaSeleccionada"
         @close="cerrarModal"
-        @save="handleCaracteristicaCreada"
+        @save="guardarCaracteristica"
+        @characteristicCreated="mostrarAlerta('Característica creada exitosamente', 'success')"
+        @characteristicUpdated="mostrarAlerta('Característica editada con éxito', 'success')"
       />
 
       <!-- Modal para confirmar eliminación -->
@@ -45,7 +44,7 @@
         title="Confirmar Eliminación"
         button-label="Eliminar"
         hasCancel
-        @confirm="eliminarHabitacionConfirmada"
+        @confirm="eliminarCaracteristicaService"
         @cancel="showConfirmModal = false"
       >
         <p>¿Estás seguro de que deseas eliminar esta característica?</p>
@@ -56,17 +55,25 @@
         <table>
           <thead>
             <tr>
-              <th>Nombre</th>
-              <th>Precio adicional</th>
-              <th>Acción</th>
+              <th class="text-black">Nombre</th>
+              <th class="text-black">Precio adicional</th>
+              <th class="text-black">Acción</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="item in caracteristicas" :key="item.id_caracteristica">
-              <td>{{ item.nombre_caracteristicas }}</td>
-              <td>{{ item.adicional }}</td>
+              <td class="text-black">{{ item.nombre_caracteristicas }}</td>
+              <td class="text-black">{{ item.adicional }}</td>
               <td>
                 <BaseButtons no-wrap>
+                  <!-- Botón para editar -->
+                  <BaseButton
+                    @click="editarCaracteristica(item)"
+                    :icon="mdiNoteEdit"
+                    small
+                    color="success"
+                  />
+                  <!-- Botón para eliminar -->
                   <BaseButton
                     @click="confirmarEliminacion(item.id_caracteristica)"
                     :icon="mdiTrashCan"
@@ -79,6 +86,24 @@
           </tbody>
         </table>
       </div>
+
+      <!-- Paginador -->
+      <div class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800 relative" style="overflow-x: auto; white-space: nowrap;">
+        <BaseLevel>
+          <small>Página {{ currentPage }} de {{ totalPaginas }}</small>
+          <BaseButtons style="display: inline-flex; overflow-x: auto; flex-wrap: nowrap;">
+            <BaseButton
+              v-for="page in totalPaginas"
+              :key="page"
+              :active="page === currentPage"
+              :label="page"
+              :color="page === currentPage ? 'lightDark' : 'whiteDark'"
+              small
+              @click="changePage(page)"
+            />
+          </BaseButtons>
+        </BaseLevel>
+      </div>
     </div>
   </LayoutAuthenticated>
 </template>
@@ -90,49 +115,66 @@ import CrearCaracteristica from '@/components/juanca_components/CrearCaracterist
 import BaseButtons from '@/components/BaseButtons.vue';
 import BaseButton from '@/components/BaseButton.vue';
 import NotificationBar from '@/components/alejo_components/NotificationBar.vue';
-import { obtenerTodasCaracteristicas, eliminarCaracteristica } from '@/services/juanca_service/caracteristicasService';
-import { mdiTrashCan } from '@mdi/js';
+import { obtenerCaracteristicasPaginadas, eliminarCaracteristica } from '@/services/juanca_service/caracteristicasService';
+import { mdiTrashCan, mdiNoteEdit } from '@mdi/js';
 import CardBoxModal from '@/components/CardBoxModal.vue';
 
 export default {
-  components: { LayoutAuthenticated, CrearCaracteristica, BaseButtons, BaseButton, NotificationBar, CardBoxModal },
+  components: {
+    LayoutAuthenticated,
+    CrearCaracteristica,
+    BaseButtons,
+    BaseButton,
+    NotificationBar,
+    CardBoxModal,
+  },
   setup() {
     const caracteristicas = ref([]);
     const showModal = ref(false);
     const showConfirmModal = ref(false);
+    const caracteristicaSeleccionada = ref(null);
     const idCaracteristicaAEliminar = ref(null);
     const isAlertVisible = ref(false);
     const modalMessage = ref('');
     const colorAlert = ref('');
+    const totalPaginas = ref(1);
+    const currentPage = ref(1);
 
-    const fetchCaracteristicas = async () => {
+    const fetchCaracteristicas = async (page = 1) => {
       try {
-        const response = await obtenerTodasCaracteristicas();
-        caracteristicas.value = response;
+        const response = await obtenerCaracteristicasPaginadas(page, 10);
+        if (response && response.caracteristicas && Array.isArray(response.caracteristicas)) {
+          caracteristicas.value = response.caracteristicas;
+          totalPaginas.value = response.total_pages || 1;
+        } else {
+          console.error('Error: La respuesta del API no tiene el formato esperado.');
+          caracteristicas.value = [];
+        }
       } catch (error) {
         console.error('Error al obtener las características:', error);
       }
     };
 
     const confirmarEliminacion = (id) => {
-      idCaracteristicaAEliminar.value = id; // Guarda el ID para usarlo al confirmar
-      showConfirmModal.value = true; // Muestra el modal de confirmación
+      idCaracteristicaAEliminar.value = id;
+      showConfirmModal.value = true;
     };
 
-    const eliminarHabitacionConfirmada = async () => {
+    const eliminarCaracteristicaService = async () => {
       try {
         await eliminarCaracteristica(idCaracteristicaAEliminar.value);
-        await fetchCaracteristicas(); // Recargar la lista después de eliminar
-        mostrarAlerta('Característica eliminada con éxito.', 'success'); // Alerta de éxito
+        await fetchCaracteristicas(currentPage.value);
+        mostrarAlerta('Característica eliminada con éxito.', 'success');
       } catch (error) {
         console.error('Error al eliminar la característica:', error);
         mostrarAlerta('Las características que están en uso no se pueden eliminar.', 'danger');
       } finally {
-        showConfirmModal.value = false; // Cierra el modal de confirmación
+        showConfirmModal.value = false;
       }
     };
 
     const mostrarModalCrear = () => {
+      caracteristicaSeleccionada.value = null;
       showModal.value = true;
     };
 
@@ -140,10 +182,20 @@ export default {
       showModal.value = false;
     };
 
-    const handleCaracteristicaCreada = async () => {
-      await fetchCaracteristicas();
-      mostrarAlerta('Característica creada con éxito.', 'success');
+    const guardarCaracteristica = async () => {
+      await fetchCaracteristicas(currentPage.value);
       cerrarModal();
+    };
+
+    const editarCaracteristica = (item) => {
+      caracteristicaSeleccionada.value = { ...item };
+      showModal.value = true;
+    };
+
+
+    const changePage = (page) => {
+      currentPage.value = page;
+      fetchCaracteristicas(page);
     };
 
     const mostrarAlerta = (message, color) => {
@@ -155,23 +207,29 @@ export default {
       }, 3000);
     };
 
-    onMounted(fetchCaracteristicas);
+    onMounted(() => {
+      fetchCaracteristicas();
+    });
 
     return {
       caracteristicas,
       showModal,
       showConfirmModal,
-      fetchCaracteristicas,
       confirmarEliminacion,
-      eliminarHabitacionConfirmada,
+      eliminarCaracteristicaService,
       mostrarModalCrear,
       cerrarModal,
-      handleCaracteristicaCreada,
+      guardarCaracteristica,
       isAlertVisible,
       modalMessage,
       colorAlert,
-      mdiTrashCan
+      totalPaginas,
+      currentPage,
+      changePage,
+      editarCaracteristica,
+      mdiTrashCan,
+      mdiNoteEdit,
     };
-  }
+  },
 };
 </script>
