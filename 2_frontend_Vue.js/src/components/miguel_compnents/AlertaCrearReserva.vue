@@ -36,15 +36,15 @@
       </div>
     </div>
 
-    <ModalCrearHuesped
-      :visible="mostrarModalCrearHuesped"
-      @close="cerrarModalCrearHuesped"
-    />
-    <ModalSeleccionHuesped
-      :visible="mostrarHuespedExistente"
-      @close="mostrarHuespedExistente = false"
-    />
   </div>
+  <ModalCrearHuesped
+    :visible="mostrarModalCrearHuesped"
+    @close="cerrarModalCrearHuesped"
+  />
+  <ModalSeleccionHuesped
+    :visible="mostrarHuespedExistente"
+    @close="mostrarHuespedExistente = false"
+  />
 </template>
 
 <script setup>
@@ -66,6 +66,7 @@ function cerrarModal() {
 }
 
 function abrirModalCrearHuesped() {
+  cerrarModal();
   mostrarModalCrearHuesped.value = true
   console.log('Modal de creación de huésped abierto:', mostrarModalCrearHuesped.value)
 }
@@ -75,6 +76,7 @@ function cerrarModalCrearHuesped() {
 }
 
 function abrirHuespedExistente() {
+  cerrarModal();
   mostrarHuespedExistente.value = true
 }
 
