@@ -102,10 +102,11 @@ onMounted(() => {
             </div>
 
             <CardBox class="shadow-md">
-                <SectionTitle>Registro entrada y salida</SectionTitle>
+                <SectionTitle>Check-In - Check-Out</SectionTitle>
                 <div class="grid grid-cols-2 gap-6">
-                    <button @click="showModal = true" class="bg-blue-600 h-12 rounded-lg my-6 font-bold hover:bg-blue-900 text-white">Registrar entrada</button>
-                    <button @click="showModalSalidas = true" class="bg-blue-600 h-12 rounded-lg my-6 font-bold hover:bg-blue-900 text-white">Registrar salida</button>
+                    <button @click="showModal = true" class="bg-blue-600 h-12 rounded-lg my-6 font-bold hover:bg-blue-900 text-white">Registrar Check-In</button>
+                    <button @click="showModalSalidas = true" class="bg-blue-600 h-12 rounded-lg my-6 font-bold hover:bg-blue-900 text-white">Registrar Check-Out
+                    </button>
                     <ModalRegistrarEntrada :visible="showModal" @close="showModal = false" />
                     <ModalRegistrarSalida :visible="showModalSalidas" @close="showModalSalidas = false"/>
                 </div>

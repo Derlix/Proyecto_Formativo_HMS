@@ -69,9 +69,9 @@ const fetchReports = async () => {
         }
         closeModal();
     } catch (error) {
-        modalMessage.value = 'Error al obtener informes';
+        modalMessage.value = 'No hay informes disponibles';
         isModalOpen.value = false;
-        colorAlert.value = 'danger';
+        colorAlert.value = 'info';
         isAlertVisible.value = true;
         setTimeout(() => {
             isAlertVisible.value = false;
@@ -82,18 +82,19 @@ const fetchReports = async () => {
 const saveReport = async () => {
     try {
         if (!currentReport.value.id_habitacion || !currentReport.value.id_reserva || !currentReport.value.estado_reportado) {
-            alert('Por favor, completa todos los campos antes de guardar.');
+            isModalOpen.value = false;
+            isAlertVisible.value = true;
+            modalMessage.value = 'Por favor completa todos los campos';
+            colorAlert.value = 'info';
+            setTimeout(() => {
+                isAlertVisible.value = false;
+            }, 3000);
             return;
         }
 
         const numeroPersonas = parseInt(currentReport.value.ama_de_llaves_numero_de_personas, 10);
         if (isNaN(numeroPersonas) || numeroPersonas <= 0) {
             alert('Número de personas es obligatorio y debe ser un número válido mayor que 0.');
-            return;
-        }
-
-        if (!currentReport.value.causa) {
-            alert('Por favor, proporciona una causa.');
             return;
         }
 

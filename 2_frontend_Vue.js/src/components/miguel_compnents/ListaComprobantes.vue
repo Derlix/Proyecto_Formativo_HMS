@@ -110,7 +110,7 @@ onMounted(() => {
         </div>
         <div class="mb-4">
           <label for="huespedTipo_documento" class="block text-gray-700 font-medium dark:text-white"
-            >Fecha salida</label
+            >Tipo documento</label
           >
           <input
             disabled

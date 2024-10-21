@@ -14,7 +14,7 @@ const productos = ref([]);
 const currentProduct = ref({});
 const TotalPages = ref(0);
 const currentPage = ref(1);
-
+const isModalOpen = ref(false)
 const isEditMode = ref(false);  
 const isAlertVisible = ref(false);
 const colorAlert = ref('');
@@ -58,6 +58,15 @@ const closeModal = () => {
 };
 
 const saveProduct = async () => {
+    if (!currentProduct.value.nombre_producto || !currentProduct.value.descripcion || !currentProduct.value.precio_actual) {
+        isModalVisible.value = false;
+        modalMessage.value = 'Por favor complete todos los campos antes de guardar';
+        colorAlert.value = 'info';
+        isAlertVisible.value = true;
+        setTimeout(() => { isAlertVisible.value = false; }, 3000);
+        return;
+    }
+
     try {
         if (isEditMode.value) {
             await updateProduct(currentProduct.value.id_producto, currentProduct.value.nombre_producto, currentProduct.value.descripcion, currentProduct.value.precio_actual);
