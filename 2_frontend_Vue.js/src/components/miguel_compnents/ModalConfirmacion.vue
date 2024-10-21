@@ -303,10 +303,13 @@
     </div>
   </div>
   <CardBoxModal v-model="activarModalCaracteristicas" title="Características de la habitación" has-cancel :showPrimaryButton="false" @cancel="activarModalCaracteristicas = false">
-        <ul v-if="habitacionSeleccionada?.caracteristicas">
+        <ul v-if="habitacionSeleccionada?.caracteristicas.length">
           <li v-for="caracteristica in habitacionSeleccionada.caracteristicas" :key="caracteristica.id_caracteristica">
             {{ caracteristica.nombre_caracteristicas }} (Adicional: {{ caracteristica.adicional }})
           </li>
+        </ul>
+        <ul v-else>
+          <p> No hay caracteristicas para esta habitación</p>
         </ul>
       </CardBoxModal>
 </template>
