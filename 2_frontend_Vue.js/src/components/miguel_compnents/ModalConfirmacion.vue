@@ -420,7 +420,7 @@ const verCaracteristicas = (habitacion) => {
 // Método para avanzar en los pasos
 const siguiente = async () => {
   if (paso.value === 1) {
-    if (!fecha_reserva.value || !num_adultos.value || !num_niños.value || !fecha_llegada.value || !fecha_salida.value || !deposito.value || !forma_pago.value) {
+    if (!fecha_reserva.value || !num_adultos.value || !fecha_llegada.value || !fecha_salida.value || !deposito.value || !forma_pago.value) {
       // console.error('Por favor, completa todos los campos antes de continuar.')
 
       modalMessage.value = 'Por favor, completa todos los campos antes de continuar.';
