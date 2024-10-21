@@ -335,8 +335,8 @@ const paso = ref(1)
 const fecha_reserva = ref('')
 const fecha_llegada = ref('')
 const fecha_salida = ref('')
-const num_adultos = ref('')
-const num_niños = ref('')
+const num_adultos = ref('1')
+const num_niños = ref('0')
 const empresa = ref('')
 const habitaciones = ref([])
 const deposito = ref('')
@@ -345,6 +345,8 @@ const habitacionSeleccionada = ref(null)
 const seleccionaridReservaSeleccionada = ref(null)
 const activarModalCaracteristicas = ref(false);
 const showSuccessAlert = ref(false) // Estado para mostrar la alerta
+const showError = ref(false) // Estado para mostrar la alerta de error
+
 
 const today = new Date();
 today.setHours(today.getHours() - today.getTimezoneOffset() / 60); // Ajusta la fecha para la zona horaria local
@@ -407,6 +409,11 @@ const closeAlert = () => {
   closeModal()
 }
 
+const closeError = () => {
+  showError.value = false // Cerrar la alerta de error
+  closeModal()
+}
+
 const verCaracteristicas = (habitacion) => {
   habitacionSeleccionada.value = habitacion;
   activarModalCaracteristicas.value = true;
@@ -421,6 +428,21 @@ const siguiente = async () => {
       // console.error('Por favor, completa todos los campos antes de continuar.')
 
       modalMessage.value = 'Por favor, completa todos los campos antes de continuar.';
+      isAlertVisible.value = true;
+      colorAlert.value = 'danger';
+
+      setTimeout(() => {
+        isAlertVisible.value = false;
+      }, 5000);
+
+      return;
+    }
+
+    // Error si pone la fecha de llegada después de la fecha de salida
+    if (new Date(fecha_llegada.value) > new Date(fecha_salida.value)) {
+      // console.error('La fecha de llegada no puede ser mayor a la fecha de salida.')
+      
+      modalMessage.value = 'La fecha de llegada no puede ser mayor a la fecha de salida.';
       isAlertVisible.value = true;
       colorAlert.value = 'danger';
 
@@ -448,6 +470,7 @@ const siguiente = async () => {
 
       return
     }
+    cargarHabitaciones(); 
   }
 
   if (paso.value === 3) {
@@ -468,7 +491,7 @@ const siguiente = async () => {
     try {
       await confirmarReservaHabitacion() // Llama a la función para confirmar la reserva de habitación
       paso.value = 0;
-      showSuccessAlert.value = true
+      limpiarCampos();
     }catch (error) {
       console.error('Error al finalizar el paso 3:', error);
     }
@@ -478,6 +501,19 @@ const siguiente = async () => {
   if (paso.value < 4) {
     paso.value++
   }
+}
+
+const limpiarCampos = () => {
+  fecha_reserva.value = today.toISOString().slice(0, 10); // Asigna la fecha actual al campo de fecha de reserva
+  empresa.value = '';
+  num_adultos.value = '1';
+  num_niños.value = '0';
+  fecha_llegada.value = '';
+  fecha_salida.value = '';
+  deposito.value = '';
+  forma_pago.value = '';
+  habitacionSeleccionada.value = null;
+  seleccionaridReservaSeleccionada.value = null;
 }
 
 const atras = () => {
@@ -507,6 +543,7 @@ const confirmarReserva = async () => {
 const confirmarReservaHabitacion = async () => {
   if (!fecha_salida.value) {
     console.error("La fecha de salida es requerida.");
+    showError.value = true;
     return;
   }
 
@@ -576,6 +613,8 @@ watch(
   () => props.visible,
   (newValue) => {
     if (newValue) {
+      paso.value = 1; 
+      limpiarCampos();
       openModal()
     }
   }
@@ -586,5 +625,5 @@ onUnmounted(() => {
   modalStack.value = [] // Limpia la pila de modales al desmontar
 })
 
-cargarHabitaciones()
+
 </script>
