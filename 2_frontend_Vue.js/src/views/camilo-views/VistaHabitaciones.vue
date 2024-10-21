@@ -229,6 +229,7 @@ const buscarHabitacionPorNumero = async () => {
         obtenerHabitaciones(1);
       } else {
         habitacion.value = [];
+        obtenerHabitaciones();
       }
     } catch (error) {
       console.error('Error al obtener la habitación:', error.message);
@@ -239,6 +240,7 @@ const buscarHabitacionPorNumero = async () => {
         isAlertVisible.value = false;
       }, 3000);
       habitacion.value = [];
+      obtenerHabitaciones();
     }
   } else {
     obtenerHabitaciones();
