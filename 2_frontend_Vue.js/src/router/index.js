@@ -26,6 +26,7 @@ import ComprobanteDeposito from '@/views/miguel-views/ComprobanteDeposito.vue'
 import AvancesEfectivo from '@/views/arce-views/AvancesEfectivo.vue'
 import GestionCajero from '@/views/miguel-views/GestionCajero.vue'
 import vistaMasAjustes from '@/views/camilo-views/vistaMasAjustes.vue'
+import { Title } from 'chart.js'
 
 
 const routes = [
@@ -348,8 +349,14 @@ const routes = [
     component: () => import('@/views/felipe-views/BibliografiaHotel.vue'),
     meta: { requiresAuth: true}
   },
-
-
+  {
+    meta:{
+      title: 'Desarolladores'
+    },
+    path: '/desarollo',
+    name: 'desarollo',
+    component: () => import('@/views/arias_views/CreditosView.vue')
+  }
 ]
 
 const router = createRouter({
