@@ -6,6 +6,12 @@
     <div
       class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-2xl w-full relative transition-all"
     >
+      <button
+        @click="closeAlert"
+        class="absolute top-4 right-4 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 z-10"
+      >
+        &times;
+      </button>
       <h1 class="text-xl font-semibold mb-4 text-center text-gray-900 dark:text-white">
         Formulario crear reserva
       </h1>
@@ -13,7 +19,14 @@
       <div class="flex justify-center mb-6">
         <span class="text-gray-700 dark:text-gray-300 mx-2">Reserva para:</span>
         <p class="text-gray-900 dark:text-gray-100">{{ huesped.nombre_completo }}</p>
+
       </div>
+      <NotificationBar
+          v-if="isAlertVisible"
+          :color="colorAlert" 
+          :description="modalMessage"
+          :visible="isModalVisible"
+        />
 
       <!-- Paso 1 - Datos de la reserva -->
       <div v-if="paso === 1" class="grid grid-cols-2 gap-4">
@@ -222,7 +235,7 @@
             @click="closeAlert"
             class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg w-full"
           >
-            Cerrar
+            Regresar
           </button>
         </div>
       </div>
@@ -267,6 +280,13 @@
 
       <div class="flex justify-between mt-6">
         <button
+          v-if="paso === 1"
+          @click="closeAlert"
+          class="bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-200 font-semibold py-2 px-4 rounded-md hover:bg-gray-400 dark:hover:bg-gray-500 transition"
+        >
+          Cancelar
+        </button>
+        <button
           v-if="paso > 1"
           @click="atras"
           class="bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-200 font-semibold py-2 px-4 rounded-md hover:bg-gray-400 dark:hover:bg-gray-500 transition"
@@ -298,6 +318,11 @@ import { crearReserva } from '@/services/reservaService'
 import { crearReservaHabitacion } from '@/services/reservaHabitacionService'
 import { obtenerReservasPorHuesped } from '@/services/reservaService'
 import CardBoxModal from '@/components/alejo_components/CardBoxModal.vue';
+import NotificationBar from '@/components/alejo_components/NotificationBar.vue';
+const modalMessage = ref('');
+const isAlertVisible = ref(false);
+const colorAlert = ref('');
+
 
 const props = defineProps({
   visible: Boolean, // Prop que controla la visibilidad del modal
@@ -320,6 +345,10 @@ const habitacionSeleccionada = ref(null)
 const seleccionaridReservaSeleccionada = ref(null)
 const activarModalCaracteristicas = ref(false);
 const showSuccessAlert = ref(false) // Estado para mostrar la alerta
+
+const today = new Date();
+today.setHours(today.getHours() - today.getTimezoneOffset() / 60); // Ajusta la fecha para la zona horaria local
+fecha_reserva.value = today.toISOString().slice(0, 10); // Asigna la fecha actual al campo de fecha de reserva
 
 const calcularPrecioTotal = (habitacion) => {
   let precioTotal = habitacion.categoria?.precio_fijo || 0;
@@ -383,25 +412,67 @@ const verCaracteristicas = (habitacion) => {
   activarModalCaracteristicas.value = true;
 };
 
-// Método para finalizar el paso 3
-const finalizarPaso3 = async () => {
-  if (!habitacionSeleccionada.value) {
-    console.error('Por favor, selecciona una habitación antes de continuar.')
-    return
-  }
-
-  await confirmarReservaHabitacion() // Llama a la función para confirmar la reserva de habitación
-
-  showSuccessAlert.value = true
-}
-
+// fecha_reserva, empresa, num_adultos, num_niños, fecha_llegada, fecha_salida, deposito, forma_pago
 
 // Método para avanzar en los pasos
 const siguiente = async () => {
   if (paso.value === 1) {
+    if (!fecha_reserva.value || !num_adultos.value || !num_niños.value || !fecha_llegada.value || !fecha_salida.value || !deposito.value || !forma_pago.value) {
+      // console.error('Por favor, completa todos los campos antes de continuar.')
+
+      modalMessage.value = 'Por favor, completa todos los campos antes de continuar.';
+      isAlertVisible.value = true;
+      colorAlert.value = 'danger';
+
+      setTimeout(() => {
+        isAlertVisible.value = false;
+      }, 5000);
+
+      return;
+    }
+    
     await confirmarReserva()
-  } else if (paso.value === 3) {
-    await finalizarPaso3() // Llama a la función que finaliza el paso 3
+  }
+
+  if (paso.value === 2) {
+    if (!seleccionaridReservaSeleccionada.value) {
+      // console.error('Por favor, selecciona una reserva antes de continuar.')
+      
+      modalMessage.value = 'Por favor, selecciona una reserva antes de continuar.';
+      isAlertVisible.value = true;
+      colorAlert.value = 'danger';
+
+      setTimeout(() => {
+        isAlertVisible.value = false;
+      }, 5000);
+
+      return
+    }
+  }
+
+  if (paso.value === 3) {
+    if (!habitacionSeleccionada.value) {
+      console.error('Por favor, selecciona una habitación antes de continuar.')
+
+      modalMessage.value = 'Por favor, selecciona una habitación antes de continuar.';
+      isAlertVisible.value = true;
+      colorAlert.value = 'danger';
+
+      setTimeout(() => {
+        isAlertVisible.value = false;
+      }, 6000);
+
+      return;
+    }
+
+    try {
+      await confirmarReservaHabitacion() // Llama a la función para confirmar la reserva de habitación
+      paso.value = 0;
+      showSuccessAlert.value = true
+    }catch (error) {
+      console.error('Error al finalizar el paso 3:', error);
+    }
+
   }
 
   if (paso.value < 4) {
@@ -449,6 +520,7 @@ const confirmarReservaHabitacion = async () => {
       fecha_salida.value // Este es el campo que debe pasar el valor para fecha_salida_propuesta
     );
     console.log('Habitación reservada exitosamente:', response.data);
+    showSuccessAlert.value = true;
   } catch (error) {
     if (error.response) {
       console.error("Error en la API:", error.response.data); // Imprimir el mensaje de error completo
