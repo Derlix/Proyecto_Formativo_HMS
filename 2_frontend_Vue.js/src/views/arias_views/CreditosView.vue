@@ -5,17 +5,18 @@ const profiles = ref([]);
 const errorMessage = ref(null);
 const isLoading = ref(true); // Variable para manejar el estado de carga
 
-// Lista de usuarios de GitHub y sus LinkedIns
+// Lista de usuarios de GitHub, LinkedIn y Instagram
 const usernames = [
-  { github: 'Derlix', linkedin: 'christian-325615306' },
-  { github: '8ustamante', linkedin: 'su_linkedin' },
-  { github: 'Nicolas-tv17', linkedin: 'su_linkedin' },
-  { github: 'destroyer012134', linkedin: 'miguel-angel-mora-galeano-72975428a' },
-  { github: 'Juan-Camilo-MH', linkedin: 'su_linkedin' },
-  { github: 'Alejo412', linkedin: 'su_linkedin' },
-  { github: 'Felipe0521', linkedin: 'su_linkedin' },
-  { github: 'BrayanAlexisCar', linkedin: 'su_linkedin' }
+  { github: 'Derlix', linkedin: 'christian-325615306', instagram: 'arpegius.v_v' },
+  { github: '8ustamante', linkedin: 'su_linkedin', instagram: 'su_instagram' },
+  { github: 'Nicolas-tv17', linkedin: 'nicolás-tapasco-valencia-166029334', instagram: 'nicolas_tvalencia' },
+  { github: 'destroyer012134', linkedin: 'miguel-angel-mora-galeano-72975428a', instagram: '_mora0_' },
+  { github: 'Juan-Camilo-MH', linkedin: 'su_linkedin', instagram: 'su_instagram' },
+  { github: 'Alejo412', linkedin: 'su_linkedin', instagram: 'alejo_hdz05' },
+  { github: 'Felipe0521', linkedin: 'su_linkedin', instagram: 'su_instagram' },
+  { github: 'BrayanAlexisCar', linkedin: 'su_linkedin', instagram: 'su_instagram' }
 ];
+
 
 const fetchGitHubProfiles = async () => {
   try {
@@ -83,6 +84,10 @@ onMounted(() => {
               <!-- Enlace a LinkedIn con icono -->
               <a :href="`https://www.linkedin.com/in/${usernames[index].linkedin}/`" target="_blank" class="text-blue-600 hover:text-blue-700">
                 <i class="fab fa-linkedin text-2xl"></i>
+              </a>
+              <!-- Enlace a Instagram con icono -->
+              <a :href="`https://www.instagram.com/${usernames[index].instagram}/`" target="_blank" class="text-pink-500 hover:text-pink-600">
+                <i class="fab fa-instagram text-2xl"></i>
               </a>
             </div>
           </div>
@@ -187,8 +192,8 @@ onMounted(() => {
   
   /* Estilo del espacio para Nicolas-tv17 */
   .space-style {
-    border: 3px solid #4a90e2;
-    background: radial-gradient(circle, #191636, #0f0c29, #1a1a3d);
+    border: 3px solid #0077ff;
+    background: radial-gradient(circle, #191636, #1e1a3f, #1a1a3d);
     color: white;
 
     box-shadow: 8px 8px 0px #000000;
