@@ -12,3 +12,85 @@ export const obtenerCategoriasHabitacion = async () => {
   }
 };
 
+
+// Función para crear una nueva categoría de habitación
+export const crearCategoria = async (precio_fijo, tipo_habitacion, id_hotel) => {
+  try {
+    const response = await api.post('categoria-habitacion/create', {
+      precio_fijo,       // Precio fijo de la categoría
+      tipo_habitacion,   // Tipo de habitación
+      id_hotel           // ID del hotel
+    }, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('access_token')}` // Incluye el token de autenticación
+      }
+    });
+    return response;
+  } catch (error) {
+    if (error.response) {
+      throw error.response;
+    } else {
+      throw new Error('Error de red o de servidor');
+    }
+  }
+};
+
+
+// Función para actualizar una categoría
+export const actualizarCategoria = async (id_categoria_habitacion, nombre, descripcion) => {
+  try {
+    const response = await api.put(`//categoria-habitacion/update_categoria_habitacion/${id_categoria_habitacion}`, {
+      nombre,
+      descripcion,
+      id_hotel: ""
+    }, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('access_token')}` // Incluye el token de autenticación
+      }
+    });
+    return response;
+  } catch (error) {
+    if (error.response) {
+      throw error.response;
+    } else {
+      throw new Error('Error de red o de servidor');
+    }
+  }
+};
+
+// Función para eliminar una categoría
+export const eliminarCategoria = async (id_categoria_habitacion) => {
+  try {
+    const response = await api.delete(`/categorias/${id_categoria_habitacion}`, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('access_token')}` // Incluye el token de autenticación
+      }
+    });
+    return response;
+  } catch (error) {
+    if (error.response) {
+      throw error.response;
+    } else {
+      throw new Error('Error de red o de servidor');
+    }
+  }
+};
+
+// Función para obtener categorías paginadas
+export const obtenerCategoriasPaginadas = async (pagina = 1, pageSize = 10) => {
+  try {
+    const response = await api.get(`/categoria-habitacion/categorie-by-page/`, {
+      params: {
+        page: pagina,
+        page_size: pageSize
+      }
+    });
+    return response; // Ajusta según la estructura de tu API
+  } catch (error) {
+    if (error.response) {
+      throw error.response;
+    } else {
+      throw new Error('Error de red o de servidor');
+    }
+  }
+};

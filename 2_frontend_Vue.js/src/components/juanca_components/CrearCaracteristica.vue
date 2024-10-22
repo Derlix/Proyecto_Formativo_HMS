@@ -1,146 +1,83 @@
 <template>
-  <div v-if="visible" class="fixed inset-0 flex items-center justify-center z-50">
-    <div :class="modalBackgroundClass" class="w-full max-w-lg mx-auto rounded-lg shadow-lg p-6">
-      <h2 class="text-2xl font-bold mb-4">{{ isEditing ? 'Editar' : 'Crear' }} Característica</h2>
-
-      <NotificationBar
-        v-if="isAlertVisible"
-        :color="colorAlert"
-        :description="modalMessage"
-        :visible="isAlertVisible"
-      />
-
-      <form @submit.prevent="guardarCaracteristica">
-        <!-- Campo Nombre de la Característica -->
-        <div class="mb-4">
-          <label for="nombre_caracteristica" class="block text-sm font-medium text-gray-700">
-            Nombre de la Característica
-          </label>
-          <input
-            id="nombre_caracteristica"
-            v-model="form.nombre_caracteristica"
-            required
-            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
-          />
-        </div>
-
-        <!-- Campo Precio Adicional -->
-        <div class="mb-4">
-          <label for="precio_adicional" class="block text-sm font-medium text-gray-700">
-            Precio Adicional
-          </label>
-          <input
-            type="number"
-            step="0.01"
-            id="precio_adicional"
-            v-model="form.precio_adicional"
-            required
-            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
-          />
-        </div>
-
-        <!-- Botones de acción -->
-        <div class="flex justify-between" v-if="userRole === 'SuperAdmin' || userRole === 'JefeRecepcion'">
-          <button
-            type="button"
-            @click="close"
-            class="bg-red-500 text-white px-4 py-2 rounded-md"
-          >
-            Cancelar
-          </button>
-          <button
-            type="submit"
-            class="bg-blue-500 text-white px-4 py-2 rounded-md"
-          >
-            {{ isEditing ? 'Actualizar' : 'Crear' }}
-          </button>
-        </div>
-      </form>
-    </div>
+  <div v-if="visible" class="modal">
+    <h2 class="text-xl">{{ isEditing ? 'Editar' : 'Crear' }} Característica</h2>
+    <form @submit.prevent="handleSubmit">
+      <div>
+        <label for="nombre">Nombre:</label>
+        <input v-model="nombre" type="text" id="nombre" required />
+      </div>
+      <div>
+        <label for="adicional">Precio adicional:</label>
+        <input v-model="adicional" type="number" id="adicional" required />
+      </div>
+      <button type="submit">{{ isEditing ? 'Actualizar' : 'Crear' }}</button>
+      <button type="button" @click="$emit('close')">Cancelar</button>
+    </form>
   </div>
 </template>
 
-<script setup>
-import { ref, computed } from 'vue';
-import { crearCaracteristica, actualizarCaracteristica } from '@/services/juanca_service/caracteristicasService';
-import { useMainStore } from '@/stores/main';
-import NotificationBar from '@/components/alejo_components/NotificationBar.vue';
+<script>
+import { ref, watch } from 'vue';
+import { crearCaracteristica, editarCaracteristica } from '@/services/juanca_service/caracteristicasService'; // Asegúrate de que la ruta sea correcta
 
-// Inicializar la store
-const mainStore = useMainStore();
+export default {
+  props: {
+    visible: Boolean,
+    caracteristica: Object,
+  },
+  setup(props, { emit }) {
+    const nombre = ref('');
+    const adicional = ref(0);
+    const isEditing = ref(false);
 
-const userRole = computed(() => mainStore.userRole);
-const userID = computed(() => mainStore.userID);
-const isEditing = ref(false);
-const isAlertVisible = ref(false);
-const modalMessage = ref('');
-const colorAlert = ref('');
+    watch(
+      () => props.caracteristica,
+      (newValue) => {
+        console.log('Característica recibida:', newValue); // Añadir esta línea
+        if (newValue) {
+          nombre.value = newValue.nombre_caracteristicas;
+          adicional.value = newValue.adicional;
+          isEditing.value = true;
+        } else {
+          nombre.value = '';
+          adicional.value = 0;
+          isEditing.value = false;
+        }
+      }
+    );
 
-const props = defineProps({
-  visible: Boolean,
-  categoria: Object,
-});
 
-const emit = defineEmits(['close', 'save']);
+    const handleSubmit = async () => {
+      const data = {
+        nombre_caracteristicas: nombre.value,
+        adicional: adicional.value,
+      };
 
-const form = ref({
-  nombre_caracteristica: '',
-  precio_adicional: '',
-});
-
-// Computed para determinar la clase de fondo según el tema
-const modalBackgroundClass = computed(() => {
-  return mainStore.isDarkTheme ? 'bg-gray-800 text-white' : 'bg-white text-gray-800';
-});
-
-const close = () => {
-  emit('close');
-  isAlertVisible.value = false;
-  colorAlert.value = '';
-  modalMessage.value = '';
-};
-
-const guardarCaracteristica = async () => {
-  try {
-    // Prepare the data with correct field names
-    const caracteristicaData = {
-      nombre_caracteristicas: form.value.nombre_caracteristica, // Field name updated
-      adicional: form.value.precio_adicional // Field name matches 'adicional'
+      try {
+        if (isEditing.value) {
+          // Accede al ID correcto
+          const caracteristicaId = props.caracteristica.id_caracteristica; // Cambia aquí
+          console.log('ID de la característica en handleSubmit:', caracteristicaId);
+          await editarCaracteristica(caracteristicaId, data.nombre_caracteristicas, data.adicional);
+        } else {
+          await crearCaracteristica(data);
+        }
+        emit('save');
+        emit('close');
+      } catch (error) {
+        console.error('Error al guardar la característica:', error);
+      }
     };
 
-    if (isEditing.value) {
-      // Update existing characteristic
-      await actualizarCaracteristica(props.categoria.id_categoria_habitacion, caracteristicaData);
-      isAlertVisible.value = true;
-      colorAlert.value = 'success';
-      modalMessage.value = 'Característica editada exitosamente';
-      emit('save');
-    } else {
-      // Create new characteristic
-      await crearCaracteristica(
-        form.value.nombre_caracteristica, // Pass the correct value
-        form.value.precio_adicional       // Pass the correct value
-      );
-      isAlertVisible.value = true;
-      colorAlert.value = 'success';
-      modalMessage.value = 'Característica creada exitosamente';
-    }
 
-    setTimeout(() => {
-      isAlertVisible.value = false;
-    }, 3000);
 
-    emit('save');
-    close();
-  } catch (error) {
-    isAlertVisible.value = true;
-    colorAlert.value = 'danger';
-    modalMessage.value = `Error al guardar la característica: ${error.message}`;
-    setTimeout(() => {
-      isAlertVisible.value = false;
-    }, 3000);
-  }
+
+    return {
+      nombre,
+      adicional,
+      isEditing,
+      handleSubmit,
+    };
+  },
 };
-
-
 </script>
