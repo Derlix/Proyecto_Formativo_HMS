@@ -44,14 +44,15 @@
   </CardBoxModal>
   
   <div class="flex items-center mb-5" style="width: 500px;">
-    <h2 class="mr-3 text-lg">Filtrar por fecha inicio:</h2>
-    <input id="selectedDate" 
+    <h2 class="mr-3 text-lg dark:text-white">Filtrar por fecha inicio:</h2>
+    <input 
+      id="selectedDate" 
       v-model="selected_date" 
-      type="date"
-      @change="filtrarRegistrosPorFechaInicio"
+      type="date" 
+      @change="filtrarRegistrosPorFechaInicio" 
+      class="w-48 px-4 py-2 rounded-lg focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:text-white dark:bg-gray-700" 
     />
   </div>
-  
     <div class="relative overflow-x-auto">
       <table>
         <thead>
