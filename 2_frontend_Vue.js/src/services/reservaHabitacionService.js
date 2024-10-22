@@ -7,6 +7,7 @@ export const crearReservaHabitacion = async (id_reserva, id_habitacion, num_adul
       id_habitacion: id_habitacion,
       num_adultos: num_adultos,
       num_niños: num_niños,
+      motivo_cambio: "String",
       fecha_entrada: fecha_entrada,
       fecha_salida_propuesta: fecha_salida_propuesta, // Este campo está correcto
     });
@@ -19,11 +20,6 @@ export const crearReservaHabitacion = async (id_reserva, id_habitacion, num_adul
     }
   }
 };
-
-
-
-
-
 
   export const obtenerReservasHabitacionPorPagina = async (page = 1, pageSize = 10) => {
     try {
@@ -62,7 +58,6 @@ export const crearReservaHabitacion = async (id_reserva, id_habitacion, num_adul
       }
     }
   };
-  
 
   export const deleteReservaHabitacion = async (id_reserva) => {
     try {
@@ -81,7 +76,6 @@ export const crearReservaHabitacion = async (id_reserva, id_habitacion, num_adul
     }
   };
   
-
   export const obtenertodasReservasHabitacion = async () => {
     try {
       const response = await api.get('/Reserva-habitacion/get_all');
