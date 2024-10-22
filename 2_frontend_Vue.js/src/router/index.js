@@ -356,6 +356,14 @@ const routes = [
     path: '/desarollo',
     name: 'desarollo',
     component: () => import('@/views/arias_views/CreditosView.vue')
+  },
+  {
+    meta:{
+      title: 'Historial Cambio Habitacion'
+    },
+    path: '/historial-cambio-habitacion',
+    name: 'Historial Cambio Habitacion',
+    component: () => import('@/views/busta-views/HistorialCambioHabitacion.vue')
   }
 ]
 

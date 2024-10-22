@@ -58,6 +58,11 @@ export default [
         label: 'His. Reservas',
         modulo: 'reservas'
       },
+      {
+        to: '/historial-cambio-habitacion',
+        label: 'His. Cam Habitacion',
+        modulo: 'reservas'
+      },
       // {
       //   to: '/transpaso-particulares',
       //   label: 'Transpaso a particulares',
