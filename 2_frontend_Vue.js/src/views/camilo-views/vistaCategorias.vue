@@ -1,7 +1,7 @@
 <template>
   <LayoutAuthenticated>
-    <div class="caracteristicas-habitacion container mx-auto p-4">
-      <h1 class="text-2xl font-semibold text-center mb-6 text-black dark:text-white">Gestión de Características</h1>
+    <div class="categorias container mx-auto p-4">
+      <h1 class="text-2xl font-semibold text-center mb-6 text-black dark:text-white">Gestión de Categorías</h1>
 
       <!-- Alerta de éxito -->
       <NotificationBar
@@ -17,7 +17,7 @@
           @click="mostrarModalCrear"
           class="bg-green-700 text-white px-4 py-2 rounded-md shadow-sm hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
         >
-          Crear Característica
+          Crear Categoría
         </button>
 
         <router-link
@@ -28,12 +28,12 @@
         </router-link>
       </div>
 
-      <!-- Modal para crear o editar una característica -->
-      <CrearCaracteristica
+      <!-- Modal para crear o editar una categoría -->
+      <CrearCategoria
         :visible="showModalCrear"
-        :caracteristica="caracteristicaSeleccionada"
+        :categoria="categoriaSeleccionada"
         @close="cerrarModal"
-        @save="handleCaracteristicaCreada"
+        @save="handleCategoriaCreada"
       />
 
       <!-- Modal para confirmar eliminación -->
@@ -42,42 +42,42 @@
         title="Confirmar Eliminación"
         button-label="Eliminar"
         hasCancel
-        @confirm="eliminarCaracteristicaService"
+        @confirm="eliminarCategoriaService"
         @cancel="showConfirmModal = false"
       >
-        <p>¿Estás seguro de que deseas eliminar esta característica?</p>
+        <p>¿Estás seguro de que deseas eliminar esta categoría?</p>
       </CardBoxModal>
 
-      <!-- Tabla de características -->
-      <div v-if="caracteristicas.length" class="w-full overflow-auto mb-4">
+      <!-- Tabla de categorías -->
+      <div v-if="categorias.length" class="w-full overflow-auto mb-4">
         <table>
           <thead>
             <tr>
-              <th class="text-black dark:text-white">Nombre</th>
-              <th class="text-black dark:text-white">Precio adicional</th>
+              <th class="text-black dark:text-white">Precio Fijo</th> <!-- Columna para Precio Fijo -->
+              <th class="text-black dark:text-white">Tipo de Habitación</th> <!-- Columna para Tipo de Habitación -->
               <th class="text-black dark:text-white">Acción</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="item in caracteristicas" :key="item.id_caracteristica">
-              <td class="text-black px-4 py-2 border-b-2 text-sm dark:text-white">{{ item.nombre_caracteristicas }}</td>
-              <td class="text-black px-4 py-2 border-b-2 text-sm dark:text-white">{{ item.adicional }}</td>
+            <tr v-for="item in categorias" :key="item.id_categoria">
+              <td class="text-black px-4 py-2 border-b-2 text-sm dark:text-white">{{ item.precio_fijo }}</td> <!-- Mostrar Precio Fijo -->
+              <td class="text-black px-4 py-2 border-b-2 text-sm dark:text-white">{{ item.tipo_habitacion }}</td> <!-- Mostrar Tipo de Habitación -->
               <td>
                 <BaseButtons no-wrap>
                   <!-- Botón para editar -->
                   <BaseButton
-                    @click="editarCaracteristica(item)"
+                    @click="editarCategoria(item)"
                     :icon="mdiNoteEdit"
                     small
                     color="success"
                   />
                   <!-- Botón para eliminar -->
-                  <BaseButton
-                    @click="confirmarEliminacion(item.id_caracteristica)"
+                  <!-- <BaseButton
+                    @click="confirmarEliminacion(item.id_categoria)"
                     :icon="mdiTrashCan"
                     small
                     color="danger"
-                  />
+                  /> -->
                 </BaseButtons>
               </td>
             </tr>
@@ -109,70 +109,74 @@
 <script>
 import { onMounted, ref } from 'vue';
 import LayoutAuthenticated from '@/layouts/LayoutAuthenticated.vue';
-import CrearCaracteristica from '@/components/juanca_components/CrearCaracteristica.vue';
+import CrearCategoria from '@/components/juanca_components/categorias.vue';
 import BaseButtons from '@/components/BaseButtons.vue';
 import BaseButton from '@/components/BaseButton.vue';
 import NotificationBar from '@/components/alejo_components/NotificationBar.vue';
-import { obtenerCaracteristicasPaginadas, eliminarCaracteristica } from '@/services/juanca_service/caracteristicasService';
+import { obtenerCategoriasPaginadas, eliminarCategoria } from '@/services/juanca_service/categoriaService';
 import { mdiTrashCan, mdiNoteEdit } from '@mdi/js';
 import CardBoxModal from '@/components/CardBoxModal.vue';
 
 export default {
   components: {
     LayoutAuthenticated,
-    CrearCaracteristica,
+    CrearCategoria,
     BaseButtons,
     BaseButton,
     NotificationBar,
     CardBoxModal,
   },
   setup() {
-    const caracteristicas = ref([]);
+    const categorias = ref([]);
     const showModalCrear = ref(false);
     const showConfirmModal = ref(false);
-    const caracteristicaSeleccionada = ref({});
-    const idCaracteristicaAEliminar = ref(null);
+    const categoriaSeleccionada = ref({});
+    const idCategoriaAEliminar = ref(null);
     const isAlertVisible = ref(false);
     const modalMessage = ref('');
     const colorAlert = ref('');
     const totalPaginas = ref(1);
     const currentPage = ref(1);
 
-    const fetchCaracteristicas = async (page = 1) => {
+    const fetchCategorias = async (page = 1) => {
       try {
-        const response = await obtenerCaracteristicasPaginadas(page, 10);
-        if (response && response.caracteristicas && Array.isArray(response.caracteristicas)) {
-          caracteristicas.value = response.caracteristicas;
-          totalPaginas.value = response.total_pages || 1;
+        const response = await obtenerCategoriasPaginadas(page, 10);
+
+        // Accede a la propiedad data de la respuesta
+        const { data } = response;
+
+        if (data && data.categories && Array.isArray(data.categories)) {
+          categorias.value = data.categories; // Accede a data.categories
+          totalPaginas.value = data.total_pages || 1; // Ahora accede a data.total_pages
         } else {
           console.error('Error: La respuesta del API no tiene el formato esperado.');
-          caracteristicas.value = [];
+          categorias.value = [];
         }
       } catch (error) {
-        console.error('Error al obtener las características:', error);
+        console.error('Error al obtener las categorías:', error);
       }
     };
 
     const confirmarEliminacion = (id) => {
-      idCaracteristicaAEliminar.value = id;
+      idCategoriaAEliminar.value = id;
       showConfirmModal.value = true;
     };
 
-    const eliminarCaracteristicaService = async () => {
+    const eliminarCategoriaService = async () => {
       try {
-        await eliminarCaracteristica(idCaracteristicaAEliminar.value);
-        await fetchCaracteristicas(currentPage.value);
-        mostrarAlerta('Característica eliminada con éxito.', 'success');
+        await eliminarCategoria(idCategoriaAEliminar.value);
+        await fetchCategorias(currentPage.value);
+        mostrarAlerta('Categoría eliminada con éxito.', 'success');
       } catch (error) {
-        console.error('Error al eliminar la característica:', error);
-        mostrarAlerta('Las características que están en uso no se pueden eliminar.', 'danger');
+        console.error('Error al eliminar la categoría:', error);
+        mostrarAlerta('La categoría no se puede eliminar porque está en uso.', 'danger');
       } finally {
         showConfirmModal.value = false;
       }
     };
 
     const mostrarModalCrear = () => {
-      caracteristicaSeleccionada.value = null; // Limpiar selección anterior
+      categoriaSeleccionada.value = null; // Limpiar selección anterior
       showModalCrear.value = true; // Muestra el modal de creación
     };
 
@@ -180,25 +184,26 @@ export default {
       showModalCrear.value = false; // Cierra también el modal de creación
     };
 
-    const handleCaracteristicaCreada = async () => {
-      await fetchCaracteristicas(currentPage.value);
+    const handleCategoriaCreada = async () => {
+      await fetchCategorias(currentPage.value);
       cerrarModal();
     };
 
-    const editarCaracteristica = (item) => {
-      console.log('Característica seleccionada:', JSON.stringify(item)); // Log as plain object
-      if (!item.id_caracteristica) {
-        console.error('Error: La característica seleccionada no tiene un ID válido.');
+    const editarCategoria = (item) => {
+      console.log('Categoría seleccionada:', JSON.stringify(item)); // Log as plain object
+      // Cambia aquí a id_categoria_habitacion si es el campo correcto
+      if (!item.id_categoria_habitacion) {
+        console.error('Error: La categoría seleccionada no tiene un ID válido.');
         return;
       }
 
-      caracteristicaSeleccionada.value = { ...item }; // Crea una copia superficial para reactividad
+      categoriaSeleccionada.value = { ...item }; // Crea una copia superficial para reactividad
       showModalCrear.value = true; // Muestra el modal de creación para editar
     };
 
     const changePage = (page) => {
       currentPage.value = page;
-      fetchCaracteristicas(page);
+      fetchCategorias(page);
     };
 
     const mostrarAlerta = (message, color) => {
@@ -211,26 +216,26 @@ export default {
     };
 
     onMounted(() => {
-      fetchCaracteristicas();
+      fetchCategorias();
     });
 
     return {
-      caracteristicas,
+      categorias,
       showModalCrear,
       showConfirmModal,
       confirmarEliminacion,
-      eliminarCaracteristicaService,
+      eliminarCategoriaService,
       mostrarModalCrear,
       cerrarModal,
-      handleCaracteristicaCreada,
+      handleCategoriaCreada,
       isAlertVisible,
       modalMessage,
       colorAlert,
       totalPaginas,
       currentPage,
       changePage,
-      editarCaracteristica,
-      caracteristicaSeleccionada,
+      editarCategoria,
+      categoriaSeleccionada,
       mdiTrashCan,
       mdiNoteEdit,
     };
