@@ -31,27 +31,22 @@ export const obtenerCaracteristicasPaginadas = async (page = 1, pageSize = 10) =
 };
 
 // Función para editar una característica
-export const actualizarCaracteristica = async (caracteristica_id, nombre_caracteristica, adicional) => {
+// Función para editar una característica
+export const editarCaracteristica = async (caracteristica_id, nombre_caracteristica, adicional) => {
   try {
-    console.log("Datos enviados:", {
-      nombre_caracteristica,
-      adicional,
-    });
-
     const response = await api.put(`caracteristicas/update_feature/?caracteristica_id=${caracteristica_id}`, {
-      nombre_caracteristica,  // Asegúrate de que este sea el nombre del campo correcto
-      adicional,              // Asegúrate de que este sea el nombre del campo correcto
+      nombre_caracteristicas: nombre_caracteristica, // Asegúrate de que el nombre sea correcto
+      adicional: adicional,
     }, {
       headers: {
-        'Content-Type': 'application/json', // Asegura que el Content-Type sea JSON
-        'Authorization': `Bearer ${localStorage.getItem('access_token')}`, // Incluye el token de autenticación
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
       }
     });
 
-    return response.data; // Devuelve los datos de la respuesta en caso de éxito
+    return response.data;
   } catch (error) {
     if (error.response) {
-      // Muestra los detalles de error específicos si están disponibles
       console.error('Error de la API:', error.response.data);
       throw new Error(error.response.data.detail || 'Error al procesar la solicitud');
     } else {
@@ -62,23 +57,22 @@ export const actualizarCaracteristica = async (caracteristica_id, nombre_caracte
 
 
 
+
 // Función para crear una nueva característica
-export const crearCaracteristica = async (nombreCaracteristica, adicional) => {
+export const crearCaracteristica = async (data) => {
   try {
-    const response = await api.post('caracteristicas/feature-create', {
-      nombre_caracteristicas: nombreCaracteristica,  // Correct field name
-      adicional: adicional  // Correct field name
-    }, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-      }
-    });
-    return response.data; // Return the API response
+      const response = await api.post('caracteristicas/feature-create', data, {
+          headers: {
+              'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+          }
+      });
+      return response.data; // Return the API response
   } catch (error) {
-    console.error('Error al crear la característica:', error);
-    throw error;
+      console.error('Error al crear la característica:', error);
+      throw error;
   }
 };
+
 
 
 // Función para crear una relación entre habitación y característica

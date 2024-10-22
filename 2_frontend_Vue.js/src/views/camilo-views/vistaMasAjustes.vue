@@ -28,14 +28,12 @@
         </router-link>
       </div>
 
-      <!-- Modal para crear/editar una característica -->
+      <!-- Modal para crear o editar una característica -->
       <CrearCaracteristica
-        :visible="showModal"
-        :categoria="caracteristicaSeleccionada"
+        :visible="showModalCrear"
+        :caracteristica="caracteristicaSeleccionada"
         @close="cerrarModal"
-        @save="guardarCaracteristica"
-        @characteristicCreated="mostrarAlerta('Característica creada exitosamente', 'success')"
-        @characteristicUpdated="mostrarAlerta('Característica editada con éxito', 'success')"
+        @save="handleCaracteristicaCreada"
       />
 
       <!-- Modal para confirmar eliminación -->
@@ -62,8 +60,8 @@
           </thead>
           <tbody>
             <tr v-for="item in caracteristicas" :key="item.id_caracteristica">
-              <td class="text-black">{{ item.nombre_caracteristicas }}</td>
-              <td class="text-black">{{ item.adicional }}</td>
+              <td class="text-black px-4 py-2 border-b-2 text-sm">{{ item.nombre_caracteristicas }}</td>
+              <td class="text-black px-4 py-2 border-b-2 text-sm">{{ item.adicional }}</td>
               <td>
                 <BaseButtons no-wrap>
                   <!-- Botón para editar -->
@@ -130,9 +128,9 @@ export default {
   },
   setup() {
     const caracteristicas = ref([]);
-    const showModal = ref(false);
+    const showModalCrear = ref(false);
     const showConfirmModal = ref(false);
-    const caracteristicaSeleccionada = ref(null);
+    const caracteristicaSeleccionada = ref({});
     const idCaracteristicaAEliminar = ref(null);
     const isAlertVisible = ref(false);
     const modalMessage = ref('');
@@ -174,24 +172,29 @@ export default {
     };
 
     const mostrarModalCrear = () => {
-      caracteristicaSeleccionada.value = null;
-      showModal.value = true;
+      caracteristicaSeleccionada.value = null; // Limpiar selección anterior
+      showModalCrear.value = true; // Muestra el modal de creación
     };
 
     const cerrarModal = () => {
-      showModal.value = false;
+      showModalCrear.value = false; // Cierra también el modal de creación
     };
 
-    const guardarCaracteristica = async () => {
+    const handleCaracteristicaCreada = async () => {
       await fetchCaracteristicas(currentPage.value);
       cerrarModal();
     };
 
     const editarCaracteristica = (item) => {
-      caracteristicaSeleccionada.value = { ...item };
-      showModal.value = true;
-    };
+      console.log('Característica seleccionada:', JSON.stringify(item)); // Log as plain object
+      if (!item.id_caracteristica) {
+        console.error('Error: La característica seleccionada no tiene un ID válido.');
+        return;
+      }
 
+      caracteristicaSeleccionada.value = { ...item }; // Crea una copia superficial para reactividad
+      showModalCrear.value = true; // Muestra el modal de creación para editar
+    };
 
     const changePage = (page) => {
       currentPage.value = page;
@@ -213,13 +216,13 @@ export default {
 
     return {
       caracteristicas,
-      showModal,
+      showModalCrear,
       showConfirmModal,
       confirmarEliminacion,
       eliminarCaracteristicaService,
       mostrarModalCrear,
       cerrarModal,
-      guardarCaracteristica,
+      handleCaracteristicaCreada,
       isAlertVisible,
       modalMessage,
       colorAlert,
@@ -227,6 +230,7 @@ export default {
       currentPage,
       changePage,
       editarCaracteristica,
+      caracteristicaSeleccionada,
       mdiTrashCan,
       mdiNoteEdit,
     };
