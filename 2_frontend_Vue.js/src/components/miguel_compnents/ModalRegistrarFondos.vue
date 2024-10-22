@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { mdiClose } from '@mdi/js'
 import BaseButton from '@/components/BaseButton.vue'
-import BaseButtons from '@/components/BaseButtons.vue'
+
 import CardBox from '@/components/CardBox.vue'
 import OverlayLayer from '@/components/OverlayLayer.vue'
 import CardBoxComponentTitle from '@/components/CardBoxComponentTitle.vue'
@@ -39,7 +39,7 @@ const confirmCancel = (mode) => {
   emit(mode)
 }
 
-const confirm = () => confirmCancel('confirm')
+
 
 const cancel = () => confirmCancel('Cancelar')
 
@@ -72,12 +72,7 @@ window.addEventListener('keydown', (e) => {
         <slot />
       </div>
 
-      <template #footer>
-        <BaseButtons>
-          <BaseButton :label="buttonLabel" :color="button" @click="confirm" />
-          <BaseButton v-if="hasCancel" label="Cancel" :color="button" outline @click="cancel" />
-        </BaseButtons>
-      </template>
+     
     </CardBox>
   </OverlayLayer>
 </template>

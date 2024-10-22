@@ -5,7 +5,7 @@ import SectionMain from '@/components/SectionMain.vue'
 import CardBoxWidget from '@/components/CardBoxWidget.vue'
 import TitleIconOnly from '@/components/TitleIconOnly.vue'
 import CardBox from '@/components/CardBox.vue'
-import SectionTitle from '@/components/SectionTitle.vue'
+
 
 import {
   mdiCash,
@@ -19,7 +19,6 @@ import { obtenerTodasHabitacion } from '@/services/habitacionService'
 import { getAllFacturas } from '@/services/brayan_service/FacturacionService'
 import { obtenerTodasCuentasHuesped } from '@/services/cuentahuespedService'
 import ModalRegistrarFondos from '@/components/miguel_compnents/ModalRegistrarFondos.vue'
-import ModalCerrarFondos from '@/components/miguel_compnents/ModalCerrarFondos.vue'
 import { useAuthStore } from '@/stores'
 import { createFondo } from '@/services/gestionfondosService'
 
@@ -87,6 +86,8 @@ const registrarFondos = async () => {
     console.log('Fondos registrados:', dineroInicialTemporal.value)
 
     activarvisibleModal.value = false
+    dinero_inicial.value = 0;
+    fecha_inicial.value = new Date().toISOString().substring(0, 10);
   } catch (error) {
     console.error('Error al registrar fondos:', error)
   }
@@ -96,21 +97,24 @@ async function cerrarFondos() {
   try {
     console.log(
       'Datos a enviar a createFondo:',
-      id_usuario,
+      id_usuario.value,
       dineroInicialTemporal.value,
       dinero_final.value,
       fecha_final.value
-    ) // Debug
-
+    )
+    activarvisibleModalFondos.value = false;
+      
     const response = await createFondo({
       id_usuario: authStore.user.user_id,
-      dinero_inicial: dineroInicialTemporal.value, // Asegúrate de que sea "dinero_inicial"
+      dinero_inicial: dineroInicialTemporal.value, 
       dinero_final: dinero_final.value,
       fecha_final: fecha_final.value
     })
+
+    
     console.log('Fondos cerrados correctamente:', response)
   } catch (error) {
-    console.error('Error al cerrar fondos:', error.response.data.detail || error)
+    console.error('Error al cerrar fondos:', error.response.detail || error)
   }
 }
 
@@ -122,17 +126,17 @@ onMounted(() => {
 </script>
 
 <template>
-  <!-- MODAL DE VISUALIZACION -->
   <ModalRegistrarFondos v-model="activarvisibleModal">
     <h2 class="text-center text-lg font-semibold text-gray-800 dark:text-white">
       Registrar Fondos
     </h2>
+    
     <form>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
         <div class="mb-4">
-          <label for="dinero_inicial" class="block text-gray-700 font-medium dark:text-white"
-            >Dinero inicial</label
-          >
+          <label for="dinero_inicial" class="block text-gray-700 font-medium dark:text-white">
+            Dinero inicial
+          </label>
           <input
             type="number"
             id="dinero_inicial"
@@ -141,9 +145,9 @@ onMounted(() => {
           />
         </div>
         <div class="mb-4">
-          <label for="fecha_inicial" class="block text-gray-700 font-medium dark:text-white"
-            >Fecha Inicial</label
-          >
+          <label for="fecha_inicial" class="block text-gray-700 font-medium dark:text-white">
+            Fecha Inicial
+          </label>
           <input
             type="date"
             id="fecha_inicial"
@@ -153,19 +157,28 @@ onMounted(() => {
         </div>
       </div>
     </form>
-
-    <div class="flex justify-between">
+  
+    <!-- Botones en la misma línea -->
+    <div class="flex justify-end space-x-2 mt-4">
       <button
-        class="mt-4 inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        class="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         @click="registrarFondos"
       >
         Registrar Fondos
       </button>
+      <button
+        class="inline-flex justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 border border-gray-300 rounded-md shadow-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+        @click="activarvisibleModal = false" 
+      >
+        Cancelar
+      </button>
     </div>
   </ModalRegistrarFondos>
+  
+  
 
   <!-- MODAL DE CERRAR FONDOS -->
-  <ModalCerrarFondos v-model="activarvisibleModalFondos">
+  <ModalRegistrarFondos v-model="activarvisibleModalFondos">
     <h2 class="text-center text-lg font-semibold text-gray-800 dark:text-white">Cerrar Fondos</h2>
     <form>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -193,16 +206,23 @@ onMounted(() => {
         </div>
       </div>
     </form>
-
-    <div class="flex justify-between">
+    <!-- Botones en la misma línea -->
+    <div class="flex justify-end space-x-2 mt-4">
       <button
-        class="mt-4 inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        class="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         @click="cerrarFondos"
+        
       >
         Cerrar Fondos
       </button>
+      <button
+        class="inline-flex justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 border border-gray-300 rounded-md shadow-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+        @click="activarvisibleModalFondos = false" 
+      >
+        Cancelar
+      </button>
     </div>
-  </ModalCerrarFondos>
+  </ModalRegistrarFondos>
 
   <LayoutAuthenticated>
     <SectionMain>
