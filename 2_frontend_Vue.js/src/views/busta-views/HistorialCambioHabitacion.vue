@@ -65,6 +65,7 @@ onMounted(() => {
                   <th class="px-4 py-2">Huésped</th>
                   <th class="px-4 py-2">Documento</th>
                   <th class="px-4 py-2">Correo</th>
+                  <th class="px-4 py-2">Motivo cambio</th>
                   <th class="px-4 py-2">Habitación Anterior</th>
                   <th class="px-4 py-2">Habitación Nueva</th>
                 </tr>
@@ -74,8 +75,9 @@ onMounted(() => {
                   <td class="border px-4 py-2">{{ historial.id_historial }}</td>
                   <td class="border px-4 py-2">{{ historial.fecha_cambio }}</td>
                   <td class="border px-4 py-2">{{ historial.huesped.nombre_completo }}</td>
-                  <td class="border px-4 py-2">{{ historial.huesped.email }}</td>
                   <td class="border px-4 py-2">{{ historial.huesped.numero_documento }}</td>
+                  <td class="border px-4 py-2">{{ historial.huesped.email }}</td>
+                  <td class="border px-4 py-2">{{ historial.motivo_cambio }}</td>
                   <td class="border px-4 py-2">{{ historial.habitacion_anterior }} ({{ historial.tipo_habitacion_anterior }})</td>
                   <td class="border px-4 py-2">{{ historial.habitacion_nueva }} ({{ historial.tipo_habitacion_nueva }})</td>
                 </tr>
