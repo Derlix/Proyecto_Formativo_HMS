@@ -28,7 +28,7 @@ const DescuentoDisponibles = ref([]);
 const fetchAllDescuentos = async () => {
   try {
     const response = await info_descuentos();
-    console.log('Respuesta de la API:', response);  
+    //console.log('Respuesta de la API:', response);  
     DescuentoDisponibles.value = response; 
   } catch (error) {
     console.error("Error al obtener productos:", error);
@@ -48,7 +48,7 @@ const productosDisponibles = ref([]);
 const fetchAllProductos = async () => {
   try {
     const response = await getAllProductosPrueba();
-    console.log('Respuesta de la API:', response);  
+    //console.log('Respuesta de la API:', response);  
     productosDisponibles.value = response; 
   } catch (error) {
     console.error("Error al obtener productos:", error);
@@ -93,7 +93,7 @@ async function buscar_Factura() {
 
     try {
       const response = await getFacturaByid(buscarFactura.value);
-      console.log('Respuesta de la API:', response);
+      //console.log('Respuesta de la API:', response);
       if (response && response.data) {
         // se Actualiza selectedFactura y facturas
         selectedFactura.value = response.data;
@@ -233,7 +233,7 @@ function openEditModal(factura) {
     ...factura,
     id_descuento: factura.descuento ? factura.descuento.id_descuento : null 
   };
-  console.log('Factura seleccionada para editar:', selectedFactura.value);
+  //console.log('Factura seleccionada para editar:', selectedFactura.value);
   showEditModal.value = true;
 }
 
@@ -388,7 +388,7 @@ function resetSelectedProduct() {
 //ELIMINAR PRODUCTO DE FACTURA
 const confirmDeleteProducto = async () => {
   try {
-    console.log('Confirmar eliminación del producto:', selectedProduct.value); // Verifica que se muestra la información del producto
+    //console.log('Confirmar eliminación del producto:', selectedProduct.value); 
     await deleteProductoFactura(selectedProduct.value.factura_producto.id_factura_producto);
     fetchProductos();
     closeDeleteProductosModal();
@@ -416,7 +416,7 @@ const confirmDeleteProducto = async () => {
 //ACTUALIZAR PRODUCTO DE FACTURA
 const updateProducto = async () => {
   try {
-    console.log('Datos del producto en el modal:', selectedProduct.value);
+    //console.log('Datos del producto en el modal:', selectedProduct.value);
     await updateProductoFactura(
       selectedProduct.value.factura_producto.id_factura_producto,
       selectedProduct.value.factura_producto.cantidad,
@@ -470,7 +470,7 @@ function openAgregarProductosModal(factura) {
 
 const openEditProductoModal = (producto) => {
   if (producto && producto.factura_producto && producto.factura_producto.id_factura_producto) {
-    console.log('Producto seleccionado para editar:', producto);
+    //console.log('Producto seleccionado para editar:', producto);
     selectedProduct.value = { ...producto };
     showEditProductosModal.value = true;
   } else {
@@ -482,7 +482,7 @@ const openEditProductoModal = (producto) => {
 
 const openDeleteProductoModal = (producto) => {
   if (producto && producto.factura_producto && producto.factura_producto.id_factura_producto) {
-    console.log('Producto seleccionado:', producto.factura_producto.id_factura_producto);
+    //console.log('Producto seleccionado:', producto.factura_producto.id_factura_producto);
     selectedProduct.value = { ...producto };
     showDeleteProductosModal.value = true;
   } else {
@@ -535,19 +535,19 @@ function cerrarAgregarProductoFactura() {
 const downloadPDF = () => {
   const facturaDetalles = document.getElementById('facturaDetalles');
 
-  // Almacenar el estilo original
+  
   const originalBackgroundColor = facturaDetalles.style.backgroundColor;
   const originalColor = facturaDetalles.style.color;
 
-  // Cambiar temporalmente a un tema claro
+  
   facturaDetalles.style.backgroundColor = 'white';
   facturaDetalles.style.color = 'black';
 
-  // Elimina el límite de altura para la captura completa del contenido
+  
   const originalMaxHeight = facturaDetalles.style.maxHeight;
   facturaDetalles.style.maxHeight = 'none'; 
 
-  // Captura el contenido del modal con html2canvas
+  
   html2canvas(facturaDetalles, { scale: 1, width: facturaDetalles.offsetWidth, height: facturaDetalles.scrollHeight })
     .then((canvas) => {
       const imgData = canvas.toDataURL('image/png', 1);
@@ -560,11 +560,10 @@ const downloadPDF = () => {
 
       let position = 0;
 
-      // Agregar la primera imagen
       pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
       heightLeft -= pageHeight;
 
-      // Manejar el contenido que excede la altura de la página
+      
       while (heightLeft >= 0) {
         position = heightLeft - imgHeight;
         pdf.addPage();
@@ -572,10 +571,9 @@ const downloadPDF = () => {
         heightLeft -= pageHeight;
       }
 
-      // Guardar el PDF
+     
       pdf.save('factura.pdf');
 
-      // Restaurar el estilo original
       facturaDetalles.style.backgroundColor = originalBackgroundColor;
       facturaDetalles.style.color = originalColor;
       facturaDetalles.style.maxHeight = originalMaxHeight;
@@ -583,7 +581,7 @@ const downloadPDF = () => {
     .catch((error) => {
       console.error('Error al generar el PDF:', error);
       
-      // Restaurar el estilo original en caso de error
+      
       facturaDetalles.style.backgroundColor = originalBackgroundColor;
       facturaDetalles.style.color = originalColor;
       facturaDetalles.style.maxHeight = originalMaxHeight;
