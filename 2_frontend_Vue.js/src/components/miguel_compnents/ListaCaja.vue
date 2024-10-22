@@ -126,7 +126,6 @@
   const TotalPages = ref(0);
   const allComprobantes = ref([]);
   const filteredFondos = ref([]);
-  const buscarHuesped = ref('');
   const activarvisibleModal = ref(false);
   const currentFondo = ref({});
   const isAlertVisible = ref(false);
@@ -167,15 +166,6 @@
   }
   
 
-  
-  const filterHuespedes = () => {
-    filteredFondos.value = allComprobantes.value.filter(comprobante => {
-      return (
-        comprobante.usuario?.nombre_completo.toLowerCase().includes(buscarHuesped.value.toLowerCase()) ||
-        comprobante.usuario?.email.toLowerCase().includes(buscarHuesped.value.toLowerCase())
-      );
-    });
-  }
   
   const formatDate = (dateString) => {
   const options = {
@@ -280,17 +270,16 @@ const cancelDelete = () => {
 
 
 const filtrarRegistrosPorFechaInicio = () => {
-  console.log("fecha_selected", selected_date.value);
   
   if (selected_date.value === "") {
     fetchComprobantes(); 
   } else {
-    console.log(comprobantesOriginales);
+    
     filteredFondos.value = comprobantesOriginales.value.filter(comprobante => {
       const fechaComprobante = comprobante.fecha_inicio.split('T')[0]; 
       return fechaComprobante === selected_date.value;
     });
-    console.log(filteredFondos.value);
+    
   }
 
   if (filteredFondos.value.length === 0) {
