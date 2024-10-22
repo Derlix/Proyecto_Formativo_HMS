@@ -37,13 +37,17 @@ export const crearCategoria = async (precio_fijo, tipo_habitacion, id_hotel) => 
 
 
 // Función para actualizar una categoría
-export const actualizarCategoria = async (id_categoria_habitacion, nombre, descripcion) => {
+export const actualizarCategoria = async (id_categoria_habitacion, tipo_habitacion, precio_fijo, id_hotel) => {
   try {
-    const response = await api.put(`//categoria-habitacion/update_categoria_habitacion/${id_categoria_habitacion}`, {
-      nombre,
-      descripcion,
-      id_hotel: ""
+    // Usar el ID directamente en la URL y eliminar params
+    const response = await api.put(`categoria-habitacion/update_categoria_habitacion/`, {
+      precio_fijo,
+      tipo_habitacion,
+      id_hotel
     }, {
+      params: {
+        id_categoria_habitacion // Enviar el ID de la categoría como parámetro de consulta
+      },
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('access_token')}` // Incluye el token de autenticación
       }
@@ -57,6 +61,8 @@ export const actualizarCategoria = async (id_categoria_habitacion, nombre, descr
     }
   }
 };
+
+
 
 // Función para eliminar una categoría
 export const eliminarCategoria = async (id_categoria_habitacion) => {
@@ -85,6 +91,7 @@ export const obtenerCategoriasPaginadas = async (pagina = 1, pageSize = 10) => {
         page_size: pageSize
       }
     });
+    console.log(response)
     return response; // Ajusta según la estructura de tu API
   } catch (error) {
     if (error.response) {

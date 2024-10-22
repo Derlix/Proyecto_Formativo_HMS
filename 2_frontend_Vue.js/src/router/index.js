@@ -26,7 +26,7 @@ import ComprobanteDeposito from '@/views/miguel-views/ComprobanteDeposito.vue'
 import AvancesEfectivo from '@/views/arce-views/AvancesEfectivo.vue'
 import GestionCajero from '@/views/miguel-views/GestionCajero.vue'
 import vistaMasAjustes from '@/views/camilo-views/vistaMasAjustes.vue'
-// import vistaAjustesCategorias from '@/views/camilo-views/vistaAjustesCategorias.vue'
+import vistaCategorias from '@/views/camilo-views/vistaCategorias.vue'
 import { Title } from 'chart.js'
 
 
@@ -264,15 +264,15 @@ const routes = [
     component: vistaMasAjustes,
     meta: { requiresAuth: true}
   },
-  // {
-  //   meta: {
-  //     title: 'vistaAjustesCategorias'
-  //   },
-  //   path: '/vistaAjustesCategorias',
-  //   name: 'Categorias',
-  //   component: vistaAjustesCategorias,
-  //   meta: { requiresAuth: true}
-  // },
+  {
+    meta: {
+      title: 'Categorias'
+    },
+    path: '/vistaCategorias',
+    name: 'Categorias',
+    component: vistaCategorias,
+    meta: { requiresAuth: true}
+  },
   {
     meta: {
       title: 'Productos'
