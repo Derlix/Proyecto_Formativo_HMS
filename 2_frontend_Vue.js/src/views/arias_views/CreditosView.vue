@@ -14,7 +14,8 @@ const usernames = [
   { github: 'Juan-Camilo-MH', linkedin: 'su_linkedin', instagram: 'su_instagram' },
   { github: 'Alejo412', linkedin: 'su_linkedin', instagram: 'alejo_hdz05' },
   { github: 'Felipe0521', linkedin: 'su_linkedin', instagram: 'su_instagram' },
-  { github: 'BrayanAlexisCar', linkedin: 'su_linkedin', instagram: 'su_instagram' }
+  { github: 'BrayanAlexisCar', linkedin: 'su_linkedin', instagram: 'su_instagram' },
+  { github: 'CristianArce2002', linkedin: '', instagram:''}
 ];
 
 
@@ -68,7 +69,8 @@ onMounted(() => {
               'floral-style': profile.login === 'Juan-Camilo-MH', 
               'mona-lisa-style': profile.login === 'Alejo412', 
               'basic-style': profile.login === 'Felipe0521', 
-              'movie-style': profile.login === 'BrayanAlexisCar' 
+              'movie-style': profile.login === 'BrayanAlexisCar',
+              'one-piece-style': profile.login === 'CristianArce2002'
             },
             'bg-white p-4 rounded-lg shadow-md flex items-center space-x-4'
           ]">
@@ -233,7 +235,7 @@ onMounted(() => {
 /* Estilo tecnológico para destroyer012134 */
 .tech-style {
     border: 4px solid #007acc;
-    background: url('path/to/cpp-logo.png'); /* Fondo con logo de C++ */
+    background: url('../../assets/img/cMASMAS.gif'); /* Fondo con logo de C++ */
     background-size: cover;
     font-family: 'Consolas', monospace;
     box-shadow: 10px 10px 0px #003366;
@@ -249,7 +251,7 @@ onMounted(() => {
   /* Estilo floral con animación de hojas para Juan-Camilo-MH */
   .floral-style {
     border: 3px solid rgb(0, 30, 85);
-    background: url('../../assets/img/blue-leaves-bg.jpg'); /* Fondo de hojas */
+    background: url('../../assets/img/hojita.gif'); /* Fondo de hojas */
     background-size: cover;
     font-family: 'Verdana', sans-serif;
     box-shadow: 8px 8px 0px #111764;
@@ -286,27 +288,45 @@ onMounted(() => {
   /* Estilo Mona Lisa para Alejo412 con cuadro girando */
   .mona-lisa-style {
     border: 3px solid rgb(36, 63, 32);
-    background: url('../../assets/img/mona-lisa.jpg'); /* Fondo de la Mona Lisa */
-    background-size: cover;
-    font-family: 'Times New Roman', serif;
-    box-shadow: 8px 8px 0px #092e23;
-    transition: transform 0.3s ease;
-    position: relative;
+    
+    background: linear-gradient(to right, #8c564b, #2e2d29);
+  border: 2px solid #d4af37;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.6);
+  color: #d4af37;
+  font-family: 'Goudy Bookletter 1911', serif;
+
   }
   
   .mona-lisa-style:hover {
-    transform: scale(1.05) rotateY(360deg); /* Rotación 3D en hover */
+    transform: scale(1.05) ; /* Rotación 3D en hover */
     transition: transform 1s ease;
+    
   }
-  
-  /* Estilo para Felipe0521 con temática de autos */
+
+  .mona-lisa-style::before{
+    background: url('../../assets/img/monalisa.jpg'); /* Fondo de la Mona Lisa */
+    opacity: 0.5;
+  }
+
   .basic-style {
-    border: 2px solid limegreen;
-    background: url('../../assets/img/car-background.jpg'); /* Fondo de autos */
+    border: 3px solid #2E8B57;
+    background: url('../../assets/img/images.png'); /* Fondo con herramientas de mecánico */
     background-size: cover;
-    box-shadow: 6px 6px 0px #006400;
+    font-family: 'Impact', sans-serif;
+    box-shadow: 8px 8px 0px #006400;
     transition: transform 0.3s ease;
     position: relative;
+    background-size: contain; /* Mantén los extremos visibles */
+    background-repeat: no-repeat; /* Evita que la imagen se repita */
+    background-position: center; 
+    
+    background: linear-gradient(to right, #0f0c29, #302b63, #24243e);
+    border: 2px solid #f39c12;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.6);
+    color: #f39c12;
+    font-family: 'Press Start 2P', cursive;
+  
+  
   }
   
   .basic-style:hover {
@@ -316,15 +336,19 @@ onMounted(() => {
   .basic-style::before {
     content: '';
     position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 100px;
-    height: 50px;
-    background: url('../../assets/img/car.png'); /* Imagen de auto */
-    background-size: contain;
-    animation: drive 3s infinite;
-    transform: translate(-50%, -50%);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(34, 139, 34, 0.5); /* Capa verde semitransparente */
+    z-index: -1;
+    background-size: cover;
+    opacity: 0.3;
+
+    
   }
+
+
   
   @keyframes drive {
     0% {
@@ -344,6 +368,11 @@ onMounted(() => {
     box-shadow: 10px 10px 0px #000000;
     transition: transform 0.3s ease;
     position: relative;
+    background: linear-gradient(to right, #ff00cc, #333399);
+    border: 2px solid #00ffff;
+    box-shadow: 0 4px 15px rgba(255, 0, 255, 0.4);
+    color: #fff;
+    font-family: 'Orbitron', sans-serif;
   }
   
   .movie-style:hover {
@@ -357,7 +386,7 @@ onMounted(() => {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(to right, rgba(0, 0, 0, 0.9) 30%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.9) 70%);
+    
     z-index: -1;
     transition: background-position 1s ease;
   }
@@ -365,6 +394,43 @@ onMounted(() => {
   .movie-style:hover::before {
     background-position: right;
   }
+
+  .one-piece-style {
+    border: 4px solid #41380b;
+    background-size: cover;
+    font-family: 'Pirata One', cursive; /* Fuente inspirada en One Piece */
+    box-shadow: 10px 10px 0px #4e3a06;
+    transition: transform 0.3s ease;
+    position: relative;
+    overflow: hidden; /* Asegúrate de que el pseudo-elemento no se salga del contenedor */
   
-  </style>
+  }
+  
+  .one-piece-style::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3); /* Capa semitransparente negra */
+    z-index: 1; /* Asegura que la capa esté encima de la imagen de fondo */
+    opacity: 0.1;
+    
+  }
+  
+  .one-piece-style:hover {
+    transform: scale(1.05) rotateZ(2deg);
+    background-position: center;
+    background:   url('../../assets/img/one.png'); /* Fondo con la bandera de One Piece */
+    background-size: cover;
+  }
+  
+
+  .cyberpunk-style {
+
+  }
+  
+
+</style>
   
