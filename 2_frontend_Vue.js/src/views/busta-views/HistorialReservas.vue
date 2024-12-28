@@ -98,13 +98,13 @@ onMounted(() => {
         </thead>
         <tbody>
           <tr v-for="reserva in reservas" :key="reserva.id_reserva" class="">
-            <td>{{ reserva.id_reserva }}</td>
-            <td>{{ reserva.fecha_reserva }}</td>
-            <td>{{ reserva.fecha_reserva }}</td>
-            <td>{{ reserva.huesped.nombre_completo }}</td>
-            <td>{{ reserva.huesped.numero_documento }}</td>
-            <td>{{ reserva.valor_deposito }}</td>
-            <td>
+            <td data-label="ID Reserva">{{ reserva.id_reserva }}</td>
+            <td data-label="Check In">{{ reserva.fecha_reserva }}</td>
+            <td data-label="Check Out">{{ reserva.fecha_reserva }}</td>
+            <td data-label="Huésped">{{ reserva.huesped.nombre_completo }}</td>
+            <td data-label="Cédula">{{ reserva.huesped.numero_documento }}</td>
+            <td data-label="Total">{{ reserva.valor_deposito }}</td>
+            <td data-label="Estado">
               <span :class="{
                 'inline-block px-3 py-1 text-xs font-semibold text-green-700 bg-green-200 rounded-full dark:text-green-100 dark:bg-green-600': reserva.estado_reserva === 'ACTIVO',
                 'inline-block px-3 py-1 text-xs font-semibold text-red-700 bg-red-200 rounded-full dark:text-red-100 dark:bg-red-600': reserva.estado_reserva !== 'ACTIVO'
@@ -112,7 +112,7 @@ onMounted(() => {
                 {{ reserva.estado_reserva }}
               </span>
             </td>
-            <td class="">
+            <td data-label="Acciones" class="">
               <button @click="openHuespedModal(reserva.huesped.numero_documento)" class="bg-blue-500 text-white px-2 py-1 rounded">Ver Huésped</button>
             </td>
           </tr>

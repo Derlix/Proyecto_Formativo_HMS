@@ -58,17 +58,17 @@
                 :key="reserva.id_reserva"
                 class="hover:bg-gray-100 dark:hover:bg-gray-600"
               >
-                <td class="border px-2 py-2 dark:text-white">
+                <td data-label="Nombre Completo" class="border px-2 py-2 dark:text-white">
                   {{ reserva.huesped.nombre_completo }}
                 </td>
-                <td class="border px-2 py-2 dark:text-white">
+                <td data-label="Documento" class="border px-2 py-2 dark:text-white">
                   {{ reserva.huesped.numero_documento }}
                 </td>
-                <td class="border px-2 py-2 dark:text-white">
+                <td data-label="Valor Depositado" class="border px-2 py-2 dark:text-white">
                   {{ reserva.reserva.valor_deposito }}
                 </td>
-                <td class="border px-2 py-2 dark:text-white">{{ reserva.reserva.empresa }}</td>
-                <td class="border px-2 py-2 dark:text-white">
+                <td data-label="Empresa" class="border px-2 py-2 dark:text-white">{{ reserva.reserva.empresa }}</td>
+                <td data-label="Habitación" class="border px-2 py-2 dark:text-white">
                   <div class="flex items-center justify-between">
                     <span>{{ reserva.habitacion.numero_habitacion }}</span>
                     <input

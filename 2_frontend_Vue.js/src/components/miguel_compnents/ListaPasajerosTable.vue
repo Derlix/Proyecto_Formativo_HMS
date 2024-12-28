@@ -89,7 +89,7 @@ onMounted(() => {
   />
   <!-- MODAL DE VISUALIZACION -->
   <CardBoxModal v-model="activarvisibleModal" title="Visualizar Datos">
-    <form>
+    <form class="max-h-96 overflow-y-auto">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
         <div class="mb-4">
           <label
@@ -210,42 +210,44 @@ onMounted(() => {
     </div>
   </div>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Nombre completo</th>
-        <th>Fecha de entrada</th>
-        <th>Fecha de salida</th>
-        <th>Documento</th>
-        <th>Expedido N.</th>
-        <th>Registro N.</th>
-        <th>Profesion</th>
-        <th />
-      </tr>
-    </thead>
-    <tbody>
-      <tr
-        v-for="movimiento in filteredHuespedes"
-        :key="`${movimiento.huesped.id_huesped}-${movimiento.reserva_habitacion.id_reserva}`"
-      >
-        <td>{{ movimiento.huesped.nombre_completo }}</td>
-        <td>{{ movimiento.reserva_habitacion.fecha_entrada }}</td>
-        <td>{{ movimiento.reserva_habitacion.fecha_salida_propuesta }}</td>
-        <td>{{ movimiento.huesped.numero_documento }}</td>
-        <td>{{ movimiento.huesped.fecha_expedicion }}</td>
-        <td>{{ movimiento.reserva_habitacion.id_reserva }}</td>
-        <td>{{ movimiento.huesped.ocupacion }}</td>
-        <td>
-          <BaseButton
-            color="info"
-            :icon="mdiEye"
-            small
-            @click="openVisibleModal(movimiento.huesped)"
-          />
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="relative overflow-x-auto">
+    <table>
+      <thead>
+        <tr>
+          <th>Nombre completo</th>
+          <th>Fecha de entrada</th>
+          <th>Fecha de salida</th>
+          <th>Documento</th>
+          <th>Expedido N.</th>
+          <th>Registro N.</th>
+          <th>Profesion</th>
+          <th />
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="movimiento in filteredHuespedes"
+          :key="`${movimiento.huesped.id_huesped}-${movimiento.reserva_habitacion.id_reserva}`"
+        >
+          <td data-label="Nombre pasajero">{{ movimiento.huesped.nombre_completo }}</td>
+          <td data-label="Fecha entrada">{{ movimiento.reserva_habitacion.fecha_entrada }}</td>
+          <td data-label="Fecha salida Prop.">{{ movimiento.reserva_habitacion.fecha_salida_propuesta }}</td>
+          <td data-label="Numero documento">{{ movimiento.huesped.numero_documento }}</td>
+          <td data-label="Fecha expedicion">{{ movimiento.huesped.fecha_expedicion }}</td>
+          <td data-label="Numero Reserva">{{ movimiento.reserva_habitacion.id_reserva }}</td>
+          <td data-label="Ocupacion">{{ movimiento.huesped.ocupacion }}</td>
+          <td>
+            <BaseButton
+              color="info"
+              :icon="mdiEye"
+              small
+              @click="openVisibleModal(movimiento.huesped)"
+            />
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
   <BaseLevel>
     <BaseButtons>
@@ -254,6 +256,8 @@ onMounted(() => {
         :key="page"
         :active="page === currentPage"
         :label="page"
+        :color="page === currentPage ? 'lightDark' : 'whiteDark'"
+        small
         @click="handlePageClick(page)"
       />
     </BaseButtons>

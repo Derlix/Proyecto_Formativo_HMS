@@ -58,17 +58,17 @@
                 :key="factura.id_facturacion"
                 class="hover:bg-gray-100 dark:hover:bg-gray-600"
               >
-                <td class="border px-2 py-2 dark:text-white">
+                <td data-label="Nombre Completo" class="border px-2 py-2 dark:text-white">
                   {{ factura.huesped.nombre_completo }}
                 </td>
-                <td class="border px-2 py-2 dark:text-white">
+                <td data-label="Documento" class="border px-2 py-2 dark:text-white">
                   {{ factura.huesped.numero_documento }}
                 </td>
-                <td class="border px-2 py-2 dark:text-white">
+                <td data-label="Fecha Reserva" class="border px-2 py-2 dark:text-white">
                   {{ factura.reserva.fecha_reserva }}
                 </td>
-                <td class="border px-2 py-2 dark:text-white">{{ factura.reserva.empresa }}</td>
-                <td class="border px-2 py-2 dark:text-white">
+                <td data-label="Empresa" class="border px-2 py-2 dark:text-white">{{ factura.reserva.empresa }}</td>
+                <td data-label="Total" class="border px-2 py-2 dark:text-white">
                   <div class="flex items-center justify-between">
                     <span>{{ factura.total }}</span>
                     <input

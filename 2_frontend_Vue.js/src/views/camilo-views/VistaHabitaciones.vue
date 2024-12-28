@@ -20,6 +20,23 @@
           >
           Crear Habitación
         </button>
+        
+        <router-link
+        v-if="userRole === 'SuperAdmin' || userRole === 'JefeRecepcion'"
+          to="/mas_ajustes"
+          class="bg-blue-700 text-white px-4 py-2 rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        >
+          Ajustes caracteristicas
+        </router-link>
+        
+        <router-link
+          v-if="userRole === 'SuperAdmin' || userRole === 'JefeRecepcion'"
+          to="/vistaCategorias"
+          class="bg-blue-700 text-white px-4 py-2 rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          >
+          Ajustes categorias
+        </router-link>
+        
         <!-- Campo de búsqueda con placeholder -->
         <div class="w-full">
           <label for="numero_habitacion" class="block text-sm font-medium overflow-auto w-full ">Buscar habitación</label>
@@ -32,35 +49,18 @@
             class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 text-black"
           />
         </div>
-
-        <router-link
-          v-if="userRole === 'SuperAdmin' || userRole === 'JefeRecepcion'"
-          to="/mas_ajustes"
-          class="bg-blue-700 text-white px-4 py-2 rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-        >
-          Ajustes caracteristicas
-        </router-link>
-
-        <router-link
-          v-if="userRole === 'SuperAdmin' || userRole === 'JefeRecepcion'"
-          to="/vistaCategorias"
-          class="bg-blue-700 text-white px-4 py-2 rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-        >
-          Ajustes categorias
-        </router-link>
-
       </div>
 
       <!-- Modal para crear/editar una habitación -->
       <RoomModal
-        :visible="showModal"
-        :habitacion="habitacionSeleccionada"
-        @close="cerrarModal"
-        @save="guardarHabitacion"
-        @roomSaved="habitacionSeleccionada ? mostrarNotificacion('Habitación editada exitosamente', 'success') : mostrarNotificacion('Habitación creada exitosamente', 'success')"
+      :visible="showModal"
+      :habitacion="habitacionSeleccionada"
+      @close="cerrarModal"
+      @save="guardarHabitacion"
+      @roomSaved="habitacionSeleccionada ? mostrarNotificacion('Habitación editada exitosamente', 'success') : mostrarNotificacion('Habitación creada exitosamente', 'success')"
       />
-
-
+      
+      
       <!-- Modal para mostrar detalles de la habitación -->
       <RoomDetailsModal
         :visible="showDetailsModal"

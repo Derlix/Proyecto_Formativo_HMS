@@ -142,7 +142,7 @@
         </div>
       </div>
 
-      <div class="sticky">
+      <div class="sticky mt-5">
         <BaseButtons>
           <BaseButton type="submit" color="info" label="PDF" @click="generarPDF()"/>
           <BaseButton type="reset" color="info" outline label="Cancelar"  @click="closeModal()" />

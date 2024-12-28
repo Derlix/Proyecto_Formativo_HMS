@@ -63,7 +63,7 @@ onMounted(() => {
                   <th class="px-4 py-2">ID Historial</th>
                   <th class="px-4 py-2">Fecha Cambio</th>
                   <th class="px-4 py-2">Huésped</th>
-                  <th class="px-4 py-2">Documento</th>
+                  <th class="px-4 py-2">Telefono</th>
                   <th class="px-4 py-2">Correo</th>
                   <th class="px-4 py-2">Motivo cambio</th>
                   <th class="px-4 py-2">Habitación Anterior</th>
@@ -72,14 +72,14 @@ onMounted(() => {
               </thead>
               <tbody>
                 <tr v-for="historial in historialCambioHabitaciones" :key="historial.id_historial">
-                  <td class="border px-4 py-2">{{ historial.id_historial }}</td>
-                  <td class="border px-4 py-2">{{ historial.fecha_cambio }}</td>
-                  <td class="border px-4 py-2">{{ historial.huesped.nombre_completo }}</td>
-                  <td class="border px-4 py-2">{{ historial.huesped.numero_documento }}</td>
-                  <td class="border px-4 py-2">{{ historial.huesped.email }}</td>
-                  <td class="border px-4 py-2">{{ historial.motivo_cambio }}</td>
-                  <td class="border px-4 py-2">{{ historial.habitacion_anterior }} ({{ historial.tipo_habitacion_anterior }})</td>
-                  <td class="border px-4 py-2">{{ historial.habitacion_nueva }} ({{ historial.tipo_habitacion_nueva }})</td>
+                    <td data-label="ID Historial" class="border px-4 py-2">{{ historial.id_historial }}</td>
+                    <td data-label="Fecha Cambio" class="border px-4 py-2">{{ historial.fecha_cambio }}</td>
+                    <td data-label="Huésped" class="border px-4 py-2">{{ historial.huesped.nombre_completo }}</td>
+                    <td data-label="Telefono" class="border px-4 py-2">{{ historial.huesped.telefono }}</td>
+                    <td data-label="Correo" class="border px-4 py-2">{{ historial.huesped.email }}</td>
+                    <td data-label="Motivo cambio" class="border px-4 py-2">{{ historial.motivo_cambio }}</td>
+                    <td data-label="Habitación Anterior" class="border px-4 py-2">{{ historial.habitacion_anterior }} ({{ historial.tipo_habitacion_anterior }})</td>
+                    <td data-label="Habitación Nueva" class="border px-4 py-2">{{ historial.habitacion_nueva }} ({{ historial.tipo_habitacion_nueva }})</td>
                 </tr>
               </tbody>
             </table>

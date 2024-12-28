@@ -163,7 +163,7 @@ onMounted(fetchDescuentos);
           <div class="flex justify-between">
             <BaseButtons>
               <BaseButton type="submit" color="info" label="Registrar" />
-              <BaseButton type="button" color="info" outline label="Reset" @click="resetForm" />
+              <BaseButton type="button" color="info" outline label="Limpiar campos" @click="resetForm" />
             </BaseButtons>
           </div>
 
@@ -177,7 +177,7 @@ onMounted(fetchDescuentos);
       <SectionTitle>Lista de Descuentos</SectionTitle>
       <div class="mt-4">
         <table class="min-w-full hidden md:table">
-          <thead class="bg-gray-200">
+            <thead class="bg-gray-800 text-white">
             <tr>
               <th class="text-left px-4 py-2">Tipo de Descuento</th>
               <th class="text-left px-4 py-2">Porcentaje</th>

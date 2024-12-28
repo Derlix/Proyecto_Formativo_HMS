@@ -213,7 +213,7 @@ onMounted(() => {
       </div>
       <div class="">
         <label for="rol" class="block text-gray-700 font-medium dark:text-white">Rol:</label>
-        <select id="rol" v-model="currentUsuario.usuario_rol" required>
+        <select id="rol" class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 dark:bg-gray-700 dark:text-white focus:outline-none focus:border-blue-500 text-sm" v-model="currentUsuario.usuario_rol" required>
           <option value="" disabled>Selecciona un rol</option>
           <option v-for="rol in roles" :key="rol.rol_name" :value="rol.rol_name">{{ rol.rol_name }}</option>
         </select>
@@ -249,7 +249,7 @@ onMounted(() => {
         </div>
         <div class="mb-4">
           <label for="rol" class="block text-gray-700 font-medium dark:text-white">Rol:</label>
-          <select id="rol" v-model="currentUsuario.usuario_rol" required>
+          <select id="rol" class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 dark:bg-gray-700 dark:text-white focus:outline-none focus:border-blue-500 text-sm" v-model="currentUsuario.usuario_rol" required>
             <option value="" disabled>Selecciona un rol</option>
             <option v-for="rol in roles" :key="rol.rol_name" :value="rol.rol_name">{{ rol.rol_name }}</option>
           </select>

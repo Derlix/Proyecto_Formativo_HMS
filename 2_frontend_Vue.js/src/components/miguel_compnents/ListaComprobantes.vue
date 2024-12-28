@@ -92,7 +92,7 @@ onMounted(() => {
   />
   <!-- MODAL DE VISUALIZACION -->
   <CardBoxModal v-model="activarvisibleModal" title="Visualizar Datos">
-    <form>
+    <form class="max-h-96 overflow-y-auto">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
         <div class="mb-4">
           <label
@@ -264,6 +264,8 @@ onMounted(() => {
         :key="page"
         :active="page === currentPage"
         :label="page"
+        :color="page === currentPage ? 'lightDark' : 'whiteDark'"
+        small
         @click="handlePageClick(page)"
       />
     </BaseButtons>

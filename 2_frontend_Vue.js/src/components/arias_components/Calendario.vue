@@ -1,7 +1,9 @@
 <template>
   <div class="p-6">
+    <div class="hidden md:block">
     <h1 class="text-2xl font-bold mb-4">Calendario de Reservas</h1>
-    <FullCalendar :options="calendarOptions" />
+      <FullCalendar :options="calendarOptions" />
+    </div>
   </div>
 </template>
 

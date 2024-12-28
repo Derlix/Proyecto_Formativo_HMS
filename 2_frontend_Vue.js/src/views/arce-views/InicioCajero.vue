@@ -167,7 +167,7 @@ onMounted(() => {
         Registrar Fondos
       </button>
       <button
-        class="inline-flex justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 border border-gray-300 rounded-md shadow-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+        class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
         @click="activarvisibleModal = false" 
       >
         Cancelar
@@ -216,7 +216,7 @@ onMounted(() => {
         Cerrar Fondos
       </button>
       <button
-        class="inline-flex justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 border border-gray-300 rounded-md shadow-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+        class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
         @click="activarvisibleModalFondos = false" 
       >
         Cancelar

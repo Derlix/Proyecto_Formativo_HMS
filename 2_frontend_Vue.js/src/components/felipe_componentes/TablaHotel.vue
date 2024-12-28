@@ -19,7 +19,7 @@
               type="search"
               id="buscarHotel"
               placeholder="Buscar hotel por id"
-              class="flex-grow px-4 py-2 border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              class="search-input flex-grow px-4 py-2 rounded-lg focus:ring-blue-500 focus:border-blue-500 sm:text-sm dark:text-white dark:bg-gray-700 "
               v-model="buscarHotel"
               @input="buscar_Hotel"
             />

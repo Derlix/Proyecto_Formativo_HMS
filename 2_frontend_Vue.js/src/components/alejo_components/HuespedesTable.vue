@@ -222,7 +222,7 @@ onMounted(() => {
 
   <CardBoxModal v-model="activarModalEdit" title="Editar huésped"  buttonLabel="Guardar cambios" has-cancel @cancel="cancelEdit"
   @confirm="update_Huesped " >
-    <form @submit.prevent="update_Huesped()">
+    <form class="max-h-96 overflow-y-auto" @submit.prevent="update_Huesped()">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
         <!-- Primer par de campos -->
         <div class="mb-4">
