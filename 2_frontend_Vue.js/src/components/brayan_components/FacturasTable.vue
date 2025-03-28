@@ -28,15 +28,15 @@ const DescuentoDisponibles = ref([]);
 const fetchAllDescuentos = async () => {
   try {
     const response = await info_descuentos();
-    //console.log('Respuesta de la API:', response);  
-    DescuentoDisponibles.value = response; 
+    //console.log('Respuesta de la API:', response);
+    DescuentoDisponibles.value = response;
   } catch (error) {
     console.error("Error al obtener productos:", error);
   }
 };
 
 onMounted(() => {
-  fetchAllDescuentos(); 
+  fetchAllDescuentos();
 });
 
 
@@ -48,15 +48,15 @@ const productosDisponibles = ref([]);
 const fetchAllProductos = async () => {
   try {
     const response = await getAllProductosPrueba();
-    //console.log('Respuesta de la API:', response);  
-    productosDisponibles.value = response; 
+    //console.log('Respuesta de la API:', response);
+    productosDisponibles.value = response;
   } catch (error) {
     console.error("Error al obtener productos:", error);
   }
 };
 
 onMounted(() => {
-  fetchAllProductos(); 
+  fetchAllProductos();
 });
 
 
@@ -179,7 +179,7 @@ const updateFactura = async () => {
     setTimeout(() => {
       isAlertVisible.value = false;
     }, 3000);
-    
+
     emit('update');
     emit('close');
   } catch (error) {
@@ -208,7 +208,7 @@ const confirmDelete = async () => {
     setTimeout(() => {
       isAlertVisible.value = false;
     }, 3000);
-   
+
     emit('delete');  // Emite el evento correcto para que lo maneje el componente padre
     emit('close');   // Cierra el modal
   } catch (error) {
@@ -221,17 +221,17 @@ const confirmDelete = async () => {
       setTimeout(() => {
       isAlertVisible.value = false;
     }, 3000);
-    } 
+    }
   }
 };
 
 
 //ABRIR MODAL DE EDITAR Y ELIMINAR FACTURA
 function openEditModal(factura) {
-  
-  selectedFactura.value = { 
+
+  selectedFactura.value = {
     ...factura,
-    id_descuento: factura.descuento ? factura.descuento.id_descuento : null 
+    id_descuento: factura.descuento ? factura.descuento.id_descuento : null
   };
   //console.log('Factura seleccionada para editar:', selectedFactura.value);
   showEditModal.value = true;
@@ -246,8 +246,8 @@ function openDeleteModal(factura) {
 function openDetallesmodal(factura) {
   selectedFactura.value = { ...factura };
   showDetalles.value = true;
- 
-  
+
+
 }
 
 
@@ -359,7 +359,7 @@ const addProducto = async () => {
     setTimeout(() => {
       isAlertVisible.value = false;
     }, 3000);
-   
+
   } catch (error) {
     closeAgregarProductosModal();
     modalMessage.value = 'Hubo un error al agregar el producto';
@@ -388,7 +388,7 @@ function resetSelectedProduct() {
 //ELIMINAR PRODUCTO DE FACTURA
 const confirmDeleteProducto = async () => {
   try {
-    //console.log('Confirmar eliminación del producto:', selectedProduct.value); 
+    //console.log('Confirmar eliminación del producto:', selectedProduct.value);
     await deleteProductoFactura(selectedProduct.value.factura_producto.id_factura_producto);
     fetchProductos();
     closeDeleteProductosModal();
@@ -399,7 +399,7 @@ const confirmDeleteProducto = async () => {
     setTimeout(() => {
       isAlertVisible.value = false;
     }, 3000);
-   
+
   } catch (error) {
     closeDeleteProductosModal();
     closeListaProductosModal();
@@ -431,8 +431,8 @@ const updateProducto = async () => {
     setTimeout(() => {
       isAlertVisible.value = false;
     }, 3000);
-   
-    
+
+
   } catch (error) {
     closeEditProductosModal();
     closeListaProductosModal();
@@ -535,19 +535,19 @@ function cerrarAgregarProductoFactura() {
 const downloadPDF = () => {
   const facturaDetalles = document.getElementById('facturaDetalles');
 
-  
+
   const originalBackgroundColor = facturaDetalles.style.backgroundColor;
   const originalColor = facturaDetalles.style.color;
 
-  
+
   facturaDetalles.style.backgroundColor = 'white';
   facturaDetalles.style.color = 'black';
 
-  
-  const originalMaxHeight = facturaDetalles.style.maxHeight;
-  facturaDetalles.style.maxHeight = 'none'; 
 
-  
+  const originalMaxHeight = facturaDetalles.style.maxHeight;
+  facturaDetalles.style.maxHeight = 'none';
+
+
   html2canvas(facturaDetalles, { scale: 1, width: facturaDetalles.offsetWidth, height: facturaDetalles.scrollHeight })
     .then((canvas) => {
       const imgData = canvas.toDataURL('image/png', 1);
@@ -563,7 +563,7 @@ const downloadPDF = () => {
       pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
       heightLeft -= pageHeight;
 
-      
+
       while (heightLeft >= 0) {
         position = heightLeft - imgHeight;
         pdf.addPage();
@@ -571,7 +571,7 @@ const downloadPDF = () => {
         heightLeft -= pageHeight;
       }
 
-     
+
       pdf.save('factura.pdf');
 
       facturaDetalles.style.backgroundColor = originalBackgroundColor;
@@ -580,8 +580,8 @@ const downloadPDF = () => {
     })
     .catch((error) => {
       console.error('Error al generar el PDF:', error);
-      
-      
+
+
       facturaDetalles.style.backgroundColor = originalBackgroundColor;
       facturaDetalles.style.color = originalColor;
       facturaDetalles.style.maxHeight = originalMaxHeight;
@@ -604,7 +604,7 @@ function fechaActual() {
 
 <NotificationBar
   v-if="isAlertVisible"
-  :color="colorAlert" 
+  :color="colorAlert"
   :description="modalMessage"
   :visible="isModalVisible"
 />
@@ -615,7 +615,7 @@ function fechaActual() {
       <form @submit.prevent="updateFactura">
         <div class="grid grid-cols-2 sm:grid-cols-2  gap-4">
           <!-- Primer par de campos -->
-         
+
           <!-- Tercer par de campos -->
           <div class="mb-4">
             <label for="facturaMetodoPago" class="block text-gray-700">Método de Pago</label>
@@ -786,7 +786,7 @@ function fechaActual() {
       </div>
       <div class="mb-4">
         <label for="fecha" class="block text-gray-700">Fecha</label>
-        <input type="date" id="fecha" :value="fechaActual()" 
+        <input type="date" id="fecha" :value="fechaActual()"
           class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500" required/>
       </div>
       <div class="mb-4">
@@ -833,9 +833,9 @@ function fechaActual() {
       </div>
       <div class="mb-4">
         <label for="fecha" class="block text-gray-700">Fecha</label>
-        <input id="fecha" v-model="selectedProduct.fecha"   type="date" 
+        <input id="fecha" v-model="selectedProduct.fecha"   type="date"
           class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500" required />
-         
+
       </div>
       <div class="mb-4">
         <label for="precio_unitario" class="block text-gray-700">Precio Unitario</label>
@@ -855,7 +855,7 @@ function fechaActual() {
   </CardModalBrayan>
 
 
-  
+
 
   <div class="mb-6 max-w-md mx-left">
     <h1 class="text-black dark:text-white text-3xl font-bold mb-3">Seccion de Facturas</h1>
@@ -871,12 +871,12 @@ function fechaActual() {
         @input="buscar_Factura"
       />
     </div>
-    
+
     <!-- Filtro de estado -->
     <div class="flex items-center" style="width: 200px;">
       <h2 class="mr-3 text-sm">Filtrar por:</h2>
       <select id="facturaEstado" v-model="selectedFactura.estado" class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500 text-sm" @change="filtrarFacturasPorEstado">
-        <option value="">Ninguna</option> 
+        <option value="">Ninguna</option>
         <option v-for="estado in estados" :key="estado" :value="estado">
           {{ estado }}
         </option>
@@ -907,8 +907,8 @@ function fechaActual() {
           <th class="">Email</th>
           <th class="">Telefono</th>
           <th class="">Subtotal</th>
-          <th class="">Impuestos</th>          
-          <th class="">% descuento</th>       
+          <th class="">Impuestos</th>
+          <th class="">% descuento</th>
           <th class="">Total Precio Productos</th>
           <th class="">Total a pagar</th>
           <th class="">Método de Pago Factura</th>
@@ -938,9 +938,9 @@ function fechaActual() {
           <td data-label="Telefono">{{ factura.huesped.telefono }}</td>
           <td data-label="Subtotal">{{ factura.subtotal }}</td>
           <td data-label="Impuestos">{{ factura.impuestos }}</td>
-        
+
           <td data-label="id descuento">{{ factura.descuento.porcentaje_descuento + '%'}} </td>
-      
+
           <td data-label="Total Precio Productos">{{ factura.total_precio_productos }}</td>
           <td data-label="Total a pagar">{{ factura.total }}</td>
           <td data-label="Método de Pago Factura">{{ factura.metodo_pago }}</td>
@@ -963,7 +963,7 @@ function fechaActual() {
               </BaseButton>
               <BaseButton color="success" :icon="mdiFoodForkDrink" small @click="openListaProductosModal(factura)">
               </BaseButton>
-              <BaseButton color="info" :icon="mdiPencilBoxMultiple" small @click="openEditModal(factura)" /> 
+              <BaseButton color="info" :icon="mdiPencilBoxMultiple" small @click="openEditModal(factura)" />
               <BaseButton v-if="userRole === 'SuperAdmin' || userRole === 'JefeRecepcion'" color="danger" :icon="mdiTrashCan" small @click="openDeleteModal(factura)" />
 
             </BaseButtons>
@@ -1002,7 +1002,7 @@ function fechaActual() {
 
         <div class="flex items-center">
 
-          <img src="@/assets/img/sena-agro.png" alt="" style="width: 70px; margin-right: 5px;">
+          <img src="@/assets/img/sena-agro.webp" alt="" style="width: 70px; margin-right: 5px;">
         </div>
 
       </div>
@@ -1089,7 +1089,7 @@ function fechaActual() {
           <td>ID Descuento</td>
             <td>{{ selectedFactura?.descuento?.id_descuento || 'N/A' }}</td>
           </tr> -->
-         
+
 
 
           </tbody>
@@ -1190,7 +1190,7 @@ td {
 .dark select {
   background-color: #1f2937; /* Background color for select dropdown in dark mode */
   color: white; /* Text color for select dropdown in dark mode */
- 
+
 }
 
 .dark option {

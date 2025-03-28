@@ -9,10 +9,10 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
-        
+
         <SectionTitleLineWithButton :icon="mdiBallotOutline" title="Tarjeta Reserva" >
         </SectionTitleLineWithButton>
-        
+
        <div class="max-h-[50vh] overflow-y-auto p-4 overflow-x-hidden">
         <div class="grid grid-cols-2 gap-4 mb-5">
           <div class="col-span-2 md:col-span-1">
@@ -148,11 +148,11 @@
           <BaseButton type="reset" color="info" outline label="Cancelar"  @click="closeModal()" />
         </BaseButtons>
       </div>
-          
+
       </div>
     </div>
   </div>
-</template> 
+</template>
 
 
 <script setup>
@@ -169,11 +169,11 @@ const nombre_completo = ref('')
 const documento = ref('')
 const email = ref('')
 const num_personas = ref(0)
-const empresa = ref('') 
+const empresa = ref('')
 const fecha_entrada = ref('')
 const fecha_salida_propuesta = ref('')
 const reservaEncontrada = ref(false)
-const idReserva = ref(null) 
+const idReserva = ref(null)
 const nombreFuncionario = ref('')
 const medioPago = ref('')
 const fecha_reserva = ref('')
@@ -271,7 +271,7 @@ const generarPDF = () => {
   doc.setFontSize(20);
   doc.setFont('helvetica', 'bold');
   doc.text('TARJETA DE RESERVA', 14, 20); // Título
-  doc.text('(HMS)', 45, 30); 
+  doc.text('(HMS)', 45, 30);
 
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(16);
@@ -322,12 +322,12 @@ const generarPDF = () => {
   });
 
 
-  const imagePath = '/src/assets/img/sena-agro.png'; // Ruta relativa de tu imagen en la carpeta 'public'
+  const imagePath = '/src/assets/img/sena-agro.webp'; // Ruta relativa de tu imagen en la carpeta 'public'
 
   // Cargar la imagen y luego agregarla al PDF
   const img = new Image();
   img.src = imagePath;
-  
+
   img.onload = function () {
     // Usamos el canvas para convertir la imagen a Base64
     const canvas = document.createElement('canvas');
@@ -357,13 +357,12 @@ const generarPDF = () => {
 
 </script>
 
-  
-    
+
+
 <style scoped>
 
 .content {
-  
+
   z-index: 9999;
 }
 </style>>
-    

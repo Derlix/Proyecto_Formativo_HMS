@@ -72,7 +72,7 @@ const resetPassword = async () => {
         <SectionFullScreen>
             <CardBox class="sm:w-3/6 md:w-3/5 lg:w-3/6 xl:w-2/6 mx-auto">
                 <div class="flex justify-center mb-4">
-                    <img src="@/assets/img/sena-agro.png" alt="Logo Sena" class="w-12 sm:w-16">
+                    <img src="@/assets/img/sena-agro.webp" alt="Logo Sena" class="w-12 sm:w-16">
                 </div>
                 <h1 class="text-center mb-4 font-bold text-lg sm:text-xl">Recuperar Contraseña</h1>
 

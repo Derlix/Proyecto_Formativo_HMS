@@ -16,12 +16,12 @@ import { computed } from 'vue';
 import { useMainStore } from '@/stores/main';
 
 // Importa las imágenes por defecto según los roles
-import superAdminImg from '@/assets/img/super-admin.png';
-import recepcionistaImg from '@/assets/img/recepcionista.png';
-import cajeroImg from '@/assets/img/cajero.png';
-import auditorNocturnoImg from '@/assets/img/auditor-nocturno.png';
-import jefeRecepcionImg from '@/assets/img/jefe-recepcion.png';
-import defaultImg from '@/assets/img/default.png';
+import superAdminImg from '@/assets/img/super-admin.webp';
+import recepcionistaImg from '@/assets/img/recepcionista.webp';
+import cajeroImg from '@/assets/img/cajero.webp';
+import auditorNocturnoImg from '@/assets/img/auditor-nocturno.webp';
+import jefeRecepcionImg from '@/assets/img/jefe-recepcion.webp';
+import defaultImg from '@/assets/img/default.webp';
 
 export default {
   name: 'UserAvatar',

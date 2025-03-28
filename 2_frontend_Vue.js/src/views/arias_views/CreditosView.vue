@@ -50,25 +50,25 @@ onMounted(() => {
 
     <section class="min-h-screen bg-gray-100 flex flex-col justify-center items-center py-10">
       <h1 class="text-4xl font-bold text-green-600 mb-8">Desarrolladores</h1>
-  
+
       <div v-if="isLoading" class="flex justify-center items-center">
         <!-- Imagen de carga -->
         <img src="../../assets/img/loading.gif" alt="Cargando" class="w-32 h-32 animate-spin">
       </div>
-  
+
       <div v-if="!isLoading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 max-w-4xl w-full px-4">
         <div v-if="errorMessage" class="col-span-full text-red-600">{{ errorMessage }}</div>
-  
+
         <!-- Renderización de cada perfil -->
         <div v-for="(profile, index) in profiles" :key="profile.id"
           :class="[
-            { 'manga-style': profile.login === 'Derlix', 
-              'cowboy-style': profile.login === '8ustamante', 
-              'space-style': profile.login === 'Nicolas-tv17', 
-              'tech-style': profile.login === 'destroyer012134', 
-              'floral-style': profile.login === 'Juan-Camilo-MH', 
-              'mona-lisa-style': profile.login === 'Alejo412', 
-              'basic-style': profile.login === 'Felipe0521', 
+            { 'manga-style': profile.login === 'Derlix',
+              'cowboy-style': profile.login === '8ustamante',
+              'space-style': profile.login === 'Nicolas-tv17',
+              'tech-style': profile.login === 'destroyer012134',
+              'floral-style': profile.login === 'Juan-Camilo-MH',
+              'mona-lisa-style': profile.login === 'Alejo412',
+              'basic-style': profile.login === 'Felipe0521',
               'movie-style': profile.login === 'BrayanAlexisCar',
               'one-piece-style': profile.login === 'CristianArce2002'
             },
@@ -95,31 +95,31 @@ onMounted(() => {
           </div>
         </div>
       </div>
-  
+
       <div class="text-center m-10">
         <router-link to="/" class="text-3xl text-blue-600 hover:text-black">Volver</router-link>
       </div>
     </section>
   </template>
-  
+
   <style scoped>
   h1 {
     color: #1a202c;
   }
-  
+
   i {
     transition: transform 0.2s ease;
   }
-  
+
   i:hover {
     transform: scale(1.1);
   }
-  
+
   /* Animación de giro */
   .animate-spin {
     animation: spin 2s linear infinite;
   }
-  
+
   @keyframes spin {
     0% {
       transform: rotate(0deg);
@@ -128,7 +128,7 @@ onMounted(() => {
       transform: rotate(360deg);
     }
   }
-  
+
   /* Estilo de manga para Derlix */
   .manga-style {
     border: 4px solid black;
@@ -139,7 +139,7 @@ onMounted(() => {
     position: relative;
     overflow: hidden;
   }
-  
+
   .manga-style::before {
     content: '';
     position: absolute;
@@ -147,32 +147,32 @@ onMounted(() => {
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url('../../assets/img/kitty.png'); /* Imagen de fondo */
+    background-image: url('../../assets/img/kitty.webp'); /* Imagen de fondo */
     background-size: contain; /* Mantén los extremos visibles */
     background-repeat: no-repeat; /* Evita que la imagen se repita */
     background-position: center; /* Centra la imagen */
     z-index: -1;
     opacity: 0.5; /* Ajusta la opacidad según sea necesario */
   }
-  
+
   .manga-style:hover {
     transform: scale(1.05);
     background-position: center;
   }
-  
+
   /* Estilo de vaquero para 8ustamante */
   /* Estilo de vaquero para 8ustamante */
 .cowboy-style {
     border: 4px solid saddlebrown;
      /* Fondo con textura de cuero o madera */
-    
+
     font-family: 'Courier New', monospace;
     box-shadow: 8px 8px 0px #8b4513;
     transition: transform 0.3s ease;
     position: relative;
-    
+
   }
-  
+
   .cowboy-style::before {
     content: '';
     position: absolute;
@@ -182,16 +182,16 @@ onMounted(() => {
     height: 100%;
     background: rgba(139, 69, 19, 0.6); /* Capa de color marrón semitransparente */
     z-index: -1;
-    background: url('../../assets/img/pepito.jpeg');
+    background: url('../../assets/img/pepito.webp');
     background-size: cover;
     opacity: 0.1;
   }
-  
+
   .cowboy-style:hover {
     transform: scale(1.05);
   }
-  
-  
+
+
   /* Estilo del espacio para Nicolas-tv17 */
   .space-style {
     border: 3px solid #0077ff;
@@ -203,7 +203,7 @@ onMounted(() => {
     position: relative;
     overflow: hidden;
   }
-  
+
   /* Añadir las estrellas animadas */
   .space-style::before {
     content: '';
@@ -212,24 +212,24 @@ onMounted(() => {
     left: 0;
     width: 200%;
     height: 200%;
-    background-image: url('https://www.transparenttextures.com/patterns/stardust.png'); /* Fondo de estrellas */
+    background-image: url('https://www.transparenttextures.com/patterns/stardust.webp'); /* Fondo de estrellas */
     background-size: cover;
     background-position: 0 0;
     opacity: 0.3;
     transition: transform 0.3s ease;
     z-index: -1;
   }
-  
+
   .space-style:hover {
     transform: scale(1.05);
     /* Movimiento de las estrellas en el fondo */
     background-position: center;
   }
-  
+
   .space-style:hover::before {
     transform: translate(-50%, -50%);
   }
-  
+
   /* Estilo tecnológico para destroyer012134 */
   /* Estilo tecnológico para destroyer012134 */
 /* Estilo tecnológico para destroyer012134 */
@@ -242,12 +242,12 @@ onMounted(() => {
     transition: transform 0.3s ease, background-position 1s ease;
     position: relative;
   }
-  
+
   .tech-style:hover {
     transform: scale(1.05);
     background-position: center;
   }
-  
+
   /* Estilo floral con animación de hojas para Juan-Camilo-MH */
   .floral-style {
     border: 3px solid rgb(0, 30, 85);
@@ -258,11 +258,11 @@ onMounted(() => {
     transition: transform 0.3s ease;
     position: relative;
   }
-  
+
   .floral-style:hover {
     transform: scale(1.05);
   }
-  
+
   .floral-style::after {
     content: '';
     position: absolute;
@@ -270,12 +270,12 @@ onMounted(() => {
     left: 50%;
     width: 100px;
     height: 100px;
-    background: url('../../assets/img/leaf.png');
+    background: url('../../assets/img/leaf.webp');
     background-size: contain;
     animation: fall 3s infinite;
     opacity: 0.6;
   }
-  
+
   @keyframes fall {
     0% {
       transform: translateY(-100px) rotate(0deg);
@@ -284,11 +284,11 @@ onMounted(() => {
       transform: translateY(500px) rotate(360deg);
     }
   }
-  
+
   /* Estilo Mona Lisa para Alejo412 con cuadro girando */
   .mona-lisa-style {
     border: 3px solid rgb(36, 63, 32);
-    
+
     background: linear-gradient(to right, #8c564b, #2e2d29);
   border: 2px solid #d4af37;
   box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.6);
@@ -296,11 +296,11 @@ onMounted(() => {
   font-family: 'Goudy Bookletter 1911', serif;
 
   }
-  
+
   .mona-lisa-style:hover {
     transform: scale(1.05) ; /* Rotación 3D en hover */
     transition: transform 1s ease;
-    
+
   }
 
   .mona-lisa-style::before{
@@ -310,7 +310,7 @@ onMounted(() => {
 
   .basic-style {
     border: 3px solid #2E8B57;
-    background: url('../../assets/img/images.png'); /* Fondo con herramientas de mecánico */
+    background: url('../../assets/img/images.webp'); /* Fondo con herramientas de mecánico */
     background-size: cover;
     font-family: 'Impact', sans-serif;
     box-shadow: 8px 8px 0px #006400;
@@ -318,21 +318,21 @@ onMounted(() => {
     position: relative;
     background-size: contain; /* Mantén los extremos visibles */
     background-repeat: no-repeat; /* Evita que la imagen se repita */
-    background-position: center; 
-    
+    background-position: center;
+
     background: linear-gradient(to right, #0f0c29, #302b63, #24243e);
     border: 2px solid #f39c12;
     box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.6);
     color: #f39c12;
     font-family: 'Press Start 2P', cursive;
-  
-  
+
+
   }
-  
+
   .basic-style:hover {
     transform: scale(1.05);
   }
-  
+
   .basic-style::before {
     content: '';
     position: absolute;
@@ -345,11 +345,11 @@ onMounted(() => {
     background-size: cover;
     opacity: 0.3;
 
-    
+
   }
 
 
-  
+
   @keyframes drive {
     0% {
       transform: translateX(-100px);
@@ -358,7 +358,7 @@ onMounted(() => {
       transform: translateX(400px);
     }
   }
-  
+
   /* Estilo para BrayanAlexisCar con telón de cine */
   .movie-style {
     border: 4px solid gray;
@@ -374,11 +374,11 @@ onMounted(() => {
     color: #fff;
     font-family: 'Orbitron', sans-serif;
   }
-  
+
   .movie-style:hover {
     transform: scale(1.05);
   }
-  
+
   .movie-style::before {
     content: '';
     position: absolute;
@@ -386,11 +386,11 @@ onMounted(() => {
     left: 0;
     width: 100%;
     height: 100%;
-    
+
     z-index: -1;
     transition: background-position 1s ease;
   }
-  
+
   .movie-style:hover::before {
     background-position: right;
   }
@@ -403,9 +403,9 @@ onMounted(() => {
     transition: transform 0.3s ease;
     position: relative;
     overflow: hidden; /* Asegúrate de que el pseudo-elemento no se salga del contenedor */
-  
+
   }
-  
+
   .one-piece-style::before {
     content: '';
     position: absolute;
@@ -416,21 +416,20 @@ onMounted(() => {
     background: rgba(0, 0, 0, 0.3); /* Capa semitransparente negra */
     z-index: 1; /* Asegura que la capa esté encima de la imagen de fondo */
     opacity: 0.1;
-    
+
   }
-  
+
   .one-piece-style:hover {
     transform: scale(1.05) rotateZ(2deg);
     background-position: center;
-    background:   url('../../assets/img/one.png'); /* Fondo con la bandera de One Piece */
+    background:   url('../../assets/img/one.webp'); /* Fondo con la bandera de One Piece */
     background-size: cover;
   }
-  
+
 
   .cyberpunk-style {
 
   }
-  
+
 
 </style>
-  

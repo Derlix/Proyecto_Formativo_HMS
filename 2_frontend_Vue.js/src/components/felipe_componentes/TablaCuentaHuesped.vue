@@ -6,7 +6,7 @@
     :visible="isModalVisible"
   />
   <BaseButton @click="openCreateModal" color="info" label="Insertar Cuenta-Huesped" class="mb-4" />
-  
+
   <div class="mb-6 max-w-3xl mx-auto">
     <div class="flex flex-col md:flex-row items-center gap-4">
       <input
@@ -80,7 +80,7 @@
       </tbody>
     </table>
     <div class="total-container">
-      <strong>Total PENDIENTE: {{ totalPendiente.toFixed(2) }}</strong> 
+      <strong>Total PENDIENTE: {{ totalPendiente.toFixed(2) }}</strong>
     </div>
 
     <div v-if="cuentasHuesped.length === 0 && !selectedReserva && !selectedHuesped" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4" role="alert">
@@ -89,11 +89,11 @@
 </div>
 
 
-    <BaseButton v-if="selectedHuesped && selectedReserva" 
+    <BaseButton v-if="selectedHuesped && selectedReserva"
     @click="openDetallesmodal" color="warning" label="Imprimir" />
   </div>
 
-  <CardBoxModal 
+  <CardBoxModal
   v-model="showModal"
   :title="isEditing ? 'Editar cuenta' : 'Agregar cuenta'"
   buttonLabel="Guardar"
@@ -156,10 +156,10 @@
       <div class="flex justify-between items-center mb-1">
         <h1 class="font-bold text-lg" style="font-size: 26px; color: darkgreen;">DETALLES CUENTA HUESPED</h1>
         <div class="flex items-center">
-          <img src="@/assets/img/sena-agro.png" alt="" style="width: 70px; margin-right: 5px;">
+          <img src="@/assets/img/sena-agro.webp" alt="" style="width: 70px; margin-right: 5px;">
         </div>
       </div>
-      
+
       <!-- Información del Huésped -->
       <div v-if="selectedHuesped" class=" p-4 rounded-lg mb-4">
         <h2 class="font-bold text-lg mb-2">Información del Huésped</h2>
@@ -167,7 +167,7 @@
         <p><strong>Cédula:</strong> {{ selectedHuesped.cedula }}</p>
         <p><strong>Tipo Documento:</strong> {{ selectedHuesped.telefono }}</p>
       </div>
-      
+
       <!-- Información de la Reserva -->
       <div v-if="selectedReserva" class=" p-4 rounded-lg mb-4">
         <h2 class="font-bold text-lg mb-2">Información de la Reserva</h2>
@@ -176,7 +176,7 @@
         <p><strong>Empresa:</strong> {{ selectedReserva.fecha_salida }}</p>
         <p><strong>Depósito:</strong> {{ selectedReserva.estado }}</p>
       </div>
-      
+
       <!-- Lista de Transacciones -->
       <div class="transaction-list">
         <h2 class="font-bold text-lg mb-2">Lista de Transacciones</h2>
@@ -201,15 +201,15 @@
           </tbody>
         </table>
         <div class="total-container">
-          <strong>Total PENDIENTE: {{ totalPendiente.toFixed(2) }}</strong> 
+          <strong>Total PENDIENTE: {{ totalPendiente.toFixed(2) }}</strong>
        </div>
 
       </div>
-      
-     
-     
+
+
+
     </div>
-    
+
   </div>
    <!-- Botón para descargar PDF -->
   <button @click="downloadPDF()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition mt-4">
@@ -219,9 +219,9 @@
 
 
 <!-- Modal de advertencia cuando no se encuentra una reserva o huésped -->
-<CardBoxModal 
-  v-model="showModalAdvertencia" 
-  title="Advertencia" 
+<CardBoxModal
+  v-model="showModalAdvertencia"
+  title="Advertencia"
   buttonLabel="Cerrar"
   hasCancel
   @confirm="showModalAdvertencia = false"
@@ -230,7 +230,7 @@
   <h2>{{ advertenciaMensaje }}</h2>
 </CardBoxModal>
 
-              
+
 </template>
 
 <script>
@@ -266,7 +266,7 @@ export default {
              jsPDF,
              html2canvas,
              NotificationBar,
-             
+
 
            },
   data() {
@@ -285,7 +285,7 @@ export default {
       selectedHuesped: null,
       selectedReserva: null,
       showConfirmDeleteModal: false,
-      showModalAdvertencia: false, 
+      showModalAdvertencia: false,
       showDetalles: false,
       cuentaToDelete: null,
       busqueda: null,
@@ -298,7 +298,7 @@ export default {
         colorAlert: '',
         valor: null,
         totalPendiente: 0,
-    
+
     };
   },
   methods: {
@@ -352,8 +352,8 @@ formatDate(fecha) {
         .reduce((total, cuenta) => total + parseFloat(cuenta.monto), 0); // Sumar montos
     },
 
-   
-  
+
+
     async fetchCuentasHuesped() {
       try {
         const response = await getCuentaHuespedByIdHuesped(this.valor);
@@ -375,7 +375,7 @@ formatDate(fecha) {
           this.calculateTotalPendiente(); // Calcular el total de cuentas PENDIENTE
         } else {
         this.limpiarResultados();
-        
+
         this.mostrarError('No se encontraron cuentas para este huésped, crea una', 'danger');
       }
     } catch (error) {
@@ -448,13 +448,13 @@ formatDate(fecha) {
 
            openCreateModal() {
              this.isEditing = false;
-             this.cuentaForm = { id_reserva: '', id_huesped: '', tipo_movimiento: '', monto: '', estado: '', fecha_movimiento: '' }; 
+             this.cuentaForm = { id_reserva: '', id_huesped: '', tipo_movimiento: '', monto: '', estado: '', fecha_movimiento: '' };
              this.showModal = true;
            },
            openEditModal(cuenta) {
              this.isEditing = true;
              this.currentCuentaId = cuenta.id_cuenta;
-             this.cuentaForm = {id_reserva: cuenta.id_reserva.id_reserva, 
+             this.cuentaForm = {id_reserva: cuenta.id_reserva.id_reserva,
              id_huesped: cuenta.id_huesped.id_huesped,
              tipo_movimiento: cuenta.tipo_movimiento,
              monto: cuenta.monto,
@@ -471,18 +471,18 @@ formatDate(fecha) {
               return false;
             }
             return true;
-          }, 
+          },
            async saveCuenta() {
              if (!this.validateForm()) {
                 return;
               }
-         
+
              try {
                if (this.isEditing) {
                 this.cuentaForm.fecha_movimiento = new Date().toISOString();
                  await updateCuentaHuesped(this.currentCuentaId, this.cuentaForm);
                  this.mostrarError('Cuenta editada exitosamente', 'success');
-                 
+
                } else {
                 this.cuentaForm.fecha_movimiento = new Date().toISOString();
                  await createCuentaHuesped(this.cuentaForm.id_reserva, this.cuentaForm.id_huesped,this.cuentaForm.tipo_movimiento, this.cuentaForm.monto, this.cuentaForm.estado, this.cuentaForm.fecha_movimiento);
@@ -490,11 +490,11 @@ formatDate(fecha) {
                 }
                if (this.busqueda == 0) {
                  await this.fetchCuentasReserva();
-                
+
                }else{
                  await this.fetchCuentasHuesped();
-                 
-               } 
+
+               }
                this.closeModal();
              } catch (error) {
               if (this.isEditing) {
@@ -506,7 +506,7 @@ formatDate(fecha) {
                console.error('Error al guardar la cuenta:', error.response ? error.response.data : error);
              }
            },
-           
+
            async downloadPDF() {
   const facturaDetalles = document.getElementById('facturaDetalles');
   const originalMaxHeight = facturaDetalles.style.maxHeight;

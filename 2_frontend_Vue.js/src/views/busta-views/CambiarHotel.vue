@@ -38,7 +38,7 @@ const changeHotelNew = async () => {
 
     try {
         await changeHotel(email.value, password.value, newHotelCode.value)
-        
+
         modalMessage.value = "¡Código de hotel actualizado con éxito! Regresa a login";
         isAlertVisible.value = true;
         colorAlert.value = 'success';
@@ -46,7 +46,7 @@ const changeHotelNew = async () => {
         setTimeout(() => {
             isAlertVisible.value = false;
         }, 10000);
-        
+
     } catch (err) {
 
             modalMessage.value = err.response?.data?.detail || "Error actualizando el código de hotel. Verifique el código.";
@@ -68,13 +68,13 @@ const changeHotelNew = async () => {
             <CardBox is-form @submit.prevent="changeHotelNew" class="sm:w-3/6 md:w-3/5 lg:w-3/6 xl:w-2/6 mx-auto">
                 <NotificationBar
                     v-if="isAlertVisible"
-                    :color="colorAlert" 
+                    :color="colorAlert"
                     :description="modalMessage"
                     :visible="isModalVisible"
                 />
 
                 <div class="flex justify-center mb-4">
-                    <img src="@/assets/img/sena-agro.png" alt="Logo Sena" class="w-12 sm:w-16">
+                    <img src="@/assets/img/sena-agro.webp" alt="Logo Sena" class="w-12 sm:w-16">
                 </div>
                 <h1 class="text-center mb-4 font-bold text-lg sm:text-xl">Cambiar Hotel</h1>
 
