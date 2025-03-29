@@ -9,3 +9,19 @@
 
 @import 'styles/_basic.css';
 @import 'styles/_white.css';
+
+.fc-license-message {
+  z-index: 0 !important;
+}
+
+.fc-toolbar-title {
+  text-transform: capitalize !important;
+}
+
+.fc-license-message * {
+  display: none;
+}
+
+.fc-license-message a[href*="More Info"] {
+  display: inline;
+}
