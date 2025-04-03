@@ -140,7 +140,7 @@
           </thead>
           <tbody>
             <tr
-              v-for="reserva in reservas"
+              v-for="reserva in reservas.filter((r) => r.estado_reserva === 'ACTIVO')"
               :key="reserva.id_reserva"
               class="hover:bg-gray-100 dark:hover:bg-gray-600"
             >
