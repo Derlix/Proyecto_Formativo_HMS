@@ -11,45 +11,51 @@
       />
 
       <!-- Contenedor para alinear el input y el botón -->
-      <div class="flex items-center mb-4 space-x-4">
-        <!-- Botón para crear una nueva habitación -->
-        <button
-          @click="mostrarModalCrear"
-          class="bg-green-700 text-white px-4 py-2 rounded-md shadow-sm hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-          v-if="userRole === 'SuperAdmin' || userRole === 'JefeRecepcion'"
-          >
-          Crear Habitación
-        </button>
-        
-        <router-link
+      <div class="flex flex-col sm:flex-row items-center sm:space-x-4 mb-4">
+  <!-- Botones para crear una nueva habitación y ajustes -->
+  <div class="flex flex-col sm:flex-row sm:space-x-4 w-full sm:w-auto mb-4 sm:mb-0">
+    <!-- Botón para crear una nueva habitación -->
+    <button
+      @click="mostrarModalCrear"
+      class="w-full sm:w-auto bg-green-700 text-white px-4 py-2 rounded-md shadow-sm hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 mb-2 sm:mb-0"
+      v-if="userRole === 'SuperAdmin' || userRole === 'JefeRecepcion'"
+    >
+      Crear Habitación
+    </button>
+    
+    <div class="flex w-full sm:w-auto space-x-4">
+      <router-link
         v-if="userRole === 'SuperAdmin' || userRole === 'JefeRecepcion'"
-          to="/mas_ajustes"
-          class="bg-blue-700 text-white px-4 py-2 rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-        >
-          Ajustes caracteristicas
-        </router-link>
-        
-        <router-link
-          v-if="userRole === 'SuperAdmin' || userRole === 'JefeRecepcion'"
-          to="/vistaCategorias"
-          class="bg-blue-700 text-white px-4 py-2 rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-          >
-          Ajustes categorias
-        </router-link>
-        
-        <!-- Campo de búsqueda con placeholder -->
-        <div class="w-full">
-          <label for="numero_habitacion" class="block text-sm font-medium overflow-auto w-full ">Buscar habitación</label>
-          <input
-            id="numero_habitacion"
-            v-model="buscarHabitacion"
-            @input="buscarHabitacionPorNumero"
-            type="text"
-            placeholder="Ingrese el número de habitación"
-            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 text-black"
-          />
-        </div>
-      </div>
+        to="/mas_ajustes"
+        class="w-full sm:w-auto bg-blue-700 text-white px-4 py-2 rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mb-2 sm:mb-0"
+      >
+        Ajustes características
+      </router-link>
+      
+      <router-link
+        v-if="userRole === 'SuperAdmin' || userRole === 'JefeRecepcion'"
+        to="/vistaCategorias"
+        class="w-full sm:w-auto bg-blue-700 text-white px-4 py-2 rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mb-2 sm:mb-0"
+      >
+        Ajustes categorías
+      </router-link>
+    </div>
+  </div>
+  
+  <!-- Campo de búsqueda -->
+  <div class="w-full">
+    <label for="numero_habitacion" class="block text-sm font-medium w-full">Buscar habitación</label>
+    <input
+      id="numero_habitacion"
+      v-model="buscarHabitacion"
+      @input="buscarHabitacionPorNumero"
+      type="text"
+      placeholder="Ingrese el número de habitación"
+      class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 text-black"
+    />
+  </div>
+</div>
+
 
       <!-- Modal para crear/editar una habitación -->
       <RoomModal

@@ -25,7 +25,7 @@
       </button>
 
       <h2
-        class="text-xl md:text-2xl mb-4 md:mb-6 font-semibold text-gray-900 dark:text-white text-center"
+        class="text-sm md:text-2xl mb-4 md:mb-6 font-semibold text-gray-900 dark:text-white text-center"
       >
         Movimiento de pasajeros - Check-In
       </h2>

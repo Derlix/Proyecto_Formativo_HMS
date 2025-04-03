@@ -99,19 +99,19 @@ onMounted(() => {
               <th class="px-4 py-2">Características</th>
               <th class="px-4 py-2">Piso</th>
               <th class="px-4 py-2">Estado</th>
-              <th class="px-4 py-2">Precio</th>
+              <th class="px-4 py-2">Precio</th> 
             </tr>
           </thead>
           <tbody>
             <tr v-for="habitacion in habitaciones" :key="habitacion.id_habitacion" class="bg-white dark:bg-gray-800 border-b dark:border-gray-700">
-              <td class="px-4 py-2">{{ habitacion.numero_habitacion }}</td>
-              <td class="px-4 py-2">
+              <td data-label="N° Habitacion" class="px-4 py-2">{{ habitacion.numero_habitacion }}</td>
+              <td data-label="Caracteristicas" class="px-4 py-2">
                 <button @click="verCaracteristicas(habitacion)" class="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 transition">
                   Ver características
                 </button>
               </td>
-              <td class="px-4 py-2">{{ habitacion.piso }}</td>
-              <td class="px-4 py-2">
+              <td data-label="Piso" class="px-4 py-2">{{ habitacion.piso }}</td>
+              <td data-label="Estado" class="px-4 py-2">
                 <span
                   class="inline-block px-3 py-1 text-xs font-semibold rounded-full"
                   :class="{
@@ -124,7 +124,7 @@ onMounted(() => {
                 </span>
               </td>
 
-              <td class="px-4 py-2">{{ calcularPrecioTotal(habitacion) }}</td>
+              <td data-label="Precio" class="px-4 py-2">{{ calcularPrecioTotal(habitacion) }}</td>
             </tr>
           </tbody>
         </table>

@@ -284,15 +284,15 @@ onMounted(() => {
       <div class="text-center w-3/4 mt-8 mx-auto">
         <CardBox class="shadow-lg bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-200 rounded-lg p-6">
           <h2 class="text-center text-2xl mb-5">Registro Fondos Caja de Recepción</h2>
-          <div class="grid grid-cols-2 gap-4 mt-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-3">
             <button
-              class="bg-blue-600 hover:bg-blue-800 dark:bg-blue-700 dark:hover:bg-blue-900 text-white h-12 rounded-lg font-bold transition duration-300 ease-in-out shadow-md transform hover:scale-105"
+              class="w-full sm:w-auto bg-blue-600 hover:bg-blue-800 dark:bg-blue-700 dark:hover:bg-blue-900 text-white h-12 rounded-lg font-bold text-sm sm:text-base md:text-lg transition duration-300 ease-in-out shadow-md transform hover:scale-105"
               @click="openVisibleModal()"
             >
               Registrar Fondos
             </button>
             <button
-              class="bg-blue-600 hover:bg-blue-800 dark:bg-blue-700 dark:hover:bg-blue-900 text-white h-12 rounded-lg font-bold transition duration-300 ease-in-out shadow-md transform hover:scale-105"
+              class="w-full sm:w-auto bg-blue-600 hover:bg-blue-800 dark:bg-blue-700 dark:hover:bg-blue-900 text-white h-12 rounded-lg font-bold text-sm sm:text-base md:text-lg transition duration-300 ease-in-out shadow-md transform hover:scale-105"
               @click="openVisibleModalFondos()"
             >
               Cerrar Fondos
@@ -302,8 +302,7 @@ onMounted(() => {
           <div class="mt-3 flex justify-center ">
             <router-link
               to="/gestion-cajero"
-              class="btn bg-blue-600 hover:bg-blue-800 dark:bg-blue-700 dark:hover:bg-blue-900 text-white h-12 rounded-lg font-bold transition duration-300 ease-in-out shadow-md transform hover:scale-105"
-            >
+              class="btn bg-blue-600 hover:bg-blue-800 dark:bg-blue-700 dark:hover:bg-blue-900 text-white h-12 rounded-lg font-bold text-sm sm:text-base md:text-lg lg:text-xl transition duration-300 ease-in-out shadow-md transform hover:scale-105">
               Administrar fondos
             </router-link>
           </div>
