@@ -211,6 +211,7 @@ const emit = defineEmits(['close'])
 const filteredReservas = computed(() => {
   return reservas.value.filter(
     (reserva) =>
+      reserva.check_in_estado !== "check_in_realizado" && // Excluir reservas con check-in realizado
       reserva.huesped.numero_documento.includes(searchDocumento.value)
   )
 })
