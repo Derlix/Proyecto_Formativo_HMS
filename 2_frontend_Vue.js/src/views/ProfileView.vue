@@ -138,13 +138,10 @@ const submitPass = async () => {
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <CardBox is-form @submit.prevent="submitProfile">
-          <FormField label="Avatar" help="Max 500kb">
-            <FormFilePicker label="Cargar" @change="onImageChange" accept="image/*" />
-          </FormField>
 
           <NotificationBar
             v-if="isAlertUserVisible"
-            :color="colorAlert" 
+            :color="colorAlert"
             :description="modalMessage"
             :visible="isModalVisible"
           />
@@ -179,7 +176,7 @@ const submitPass = async () => {
         <CardBox is-form @submit.prevent="submitPass">
           <NotificationBar
             v-if="isAlertVisible"
-            :color="colorAlert" 
+            :color="colorAlert"
             :description="modalMessage"
             :visible="isModalVisible"
           />
