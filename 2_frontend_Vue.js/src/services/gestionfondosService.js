@@ -25,9 +25,8 @@ export const createFondo = async (id_usuario, dinero_incial, dinero_final, fecha
 
 export const obtenerFondosPaginados = async (page = 1, pageSize = 10) => {
   try {
-    // Realiza la solicitud a la API con los parámetros de paginación
+    // Corrected query parameter formatting
     const response = await api.get(`/Manejo-dinero/all-manejo-caja-paginated/?page=${page}&page_size=${pageSize}`);
-
     return response.data; // Devuelve solo los datos de respuesta
   } catch (error) {
     if (error.response) {
