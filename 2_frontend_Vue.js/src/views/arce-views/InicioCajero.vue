@@ -6,7 +6,6 @@ import CardBoxWidget from '@/components/CardBoxWidget.vue'
 import TitleIconOnly from '@/components/TitleIconOnly.vue'
 import CardBox from '@/components/CardBox.vue'
 
-
 import {
   mdiCash,
   mdiTools,
@@ -19,11 +18,12 @@ import { obtenerTodasHabitacion } from '@/services/habitacionService'
 import { getAllFacturas } from '@/services/brayan_service/FacturacionService'
 import { obtenerTodasCuentasHuesped } from '@/services/cuentahuespedService'
 import ModalRegistrarFondos from '@/components/miguel_compnents/ModalRegistrarFondos.vue'
+import { updateFondo, createFondo, getFondoById } from '@/services/gestionfondosService'
 import { useAuthStore } from '@/stores'
-import { createFondo } from '@/services/gestionfondosService'
 
 const authStore = useAuthStore()
 const id_usuario = authStore.user.user_id
+
 const activarvisibleModal = ref(false)
 const activarvisibleModalFondos = ref(false)
 const habitacionesMantenimiento = ref(0)
@@ -31,9 +31,11 @@ const depositosEmitidos = ref(0)
 const facturasEmitidas = ref(0)
 const facturasProceso = ref(0)
 const dinero_inicial = ref(0)
-const fecha_inicial = ref(new Date().toISOString().substring(0, 10)) // Establecer fecha actual
+const fecha_inicial = ref(new Date().toISOString()) // Establecer fecha actual
 const dinero_final = ref(0)
-const fecha_final = ref(' ') // Inicializa la fecha como un ref
+const fecha_final = ref(new Date().toISOString()) // Inicializa la fecha como un ref
+
+const id_cajero = ref(1);
 
 const dineroInicialTemporal = ref(0) // Cambia esto
 
@@ -80,48 +82,73 @@ const fetchHabitaciones = async () => {
     console.error('Error al obtener habitaciones:', error)
   }
 }
+
+const fetchFondoById = async () => {
+  try {
+    const fondo = await getFondoById(id_cajero.value) // Replace '1' with the desired ID
+    console.log('Fondo obtenido:', fondo)
+    // Puedes asignar los valores obtenidos a las variables necesarias
+    dineroInicialTemporal.value = fondo.dinero_inicial
+    dinero_final.value = fondo.dinero_final
+    fecha_inicial.value = fondo.fecha_inicial
+    fecha_final.value = fondo.fecha_final
+  } catch (error) {
+    console.error('Error al obtener el fondo por ID:', error)
+  }
+}
+
+
 const registrarFondos = async () => {
   try {
-    dineroInicialTemporal.value = dinero_inicial.value // Usa .value para acceder al ref
-    console.log('Fondos registrados:', dineroInicialTemporal.value)
+    const response = await createFondo(
+      id_usuario,
+      dinero_inicial.value,
+      0,
+      fecha_final.value
+    )
+    console.log('Fondos registrados:', response)
 
+    dineroInicialTemporal.value = dinero_inicial.value
     activarvisibleModal.value = false
-    dinero_inicial.value = 0;
-    fecha_inicial.value = new Date().toISOString().substring(0, 10);
+    dinero_inicial.value = 0
+    fecha_inicial.value = new Date().toISOString()
+
   } catch (error) {
     console.error('Error al registrar fondos:', error)
   }
 }
 
-async function cerrarFondos() {
+const updateFondos = async () => {
   try {
     console.log(
-      'Datos a enviar a createFondo:',
-      id_usuario.value,
+      'Datos a enviar a updateFondo:',
+      dineroInicialTemporal.value,
+      dinero_inicial.value,
+      dinero_final.value,
+      fecha_final.value
+    );
+
+    activarvisibleModalFondos.value = false;
+
+    const response = await updateFondo(
+      id_cajero.value, // Reemplaza con el id_manejo_caja correspondiente
       dineroInicialTemporal.value,
       dinero_final.value,
       fecha_final.value
-    )
-    activarvisibleModalFondos.value = false;
-      
-    const response = await createFondo({
-      id_usuario: authStore.user.user_id,
-      dinero_inicial: dineroInicialTemporal.value, 
-      dinero_final: dinero_final.value,
-      fecha_final: fecha_final.value
-    })
+    );
 
-    
-    console.log('Fondos cerrados correctamente:', response)
+    console.log('Fondos cerrados correctamente:', response);
   } catch (error) {
-    console.error('Error al cerrar fondos:', error.response.detail || error)
+    console.error('Error al cerrar fondos:', error.response?.detail || error.message || error);
   }
-}
+};
 
 onMounted(() => {
+  fetchFondoById()
   fetchCuentas()
   fetchFacturas()
   fetchHabitaciones()
+  fetchFondoById() // Llama a la nueva función al montar el componente
 })
 </script>
 
@@ -130,8 +157,11 @@ onMounted(() => {
     <h2 class="text-center text-lg font-semibold text-gray-800 dark:text-white">
       Registrar Fondos
     </h2>
-    
+
     <form>
+      <p v-if="dineroInicialTemporal !== 0" class="text-red-600 dark:text-red-400 text-center">
+          Ya hay una caja abierta, no puede abrir otra.
+      </p>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
         <div class="mb-4">
           <label for="dinero_inicial" class="block text-gray-700 font-medium dark:text-white">
@@ -157,7 +187,7 @@ onMounted(() => {
         </div>
       </div>
     </form>
-  
+
     <!-- Botones en la misma línea -->
     <div class="flex justify-end space-x-2 mt-4">
       <button
@@ -168,14 +198,14 @@ onMounted(() => {
       </button>
       <button
         class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-        @click="activarvisibleModal = false" 
+        @click="activarvisibleModal = false"
       >
         Cancelar
       </button>
     </div>
   </ModalRegistrarFondos>
-  
-  
+
+
 
   <!-- MODAL DE CERRAR FONDOS -->
   <ModalRegistrarFondos v-model="activarvisibleModalFondos">
@@ -210,14 +240,14 @@ onMounted(() => {
     <div class="flex justify-end space-x-2 mt-4">
       <button
         class="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-        @click="cerrarFondos"
-        
+        @click="updateFondos"
+
       >
         Cerrar Fondos
       </button>
       <button
         class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-        @click="activarvisibleModalFondos = false" 
+        @click="activarvisibleModalFondos = false"
       >
         Cancelar
       </button>
@@ -308,7 +338,7 @@ onMounted(() => {
           </div>
         </CardBox>
       </div>
-      
+
     </SectionMain>
   </LayoutAuthenticated>
 </template>
