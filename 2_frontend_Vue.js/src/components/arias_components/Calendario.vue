@@ -16,6 +16,7 @@ import resourceTimelinePlugin from '@fullcalendar/resource-timeline'; // Importa
 import api from '@/services/api'; // Asegúrate de tener configurada tu API
 
 export default {
+  name: 'CalendarioReservas',
   components: {
     FullCalendar, // Hacemos disponible el componente FullCalendar
   },

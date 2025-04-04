@@ -23,7 +23,7 @@
       </div>
       <NotificationBar
           v-if="isAlertVisible"
-          :color="colorAlert" 
+          :color="colorAlert"
           :description="modalMessage"
           :visible="isModalVisible"
         />
@@ -96,7 +96,7 @@
             class="block w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
           />
         </div>
-        
+
 
         <div>
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Depósito</label>
@@ -178,7 +178,7 @@
           </thead>
           <tbody>
             <tr
-              v-for="habitacion in habitaciones.filter((h) => h.estado === 'ACTIVO')"
+              v-for="habitacion in habitaciones.filter((h) => h.estado)"
               :key="habitacion.id_habitacion"
               class="hover:bg-gray-100 dark:hover:bg-gray-600"
             >
@@ -325,6 +325,7 @@ import NotificationBar from '@/components/alejo_components/NotificationBar.vue';
 const modalMessage = ref('');
 const isAlertVisible = ref(false);
 const colorAlert = ref('');
+import api from '@/services/api'; // Asegúrate de tener configurada tu API
 
 
 const props = defineProps({
@@ -349,7 +350,7 @@ const seleccionaridReservaSeleccionada = ref(null)
 const activarModalCaracteristicas = ref(false);
 const showSuccessAlert = ref(false) // Estado para mostrar la alerta
 const showError = ref(false) // Estado para mostrar la alerta de error
-
+const fetchReser = ref([]);
 
 const today = new Date();
 today.setHours(today.getHours() - today.getTimezoneOffset() / 60); // Ajusta la fecha para la zona horaria local
@@ -392,12 +393,30 @@ const cargarReservasDelHuesped = async () => {
   }
 }
 
+const fetchReservations = async () => {
+  try {
+    const response = await api.get('/Reserva-habitacion/get_all'); // Cambia esta ruta por la de tus reservas
+    const reservasProcesadas = response.data.map((reserva) => ({
+      idReserva: reserva.id_reserva,
+      fechaEntrada: reserva.fecha_entrada,
+      fechaSalidaPropuesta: reserva.fecha_salida_propuesta,
+      numeroHabitacion: reserva.habitacion?.numero_habitacion,
+    }));
+
+    fetchReser.value = reservasProcesadas; // Actualizar fetchReser con los datos procesados
+    console.log('Reservas procesadas:', fetchReser.value); // Agrega un mensaje descriptivo al console.log
+  } catch (error) {
+    console.error('Error al obtener las reservas:', error);
+  }
+};
+
 // Cargar las reservas cuando se monte el componente
 onMounted(() => {
   if (props.huesped && props.huesped.numero_documento) {
-    cargarReservasDelHuesped()
+    cargarReservasDelHuesped();
   }
-})
+  fetchReservations();
+});
 
 // Vigila el paso actual para cargar reservas si es necesario
 watch(paso, (nuevoPaso) => {
@@ -444,7 +463,7 @@ const siguiente = async () => {
     // Error si pone la fecha de llegada después de la fecha de salida
     if (new Date(fecha_llegada.value) > new Date(fecha_salida.value)) {
       // console.error('La fecha de llegada no puede ser mayor a la fecha de salida.')
-      
+
       modalMessage.value = 'La fecha de llegada no puede ser mayor a la fecha de salida.';
       isAlertVisible.value = true;
       colorAlert.value = 'danger';
@@ -455,14 +474,14 @@ const siguiente = async () => {
 
       return;
     }
-    
+
     await confirmarReserva()
   }
 
   if (paso.value === 2) {
     if (!seleccionaridReservaSeleccionada.value) {
       // console.error('Por favor, selecciona una reserva antes de continuar.')
-      
+
       modalMessage.value = 'Por favor, selecciona una reserva antes de continuar.';
       isAlertVisible.value = true;
       colorAlert.value = 'danger';
@@ -473,7 +492,7 @@ const siguiente = async () => {
 
       return
     }
-    cargarHabitaciones(); 
+    cargarHabitaciones();
   }
 
   if (paso.value === 3) {
@@ -577,7 +596,37 @@ const confirmarReservaHabitacion = async () => {
 const cargarHabitaciones = async () => {
   try {
     const response = await obtenerTodasHabitaciones()
-    habitaciones.value = response.data
+    let todasHabitaciones = response.data
+
+    // Filtrar habitaciones disponibles según las fechas seleccionadas
+    if (fecha_llegada.value && fecha_salida.value) {
+      const fechaLlegada = new Date(fecha_llegada.value)
+      const fechaSalida = new Date(fecha_salida.value)
+
+      // Filtrar habitaciones que no estén reservadas en el rango de fechas seleccionado
+      todasHabitaciones = todasHabitaciones.filter(habitacion => {
+        // Verificar si esta habitación tiene reservas que se solapan con las fechas seleccionadas
+        const reservasConflicto = fetchReser.value.filter(reserva => {
+          if (reserva.numeroHabitacion !== habitacion.numero_habitacion) {
+            return false // No es la misma habitación, no hay conflicto
+          }
+
+          const reservaInicio = new Date(reserva.fechaEntrada)
+          const reservaFin = new Date(reserva.fechaSalidaPropuesta)
+
+          // Verificar si hay solapamiento entre las fechas
+          // (Llegada antes de que termine otra reserva Y Salida después de que comience otra reserva)
+          return !(fechaSalida <= reservaInicio || fechaLlegada >= reservaFin)
+        })
+
+        // La habitación está disponible si no hay reservas conflictivas
+        return reservasConflicto.length === 0
+      })
+    }
+
+    habitaciones.value = todasHabitaciones
+    console.log('Fechas con habitaciones ocupadas:', fetchReser.value)
+    console.log('Habitaciones disponibles para las fechas seleccionadas:', habitaciones.value)
   } catch (error) {
     console.error('Error al cargar las habitaciones:', error)
   }
@@ -616,7 +665,7 @@ watch(
   () => props.visible,
   (newValue) => {
     if (newValue) {
-      paso.value = 1; 
+      paso.value = 1;
       limpiarCampos();
       openModal()
     }
