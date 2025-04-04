@@ -1,12 +1,12 @@
 <template>
   <div class="video-library">
-    <div class="video-grid">
+    <div class="video-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       <div v-for="video in paginatedVideos" :key="video.id" class="video-item">
         <h3>{{ video.title }}</h3>
         <p>{{ video.description }}</p>
         <iframe 
           width="100%" 
-          height="300" 
+          height="200" 
           :src="video.url" 
           title="YouTube video player" 
           frameborder="0" 
@@ -16,13 +16,17 @@
       </div>
     </div>
     
-    <div class="pagination">
-      <button @click="prevPage" :disabled="currentPage === 1">Anterior</button>
-      <span>Página {{ currentPage }} de {{ totalPages }}</span>
-      <button @click="nextPage" :disabled="currentPage === totalPages">Siguiente</button>
+    <div class="pagination mt-8 flex justify-center items-center space-x-4">
+      <button @click="prevPage" :disabled="currentPage === 1" class="pagination-btn">
+        Anterior
+      </button>
+      <span class="text-lg">Página {{ currentPage }} de {{ totalPages }}</span>
+      <button @click="nextPage" :disabled="currentPage === totalPages" class="pagination-btn">
+        Siguiente
+      </button>
     </div>
     
-    <div class="manual-download">
+    <div class="manual-download mt-8 flex justify-center">
       <a :href="manualUrl" download>
         <button class="download-button">
           <i class="fas fa-file-pdf"></i> Descargar Manual de Usuario
@@ -35,7 +39,6 @@
 <script>
 import manualDeUsuario from '@/assets/img/ManualDeUsuarioHMS.pdf';
 
-
 export default {
   data() {
     return {
@@ -44,12 +47,10 @@ export default {
         { id: 2, title: "Gestión de cuentas de huéspedes", description: "Aprende a gestionar las cuentas de huéspedes con este tutorial.", url: "https://www.youtube.com/embed/jeVg0Br3D_8" },
         { id: 3, title: "Uso de los productos del hotel", description: "Este video muestra cómo gestionar los productos del hotel", url: "https://www.youtube.com/embed/UXJvMNZMHHE" },
         { id: 4, title: "Manejo de Hoteles", description: "Aprende a manejar los hoteles y sus datos", url: "https://www.youtube.com/embed/lmzgXQ9pPA0" },
-        // Agrega más videos según sea necesario
       ],
       currentPage: 1,
       videosPerPage: 4,
-      manualUrl: manualDeUsuario, // Aquí se usa el import del PDF
-
+      manualUrl: manualDeUsuario,
     };
   },
   computed: {
@@ -93,7 +94,7 @@ h1 {
 
 .video-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(1, 1fr);
   gap: 20px;
 }
 
@@ -129,7 +130,7 @@ iframe {
   margin-top: 20px;
 }
 
-.pagination button {
+.pagination-btn {
   background-color: #007bff;
   color: white;
   border: none;
@@ -139,7 +140,7 @@ iframe {
   transition: background-color 0.3s;
 }
 
-.pagination button:disabled {
+.pagination-btn:disabled {
   background-color: #ccc;
   cursor: not-allowed;
 }
@@ -171,5 +172,17 @@ iframe {
 
 .download-button:hover {
   background-color: #c9302c;
+}
+
+@media (min-width: 640px) {
+  .video-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .video-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 </style>
