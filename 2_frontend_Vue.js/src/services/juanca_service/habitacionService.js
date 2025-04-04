@@ -1,24 +1,26 @@
 import api from '../api';
 
 // Función para crear una nueva habitación
-export const crearHabitacion = async (estado, piso, numero_habitacion, id_categoria_habitacion) => {
+export const crearHabitacion = async (estado, piso, numero_habitacion, id_categoria_habitacion, id_usuario) => {
   try {
+    console.log(estado, piso, numero_habitacion, id_categoria_habitacion, id_usuario);
     const response = await api.post('/habitacion/create_room', {
       estado,
       piso,
       numero_habitacion,
       id_categoria_habitacion,
-      id_usuario: "string",
+      id_usuario,
     }, {
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('access_token')}` // Incluye el token de autenticación
+        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
       }
     });
-    return response;
+
+    return response.data;
   } catch (error) {
     if (error.response) {
-      throw error.response; // Devuelve el error original de la API
+      throw error.response;
     } else {
       throw new Error('Error de red o de servidor');
     }
@@ -33,12 +35,12 @@ export const obtenerTodasHabitaciones = async () => {
         'Authorization': `Bearer ${localStorage.getItem('access_token')}`
       }
     });
-    return response; // Asegúrate de retornar `response`
+    return response.data;
   } catch (error) {
-    if (error.response) {
-      throw error.response;
+    if (error.response?.status === 404) {
+      return [];
     } else {
-      throw new Error('Error de red o de servidor');
+      throw error;
     }
   }
 };
@@ -141,17 +143,17 @@ export const eliminarHabitacion = async (id_habitacion) => {
 
 export const verificarNumeroHabitacion = async (numero_habitacion, id_habitacion = null) => {
   try {
-    const response = await obtenerTodasHabitaciones();
-    const habitacionExiste = response.data.some(h =>
-      h.numero_habitacion === numero_habitacion && h.id_habitacion !== id_habitacion
+    const habitaciones = await obtenerTodasHabitaciones();
+
+    const habitacionExiste = habitaciones.some(h =>
+      h.numero_habitacion === numero_habitacion &&
+      h.id_habitacion !== id_habitacion
     );
+
     return habitacionExiste;
   } catch (error) {
-    if (error.response) {
-      throw error.response;
-    } else {
-      throw new Error('Error de red o de servidor');
-    }
+    console.error('Error al verificar el número de habitación:', error);
+    throw new Error('No se pudo verificar el número de habitación.');
   }
 };
 

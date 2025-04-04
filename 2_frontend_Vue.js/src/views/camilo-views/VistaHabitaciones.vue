@@ -22,7 +22,7 @@
     >
       Crear Habitación
     </button>
-    
+
     <div class="flex w-full sm:w-auto space-x-4">
       <router-link
         v-if="userRole === 'SuperAdmin' || userRole === 'JefeRecepcion'"
@@ -31,7 +31,7 @@
       >
         Ajustes características
       </router-link>
-      
+
       <router-link
         v-if="userRole === 'SuperAdmin' || userRole === 'JefeRecepcion'"
         to="/vistaCategorias"
@@ -41,7 +41,7 @@
       </router-link>
     </div>
   </div>
-  
+
   <!-- Campo de búsqueda -->
   <div class="w-full">
     <label for="numero_habitacion" class="block text-sm font-medium w-full">Buscar habitación</label>
@@ -65,8 +65,8 @@
       @save="guardarHabitacion"
       @roomSaved="habitacionSeleccionada ? mostrarNotificacion('Habitación editada exitosamente', 'success') : mostrarNotificacion('Habitación creada exitosamente', 'success')"
       />
-      
-      
+
+
       <!-- Modal para mostrar detalles de la habitación -->
       <RoomDetailsModal
         :visible="showDetailsModal"
@@ -216,9 +216,7 @@ const habitacionesFiltradas = computed(() => {
 const obtenerHabitaciones = async (page = 1) => {
   try {
     const response = await obtenerHabitacionesPaginadas(page, 10);
-    console.log('Respuesta del API:', response.data.habitacion);
-    console.log('Respuesta del API:', response);
-    habitacion.value = response.data.habitacion; // Verifica que esto sea un arreglo
+    habitacion.value = response.data.habitacion;
     totalPaginas.value = response.data.total_paginas;
   } catch (error) {
     console.error("Error al obtener las habitaciones:", error.message);

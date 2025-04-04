@@ -91,8 +91,7 @@ export const obtenerCategoriasPaginadas = async (pagina = 1, pageSize = 10) => {
         page_size: pageSize
       }
     });
-    console.log(response)
-    return response; // Ajusta según la estructura de tu API
+    return response;
   } catch (error) {
     if (error.response) {
       throw error.response;

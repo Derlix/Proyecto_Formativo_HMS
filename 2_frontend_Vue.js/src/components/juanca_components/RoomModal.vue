@@ -210,7 +210,8 @@ const guardarHabitacion = async () => {
         habitacionData.estado,
         habitacionData.piso,
         habitacionData.numero_habitacion,
-        habitacionData.id_categoria_habitacion
+        habitacionData.id_categoria_habitacion,
+        habitacionData.id_usuario
       );
 
       isAlertVisible.value = true;
