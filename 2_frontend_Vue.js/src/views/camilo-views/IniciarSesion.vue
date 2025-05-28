@@ -104,11 +104,11 @@ const handleLogin = async () => {
 
           <!-- Links -->
           <div class="text-center mt-3">
-            <router-link to="/recuperar" class="text-sm text-blue-700 hover:underline">¿Olvidaste tu contraseña? Restablecer contraseña</router-link>
+            <router-link to="/registrar" class="text-sm text-blue-700 hover:underline">Crear cuenta nueva</router-link>
           </div>
 
           <div class="text-center mt-3">
-            <router-link to="/registrar" class="text-sm text-blue-700 hover:underline">Crear cuenta nueva</router-link>
+            <router-link to="/recuperar" class="text-sm text-blue-700 hover:underline">¿Olvidaste tu contraseña? Restablecer contraseña</router-link>
           </div>
 
           <div class="text-center mt-3">
@@ -119,10 +119,10 @@ const handleLogin = async () => {
 
       <!-- Sección derecha: Texto SENA (arriba en móviles) -->
       <div class="flex flex-col justify-center w-full lg:w-1/2 lg:order-2 order-1 lg:pl-16 text-center lg:text-left">
-        <h1 class="text-4xl lg:text-5xl font-bold text-green-600 mb-2 lg:mb-4">
-          SENA
-        </h1>
-        <p class="text-lg lg:text-2xl text-gray-700 font-light">
+        <div class="flex justify-center m-5">
+          <img src="../../assets/img/sena-agro.webp" alt="Logo SENA" width="110">
+        </div>
+        <p class="text-lg lg:text-2xl text-gray-700 font-light m-4">
           HMS es tu sistema integral de gestión hotelera que te permite manejar reservas,
           administrar habitaciones y optimizar la experiencia de tus clientes de manera sencilla y eficaz.
         </p>
