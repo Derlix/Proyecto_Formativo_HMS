@@ -31,7 +31,6 @@ const fetchReservas = async () => {
     }
   } catch (error) {
     alert("Error al cargar las habitaciones")
-    console.error('Error al cargar las habitaciones:', error);
   }
 };
 

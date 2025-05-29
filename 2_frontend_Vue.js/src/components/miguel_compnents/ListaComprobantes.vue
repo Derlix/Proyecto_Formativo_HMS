@@ -77,6 +77,14 @@ const openVisibleModal = (huesped) => {
   activarvisibleModal.value = true
 }
 
+const formatCurrency = (value) => {
+  return new Intl.NumberFormat('es-CO', {
+    style: 'currency',
+    currency: 'COP',
+    minimumFractionDigits: 0
+  }).format(value);
+}
+
 onMounted(() => {
   fetchComprobantes()
 })
@@ -240,7 +248,7 @@ onMounted(() => {
         <td data-label="N. Huesped ">{{ comprobante.huesped.id_huesped }}</td>
         <td data-label="N. Reserva ">{{ comprobante.reserva.id_reserva }}</td>
         <td data-label="Fecha de salida">{{ comprobante.reserva_habitacion.fecha_salida_propuesta }}</td>
-        <td data-label="Valor de deposito">{{ comprobante.reserva.valor_deposito }}</td>
+        <td data-label="Valor de deposito" class="text-end">{{ formatCurrency(comprobante.reserva.valor_deposito) }}</td>
         <td data-label="Forma de pago">{{ comprobante.reserva.forma_pago }}</td>
         <td data-label="Elaborado por">{{ comprobante.usuario.nombre_completo }}</td>
         <!--  <td data-label="ID Facturación">{{ comprobante.usuario.id_usuario }}</td>-->

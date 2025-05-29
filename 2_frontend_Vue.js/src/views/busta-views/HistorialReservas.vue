@@ -19,16 +19,6 @@ const modalMessage = ref('');
 const isAlertVisible = ref(false);
 const colorAlert = ref('');
 
-// const fetchReservas = async () => {
-//   try {
-//     const data = await getAllHistorialReservas();
-//     reservas.value = data.reverse(); // Invertir el orden para mostrar del último al primero
-//   } catch (error) {
-//     console.error('Error al obtener el historial de reservas:', error);
-//     alert('Ocurrió un error al obtener el historial de reservas.');
-//   }
-// };
-
 const fetchPageReservas = async () => {
   try {
     const response = await getHistorialReservasByPage(currentPage.value);
@@ -36,7 +26,6 @@ const fetchPageReservas = async () => {
     reservas.value = response.data.reservas; // Invertir el orden para mostrar del último al primero
     
   } catch (error) {
-    console.error('Error al obtener el historial de reservas:', error);
     showAlert('Ocurrió un error al obtener el historial de reservas.', 'danger');
 
   }
@@ -57,13 +46,18 @@ const openHuespedModal = async (numero_documento) => {
     selectedHuesped.value = data.data; // Asegúrate de que esto sea correcto según la respuesta de la API
     isHuespedModalVisible.value = true;
   } catch (error) {
-    console.error('Error al obtener el huésped:', error);
     
     showAlert('Ocurrió un error al obtener los datos del huésped', 'danger');
   }
 };
 
-
+const formatCurrency = (value) => {
+  return new Intl.NumberFormat('es-CO',{
+    style: 'currency',
+    currency: 'COP',
+    minimumFractionDigits: 0
+  }).format(value);
+}
 
 onMounted(() => {
   fetchPageReservas();
@@ -103,7 +97,7 @@ onMounted(() => {
             <td data-label="Check Out">{{ reserva.fecha_reserva }}</td>
             <td data-label="Huésped">{{ reserva.huesped.nombre_completo }}</td>
             <td data-label="Cédula">{{ reserva.huesped.numero_documento }}</td>
-            <td data-label="Total">{{ reserva.valor_deposito }}</td>
+            <td data-label="Total" class="text-end">{{ formatCurrency(reserva.valor_deposito) }}</td>
             <td data-label="Estado">
               <span :class="{
                 'inline-block px-3 py-1 text-xs font-semibold text-green-700 bg-green-200 rounded-full dark:text-green-100 dark:bg-green-600': reserva.estado_reserva === 'ACTIVO',
