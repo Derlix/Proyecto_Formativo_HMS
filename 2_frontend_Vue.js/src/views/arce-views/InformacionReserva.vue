@@ -113,6 +113,14 @@ const goToReservas = () => {
     router.push({ name: 'reservas' });
 }
 
+const formatCurrency = (value) => {
+    return new Intl.NumberFormat('es-CO', {
+        style: 'currency',
+        currency: 'COP',
+        minimumFractionDigits: 0,
+    }).format(value);
+};
+
 onMounted(() => {
     fetchHabitacion()
     fetchDataReserva();
@@ -189,7 +197,7 @@ onMounted(() => {
                         </div>
                         <div class="flex justify-between">
                             <p class="text-lg">Depósito:</p>
-                            <p class="text-base">{{ dataReserva.valor_deposito }}</p>
+                            <p class="text-base">{{ formatCurrency(dataReserva.valor_deposito) }}</p>
                         </div>
                         <div class="flex justify-between">
                             <p class="text-lg">Forma de pago:</p>

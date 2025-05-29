@@ -53,15 +53,15 @@
         <table>
           <thead>
             <tr>
-              <th class="text-black dark:text-white">Precio Fijo</th> <!-- Columna para Precio Fijo -->
               <th class="text-black dark:text-white">Tipo de Habitación</th> <!-- Columna para Tipo de Habitación -->
+              <th class="text-black dark:text-white">Precio Fijo</th> <!-- Columna para Precio Fijo -->
               <th class="text-black dark:text-white">Acción</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="item in categorias" :key="item.id_categoria">
-              <td class="text-black px-4 py-2 border-b-2 text-sm dark:text-white">{{ item.precio_fijo }}</td> <!-- Mostrar Precio Fijo -->
               <td class="text-black px-4 py-2 border-b-2 text-sm dark:text-white">{{ item.tipo_habitacion }}</td> <!-- Mostrar Tipo de Habitación -->
+              <td class="text-black px-4 py-2 border-b-2 text-sm dark:text-white">{{ formatCurrency(item.precio_fijo) }}</td> <!-- Mostrar Precio Fijo -->
               <td>
                 <BaseButtons no-wrap>
                   <!-- Botón para editar -->
@@ -141,15 +141,11 @@ export default {
     const fetchCategorias = async (page = 1) => {
       try {
         const response = await obtenerCategoriasPaginadas(page, 10);
-
-        // Accede a la propiedad data de la respuesta
         const { data } = response;
-
         if (data && data.categories && Array.isArray(data.categories)) {
-          categorias.value = data.categories; // Accede a data.categories
-          totalPaginas.value = data.total_pages || 1; // Ahora accede a data.total_pages
+          categorias.value = data.categories;
+          totalPaginas.value = data.total_pages || 1;
         } else {
-          console.error('Error: La respuesta del API no tiene el formato esperado.');
           categorias.value = [];
         }
       } catch (error) {
@@ -168,7 +164,6 @@ export default {
         await fetchCategorias(currentPage.value);
         mostrarAlerta('Categoría eliminada con éxito.', 'success');
       } catch (error) {
-        console.error('Error al eliminar la categoría:', error);
         mostrarAlerta('La categoría no se puede eliminar porque está en uso.', 'danger');
       } finally {
         showConfirmModal.value = false;
@@ -176,12 +171,12 @@ export default {
     };
 
     const mostrarModalCrear = () => {
-      categoriaSeleccionada.value = null; // Limpiar selección anterior
-      showModalCrear.value = true; // Muestra el modal de creación
+      categoriaSeleccionada.value = null;
+      showModalCrear.value = true;
     };
 
     const cerrarModal = () => {
-      showModalCrear.value = false; // Cierra también el modal de creación
+      showModalCrear.value = false;
     };
 
     const handleCategoriaCreada = async () => {
@@ -190,20 +185,27 @@ export default {
     };
 
     const editarCategoria = (item) => {
-      console.log('Categoría seleccionada:', JSON.stringify(item)); // Log as plain object
-      // Cambia aquí a id_categoria_habitacion si es el campo correcto
       if (!item.id_categoria_habitacion) {
         console.error('Error: La categoría seleccionada no tiene un ID válido.');
         return;
       }
 
-      categoriaSeleccionada.value = { ...item }; // Crea una copia superficial para reactividad
-      showModalCrear.value = true; // Muestra el modal de creación para editar
+      categoriaSeleccionada.value = { ...item };
+      showModalCrear.value = true;
     };
 
     const changePage = (page) => {
       currentPage.value = page;
       fetchCategorias(page);
+    };
+
+
+    const formatCurrency = (value) => {
+      return new Intl.NumberFormat('es-CO', {
+          style: 'currency',
+          currency: 'COP',
+          minimumFractionDigits: 0,
+      }).format(value);
     };
 
     const mostrarAlerta = (message, color) => {
@@ -234,6 +236,7 @@ export default {
       totalPaginas,
       currentPage,
       changePage,
+      formatCurrency,
       editarCategoria,
       categoriaSeleccionada,
       mdiTrashCan,

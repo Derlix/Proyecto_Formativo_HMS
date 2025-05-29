@@ -11,24 +11,23 @@ import BaseButton from '@/components/BaseButton.vue'
 import UserAvatar from '@/components/UserAvatar.vue'
 import NotificationBar from '@/components/alejo_components/NotificationBar.vue'
 import FormField from '@/components/FormField.vue'
-defineProps({
-  checkable: Boolean
-})
-const mainStore = useMainStore();
-const userRole = computed(() => mainStore.userRole);
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
-
 import { getProductosFacturaById, deleteProductoFactura, updateProductoFactura, addProductoToFactura,getAllProductosPrueba } from "@/services/brayan_service/FacturaProductoService";
 import { getAllFacturas, updateFacturaService, deleteFactura, getFacturaByPage, getFacturaByid } from "@/services/brayan_service/FacturacionService";
 import { info_descuentos } from "@/services/arce_service/descuentoService";
 
+defineProps({
+  checkable: Boolean
+})
+
+const mainStore = useMainStore();
+const userRole = computed(() => mainStore.userRole);
 const DescuentoDisponibles = ref([]);
 
 const fetchAllDescuentos = async () => {
   try {
     const response = await info_descuentos();
-    //console.log('Respuesta de la API:', response);
     DescuentoDisponibles.value = response;
   } catch (error) {
     console.error("Error al obtener productos:", error);
@@ -39,27 +38,28 @@ onMounted(() => {
   fetchAllDescuentos();
 });
 
-
-//ESTO ES PARA OBTENER LOS PRODUCTOS Y PONERLOS EN EL INPUT DE AGREGAR PRODUCTO, te odio  NICOLAS
 const productosDisponibles = ref([]);
-
-
 
 const fetchAllProductos = async () => {
   try {
     const response = await getAllProductosPrueba();
-    //console.log('Respuesta de la API:', response);
     productosDisponibles.value = response;
   } catch (error) {
     console.error("Error al obtener productos:", error);
   }
 };
 
+const formatCurrency = (value) => {
+    return new Intl.NumberFormat('es-CO', {
+        style: 'currency',
+        currency: 'COP',
+        minimumFractionDigits: 0,
+    }).format(value);
+};
+
 onMounted(() => {
   fetchAllProductos();
 });
-
-
 
 //variables de facturas
 const facturas = ref([]);
@@ -70,42 +70,27 @@ const showDetalles = ref(false);
 const facturasOriginales = ref([]);
 const TotalPages = ref(0);
 const currentPage = ref(1);
-
 const buscarFactura = ref('');
-
-
-
 const metodosDePago = ['EFECTIVO', 'TARJETA', 'TRANSFERENCIA'];
-
- // Lista de estados
 const estados = ['PAGADA', 'PENDIENTE', 'CANCELADA'];
-
-
 const isAlertVisible = ref(false);
 const modalMessage = ref('');
 const colorAlert = ref('');
 
 async function buscar_Factura() {
-  // Si el campo de busqueda esta vacío, se obtienen  las facturs
   if (buscarFactura.value.trim() === '') {
     fetchFacturas();
   } else {
 
     try {
       const response = await getFacturaByid(buscarFactura.value);
-      //console.log('Respuesta de la API:', response);
       if (response && response.data) {
-        // se Actualiza selectedFactura y facturas
         selectedFactura.value = response.data;
-        facturas.value = [selectedFactura.value]; // Mostrar    factura encontrada
+        facturas.value = [selectedFactura.value];
       } else {
-        // Si no se encuentra la factura, limpiar selectedFactura pero no facturas
         selectedFactura.value = null;
       }
     } catch (error) {
-      console.error('Error al encontrar la factura:', error);
-
-      // Mantener las facturas existentes en caso de error
       selectedFactura.value = null;
     }
   }
@@ -116,46 +101,37 @@ const filtrarFacturasPorEstado = () => {
   const estadoSeleccionado = selectedFactura.value.estado;
 
   if (estadoSeleccionado === "") {
-    // Si el estado es "Ninguna", mostrar todas las facturas
     facturas.value = [...facturasOriginales.value];
   } else {
-    // Filtrar facturas basadas en el estado seleccionado
     facturas.value = facturasOriginales.value.filter(factura => factura.estado === estadoSeleccionado);
   }
   if (facturas.value.length === 0) {
     modalMessage.value = 'No se encontraron facturas con el estado seleccionado';
     isAlertVisible.value = true;
     colorAlert.value = 'danger';
-
-    // Cerrar la alerta automáticamente después de 3 segundos
     setTimeout(() => {
       isAlertVisible.value = false;
     }, 2000);
   }
 };
 
-
-
 //ver facturas
 const fetchFacturas = async () => {
   try {
     const response = await getFacturaByPage(currentPage.value);
     facturas.value = response.data.facturaciones;
-    facturasOriginales.value = [...facturas.value]; // Guardamos todas las facturas sin filtrar
+    facturasOriginales.value = [...facturas.value];
     TotalPages.value = response.data.total_pages;
   } catch (error) {
     console.error('Error al obtener facturas:', error.message);
   }
 };
 
-
 onMounted(() => {
   fetchFacturas();
 });
 
 const emit = defineEmits(['update', 'close']);
-
-
 
 //actualizar facturas
 const updateFactura = async () => {
@@ -194,9 +170,7 @@ const updateFactura = async () => {
   }
 };
 
-
-
-//Eliminar factura
+//Eliminar factur
 const confirmDelete = async () => {
   try {
     await deleteFactura(selectedFactura.value.id_facturacion);
@@ -209,8 +183,8 @@ const confirmDelete = async () => {
       isAlertVisible.value = false;
     }, 3000);
 
-    emit('delete');  // Emite el evento correcto para que lo maneje el componente padre
-    emit('close');   // Cierra el modal
+    emit('delete');
+    emit('close');
   } catch (error) {
     if (error.response?.status === 400) {
       fetchFacturas();
@@ -225,18 +199,14 @@ const confirmDelete = async () => {
   }
 };
 
-
-//ABRIR MODAL DE EDITAR Y ELIMINAR FACTURA
 function openEditModal(factura) {
 
   selectedFactura.value = {
     ...factura,
     id_descuento: factura.descuento ? factura.descuento.id_descuento : null
   };
-  //console.log('Factura seleccionada para editar:', selectedFactura.value);
   showEditModal.value = true;
 }
-
 
 function openDeleteModal(factura) {
   selectedFactura.value = { ...factura };
@@ -246,12 +216,7 @@ function openDeleteModal(factura) {
 function openDetallesmodal(factura) {
   selectedFactura.value = { ...factura };
   showDetalles.value = true;
-
-
 }
-
-
-
 
 //CERRAR MODAL DE EDITAR Y ELIMINAR FACTURA
 function closeEditModal() {
@@ -266,7 +231,6 @@ function closeDetallesModal() {
   showDetalles.value = false;
 }
 
-
 function cerrarEditarFactura() {
   closeEditModal();
 }
@@ -275,18 +239,10 @@ function cerrarEliminarFactura() {
   closeDeleteModal();
 }
 
-
 function cerrarDetallesFactura() {
   closeDetallesModal();
 }
 
-
-//
-
-//PRODUCTOS DE FACTURAS |||||||||||||||||||
-
-
-//variables de productos de facturas
 const productos = ref([]);
 const selectedProduct = ref({
   factura_producto: {
@@ -300,34 +256,28 @@ const selectedProduct = ref({
 
 });
 
-//  un watch para ver los cambios en selectedProduct.id_productom, como el precio_unitario
 watch(() => selectedProduct.value.id_producto, (newProductoId) => {
-  // Encuentra el producto seleccionado en la lista de productos disponibles
   const productoSeleccionado = productosDisponibles.value.find(
     (producto) => producto.id_producto === newProductoId
   );
 
-  // Si se encuentra el producto, actualiza el precio unitari
   if (productoSeleccionado) {
     selectedProduct.value.precio_unitario = productoSeleccionado.precio_actual;
   }
 });
-
 
 const showListaProductosModal = ref(false);
 const showAgregarProductosModal = ref(false);
 const showDeleteProductosModal = ref(false);
 const showEditProductosModal = ref(false);
 
-
 //LISTA DE PRODCUTOS DE FACTURA
 const fetchProductos = async () => {
   try {
     if (selectedFactura.value && selectedFactura.value.id_facturacion) {
       const response = await getProductosFacturaById(selectedFactura.value.id_facturacion);
-      //console.log(response); // Verifica la estructura de la respuesta
       if (response && response.productos) {
-        productos.value = response.productos; // Asegúrate de asignar la lista de productos
+        productos.value = response.productos;
       } else {
         console.error('No se encontraron productos en la respuesta:', response);
       }
@@ -339,10 +289,8 @@ const fetchProductos = async () => {
 
 watch(() => selectedFactura.value, fetchProductos, { immediate: true });
 
-
 const addProducto = async () => {
   try {
-    //console.log('Datos del producto a agregar:', selectedProduct.value);
     await addProductoToFactura(
       selectedFactura.value.id_facturacion,
       selectedProduct.value.id_producto,
@@ -380,15 +328,9 @@ function resetSelectedProduct() {
   };
 }
 
-
-
-
-
-
 //ELIMINAR PRODUCTO DE FACTURA
 const confirmDeleteProducto = async () => {
   try {
-    //console.log('Confirmar eliminación del producto:', selectedProduct.value);
     await deleteProductoFactura(selectedProduct.value.factura_producto.id_factura_producto);
     fetchProductos();
     closeDeleteProductosModal();
@@ -412,11 +354,9 @@ const confirmDeleteProducto = async () => {
   }
 };
 
-
 //ACTUALIZAR PRODUCTO DE FACTURA
 const updateProducto = async () => {
   try {
-    //console.log('Datos del producto en el modal:', selectedProduct.value);
     await updateProductoFactura(
       selectedProduct.value.factura_producto.id_factura_producto,
       selectedProduct.value.factura_producto.cantidad,
@@ -432,7 +372,6 @@ const updateProducto = async () => {
       isAlertVisible.value = false;
     }, 3000);
 
-
   } catch (error) {
     closeEditProductosModal();
     closeListaProductosModal();
@@ -445,10 +384,6 @@ const updateProducto = async () => {
   }
 };
 
-
-
-
-
 //ABRIR MODAL DE LISTA DE PRODUCTOS DE LA FACTURA
 
 function openListaProductosModal(factura) {
@@ -456,21 +391,15 @@ function openListaProductosModal(factura) {
   showListaProductosModal.value = true;
 }
 
-
-
 //ABRIR MODAL DE AGREGAR PRODUCTOS A LA FACTURA
 function openAgregarProductosModal(factura) {
   selectedFactura.value = factura;
-  selectedProduct.value.fecha = fechaActual();  // Aquí asignamos la fecha actual
+  selectedProduct.value.fecha = fechaActual();
   showAgregarProductosModal.value = true;
 }
 
-
-
-
 const openEditProductoModal = (producto) => {
   if (producto && producto.factura_producto && producto.factura_producto.id_factura_producto) {
-    //console.log('Producto seleccionado para editar:', producto);
     selectedProduct.value = { ...producto };
     showEditProductosModal.value = true;
   } else {
@@ -478,11 +407,8 @@ const openEditProductoModal = (producto) => {
   }
 };
 
-
-
 const openDeleteProductoModal = (producto) => {
   if (producto && producto.factura_producto && producto.factura_producto.id_factura_producto) {
-    //console.log('Producto seleccionado:', producto.factura_producto.id_factura_producto);
     selectedProduct.value = { ...producto };
     showDeleteProductosModal.value = true;
   } else {
@@ -490,18 +416,14 @@ const openDeleteProductoModal = (producto) => {
   }
 };
 
-
-
 //CERRAR MODAL DE LISTA DE PRODUCTOS DE LA FACTURA
 function closeListaProductosModal() {
   showListaProductosModal.value = false;
 }
 
-
 function closeAgregarProductosModal() {
   showAgregarProductosModal.value = false;
 }
-
 
 const closeEditProductosModal = () => {
   showEditProductosModal.value = false;
@@ -511,14 +433,10 @@ const closeDeleteProductosModal = () => {
   showDeleteProductosModal.value = false;
 };
 
-
-
-
 //CERRAR MODALES DE AGREGAR Y ELIMINAR PRODUCTOS DE LA FACTURA
 function cerrarlistaProductoFactura() {
   closeListaProductosModal();
 }
-
 
 function cerrarEditarProductoFactura() {
   closeEditProductosModal();
@@ -553,7 +471,7 @@ const downloadPDF = () => {
       const imgData = canvas.toDataURL('image/png', 1);
       const pdf = new jsPDF();
 
-      const imgWidth = 190; // Ancho del PDF
+      const imgWidth = 190;
       const pageHeight = pdf.internal.pageSize.height;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
       let heightLeft = imgHeight;
@@ -563,14 +481,12 @@ const downloadPDF = () => {
       pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
       heightLeft -= pageHeight;
 
-
       while (heightLeft >= 0) {
         position = heightLeft - imgHeight;
         pdf.addPage();
         pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
         heightLeft -= pageHeight;
       }
-
 
       pdf.save('factura.pdf');
 
@@ -580,23 +496,16 @@ const downloadPDF = () => {
     })
     .catch((error) => {
       console.error('Error al generar el PDF:', error);
-
-
       facturaDetalles.style.backgroundColor = originalBackgroundColor;
       facturaDetalles.style.color = originalColor;
       facturaDetalles.style.maxHeight = originalMaxHeight;
     });
 };
 
-
-
-
 function fechaActual() {
   const hoy = new Date();
-
-  return hoy.toISOString().split('T')[0];  // Cambia el idioma según sea necesario
+  return hoy.toISOString().split('T')[0];
 }
-
 </script>
 
 
@@ -731,7 +640,7 @@ function fechaActual() {
               <td :data-label="'Precio U'">{{ producto.factura_producto?.precio_unitario || 'N/A' }}</td>
               <td :data-label="'Nombre'">{{ producto.productos?.nombre_producto || 'N/A' }}</td>
               <td :data-label="'Descripción'">{{ producto.productos?.descripcion || 'N/A' }}</td>
-              <td :data-label="'Precio Actual'">{{ producto.productos?.precio_actual || 'N/A' }}</td>
+              <td :data-label="'Precio Actual'">{{ formatCurrency(producto.productos?.precio_actual) || 'N/A' }}</td>
               <td :data-label="'Acciones'">
                 <div class="flex justify-center space-x-2">
                   <BaseButton color="info" :icon="mdiPencilPlus" small @click="openEditProductoModal(producto)">
@@ -791,7 +700,7 @@ function fechaActual() {
       </div>
       <div class="mb-4">
         <label for="precio_unitario" class="block text-gray-700">Precio Unitario</label>
-        <input type="number" id="precio_unitario" v-model="selectedProduct.factura_producto.precio_unitario"
+        <input type="number" id="precio_unitario" v-model="(selectedProduct.factura_producto.precio_unitario)"
           class="w-full border border-gray-300 rounded px-3 py-2 text-gray-800 focus:outline-none focus:border-blue-500"
           required />
       </div>
@@ -886,22 +795,14 @@ function fechaActual() {
   </div>
 
 
-  <!-- SECCION  DE HISTORIAL DE FACTURAS-->
   <div class="relative overflow-x-auto">
-
-
-
-
     <div class="grid grid-cols-1 md:grid-cols-5 gap-4 py-4">
 
     </div>
     <table>
       <thead>
         <tr>
-          <th v-if="checkable" />
-
           <th class="">N° Factura</th>
-           <!--<th class="">ID Check-in</th>-->
           <th class="">Nombre</th>
           <th class="">N° Documento</th>
           <th class="">Email</th>
@@ -909,20 +810,11 @@ function fechaActual() {
           <th class="">Subtotal</th>
           <th class="">Impuestos</th>
           <th class="">% descuento</th>
-          <th class="">Total Precio Productos</th>
+          <th class="">Total Productos</th>
           <th class="">Total a pagar</th>
-          <th class="">Método de Pago Factura</th>
+          <th class="">Método de Pago</th>
           <th class="">Estado</th>
           <th class="">Fecha Salida</th>
-          <!-- <th class="">ID Reserva</th>
-          <th class="">Medio Llegada</th>
-          <th class="">Llegada Situación</th>
-          <th class="">Equipaje</th>
-          <th class="">Fecha Reserva</th>
-          <th class="">Empresa</th>
-          <th class="">Valor Depósito</th>
-          <th class="">Forma de Pago Reserva</th>-->
-
           <th class="">Acciones</th>
 
         </tr>
@@ -931,30 +823,20 @@ function fechaActual() {
         <tr v-for="factura in facturas" :key="factura.id_facturacion">
 
           <td data-label="N° Factura">{{ factura.id_facturacion }}</td>
-            <!--<td data-label="ID Check-In">{{ factura.check_in.id_check_in }}</td>-->
           <td data-label="Nombre Completo">{{ factura.huesped.nombre_completo }}</td>
           <td data-label="Número de Documento">{{ factura.huesped.numero_documento }}</td>
           <td data-label="Email">{{ factura.huesped.email }}</td>
           <td data-label="Telefono">{{ factura.huesped.telefono }}</td>
-          <td data-label="Subtotal">{{ factura.subtotal }}</td>
-          <td data-label="Impuestos">{{ factura.impuestos }}</td>
+          <td class="text-end" data-label="Subtotal">{{ formatCurrency(factura.subtotal) }}</td>
+          <td class="text-end" data-label="Impuestos">{{ formatCurrency(factura.impuestos) }}</td>
 
-          <td data-label="id descuento">{{ factura.descuento.porcentaje_descuento + '%'}} </td>
+          <td class="text-end" data-label="id descuento">{{ factura.descuento.porcentaje_descuento + '%'}} </td>
 
-          <td data-label="Total Precio Productos">{{ factura.total_precio_productos }}</td>
-          <td data-label="Total a pagar">{{ factura.total }}</td>
+          <td class="text-end" data-label="Total Precio Productos">{{ formatCurrency(factura.total_precio_productos) }}</td>
+          <td class="text-end" data-label="Total a pagar">{{ formatCurrency(factura.total) }}</td>
           <td data-label="Método de Pago Factura">{{ factura.metodo_pago }}</td>
           <td data-label="Estado">{{ factura.estado }}</td>
           <td data-label="Fecha de Salida">{{ factura.fecha_salida }}</td>
-         <!-- <td data-label="ID Reserva">{{ factura.reserva.id_reserva }}</td>
-          <td data-label="Medio de Llegada">{{ factura.check_in.medio_llegada }}</td>
-          <td data-label="Llegada Situación">{{ factura.check_in.llegada_situacion }}</td>
-          <td data-label="Equipaje">{{ factura.check_in.equipaje }}</td>
-          <td data-label="Fecha Reserva">{{ factura.reserva.fecha_reserva }}</td>
-          <td data-label="Empresa">{{ factura.reserva.empresa }}</td>
-          <td data-label="Valor Depósito">{{ factura.reserva.valor_deposito }}</td>
-          <td data-label="Forma de Pago Reserva">{{ factura.reserva.forma_pago }}</td>-->
-
           <td class="before:hidden lg:w-1 whitespace-nowrap">
             <BaseButtons type="justify-start lg:justify-end" no-wrap>
               <BaseButton color="primary" :icon="mdiEyeCheckOutline" small @click="openDetallesmodal(factura)">
@@ -994,7 +876,6 @@ function fechaActual() {
   <!-- VER INFO DE LA FACTURA-->
   <!-- CardBox para mostrar información de la factura y productos asociados -->
   <CardLista v-model="showDetalles" >
-    <!-- Sección de Información de la Factura -->
     <div class="mb-2 overflow-y-auto max-h-96 " id="facturaDetalles" >
     <div >
       <div class="flex justify-between items-center mb-1" >
@@ -1032,10 +913,6 @@ function fechaActual() {
               <td data-label="Campo">N° Factura</td>
               <td data-label="Valor">{{ selectedFactura?.id_facturacion }}</td>
             </tr>
-             <!-- <tr>
-              <td data-label="Campo">ID Check-In</td>
-              <td data-label="Valor">{{ selectedFactura?.check_in?.id_check_in }}</td>
-            </tr>-->
             <tr>
               <td data-label="Campo">Estado</td>
               <td data-label="Valor">{{ selectedFactura?.estado }}</td>
@@ -1044,10 +921,6 @@ function fechaActual() {
               <td data-label="Campo">Fecha de Salida</td>
               <td data-label="Valor">{{ selectedFactura?.fecha_salida }}</td>
             </tr>
-            <!--<tr>
-              <td data-label="Campo">ID Reserva</td>
-              <td data-label="Valor">{{ selectedFactura?.reserva?.id_reserva }}</td>
-            </tr>-->
             <tr>
               <td data-label="Campo">Medio de Llegada</td>
               <td data-label="Valor">{{ selectedFactura?.check_in?.medio_llegada }}</td>
@@ -1070,7 +943,7 @@ function fechaActual() {
             </tr>
             <tr>
               <td data-label="Campo">Valor Depósito</td>
-              <td data-label="Valor">{{ selectedFactura?.reserva?.valor_deposito }}</td>
+              <td data-label="Valor">{{ formatCurrency(selectedFactura?.reserva?.valor_deposito) }}</td>
             </tr>
             <tr>
             <td>Porcentaje Descuento</td>
@@ -1080,122 +953,69 @@ function fechaActual() {
               <td data-label="Campo">Forma de Pago-Reserva</td>
               <td data-label="Valor">{{ selectedFactura?.reserva?.forma_pago }}</td>
             </tr>
-
             <tr>
               <td data-label="Campo">Método de Pago Factura</td>
               <td data-label="Valor">{{ selectedFactura?.metodo_pago }}</td>
             </tr>
-            <!--  <tr>
-          <td>ID Descuento</td>
-            <td>{{ selectedFactura?.descuento?.id_descuento || 'N/A' }}</td>
-          </tr> -->
-
-
-
           </tbody>
         </table>
-
         <h3 class="text-lg font-semibold mb-3 mt-2">Productos Asociados</h3>
         <table class="mb-2" style="border: black  1px solid;">
           <thead>
             <tr>
-
               <th class=" text-sm">ID Producto</th>
               <th class=" text-sm">Cantidad</th>
               <th class=" text-sm">Precio Unitario</th>
               <th class=" text-sm">Nombre</th>
               <th class=" text-sm">Descripción</th>
-
             </tr>
           </thead>
           <tbody class="text-sm">
             <tr v-for="producto in productos" :key="producto.factura_producto.id_factura_producto">
               <td data-label="ID producto">{{ producto.factura_producto.id_producto || 'N/A' }}</td>
               <td data-label="cantidad">{{ producto.factura_producto.cantidad || 'N/A' }}</td>
-              <td data-label="precio unitario">{{ producto.factura_producto.precio_unitario || 'N/A' }}</td>
+              <td data-label="precio unitario">{{ formatCurrency(producto.factura_producto.precio_unitario) || 'N/A' }}</td>
               <td data-label="nombre">{{ producto.productos.nombre_producto || 'N/A' }}</td>
               <td data-label="descripcion">{{ producto.productos.descripcion || 'N/A' }}</td>
             </tr>
-
-
           </tbody>
         </table>
         <div class="mt-5 w-full md:w-1/2 mb-2" style="display: flex; flex-direction: column;">
-            <div class="font-bold" data-label="Valor"  style="font-size: 16px;">Total precio productos: {{ selectedFactura?.total_precio_productos }}</div>
-            <div class="font-bold" data-label="Valor" style="font-size: 16px;">Subtotal: {{ selectedFactura?.subtotal }}</div>
-            <div class="font-bold" data-label="Valor" style="font-size: 16px;">Impuestos: {{ selectedFactura?.impuestos }}</div>
-        <!--   <div class="font-bold" data-label="Valor" style="font-size: 16px;">Porcentaje descuento: {{ selectedFactura?.descuento.porcentaje_descuento }}</div>-->
-            <div class="font-bold" data-label="Valor" style="font-size: 17px;">TOTAL A PAGAR: {{ selectedFactura?.total }}</div>
+            <div class="font-bold" data-label="Valor"  style="font-size: 16px;">Total precio productos: {{ formatCurrency(selectedFactura?.total_precio_productos) }}</div>
+            <div class="font-bold" data-label="Valor" style="font-size: 16px;">Subtotal: {{ formatCurrency(selectedFactura?.subtotal) }}</div>
+            <div class="font-bold" data-label="Valor" style="font-size: 16px;">Impuestos: {{ formatCurrency(selectedFactura?.impuestos) }}</div>
+            <div class="font-bold" data-label="Valor" style="font-size: 17px;">TOTAL A PAGAR: {{ formatCurrency(selectedFactura?.total) }}</div>
         </div>
-
       </div>
-      <BaseButton type="button" @click="cerrarListaProductosModal"
-        class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition">
-        Cerrar
-      </BaseButton>
-
     </div>
-    <button @click="downloadPDF()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
-            Descargar PDF
-      </button>
-
-
+    <button @click="downloadPDF()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">Descargar PDF</button>
   </CardLista>
-
-
-
-
-
-
-
-
-  <!--  <div class="p-3 lg:px-6 border-t border-gray-100 dark:border-slate-800">
-    <BaseLevel>
-      <BaseButtons>
-        <BaseButton v-for="page in pagesList" :key="page" :active="page === currentPage" :label="page + 1"
-          :color="page === currentPage ? 'lightDark' : 'whiteDark'" small @click="currentPage = page" />
-      </BaseButtons>
-      <small>Page {{ currentPageHuman }} of {{ numPages }}</small>
-    </BaseLevel>
-  </div>
-    -->
 </template>
 <style scoped>
-th,
-td {
+th,td {
   white-space: nowrap;
 }
 
 .dark input {
   background-color: #1f2937;
-  /* Fondo oscuro */
   color: white;
-  /* Texto claro */
   border-color: #374151;
-  /* Borde oscuro */
-}
-
-/* #tabla_productos{
-
-}
-*/
-
-
-.dark select {
-  background-color: #1f2937; /* Dark background for dark mode */
-  color: white; /* Light text for dark mode */
-   /* Dark border for dark mode */
 }
 
 .dark select {
-  background-color: #1f2937; /* Background color for select dropdown in dark mode */
-  color: white; /* Text color for select dropdown in dark mode */
+  background-color: #1f2937;
+  color: white;
+}
+
+.dark select {
+  background-color: #1f2937;
+  color: white;
 
 }
 
 .dark option {
-  background-color: #1f2937; /* Background for options in dark mode */
-  color: white; /* Text color for options in dark mode */
+  background-color: #1f2937;
+  color: white;
 }
 </style>
 

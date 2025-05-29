@@ -61,7 +61,7 @@
           <tbody>
             <tr v-for="item in caracteristicas" :key="item.id_caracteristica">
               <td class="text-black px-4 py-2 border-b-2 text-sm dark:text-white">{{ item.nombre_caracteristicas }}</td>
-              <td class="text-black px-4 py-2 border-b-2 text-sm dark:text-white">{{ item.adicional }}</td>
+              <td class="text-black px-4 py-2 border-b-2 text-sm dark:text-white">{{ formatCurrency(item.adicional) }}</td>
               <td>
                 <BaseButtons no-wrap>
                   <!-- Botón para editar -->
@@ -186,7 +186,6 @@ export default {
     };
 
     const editarCaracteristica = (item) => {
-      console.log('Característica seleccionada:', JSON.stringify(item)); // Log as plain object
       if (!item.id_caracteristica) {
         console.error('Error: La característica seleccionada no tiene un ID válido.');
         return;
@@ -210,6 +209,14 @@ export default {
       }, 3000);
     };
 
+    const formatCurrency = (value) => {
+      return new Intl.NumberFormat('es-CO', {
+          style: 'currency',
+          currency: 'COP',
+          minimumFractionDigits: 0,
+      }).format(value);
+    };
+
     onMounted(() => {
       fetchCaracteristicas();
     });
@@ -227,6 +234,7 @@ export default {
       modalMessage,
       colorAlert,
       totalPaginas,
+      formatCurrency,
       currentPage,
       changePage,
       editarCaracteristica,

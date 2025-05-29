@@ -56,6 +56,14 @@ const verCaracteristicas = (habitacion) => {
   activarModalCaracteristicas.value = true;
 };
 
+const formatCurrency = (value) => {
+    return new Intl.NumberFormat('es-CO', {
+        style: 'currency',
+        currency: 'COP',
+        minimumFractionDigits: 0,
+    }).format(value);
+};
+
 onMounted(() => {
   fetchReservas();
 });
@@ -147,7 +155,7 @@ onMounted(() => {
       <CardBoxModal v-model="activarModalCaracteristicas" title="Características de la habitación" has-cancel :showPrimaryButton="false" @cancel="activarModalCaracteristicas = false">
         <ul v-if="habitacionSeleccionada?.caracteristicas.length">
           <li v-for="caracteristica in habitacionSeleccionada.caracteristicas" :key="caracteristica.id_caracteristica">
-            {{ caracteristica.nombre_caracteristicas }} (Adicional: {{ caracteristica.adicional }})
+            {{ caracteristica.nombre_caracteristicas }} (Adicional: {{ formatCurrency(caracteristica.adicional) }})
           </li>
         </ul>
         <ul v-else >
