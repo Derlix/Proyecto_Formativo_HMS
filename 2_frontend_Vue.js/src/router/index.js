@@ -33,7 +33,7 @@ import { Title } from 'chart.js'
 const routes = [
   {
     meta: {
-      title: 'Iniciar Sesion'
+      title: 'Login HMS'
     },
     path: '/',
     name: 'Iniciar Sesión',
@@ -364,8 +364,16 @@ const routes = [
       title: 'Desarolladores'
     },
     path: '/desarollo',
-    name: 'desarollo',
+    name: 'Desarrolladores',
     component: () => import('@/views/arias_views/CreditosView.vue')
+  },
+  {
+    meta:{
+      title: 'Ayuda Login'
+    },
+    path: '/ayuda',
+    name: 'Ayuda',
+    component: () => import('@/views/nico-views/LoginInfo.vue')
   },
   {
     meta:{

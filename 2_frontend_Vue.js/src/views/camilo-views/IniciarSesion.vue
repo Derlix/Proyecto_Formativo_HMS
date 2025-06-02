@@ -130,10 +130,19 @@ const handleLogin = async () => {
 
       <footer class="footer-container absolute bottom-0 left-0 w-full py-2 bg-gray-200">
         <div class="text-center">
-          <p class="text-gray-500 text-sm mb-2">
-            HMS &copy; <span id="currentYear">{{ anio }}</span>. Todos los derechos reservados.
-            <router-link to="/desarollo" class="text-blue-700 hover:underline cursor-pointer">Creditos</router-link>
-          </p>
+          <div class="relative flex items-center justify-center w-full h-12">
+            <div class="absolute left-1/2 transform -translate-x-1/2">
+              <p class="text-gray-600 text-sm mb-2">
+                HMS &copy; <span id="currentYear">{{ anio }}</span>. Todos los derechos reservados.
+                <router-link to="/desarollo" class="text-blue-700 hover:underline cursor-pointer">Creditos</router-link>
+              </p>
+            </div>
+            <div class="ml-auto pr-4">
+              <router-link to="/ayuda" class="text-gray-800 mr-5 hover:text-black">
+                <i class="fas fa-question-circle text-4xl"></i>
+              </router-link>
+            </div>
+          </div>
         </div>
       </footer>
     </SectionFullScreen>
